@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace DynamicGeometry
 {
     [Category(BehaviorCategories.Shapes)]
-    [Order(4)]
+    [Order(7)]
     public class RegularPolygonCreator : FigureCreator
     {
         protected override IEnumerable<IFigure> CreateFigures()

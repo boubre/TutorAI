@@ -10,7 +10,7 @@ using System.Windows.Shapes;
 namespace DynamicGeometry
 {
     [Category(BehaviorCategories.Shapes)]
-    [Order(3)]
+    [Order(6)]
     public class PolygonCreator : ShapeCreator
     {
         protected int FoundDependenciesMinimum = 3; // Includes TempPoint

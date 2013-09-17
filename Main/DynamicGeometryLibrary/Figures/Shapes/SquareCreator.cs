@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace DynamicGeometry
 {
     [Category(BehaviorCategories.Shapes)]
-    [Order(2)]
+    [Order(5)]
     public class SquareCreator : ShapeCreator
     {
         protected override IEnumerable<IFigure> CreateFigures()

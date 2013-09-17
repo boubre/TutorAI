@@ -207,6 +207,9 @@
     <Compile Include="Figures\Shapes\Arrow.cs" />
     <Compile Include="Figures\Shapes\Bezier.cs" />
     <Compile Include="Figures\Shapes\BezierCreator.cs" />
+    <Compile Include="Figures\Shapes\EquilateralTriangleCreator.cs" />
+    <Compile Include="Figures\Shapes\IsoscelesTriangleCreator.cs" />
+    <Compile Include="Figures\Shapes\RightTriangleCreator.cs" />
     <Compile Include="Figures\Shapes\CoordinatesShapeBase.cs" />
     <Compile Include="Figures\Shapes\Curve.cs" />
     <Compile Include="Figures\Shapes\FunctionGraph\FunctionGraph.cs" />
