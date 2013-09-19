@@ -5,6 +5,12 @@ using System.Text;
 
 namespace GeometryTutorLib.AbstractSyntax
 {
+    /// <summary>
+    /// Represents a Quadrilateral.
+    /// </summary>
+    /// <remarks>
+    /// This class is currently unimplemented.
+    /// </remarks>
     public class Quadrilateral : Polygon
     {
         internal override void BuildUnparse(StringBuilder sb, int tabDepth)
