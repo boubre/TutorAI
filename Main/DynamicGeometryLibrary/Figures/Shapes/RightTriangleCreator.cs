@@ -16,27 +16,27 @@ namespace DynamicGeometry.Figures.Shapes
 
         protected override IEnumerable<IFigure> CreateFigures()
         {
-            IPoint[] points = new IPoint[] {
-                FoundDependencies[0] as IPoint,
-                FoundDependencies[1] as IPoint,
-                FoundDependencies[2] as IPoint
+            FreePoint[] points = new FreePoint[] {
+                FoundDependencies[0] as FreePoint,
+                FoundDependencies[1] as FreePoint,
+                FoundDependencies[2] as FreePoint
             };
 
-            double slope = (points[1].Coordinates.Y - points[0].Coordinates.Y) / (points[1].Coordinates.X - points[0].Coordinates.X);
+            double slope = (points[1].Y - points[0].Y) / (points[1].X - points[0].X);
             double orthoSlope = -1.0 / slope;
-            double b = points[1].Coordinates.Y - orthoSlope * points[1].Coordinates.X;
-            IMovable point2 = points[2] as IMovable;
-            point2.MoveTo(new Point(point2.Coordinates.X, orthoSlope * point2.Coordinates.X + b));
-            
-            yield return Factory.CreatePolygon(Drawing, FoundDependencies);
-            for (int i = 0; i < FoundDependencies.Count; i++)
+            double b = points[1].Y - orthoSlope * points[1].X;
+            points[2].X = points[2].X;
+            points[2].Y = orthoSlope * points[2].X + b;
+
+            yield return Factory.CreatePolygon(Drawing, points);
+            for (int i = 0; i < points.Length; i++)
             {
                 // get two consecutive vertices of the polygon
-                int j = (i + 1) % FoundDependencies.Count;
-                IPoint p1 = FoundDependencies[i] as IPoint;
-                IPoint p2 = FoundDependencies[j] as IPoint;
+                int j = (i + 1) % points.Length;
+                IPoint p1 = points[i] as IPoint;
+                IPoint p2 = points[j] as IPoint;
                 // try to find if there is already a line connecting them
-                if (Drawing.Figures.FindLine(p1, p2) == null)
+                 if (Drawing.Figures.FindLine(p1, p2) == null)
                 {
                     // if not, create a new segment
                     var segment = Factory.CreateSegment(Drawing, new[] { p1, p2 });

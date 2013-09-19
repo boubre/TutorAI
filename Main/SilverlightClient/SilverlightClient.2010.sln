@@ -1,9 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightDynamicGeometry.2010", "..\DynamicGeometryLibrary\SilverlightDynamicGeometry.2010.csproj", "{12C65F68-BDF8-4C3C-A7C0-4366A72D887F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightClient.2010", "SilverlightClient.2010.csproj", "{403EAF86-0F48-483E-8482-DF2DD98A765B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeometryTutorLib", "..\GeometryTutorLibrary\GeometryTutorLib\GeometryTutorLib.csproj", "{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +21,10 @@ Global
 		{403EAF86-0F48-483E-8482-DF2DD98A765B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{403EAF86-0F48-483E-8482-DF2DD98A765B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{403EAF86-0F48-483E-8482-DF2DD98A765B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
