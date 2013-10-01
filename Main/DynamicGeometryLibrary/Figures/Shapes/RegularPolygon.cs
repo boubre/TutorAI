@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Xml;
@@ -11,7 +12,7 @@ namespace DynamicGeometry
         private readonly List<Segment> sides;
         private readonly Polygon polygon;
 
-        private int numberOfSides = 5;
+        private int numberOfSides = 3;
         [PropertyGridVisible]
         [PropertyGridName("Number of sides")]
         public int NumberOfSides

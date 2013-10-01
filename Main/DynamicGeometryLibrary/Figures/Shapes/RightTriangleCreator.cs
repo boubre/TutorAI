@@ -22,11 +22,16 @@ namespace DynamicGeometry.Figures.Shapes
                 FoundDependencies[2] as FreePoint
             };
 
-            double slope = (points[1].Y - points[0].Y) / (points[1].X - points[0].X);
-            double orthoSlope = -1.0 / slope;
-            double b = points[1].Y - orthoSlope * points[1].X;
-            points[2].X = points[2].X;
-            points[2].Y = orthoSlope * points[2].X + b;
+            //We have two vectors in R^2.
+            Tuple<double, double> v1 = new Tuple<double, double>(points[1].X - points[0].X, points[1].Y - points[0].Y);
+            Tuple<double, double> v2 = new Tuple<double, double>(points[2].X - points[1].X, points[2].Y - points[1].Y);
+            //Apply Gram-Schmidt to find part of v2 orthogonal to v1.
+            double v2ParallelCoef = (v2.Item1 * v1.Item1 + v2.Item2 * v1.Item2) / (System.Math.Pow(v1.Item1, 2) + System.Math.Pow(v1.Item2, 2));
+            Tuple<double, double> v2Parallel = new Tuple<double, double>(v2ParallelCoef * v1.Item1, v2ParallelCoef * v1.Item2);
+            Tuple<double, double> v2Perp = new Tuple<double, double>(v2.Item1 - v2Parallel.Item1, v2.Item2 - v2Parallel.Item2);
+            //Translate the vector to the correct grid coordinate.
+            points[2].X = v2Perp.Item1 + points[1].X;
+            points[2].Y = v2Perp.Item2 + points[1].Y;
 
             yield return Factory.CreatePolygon(Drawing, points);
             for (int i = 0; i < points.Length; i++)

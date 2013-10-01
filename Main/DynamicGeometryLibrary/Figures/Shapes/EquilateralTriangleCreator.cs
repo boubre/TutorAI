@@ -1,14 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 
 namespace DynamicGeometry.Figures.Shapes
 {
@@ -16,6 +9,18 @@ namespace DynamicGeometry.Figures.Shapes
     [Order(3)]
     public class EquilateralTriangleCreator : TriangleCreator
     {
+        protected override IEnumerable<IFigure> CreateFigures()
+        {
+            RegularPolygon triangle = Factory.CreateRegularPolygon(Drawing, FoundDependencies);
+            //triangle.NumberOfSides = 3;
+            yield return triangle;
+        }
+
+        protected override DependencyList InitExpectedDependencies()
+        {
+            return DependencyList.PointPoint;
+        }
+
         public override string Name
         {
             get { return "Equilateral Triangle"; }
