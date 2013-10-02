@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -388,6 +389,12 @@ namespace LiveGeometry
                     currentDrawing.LastUndoableActionAtSave = undoableActions.Last();
                 }
             }
+        }
+
+        void ParseToAst()
+        {
+            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing.Figures);
+            parser.ParseDrawing();
         }
     }
 }

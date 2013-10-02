@@ -127,6 +127,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="Demo.cs" />
     <Compile Include="Downloader.cs" />
+    <Compile Include="DrawingParser.cs" />
     <Compile Include="Encoding.cs" />
     <Compile Include="Extensions\Operations\TearOff.cs" />
     <Compile Include="IsolatedStorage.cs" />
@@ -231,6 +232,10 @@
     <ProjectReference Include="..\DynamicGeometryLibrary\SilverlightDynamicGeometry.2010.csproj">
       <Project>{12C65F68-BDF8-4C3C-A7C0-4366A72D887F}</Project>
       <Name>SilverlightDynamicGeometry.2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GeometryTutorLibrary\GeometryTutorLib\GeometryTutorLib.csproj">
+      <Project>{2baa33e9-4cf7-4962-a32c-3988dc64f63a}</Project>
+      <Name>GeometryTutorLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
