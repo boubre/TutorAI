@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.AbstractSyntax
+namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
     /// Represents a polygon, ie a closed figure made of 3 or more connected lines.

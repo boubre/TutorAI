@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.AbstractSyntax
+namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
     /// A List of Figures on a Drawing. The Head is a Figure and the Tail is a reference to the next Figure (ie the tail is a FigureList).

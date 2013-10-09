@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.AbstractSyntax
+namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
     /// A Figure that can exist on a <see cref="Drawing"/>.

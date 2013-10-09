@@ -36,19 +36,21 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractSyntax\Drawing.cs" />
-    <Compile Include="AbstractSyntax\Figure.cs" />
-    <Compile Include="AbstractSyntax\FigureList.cs" />
-    <Compile Include="AbstractSyntax\Line.cs" />
-    <Compile Include="AbstractSyntax\LineType.cs" />
-    <Compile Include="AbstractSyntax\Node.cs" />
-    <Compile Include="AbstractSyntax\Point.cs" />
-    <Compile Include="AbstractSyntax\Polygon.cs" />
-    <Compile Include="AbstractSyntax\Quadrilateral.cs" />
-    <Compile Include="AbstractSyntax\Triangle.cs" />
-    <Compile Include="AbstractSyntax\TriangleType.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Drawing.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Figure.cs" />
+    <Compile Include="ConcreteAbstractSyntax\FigureList.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Line.cs" />
+    <Compile Include="ConcreteAbstractSyntax\LineType.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Node.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Point.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Polygon.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Quadrilateral.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Triangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\TriangleType.cs" />
+    <Compile Include="GenericAbstractSyntax\GenericRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

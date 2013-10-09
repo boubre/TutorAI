@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using DynamicGeometry;
-using GeometryTutorLib.AbstractSyntax;
+using GeometryTutorLib.ConcreteAbstractSyntax;
 
 namespace LiveGeometry
 {
