@@ -393,7 +393,7 @@ namespace LiveGeometry
 
         void ParseToAst()
         {
-            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing.Figures);
+            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
             parser.ParseDrawing();
         }
     }

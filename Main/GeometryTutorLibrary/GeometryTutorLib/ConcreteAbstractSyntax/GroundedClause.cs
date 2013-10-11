@@ -6,14 +6,14 @@ using System.Text;
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
-    /// A Node in the AST.
+    /// A First Order Logic clause that describes a property about a geometric drawing.
     /// </summary>
-    public abstract class Node
+    public abstract class GroundedClause : IEquatable<GroundedClause>
     {
         /// <summary>
-        /// Create a formatted string that represents the tree structure of this node and its children.
+        /// Create a formatted string that represents the tree structure of this clause and its children.
         /// </summary>
-        /// <returns>A textual representation of the AST</returns>
+        /// <returns>A textual representation of the Clause and its subclauses</returns>
         public string Unparse()
         {
             StringBuilder sb = new StringBuilder();
@@ -40,6 +40,11 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             {
                 sb.Append(' ');
             }
+        }
+
+        public override string ToString()
+        {
+            return Unparse();
         }
     }
 }
