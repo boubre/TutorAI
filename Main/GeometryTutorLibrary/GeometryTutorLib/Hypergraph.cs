@@ -9,7 +9,9 @@ namespace GeometryTutorLib
 {
     public class Hypergraph
     {
+        // List of ground clauses
         List<ConcreteAbstractSyntax.GroundClause> grounds;
+        // List of generic rules (definitions, theorems, axioms) that may be instantiated
         List<GenericAbstractSyntax.GenericRule> generics;
 
         public Hypergraph(List<ConcreteAbstractSyntax.GroundClause> grs, List<GenericAbstractSyntax.GenericRule> gens)
