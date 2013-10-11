@@ -16,6 +16,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             commonName = name;
         }
 
-        public abstract Boolean Unify(ConcreteFigure cf);
+        //Below lone commented out since it results in temp build errors
+        //public abstract Boolean Unify(ConcreteFigure cf);
     }
 }

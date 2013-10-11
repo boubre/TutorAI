@@ -5,11 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
-    /// <summary>
-    /// Defines whether a Line is a Line, Ray, or Segment.
-    /// </summary>
-    public enum LineType
+    public abstract class Descriptor : GroundedClause
     {
-        Line, Ray, Segment
     }
 }
