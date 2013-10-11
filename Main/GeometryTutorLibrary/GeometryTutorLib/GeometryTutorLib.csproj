@@ -39,17 +39,16 @@
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConcreteAbstractSyntax\Drawing.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Figure.cs" />
-    <Compile Include="ConcreteAbstractSyntax\FigureList.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Line.cs" />
-    <Compile Include="ConcreteAbstractSyntax\LineType.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Node.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Point.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Polygon.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Quadrilateral.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Triangle.cs" />
-    <Compile Include="ConcreteAbstractSyntax\TriangleType.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteIsoscelesTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
+    <Compile Include="ConcreteAbstractSyntax\GroundedClause.cs" />
+    <Compile Include="ConcreteAbstractSyntax\InMiddle.cs" />
     <Compile Include="GenericAbstractSyntax\GenericRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

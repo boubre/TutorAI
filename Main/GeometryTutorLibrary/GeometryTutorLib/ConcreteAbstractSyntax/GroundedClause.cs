@@ -46,5 +46,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         {
             return Unparse();
         }
+
+        public abstract bool Equals(GroundedClause other);
     }
 }
