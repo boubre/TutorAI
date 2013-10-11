@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// <summary>
     /// Represents a triangle, which consists of 3 segments
     /// </summary>
-    public class ConcreteTriangle : GroundedClause
+    public class ConcreteTriangle : ConcreteFigure
     {
         public ConcreteSegment SegmentA { get; private set; }
         public ConcreteSegment SegmentB { get; private set; }

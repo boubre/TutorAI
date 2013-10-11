@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// <summary>
     /// A segment defined by two points.
     /// </summary>
-    public class ConcreteSegment : GroundedClause
+    public class ConcreteSegment : ConcreteFigure
     {
         public ConcretePoint Point1 { get; private set; }
         public ConcretePoint Point2 { get; private set; }

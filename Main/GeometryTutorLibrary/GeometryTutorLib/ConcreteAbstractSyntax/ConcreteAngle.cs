@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// <summary>
     /// Represents an angle (degrees), defined by 3 points.
     /// </summary>
-    public class ConcreteAngle : GroundedClause
+    public class ConcreteAngle : ConcreteFigure
     {
         public ConcretePoint A { get; private set; }
         public ConcretePoint B { get; private set; }

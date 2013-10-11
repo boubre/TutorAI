@@ -36,11 +36,12 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteFigure.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteIsoscelesTriangle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />

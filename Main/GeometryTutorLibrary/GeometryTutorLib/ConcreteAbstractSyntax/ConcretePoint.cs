@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// <summary>
     /// A 2D point
     /// </summary>
-    public class ConcretePoint : GroundedClause
+    public class ConcretePoint : ConcreteFigure
     {
         private static int CURRENT_ID = 0;
 
