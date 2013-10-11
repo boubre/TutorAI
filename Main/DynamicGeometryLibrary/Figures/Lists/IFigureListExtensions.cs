@@ -55,7 +55,7 @@ namespace DynamicGeometry
         {
             foreach (var point in figures.OfType<IPoint>())
             {
-                if (point.Coordinates.Distance(coordinates) < epsilon)
+                if (point.Coordinates.Distance(coordinates) <= epsilon)
                 {
                     return point;
                 }
