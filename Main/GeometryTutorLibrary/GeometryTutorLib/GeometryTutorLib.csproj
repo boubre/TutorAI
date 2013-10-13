@@ -39,6 +39,7 @@
     <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConcreteAbstractSyntax\Colinear.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteFigure.cs" />
@@ -46,6 +47,7 @@
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Congruent.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
     <Compile Include="ConcreteAbstractSyntax\GroundedClause.cs" />
