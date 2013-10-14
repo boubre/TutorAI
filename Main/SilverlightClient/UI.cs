@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -394,7 +395,18 @@ namespace LiveGeometry
         void ParseToAst()
         {
             DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-            parser.ParseDrawing();
+            List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult = parser.ParseDrawing();
+            parser.calculateIntersections(parseResult);
+            parser.calculateInMiddle(parseResult);
+            parser.calculateLineEquality(parseResult);
+            parseResult = parser.removeDuplicates(parseResult);
+
+            foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
+            {
+                Debug.WriteLine(gc.Unparse());
+                Debug.WriteLine("--------------------");
+            }
+            Debug.WriteLine("=====END=====");
         }
     }
 }

@@ -35,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="ClassDiagram2.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="ConcreteAbstractSyntax\Colinear.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
@@ -54,6 +50,9 @@
     <Compile Include="ConcreteAbstractSyntax\InMiddle.cs" />
     <Compile Include="GenericAbstractSyntax\GenericRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
