@@ -35,25 +35,60 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ConcreteAbstractSyntax\Colinear.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Addition.cs" />
+    <Compile Include="ConcreteAbstractSyntax\AngleMeasureEquation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ArithmeticNode.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ArithmeticOperation.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCollinear.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruent.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentAngles.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentSegments.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentTriangles.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteFigure.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteIsoscelesTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteMidpoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
-    <Compile Include="ConcreteAbstractSyntax\Congruent.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
+    <Compile Include="ConcreteAbstractSyntax\EqualSegments.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Equation.cs" />
     <Compile Include="ConcreteAbstractSyntax\GroundedClause.cs" />
     <Compile Include="ConcreteAbstractSyntax\InMiddle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Intersection.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Multiplication.cs" />
+    <Compile Include="ConcreteAbstractSyntax\NumericValue.cs" />
+    <Compile Include="ConcreteAbstractSyntax\SegmentEquation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Subtraction.cs" />
+    <Compile Include="GenericAbstractSyntax\AngleAdditionAxiom.cs" />
+    <Compile Include="GenericAbstractSyntax\ASA.cs" />
+    <Compile Include="GenericAbstractSyntax\Axiom.cs" />
+    <Compile Include="GenericAbstractSyntax\CongruentTriangleAxiom.cs" />
+    <Compile Include="GenericAbstractSyntax\Definition.cs" />
     <Compile Include="GenericAbstractSyntax\GenericRule.cs" />
+    <Compile Include="GenericAbstractSyntax\HypotenuseLeg.cs" />
+    <Compile Include="GenericAbstractSyntax\IsoscelesTriangleDefinition.cs" />
+    <Compile Include="GenericAbstractSyntax\MidpointDefinition.cs" />
+    <Compile Include="GenericAbstractSyntax\SAS.cs" />
+    <Compile Include="GenericAbstractSyntax\SegmentAdditionAxiom.cs" />
+    <Compile Include="GenericAbstractSyntax\Simplification.cs" />
+    <Compile Include="GenericAbstractSyntax\SSS.cs" />
+    <Compile Include="GenericAbstractSyntax\StraightAngleDefinition.cs" />
+    <Compile Include="GenericAbstractSyntax\Substitution.cs" />
+    <Compile Include="GenericAbstractSyntax\SumAnglesInTriangle.cs" />
+    <Compile Include="GenericAbstractSyntax\Theorem.cs" />
+    <Compile Include="GenericAbstractSyntax\VerticalAnglesTheorem.cs" />
+    <Compile Include="Hypergraph\Hypergraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

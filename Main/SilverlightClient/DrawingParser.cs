@@ -114,8 +114,8 @@ namespace LiveGeometry
                     figures.Add(new ConcreteSegment(intersection, segments[i].Point2));
                     figures.Add(new ConcreteSegment(segments[j].Point1, intersection));
                     figures.Add(new ConcreteSegment(intersection, segments[j].Point2));
-                    figures.Add(new InMiddle(intersection, segments[i]));
-                    figures.Add(new InMiddle(intersection, segments[j]));
+                    figures.Add(new InMiddle(intersection, segments[i], "Intrinsic"));
+                    figures.Add(new InMiddle(intersection, segments[j], "Intrinsic"));
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace LiveGeometry
                     if (segment.Point1.Equals(point) || segment.Point2.Equals(point))
                         continue;
                     else if (isInMiddle(segment.Point1, point, segment.Point2))
-                        clauses.Add(new InMiddle(point, segment));
+                        clauses.Add(new InMiddle(point, segment, "Intrinsic"));
                 }
             }
         }
@@ -202,7 +202,7 @@ namespace LiveGeometry
             for (int i = 0; i < segments.Length - 1; i++)
                 for (int j = i + 1; j < segments.Length; j++)
                     if (segments[i].Length == segments[j].Length)
-                        clauses.Add(new Equal(segments[i], segments[j]));
+                        clauses.Add(new EqualSegments(segments[i], segments[j], "Given"));
         }
 
         /// <summary>
@@ -279,9 +279,9 @@ namespace LiveGeometry
                     isosceles = isosceles || (csegs[i].Length == csegs[(i+1)%3].Length);
 
                 if (isosceles)
-                    parsed.Add(pgon, new ConcreteIsoscelesTriangle(csegs[0], csegs[1], csegs[2]));
+                    parsed.Add(pgon, new ConcreteIsoscelesTriangle(csegs[0], csegs[1], csegs[2], "Given"));
                 else
-                    parsed.Add(pgon, new ConcreteTriangle(csegs[0], csegs[1], csegs[2]));
+                    parsed.Add(pgon, new ConcreteTriangle(csegs[0], csegs[1], csegs[2], "Given"));
             }
         }
 
@@ -325,7 +325,7 @@ namespace LiveGeometry
                     csegs[i] = parsed[lines[i]] as ConcreteSegment;
                 }
 
-                parsed.Add(rgon, new ConcreteEquilateralTriangle(csegs[0], csegs[1], csegs[2]));
+                parsed.Add(rgon, new ConcreteEquilateralTriangle(csegs[0], csegs[1], csegs[2], "Given"));
             }
         }
 

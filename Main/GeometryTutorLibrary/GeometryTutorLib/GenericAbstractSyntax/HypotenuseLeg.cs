@@ -6,14 +6,14 @@ using GeometryTutorLib.ConcreteAbstractSyntax;
 
 namespace GeometryTutorLib.GenericAbstractSyntax
 {
-    public class ASA : CongruentTriangleAxiom
+    public class HypotenuseLeg : CongruentTriangleAxiom
     {
-        public Boolean MayUnifyWith(GroundedClause c)
+        public static Boolean MayUnifyWith(GroundedClause c)
         {
             return c is ConcreteTriangle;
         }
 
-        public List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<GroundedClause> Instantiate(GroundedClause c)
         {
             return new List<GroundedClause>();
         }

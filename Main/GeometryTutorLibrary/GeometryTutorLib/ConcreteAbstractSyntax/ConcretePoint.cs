@@ -14,11 +14,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 
         public double X { get; private set; }
         public double Y { get; private set; }
-        
+        public static readonly double EPSILON = 0.0001;
+
         /// <summary> A unique identifier for this point. </summary>
         public int ID { get; private set; }
 
-        public String Name { get; private set; }
+        public string name { get; private set; }
 
         /// <summary>
         /// Create a new ConcretePoint with the specified coordinates.
@@ -26,9 +27,10 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// <param name="name">The name of the point. (Assigned by the UI)</param>
         /// <param name="x">The X coordinate</param>
         /// <param name="y">The Y coordinate</param>
-        public ConcretePoint(String name, double x, double y)
+        public ConcretePoint(string n, double x, double y)
         {
             this.ID = CURRENT_ID++;
+            name = n != null ? n : "";
             this.X = x;
             this.Y = y;
         }
@@ -44,11 +46,11 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return System.Math.Sqrt(System.Math.Pow(p2.X - p1.X, 2) + System.Math.Pow(p2.Y - p1.Y, 2)); ;
         }
 
-        internal override void BuildUnparse(StringBuilder sb, int tabDepth)
+        internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);
             sb.Append("ConcretePoint [");
-            sb.Append(Name);
+            sb.Append(name);
             sb.Append(": (");
             sb.Append(X);
             sb.Append(", ");
@@ -63,11 +65,16 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
-        public override bool Equals(GroundedClause obj)
+        public override bool Equals(Object obj)
         {
             ConcretePoint pt = obj as ConcretePoint;
+
             if (pt == null) return false;
-            return pt.ID == ID;
+
+            return Math.Abs(pt.X - X) < EPSILON && Math.Abs(pt.Y - Y) < EPSILON && name.Equals(pt.name);
+            // Diff names and ids allowed? return pt.ID == ID;
         }
+
+        public override string ToString() { return name + "(" + X + ", " + Y + ")"; }
     }
 }

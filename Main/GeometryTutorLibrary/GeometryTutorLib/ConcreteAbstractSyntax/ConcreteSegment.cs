@@ -26,7 +26,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Length = ConcretePoint.calcDistance(p1, p2);
         }
 
-        internal override void BuildUnparse(StringBuilder sb, int tabDepth)
+        internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);
             sb.Append("ConcreteSegment [l=");
@@ -43,11 +43,41 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
-        public override bool Equals(GroundedClause obj)
+        public override bool Equals(Object obj)
         {
             ConcreteSegment segment = obj as ConcreteSegment;
             if (segment == null) return false;
-            return segment.Point1.Equals(Point1) && segment.Point2.Equals(Point2);
+            return (segment.Point1.Equals(Point1) && segment.Point2.Equals(Point2)) ||
+                   (segment.Point1.Equals(Point2) && segment.Point2.Equals(Point1));
         }
+
+        public ConcretePoint SharedVertex(ConcreteSegment s)
+        {
+            if (Point1.Equals(s.Point1)) return Point1;
+            if (Point1.Equals(s.Point2)) return Point1;
+            if (Point2.Equals(s.Point1)) return Point2;
+            if (Point2.Equals(s.Point2)) return Point2;
+            return null;
+        }
+
+        public ConcretePoint OtherPoint(ConcretePoint p)
+        {
+            if (p.Equals(Point1)) return Point2;
+            if (p.Equals(Point2)) return Point1;
+
+            return null;
+        }
+
+        public bool HasPoint(ConcretePoint p)
+        {
+            return Point1.Equals(p) || Point2.Equals(p);
+        }
+
+        public override bool Contains(GroundedClause target)
+        {
+            return this.Equals(target);
+        }
+
+        public override string ToString() { return "Segment(" + Point1.ToString() + ", " + Point2.ToString() + ")"; }
     }
 }

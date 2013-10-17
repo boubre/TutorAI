@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
-    public abstract class Equal : Descriptor
+    public abstract class ConcreteCongruent : Descriptor
     {
     }
 }

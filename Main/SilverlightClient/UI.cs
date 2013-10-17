@@ -403,7 +403,7 @@ namespace LiveGeometry
 
             foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
             {
-                Debug.WriteLine(gc.Unparse());
+                Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");
             }
             Debug.WriteLine("=====END=====");

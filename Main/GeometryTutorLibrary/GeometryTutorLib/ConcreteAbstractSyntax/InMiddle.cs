@@ -10,27 +10,28 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// </summary>
     public class InMiddle : Descriptor
     {
-        public ConcretePoint Point { get; private set; }
-        public ConcreteSegment Segment { get; private set; }
+        public ConcretePoint point { get; private set; }
+        public ConcreteSegment segment { get; private set; }
 
         /// <summary>
         /// Create a new InMiddle statement
         /// </summary>
         /// <param name="p">A point that lies on the segment</param>
         /// <param name="segment">A segment</param>
-        public InMiddle(ConcretePoint p, ConcreteSegment segment)
+        public InMiddle(ConcretePoint p, ConcreteSegment segment, string just)
         {
-            this.Point = p;
-            this.Segment = segment;
+            this.point = p;
+            this.segment = segment;
+            justification = just;
         }
 
-        internal override void BuildUnparse(StringBuilder sb, int tabDepth)
+        internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);
             sb.Append("InMiddle");
             sb.AppendLine();
-            Point.BuildUnparse(sb, tabDepth + 1);
-            Segment.BuildUnparse(sb, tabDepth + 1);
+            point.BuildUnparse(sb, tabDepth + 1);
+            segment.BuildUnparse(sb, tabDepth + 1);
         }
 
         public override int GetHashCode()
@@ -39,11 +40,16 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
-        public override bool Equals(GroundedClause obj)
+        public override bool Equals(Object obj)
         {
             InMiddle im = obj as InMiddle;
             if (im == null) return false;
-            return im.Point.Equals(Point) && im.Segment.Equals(Segment);
+            return im.point.Equals(point) && im.segment.Equals(segment);
+        }
+
+        public override string ToString()
+        {
+            return "InMiddle(" + point.ToString() + ", " + segment.ToString() + "): " + justification;
         }
     }
 }

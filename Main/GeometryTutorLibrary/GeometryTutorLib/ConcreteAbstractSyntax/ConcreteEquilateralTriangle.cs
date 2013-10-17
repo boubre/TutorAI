@@ -13,12 +13,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// <param name="a">The segment opposite point a</param>
         /// <param name="b">The segment opposite point b</param>
         /// <param name="c">The segment opposite point c</param>
-        public ConcreteEquilateralTriangle(ConcreteSegment a, ConcreteSegment b, ConcreteSegment c)
-            : base(a, b, c)
+        public ConcreteEquilateralTriangle(ConcreteSegment a, ConcreteSegment b, ConcreteSegment c, string just)
+            : base(a, b, c, just)
         {
         }
 
-        internal override void BuildUnparse(StringBuilder sb, int tabDepth)
+        new internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);
             sb.Append("ConcreteEquilateralTriangle");
@@ -34,7 +34,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
-        public override bool Equals(GroundedClause obj)
+        public override bool Equals(Object obj)
         {
             ConcreteEquilateralTriangle triangle = obj as ConcreteEquilateralTriangle;
             if (triangle == null) return false;
