@@ -13,6 +13,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcretePoint Point1 { get; private set; }
         public ConcretePoint Point2 { get; private set; }
         public double Length { get; private set; }
+        public double Slope { get; private set; }
 
         /// <summary>
         /// Create a new ConcreteSegment. 
@@ -24,6 +25,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point1 = p1;
             Point2 = p2;
             Length = ConcretePoint.calcDistance(p1, p2);
+            Slope = (p2.Y - p1.Y) / (p2.X - p1.X);
         }
 
         internal void BuildUnparse(StringBuilder sb, int tabDepth)
