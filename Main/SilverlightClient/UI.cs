@@ -399,6 +399,8 @@ namespace LiveGeometry
             parser.calculateIntersections(parseResult);
             parser.calculateInMiddle(parseResult);
             parser.calculateLineEquality(parseResult);
+            parser.calculateMidpoints(parseResult);
+            parser.calculateTriangles(parseResult);
             parseResult = parser.removeDuplicates(parseResult);
 
             foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
