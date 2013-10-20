@@ -6,7 +6,7 @@ using GeometryTutorLib.ConcreteAbstractSyntax;
 
 namespace GeometryTutorLib.GenericAbstractSyntax
 {
-    public abstract class Axiom : GenericRule
+    public class Axiom : GenericRule
     {
         // protected static List<ConcreteCongruentTriangles> deducedCongruentTriangles = new List<ConcreteCongruentTriangles>();
     }

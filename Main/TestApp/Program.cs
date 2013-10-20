@@ -11,7 +11,7 @@ namespace Geometry_Testbed
     {
         private static void Generate(GroundedClause c)
         {
-            List<GroundedClause> newClauses = SAS.Instantiate(c);
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = SAS.Instantiate(c);
 
             if (newClauses == null || !newClauses.Any())
             {
@@ -19,7 +19,7 @@ namespace Geometry_Testbed
             }
             else
             {
-                foreach (GroundedClause gc in newClauses)
+                foreach (KeyValuePair<List<GroundedClause>, GroundedClause> gc in newClauses)
                 {
                     //Console.WriteLine(gc.ToString());
                 }
@@ -77,7 +77,15 @@ namespace Geometry_Testbed
 
             GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
             graph.ConstructGraph();
+            graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
+
+            int[] srcArr = { 1 };
+            List<int> src = new List<int>(srcArr);
+            int[] goalArr = { 5, 6, 7, 8, 9, 10 };
+            List<int> goals = new List<int>(goalArr);
+
+            graph.ConstructPath(src, goals);
         }
 
         private static void TestEntireFigure()
@@ -123,12 +131,13 @@ namespace Geometry_Testbed
 
             GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
             graph.ConstructGraph();
+            graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
             //            Console.WriteLine("Constructing all Paths:");
 
             int[] srcArr = { 2, 3, 4, 5, 6, 7, 8 };
             List<int> src = new List<int>(srcArr);
-            int[] goalArr = { 22, 23, 24 };
+            int[] goalArr = { 36 };
             List<int> goals = new List<int>(goalArr);
 
             graph.ConstructPath(src, goals);
@@ -138,10 +147,49 @@ namespace Geometry_Testbed
         {
             //SASTest1();
             //TestSumAnglesInTriangle();
-            //TestMidpointTheoremFigure();
-            TestEntireFigure();
+            TestMidpointTheoremFigure();
+            //TestEntireFigure();
+            //TestSimplification();
+            //TestSimplificationConstants();
+        }
 
-            //            Console.ReadLine();
+        private static void TestSimplificationConstants()
+        {
+            Addition suml = new Addition(new NumericValue(0), new NumericValue(1));
+            Addition sumr = new Addition(new NumericValue(9), new NumericValue(8));
+            for (int i = 2; i < 10; i++)
+            {
+                suml = new Addition(suml, new NumericValue(i));
+                sumr = new Addition(sumr, new NumericValue(10 - i));
+            }
+
+            SegmentEquation se = new SegmentEquation(sumr, sumr);
+
+            Simplification.Instantiate(se);
+        }
+
+        private static void TestSimplification()
+        {
+            ConcretePoint a = new ConcretePoint("A", 0, 3);
+            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
+            ConcretePoint b = new ConcretePoint("B", 4, 3);
+            ConcretePoint c = new ConcretePoint("C", 4, 0);
+            ConcretePoint d = new ConcretePoint("D", 0, 0);
+
+            ConcreteSegment segmentAM = new ConcreteSegment(a, m);
+            ConcreteSegment segmentMB = new ConcreteSegment(m, b);
+            ConcreteSegment segmentAB = new ConcreteSegment(a, b);
+
+            NumericValue two = new NumericValue(2);
+
+            Addition add = new Addition(segmentAM, segmentAM);
+            Addition add2 = new Addition(segmentAM, segmentAM);
+            Addition add3 = new Addition(add, add2);
+            Multiplication product = new Multiplication(two, add3);
+
+            SegmentEquation se = new SegmentEquation(add3, product);
+
+            Simplification.Instantiate(se);
         }
 
         private static void TestStraightAngleDefinition()

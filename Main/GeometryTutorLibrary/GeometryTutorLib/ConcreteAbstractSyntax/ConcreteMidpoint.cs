@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcretePoint midpoint { get; private set; }
         public ConcreteSegment segment { get; private set; }
 
-        public ConcreteMidpoint(ConcretePoint mid, ConcreteSegment seg, string just)
+        public ConcreteMidpoint(ConcretePoint mid, ConcreteSegment seg, string just) : base()
         {
             midpoint = mid;
             segment = seg;
@@ -30,6 +30,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public override string ToString()
         {
             return "Midpoint(" + midpoint.ToString() + ", " + segment.ToString() + "): " + justification;
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
     }
 }

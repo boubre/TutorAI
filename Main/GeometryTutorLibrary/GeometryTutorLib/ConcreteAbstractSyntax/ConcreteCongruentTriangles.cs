@@ -12,7 +12,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteTriangle ct1 { get; private set; }
         public ConcreteTriangle ct2 { get; private set; }
 
-        public ConcreteCongruentTriangles(ConcreteTriangle t1, ConcreteTriangle t2, string just)
+        public ConcreteCongruentTriangles(ConcreteTriangle t1, ConcreteTriangle t2, string just) : base()
         {
             ct1 = t1;
             ct2 = t2;
@@ -32,6 +32,13 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         {
             //Console.WriteLine("To Be Implemented");
         }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
+        }
+
 
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
@@ -95,28 +102,26 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return congAngles;
         }
 
-        public static List<GroundedClause> GenerateCPCTC(ConcreteCongruentTriangles ccts,
-                                                            List<ConcretePoint> orderedTriOnePts,
-                                                            List<ConcretePoint> orderedTriTwoPts)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateCPCTC(ConcreteCongruentTriangles ccts,
+                                                         List<ConcretePoint> orderedTriOnePts,
+                                                         List<ConcretePoint> orderedTriTwoPts)
         {
-            List<GroundedClause> newClauses = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(ccts);
             List<GroundedClause> congAngles = GenerateCPCTCAngles(orderedTriOnePts, orderedTriTwoPts);
-
-            newClauses.AddRange(congAngles);
 
             foreach (ConcreteCongruentAngles ccas in congAngles)
             {
-                ccts.AddSuccessor(ccas);
-                ccas.AddPredecessor(Utilities.MakeList<GroundedClause>(ccts));
+                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccas));
+                GroundedClause.ConstructClauseLinks(antecedent, ccas);
             }
 
             List<GroundedClause> congSegments = GenerateCPCTCSegments(orderedTriOnePts, orderedTriTwoPts);
-            newClauses.AddRange(congSegments);
             foreach (GroundedClause ccss in congSegments)
             {
-                ccts.AddSuccessor(ccss);
-                ccss.AddPredecessor(Utilities.MakeList<GroundedClause>(ccts));
+                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+                GroundedClause.ConstructClauseLinks(antecedent, ccss);
             }
 
             return newClauses;

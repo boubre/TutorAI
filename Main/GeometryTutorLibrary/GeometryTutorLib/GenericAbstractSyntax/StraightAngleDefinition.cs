@@ -17,12 +17,12 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         // All angles will have measure 180^o
         // There will be nC3 resulting clauses.
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
             if (!(c is ConcreteCollinear)) return null;
 
             ConcreteCollinear cc = (ConcreteCollinear)c;
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             for (int i = 0; i < cc.points.Count - 2; i++)
             {
@@ -34,10 +34,10 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                         {
                             if (j != k)
                             {
-                                ConcreteAngle newAngle = new ConcreteAngle(cc.points[i], cc.points[j], cc.points[k]); 
-                                newGrounded.Add(newAngle);
-                                cc.AddSuccessor(newAngle);
-                                newAngle.AddPredecessor(Utilities.MakeList<GroundedClause>(cc));
+                                ConcreteAngle newAngle = new ConcreteAngle(cc.points[i], cc.points[j], cc.points[k]);
+                                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cc);
+                                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngle));
+                                GroundedClause.ConstructClauseLinks(antecedent, newAngle);
                             }
                         }
                     }

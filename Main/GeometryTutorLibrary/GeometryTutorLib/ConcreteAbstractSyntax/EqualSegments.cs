@@ -18,7 +18,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// </summary>
         /// <param name="s1">A segment</param>
         /// <param name="s2">A segment with the same length as the previous segment</param>
-        public EqualSegments(ConcreteSegment s1, ConcreteSegment s2, string just)
+        public EqualSegments(ConcreteSegment s1, ConcreteSegment s2, string just) : base()
         {
             this.segment1 = s1;
             this.segment2 = s2;
@@ -44,7 +44,8 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         {
             EqualSegments eq = obj as EqualSegments;
             if (eq == null) return false;
-            return eq.segment1.Equals(segment1) && eq.segment1.Equals(segment1);
+            return (segment1.Equals(eq.segment1) && segment2.Equals(segment2)) ||
+                   (segment1.Equals(eq.segment2) && segment2.Equals(segment1));
         }
 
         public override string ToString()

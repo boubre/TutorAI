@@ -12,9 +12,9 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         protected int numSubstitutions; // The number of substitution 'levels' required to create this equation; this is an attempt to cut off infinite substitutions
         public void AddSubstitutionLevel() { numSubstitutions++; }
 
-        public Equation() { }
+        public Equation() : base() { }
 
-        public Equation(GroundedClause l, GroundedClause r)
+        public Equation(GroundedClause l, GroundedClause r) : base()
         {
             lhs = l;
             rhs = r;
@@ -33,7 +33,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         {
             if (lhs.Equals(toFind))
             {
-                lhs = toSub;
+                lhs = toSub.DeepCopy();
             }
             else
             {
@@ -42,7 +42,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 
             if (rhs.Equals(toFind))
             {
-                rhs = toSub;
+                rhs = toSub.DeepCopy();
             }
             else
             {
@@ -85,15 +85,13 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return NONE_ATOMIC;
         }
 
-        public abstract Equation MakeCopy();
-
-        public Equation Flatten()
+        public FlatEquation FlattenEquation()
         {
-            Equation flattened = this.MakeCopy();
+            Equation copyEq = (Equation)DeepCopy();
 
-            
+//            FlatEquation flattened = new FlatEquation(copyEq.lhs, copyEq.rhs);
 
-            return flattened;
+            return new FlatEquation(); // NEED TO CHANGE
         }
 
         public override string ToString()

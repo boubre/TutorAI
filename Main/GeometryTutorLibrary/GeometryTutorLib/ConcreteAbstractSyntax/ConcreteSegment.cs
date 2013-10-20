@@ -19,7 +19,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// </summary>
         /// <param name="p1">A point defining the segment.</param>
         /// <param name="p2">Another point defining the segment.</param>
-        public ConcreteSegment(ConcretePoint p1, ConcretePoint p2)
+        public ConcreteSegment(ConcretePoint p1, ConcretePoint p2) : base()
         {
             Point1 = p1;
             Point2 = p2;
@@ -76,6 +76,16 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public override bool Contains(GroundedClause target)
         {
             return this.Equals(target);
+        }
+
+        // Make a deep copy of this object
+        public override GroundedClause DeepCopy()
+        {
+            ConcreteSegment other = (ConcreteSegment)(this.MemberwiseClone());
+            other.Point1 = (ConcretePoint)Point1.DeepCopy();
+            other.Point2 = (ConcretePoint)Point2.DeepCopy();
+
+            return other;
         }
 
         public override string ToString() { return "Segment(" + Point1.ToString() + ", " + Point2.ToString() + ")"; }

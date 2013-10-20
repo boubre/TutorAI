@@ -11,9 +11,9 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment lhs { get; private set; }
         public ConcreteSegment rhs { get; private set; }
 
-        public Intersection() { }
+        public Intersection() : base() { }
 
-        public Intersection(ConcretePoint i, ConcreteSegment l, ConcreteSegment r, string just)
+        public Intersection(ConcretePoint i, ConcreteSegment l, ConcreteSegment r, string just) : base()
         {
             intersect = i;
             lhs = l;
@@ -31,6 +31,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Intersection inter = obj as Intersection;
             if (inter == null) return false;
             return intersect.Equals(inter.intersect) && lhs.Equals(inter.lhs) && rhs.Equals(inter.rhs);
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
     }
 }

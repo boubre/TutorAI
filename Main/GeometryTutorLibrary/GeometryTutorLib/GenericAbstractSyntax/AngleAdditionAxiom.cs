@@ -10,23 +10,18 @@ namespace GeometryTutorLib.GenericAbstractSyntax
     {
         private readonly static string NAME = "Angle Addition Axiom";
 
-        public AngleAdditionAxiom() { }
-
-        public static bool MayUnifyWith(GroundedClause c)
-        {
-            return c is ConcreteAngle;
-        }
-
+        // Candidate angles
         private static List<ConcreteAngle> unifyCandAngles = new List<ConcreteAngle>();
+
         //
         // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!MayUnifyWith(c)) return new List<GroundedClause>();
+            if (!(c is ConcreteAngle)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             ConcreteAngle newAngle = (ConcreteAngle)c;
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             if (!unifyCandAngles.Any())
             {
@@ -49,17 +44,16 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                     Addition sum = new Addition(newAngle, ang);
                     AngleMeasureEquation eq = new AngleMeasureEquation(sum, angle, NAME);
 
-                    newGrounded.Add(eq);
-
                     // For hypergraph construction
-                    List<GroundedClause> preds = new List<GroundedClause>();
-                    preds.Add(newAngle);
-                    preds.Add(ang);
-                    eq.AddPredecessor(preds);
-                    ang.AddSuccessor(eq);
-                    newAngle.AddSuccessor(eq);
+                    List<GroundedClause> antecedent = new List<GroundedClause>();
+                    antecedent.Add(newAngle);
+                    antecedent.Add(ang);
+                    GroundedClause.ConstructClauseLinks(antecedent, eq);
+
+                    newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
                 }
             }
+
             // Add this angle to the unifying candidates
             unifyCandAngles.Add(newAngle);
 

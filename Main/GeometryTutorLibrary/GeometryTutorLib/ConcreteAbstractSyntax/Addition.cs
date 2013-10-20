@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     public class Addition : ArithmeticOperation
     {
-        public Addition() { }
+        public Addition() : base() { }
 
         public Addition(GroundedClause l, GroundedClause r) : base(l, r) { }
 
@@ -21,6 +21,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Addition aa = obj as Addition;
             if (aa == null) return false;
             return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
     }
 }

@@ -7,6 +7,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     public abstract class ArithmeticNode : GroundedClause
     {
-        public ArithmeticNode() { }
+        public ArithmeticNode() : base() { }
     }
 }

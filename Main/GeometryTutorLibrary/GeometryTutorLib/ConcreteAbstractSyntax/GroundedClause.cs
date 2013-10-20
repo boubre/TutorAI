@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
@@ -11,6 +12,15 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// </summary>
     public abstract class GroundedClause
     {
+        public GroundedClause()
+        {
+            justification = "";
+            successors = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            predecessors = new List<KeyValuePair<GroundedClause, List<GroundedClause>>>();
+            graphId = -1;
+            multiplier = 1;
+        }
+
         // The justification for when a node is deduced
         protected string justification;
         public string GetJustification() { return justification; }
@@ -19,16 +29,38 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         //
         // For the Hypergraph
         //
-        protected List<List<GroundedClause>> predecessors = new List<List<GroundedClause>>();
-        protected List<GroundedClause> successors = new List<GroundedClause>();
-        public List<List<GroundedClause>> GetPredecessors() { return predecessors; }
-        public List<GroundedClause> GetSuccessors() { return successors; }
+        private List<KeyValuePair<List<GroundedClause>, GroundedClause>> successors = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        private List<KeyValuePair<GroundedClause, List<GroundedClause>>> predecessors = new List<KeyValuePair<GroundedClause, List<GroundedClause>>>();
+        public List<KeyValuePair<List<GroundedClause>, GroundedClause>> GetSuccessors() { return successors; }
+        public List<KeyValuePair<GroundedClause, List<GroundedClause>>> GetPredecessors() { return predecessors; }
 
-        public void AddPredecessor(List<GroundedClause> pred) { predecessors.Add(pred); }
-        public void AddSuccessor(GroundedClause succ) { successors.Add(succ); }
+        public void AddSuccessorEdge(KeyValuePair<List<GroundedClause>, GroundedClause> edge) { successors.Add(edge); }
+        public void AddPredecessorEdge(KeyValuePair<GroundedClause, List<GroundedClause>> edge) { predecessors.Add(edge); }
+
+        public static void ConstructClauseLinks(List<GroundedClause> antecedent, GroundedClause consequent)
+        {
+            KeyValuePair<List<GroundedClause>, GroundedClause> succEdge = new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, consequent);
+
+            foreach (GroundedClause ante in antecedent)
+            {
+                ante.AddSuccessorEdge(succEdge);
+            }
+            consequent.AddPredecessorEdge(new KeyValuePair<GroundedClause, List<GroundedClause>>(consequent, antecedent));
+        }
 
         public int graphId { get; private set; }
-        public void SetID(int id) { graphId = id; }
+        public void SetID(int id)
+        {
+            if (graphId != 0) Debug.WriteLine("Graph ID is being overwritten unexpectedly.");
+            graphId = id;
+        }
+
+        // For equation simplification
+        public int multiplier { get; set; }
+        public virtual List<GroundedClause> CollectTerms()
+        {
+            return new List<GroundedClause>(Utilities.MakeList<GroundedClause>(this));
+        }
 
         //
         // For subsitution and algebraic Simplifications
@@ -36,6 +68,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public virtual bool Contains(GroundedClause clause) { return false; }
         public virtual void Substitute(GroundedClause c1, GroundedClause c2) { }
         public virtual GroundedClause Flatten() { return this; }
+        public virtual GroundedClause DeepCopy() { return (GroundedClause)this.MemberwiseClone(); }
 
         /// <summary>
         /// Create a formatted string that represents the tree structure of this clause and its children.

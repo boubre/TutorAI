@@ -29,7 +29,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// <param name="a">The segment opposite point a</param>
         /// <param name="b">The segment opposite point b</param>
         /// <param name="c">The segment opposite point c</param>
-        public ConcreteTriangle(ConcreteSegment a, ConcreteSegment b, ConcreteSegment c, string just)
+        public ConcreteTriangle(ConcreteSegment a, ConcreteSegment b, ConcreteSegment c, string just) : base()
         {
             justification = just;
             SegmentA = a;
@@ -43,7 +43,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point3 = Point1.Equals(SegmentB.Point1) || Point2.Equals(SegmentB.Point1) ? SegmentB.Point2 : SegmentB.Point1;
         }
 
-        public ConcreteTriangle(ConcretePoint a, ConcretePoint b, ConcretePoint c)
+        public ConcreteTriangle(ConcretePoint a, ConcretePoint b, ConcretePoint c) : base()
         {
             Point1 = a;
             Point2 = b;
@@ -57,7 +57,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
         }
 
-        public ConcreteTriangle(List<ConcretePoint> pts)
+        public ConcreteTriangle(List<ConcretePoint> pts) : base()
         {
             Point1 = pts.ElementAt(0);
             Point2 = pts.ElementAt(1);
@@ -256,26 +256,24 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         //
         // RightTriangle(A, B, C) -> Segment(A, B), Segment(B, C), Segment(A, C), m\angle ABC = 90^o
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             ConcreteTriangle tri = c as ConcreteTriangle;
             if (tri == null) return newGrounded;
 
             // Generate the FOL for segments
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
             tri.SegmentA.SetJustification("Intrinsic");
             tri.SegmentB.SetJustification("Intrinsic");
             tri.SegmentC.SetJustification("Intrinsic");
-            tri.AddSuccessor(tri.SegmentA);
-            tri.AddSuccessor(tri.SegmentB);
-            tri.AddSuccessor(tri.SegmentC);
-            tri.SegmentA.AddPredecessor(Utilities.MakeList<GroundedClause>(tri));
-            tri.SegmentB.AddPredecessor(Utilities.MakeList<GroundedClause>(tri));
-            tri.SegmentB.AddPredecessor(Utilities.MakeList<GroundedClause>(tri));
-            newGrounded.Add(tri.SegmentA);
-            newGrounded.Add(tri.SegmentB);
-            newGrounded.Add(tri.SegmentC);
+            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentA);
+            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentB);
+            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentC);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentA));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentB));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentC));
 
             // If this is a right triangle, generate the FOL equation
             if (tri.isRight) newGrounded.AddRange(ConcreteAngle.Instantiate(tri, tri.rightAngle));

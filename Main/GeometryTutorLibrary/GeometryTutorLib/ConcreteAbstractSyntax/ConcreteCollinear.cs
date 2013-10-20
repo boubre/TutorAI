@@ -9,7 +9,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     {
         public List<ConcretePoint> points { get; private set; }
 
-        public ConcreteCollinear(List<ConcretePoint> pts)
+        public ConcreteCollinear(List<ConcretePoint> pts) : base()
         {
             points = pts;
         }
@@ -33,6 +33,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             foreach (ConcretePoint p in points) 
                 strings.Add(p.ToString());
             return "Collinear(" + string.Join(",", strings.ToArray()) + ")";
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
     }
 }

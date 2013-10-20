@@ -15,9 +15,9 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         // 
         // Triangle(A, B, C) -> m\angle ABC + m\angle CAB + m\angle BCA = 180^o
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             ConcreteTriangle tri = c as ConcreteTriangle;
             if (tri == null) return newGrounded;
@@ -31,10 +31,9 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             NumericValue value = new NumericValue(180); // Sum is 180^o
             AngleMeasureEquation eq = new AngleMeasureEquation(overallAdd, value, NAME);
 
-            newGrounded.Add(eq);
-
-            tri.AddSuccessor(eq);
-            eq.AddPredecessor(Utilities.MakeList<GroundedClause>(tri));
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
+            GroundedClause.ConstructClauseLinks(antecedent, eq);
 
             return newGrounded;
         }

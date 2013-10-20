@@ -18,18 +18,22 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         // Midpoint(M, Segment(A, B)) -> AM = MB
         // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is ConcreteMidpoint)) return new List<GroundedClause>();
+            if (!(c is ConcreteMidpoint)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             ConcreteMidpoint cm = (ConcreteMidpoint)c;
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            // For hypergraph
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cm);
 
             // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
             InMiddle im = new InMiddle(cm.midpoint, cm.segment, NAME);
-            newGrounded.Add(im);
-            im.AddPredecessor(Utilities.MakeList<GroundedClause>(cm));
-            cm.AddSuccessor(im);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
+
+            // Hypergraph
+            GroundedClause.ConstructClauseLinks(antecedent, im);
 
             //
             // Midpoint(M, Segment(A, B)) -> AM = MB
@@ -38,9 +42,8 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             ConcreteSegment right = new ConcreteSegment(cm.midpoint, cm.segment.Point2);
             SegmentEquation strictEq = new SegmentEquation(left, right, NAME);
 
-            newGrounded.Add(strictEq);
-            strictEq.AddPredecessor(Utilities.MakeList<GroundedClause>(cm));
-            cm.AddSuccessor(strictEq);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, strictEq));
+            GroundedClause.ConstructClauseLinks(antecedent, strictEq);
 
             //
             // Midpoint(M, Segment(A, B)) -> AM + MB = AB
@@ -48,17 +51,15 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             Addition sum = new Addition(left, right);
             SegmentEquation generalEq = new SegmentEquation(sum, cm.segment, NAME);
 
-            newGrounded.Add(generalEq);
-            generalEq.AddPredecessor(Utilities.MakeList<GroundedClause>(cm));
-            cm.AddSuccessor(generalEq);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, generalEq));
+            GroundedClause.ConstructClauseLinks(antecedent, generalEq);
 
             //
             // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
             //
             ConcreteCongruentSegments ccss = new ConcreteCongruentSegments(left, right, NAME);
-            newGrounded.Add(ccss);
-            ccss.AddPredecessor(Utilities.MakeList<GroundedClause>(cm));
-            cm.AddSuccessor(ccss);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+            GroundedClause.ConstructClauseLinks(antecedent, ccss);
 
             return newGrounded;
         }

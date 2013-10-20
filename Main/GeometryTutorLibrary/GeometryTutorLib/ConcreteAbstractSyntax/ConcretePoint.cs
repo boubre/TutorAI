@@ -27,7 +27,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// <param name="name">The name of the point. (Assigned by the UI)</param>
         /// <param name="x">The X coordinate</param>
         /// <param name="y">The Y coordinate</param>
-        public ConcretePoint(string n, double x, double y)
+        public ConcretePoint(string n, double x, double y) : base()
         {
             this.ID = CURRENT_ID++;
             name = n != null ? n : "";
@@ -73,6 +73,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 
             return Math.Abs(pt.X - X) < EPSILON && Math.Abs(pt.Y - Y) < EPSILON && name.Equals(pt.name);
             // Diff names and ids allowed? return pt.ID == ID;
+        }
+
+        // Make a deep copy of this object; this is actually shallow, but is all that is required.
+        public override GroundedClause DeepCopy()
+        {
+            return (ConcretePoint)(this.MemberwiseClone());
         }
 
         public override string ToString() { return name + "(" + X + ", " + Y + ")"; }

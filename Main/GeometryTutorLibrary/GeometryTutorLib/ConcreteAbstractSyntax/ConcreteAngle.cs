@@ -17,13 +17,26 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment ray2 { get; private set; }
         public double measure { get; private set; }
 
+        // Make a deep copy of this object
+        public override GroundedClause DeepCopy()
+        {
+            ConcreteAngle other = (ConcreteAngle)(this.MemberwiseClone());
+            other.A = (ConcretePoint)this.A.DeepCopy();
+            other.B = (ConcretePoint)this.B.DeepCopy();
+            other.C = (ConcretePoint)this.C.DeepCopy();
+            other.ray1 = (ConcreteSegment)this.ray1.DeepCopy();
+            other.ray2 = (ConcreteSegment)this.ray2.DeepCopy();
+
+            return other;
+        }
+
         /// <summary>
         /// Create a new angle.
         /// </summary>
         /// <param name="a">A point defining the angle.</param>
         /// <param name="b">A point defining the angle. This is the point the angle is actually at.</param>
         /// <param name="c">A point defining the angle.</param>
-        public ConcreteAngle(ConcretePoint a, ConcretePoint b, ConcretePoint c)
+        public ConcreteAngle(ConcretePoint a, ConcretePoint b, ConcretePoint c) : base()
         {
             this.A = a;
             this.B = b;
@@ -33,7 +46,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             this.measure = toDegrees(findAngle(A, B, C));
         }
 
-        public ConcreteAngle(List<ConcretePoint> pts)
+        public ConcreteAngle(List<ConcretePoint> pts) : base()
         {
             if (pts.Count != 3)
             {
@@ -148,16 +161,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 
         private static readonly int[] VALID_CONCRETE_SPECIAL_ANGLES = { 30, 45 }; // 0 , 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330 }; // 15, 22.5, ...
 
-        private static int GCD(int a, int b)
-        {
-            return b == 0 ? a : GCD(b, a % b);
-        }
 
         private static bool IsSpecialAngle(double measure)
         {
             foreach (int d in VALID_CONCRETE_SPECIAL_ANGLES)
             {
-                if (GCD((int)measure, d) == d) return true;
+                if (Utilities.GCD((int)measure, d) == d) return true;
             }
 
             return false;
@@ -168,19 +177,18 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return this.Equals(target);
         }
 
-        public static List<GroundedClause> Instantiate(GroundedClause pred, GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause pred, GroundedClause c)
         {
             ConcreteAngle angle = c as ConcreteAngle;
-            if (angle == null) return new List<GroundedClause>();
+            if (angle == null) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            List<GroundedClause> newClauses = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             if (IsSpecialAngle(angle.measure))
             {
                 AngleMeasureEquation angEq = new AngleMeasureEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
-                angEq.AddPredecessor(Utilities.MakeList<GroundedClause>(pred));
-                pred.AddSuccessor(angEq);
-
-                newClauses.Add(angEq);
+                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
+                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+                GroundedClause.ConstructClauseLinks(antecedent, angEq);
             }
 
             return newClauses;

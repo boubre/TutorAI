@@ -26,10 +26,13 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         // Note: we need to figure out the proper order of the sides to guarantee congruence
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
             // Do we have a segment or triangle?
-            if (!(c is ConcreteCongruentSegments) && !(c is ConcreteCongruentAngles) && !(c is ConcreteTriangle)) return new List<GroundedClause>();
+            if (!(c is ConcreteCongruentSegments) && !(c is ConcreteCongruentAngles) && !(c is ConcreteTriangle))
+            {
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            }
 
             //
             // Do we have enough information for unification?
@@ -37,23 +40,23 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             if (c is ConcreteCongruentSegments && (!unifyCandSegments.Any() || unifyCandTris.Count <= 1 || !unifyCandAngles.Any()))
             {
                 unifyCandSegments.Add((ConcreteCongruentSegments)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
             else if (c is ConcreteCongruentAngles && (unifyCandSegments.Count < 2 || !unifyCandTris.Any()))
             {
                 unifyCandAngles.Add((ConcreteCongruentAngles)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
             else if (c is ConcreteTriangle && (!unifyCandTris.Any() || unifyCandSegments.Count < 2 || !unifyCandAngles.Any()))
             {
                 unifyCandTris.Add((ConcreteTriangle)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
 
             //
             // The list of new grounded clauses if they are deduced
             //
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // If this is a new segment, check for congruent triangles with this new piece of information
             if (c is ConcreteCongruentSegments)
@@ -135,12 +138,12 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         // Acquires all of the applicable congruent segments as well as congruent angles. Then checks for SAS
         //
-        private static List<GroundedClause> CollectAndCheckSAS(ConcreteTriangle ct1, ConcreteTriangle ct2,
-                                                               List<ConcreteCongruentSegments> applicSegments,
-                                                               List<ConcreteCongruentAngles> applicAngles)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckSAS(ConcreteTriangle ct1, ConcreteTriangle ct2,
+                                                                                                   List<ConcreteCongruentSegments> applicSegments,
+                                                                                                   List<ConcreteCongruentAngles> applicAngles)
         {
 
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // Check all other segments
             foreach (ConcreteCongruentSegments ccs in unifyCandSegments)
@@ -180,17 +183,14 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                                                                                  new ConcreteTriangle(triangleTwo), NAME);
 //                int congreuntKey = deducedCongruentTriangles.Count;
 //                deducedCongruentTriangles.Add(ccts);
-                newGrounded.Add(ccts);
 
-                //
-                // For graph construction
-                //
-                List<GroundedClause> tris = new List<GroundedClause>();
-                tris.Add(ct1);
-                ct1.AddSuccessor(ccts);
-                tris.Add(ct2);
-                ct2.AddSuccessor(ccts);
-                ccts.AddPredecessor(tris);
+                // Hypergraph
+                List<GroundedClause> antecedent = new List<GroundedClause>();
+                antecedent.Add(ct1);
+                antecedent.Add(ct2);
+
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
+                GroundedClause.ConstructClauseLinks(antecedent, ccts);
 
 
                 // Add all the corresponding parts as new congruent clauses
@@ -203,7 +203,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         // Acquires all of the applicable congruent segments as well as congruent angles. Then checks for SAS
         //
-        private static List<GroundedClause> CollectAndCheckSAS(ConcreteTriangle ct1, ConcreteTriangle ct2, ConcreteCongruent cc)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckSAS(ConcreteTriangle ct1, ConcreteTriangle ct2, ConcreteCongruent cc)
         {
             List<ConcreteCongruentSegments> applicSegments = new List<ConcreteCongruentSegments>();
             List<ConcreteCongruentAngles> applicAngles = new List<ConcreteCongruentAngles>();

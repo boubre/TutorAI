@@ -52,6 +52,7 @@
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\FlatEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
     <Compile Include="ConcreteAbstractSyntax\EqualSegments.cs" />
@@ -81,6 +82,11 @@
     <Compile Include="GenericAbstractSyntax\SumAnglesInTriangle.cs" />
     <Compile Include="GenericAbstractSyntax\Theorem.cs" />
     <Compile Include="GenericAbstractSyntax\VerticalAnglesTheorem.cs" />
+    <Compile Include="Hypergraph\FibonacciHeap.cs" />
+    <Compile Include="Hypergraph\HeapNode.cs" />
+    <Compile Include="Hypergraph\Suurballe.cs" />
+    <Compile Include="Hypergraph\MinHeap.cs" />
+    <Compile Include="Hypergraph\PathGraph.cs" />
     <Compile Include="Hypergraph\Hypergraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />

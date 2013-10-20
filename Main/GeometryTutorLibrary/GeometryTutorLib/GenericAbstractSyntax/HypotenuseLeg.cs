@@ -13,9 +13,9 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             return c is ConcreteTriangle;
         }
 
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            return new List<GroundedClause>();
+            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
         }
     }
 }

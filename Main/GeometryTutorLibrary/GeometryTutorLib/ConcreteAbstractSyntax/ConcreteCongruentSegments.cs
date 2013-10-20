@@ -10,11 +10,17 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment cs1 { get; private set; }
         public ConcreteSegment cs2 { get; private set; }
 
-        public ConcreteCongruentSegments(ConcreteSegment s1, ConcreteSegment s2, string just)
+        public ConcreteCongruentSegments(ConcreteSegment s1, ConcreteSegment s2, string just) : base()
         {
             cs1 = s1;
             cs2 = s2;
             justification = just;
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
 
         public Boolean HasSegment(ConcreteSegment cs)

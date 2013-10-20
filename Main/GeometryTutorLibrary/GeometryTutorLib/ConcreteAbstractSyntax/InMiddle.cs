@@ -18,7 +18,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         /// </summary>
         /// <param name="p">A point that lies on the segment</param>
         /// <param name="segment">A segment</param>
-        public InMiddle(ConcretePoint p, ConcreteSegment segment, string just)
+        public InMiddle(ConcretePoint p, ConcreteSegment segment, string just) : base()
         {
             this.point = p;
             this.segment = segment;

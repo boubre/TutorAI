@@ -17,7 +17,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         // Deduced Node Information
         //
         private List<ConcreteCongruentSegments> facts; // CTA: needed?
-        public ConcreteCongruentAngles(ConcreteAngle a1, ConcreteAngle a2, string just)
+        public ConcreteCongruentAngles(ConcreteAngle a1, ConcreteAngle a2, string just) : base()
         {
             ca1 = a1;
             ca2 = a2;
@@ -41,6 +41,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public bool LinksTriangles(ConcreteTriangle ct1, ConcreteTriangle ct2)
         {
             return ct1.HasAngle(ca1) && ct2.HasAngle(ca2) || ct1.HasAngle(ca2) && ct2.HasAngle(ca1);
+        }
+
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
         }
 
         public override string ToString()

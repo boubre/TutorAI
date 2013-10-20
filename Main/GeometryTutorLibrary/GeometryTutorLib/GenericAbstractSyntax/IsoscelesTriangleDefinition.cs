@@ -25,9 +25,9 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         //    Triangle(A, B, C), Congruent(Segment(A, B), Segment(B, C)) -> IsoscelesTriangle(A, B, C)
         //
-        public static List<GroundedClause> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!MayUnifyWith(c)) return new List<GroundedClause>();
+            if (!MayUnifyWith(c)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             //
             // Do we have enough information for unification?
@@ -35,21 +35,21 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             if (c is ConcreteCongruentSegments && !unifyCandTriangles.Any())
             {
                 unifyCandCongSegments.Add((ConcreteCongruentSegments)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
             else if (c is EqualSegments && !unifyCandTriangles.Any())
             {
                 unifyCandEqSegments.Add((EqualSegments)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
             else if (c is ConcreteTriangle && !(unifyCandEqSegments.Any() || unifyCandCongSegments.Any()))
             {
                 unifyCandTriangles.Add((ConcreteTriangle)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
 
             // The list of new grounded clauses if they are deduced
-            List<GroundedClause> newGrounded = new List<GroundedClause>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             //
             // Unify
@@ -73,7 +73,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 }
 
                 unifyCandCongSegments.Add((ConcreteCongruentSegments)c);
-                return new List<GroundedClause>();
+                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
             else if (c is EqualSegments)
             {
