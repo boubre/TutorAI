@@ -165,7 +165,8 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 }
             }
 
-            List<KeyValuePair<ConcretePoint, ConcretePoint>> pairs = IsSASsituation(ct1, ct2, applicSegments, applicAngles);
+            List<GroundedClause> congruences;
+            List<KeyValuePair<ConcretePoint, ConcretePoint>> pairs = IsSASsituation(ct1, ct2, applicSegments, applicAngles, out congruences);
 
             // If pairs is populated, we have a SAS situation
             if (pairs.Any())
@@ -185,7 +186,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
 //                deducedCongruentTriangles.Add(ccts);
 
                 // Hypergraph
-                List<GroundedClause> antecedent = new List<GroundedClause>();
+                List<GroundedClause> antecedent = new List<GroundedClause>(congruences);
                 antecedent.Add(ct1);
                 antecedent.Add(ct2);
 
@@ -227,10 +228,14 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         private static List<KeyValuePair<ConcretePoint, ConcretePoint>> IsSASsituation(ConcreteTriangle ct1, ConcreteTriangle ct2,
                                       List<ConcreteCongruentSegments> segmentPairs,
-                                      List<ConcreteCongruentAngles> anglePairs)
+                                      List<ConcreteCongruentAngles> anglePairs,
+                                  out List<GroundedClause> congruences)
         {
             // Construct a list of pairs to return; this is the correspondence from triangle 1 to triangle 2
             List<KeyValuePair<ConcretePoint, ConcretePoint>> pairs = new List<KeyValuePair<ConcretePoint, ConcretePoint>>();
+
+            // Initialize congruences
+            congruences = new List<GroundedClause>();
 
             // Miniumum information required
             if (!anglePairs.Any() || segmentPairs.Count < 2) return pairs;
@@ -267,6 +272,10 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                                 // For the segments, look at the congruences and select accordingly
                                 pairs.Add(new KeyValuePair<ConcretePoint, ConcretePoint>(seg1Tri1.OtherPoint(vertex1), seg1Tri2.OtherPoint(vertex2)));
                                 pairs.Add(new KeyValuePair<ConcretePoint, ConcretePoint>(seg2Tri1.OtherPoint(vertex1), seg2Tri2.OtherPoint(vertex2)));
+
+                                congruences.Add(segmentPairs.ElementAt(i));
+                                congruences.Add(segmentPairs.ElementAt(j));
+                                congruences.Add(ccas);
 
                                 return pairs;
                             }

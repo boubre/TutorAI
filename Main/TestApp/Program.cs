@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 using GeometryTutorLib.GenericAbstractSyntax;
+using System.Diagnostics;
+using GeometryTutorLib.Hypergraph;
 
 namespace Geometry_Testbed
 {
@@ -85,7 +87,70 @@ namespace Geometry_Testbed
             int[] goalArr = { 5, 6, 7, 8, 9, 10 };
             List<int> goals = new List<int>(goalArr);
 
-            graph.ConstructPath(src, goals);
+            graph.Pebble(src, goals);
+            Debug.WriteLine("Path from 1 to 11:");
+            graph.PrintPath(1, 11);
+            //graph.ConstructPath(src, goals);
+            //graph.ConstructDualPaths(src, goals);
+        }
+
+        private static void TestFigureSix()
+        {
+            ConcretePoint x = new ConcretePoint("X", 0, 0);
+            ConcretePoint m = new ConcretePoint("M", 2, 0);
+            ConcretePoint y = new ConcretePoint("Y", 4, 0);
+            ConcretePoint t = new ConcretePoint("T", -1, 2);
+            ConcretePoint n = new ConcretePoint("N", 1, 2); 
+            ConcretePoint z = new ConcretePoint("Z", -2, 2);
+
+            ConcreteTriangle ztn = new ConcreteTriangle(z, t, n);
+            ConcreteTriangle tnm = new ConcreteTriangle(t, n, m);
+            ConcreteTriangle nmy = new ConcreteTriangle(n, m, y);
+            ConcreteTriangle txm = new ConcreteTriangle(t, x, m);
+
+            ConcreteSegment zx = new ConcreteSegment(z, x);
+            ConcreteSegment zy = new ConcreteSegment(z, y);
+            ConcreteSegment xy = new ConcreteSegment(x, y);
+
+            ConcreteMidpoint midT = new ConcreteMidpoint(t, zx, "Given");
+            ConcreteMidpoint midN = new ConcreteMidpoint(n, zy, "Given");
+            ConcreteMidpoint midM = new ConcreteMidpoint(m, xy, "Given");
+
+            ConcreteCongruentSegments ccss1 = new ConcreteCongruentSegments(new ConcreteSegment(t, n), new ConcreteSegment(x, m), "Given");
+            ConcreteCongruentSegments ccss2 = new ConcreteCongruentSegments(new ConcreteSegment(n, m), new ConcreteSegment(t, x), "Given");
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(x);
+            clauses.Add(m);
+            clauses.Add(y);
+            clauses.Add(t);
+            clauses.Add(n);
+            clauses.Add(z);
+            clauses.Add(ztn);
+            clauses.Add(tnm);
+            clauses.Add(nmy);
+            clauses.Add(txm);
+            clauses.Add(zx);
+            clauses.Add(zy);
+            clauses.Add(xy);
+            clauses.Add(midT);
+            clauses.Add(midN);
+            clauses.Add(midM);
+            clauses.Add(ccss1);
+            clauses.Add(ccss2);
+
+            GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
+            graph.ConstructGraph();
+            graph.ConstructGraphRepresentation();
+            graph.DebugDumpClauses();
+
+            int[] srcArr = { 2, 3, 4, 5, 6, 7, 8 };
+            List<int> src = new List<int>(srcArr);
+            int[] goalArr = { 36 };
+            List<int> goals = new List<int>(goalArr);
+
+            //graph.ConstructPath(src, goals);
         }
 
         private static void TestEntireFigure()
@@ -125,6 +190,7 @@ namespace Geometry_Testbed
             clauses.Add(rightTwo);
             clauses.Add(isoOne);
             clauses.Add(isoTwo);
+            clauses.Add(bottomIso);
             clauses.Add(inter);
             clauses.Add(mid1);
             clauses.Add(mid2);
@@ -135,22 +201,45 @@ namespace Geometry_Testbed
             graph.DebugDumpClauses();
             //            Console.WriteLine("Constructing all Paths:");
 
-            int[] srcArr = { 2, 3, 4, 5, 6, 7, 8 };
+            int[] srcArr = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
             List<int> src = new List<int>(srcArr);
-            int[] goalArr = { 36 };
+            int[] goalArr = { 84 };
             List<int> goals = new List<int>(goalArr);
 
-            graph.ConstructPath(src, goals);
+            graph.Pebble(src, goals);
+
+            graph.PrintAllPathsToInteresting(2);
         }
 
         static void Main(string[] args)
         {
+            //TestMidpointTheoremFigure();
             //SASTest1();
             //TestSumAnglesInTriangle();
-            TestMidpointTheoremFigure();
-            //TestEntireFigure();
+            //TestFigureSix();
+            TestEntireFigure();
             //TestSimplification();
             //TestSimplificationConstants();
+            //TestSimpleSubstitution();
+        }
+
+        private static void TestSimpleSubstitution()
+        {
+            ConcretePoint a = new ConcretePoint("A", 0, 3);
+            ConcretePoint b = new ConcretePoint("B", 0, 0);
+            ConcretePoint c = new ConcretePoint("C", 3, 0);
+            ConcretePoint d = new ConcretePoint("D", 7, 3);
+            ConcretePoint e = new ConcretePoint("E", 7, 0);
+            ConcretePoint f = new ConcretePoint("F", 10, 0);
+
+            ConcreteAngle ang1 = new ConcreteAngle(a, b, c);
+            ConcreteAngle ang2 = new ConcreteAngle(d, e, f);
+
+            AngleMeasureEquation ame1 = new AngleMeasureEquation(ang1, new NumericValue(90));
+            AngleMeasureEquation ame2 = new AngleMeasureEquation(ang2, new NumericValue(90));
+
+            Substitution.Instantiate(ame1);
+            Substitution.Instantiate(ame2);
         }
 
         private static void TestSimplificationConstants()

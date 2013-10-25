@@ -7,5 +7,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     public abstract class Descriptor : GroundedClause
     {
+        public Descriptor() : base() { }
     }
 }

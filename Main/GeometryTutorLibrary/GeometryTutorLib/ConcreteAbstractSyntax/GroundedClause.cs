@@ -51,11 +51,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public int graphId { get; private set; }
         public void SetID(int id)
         {
-            if (graphId != 0) Debug.WriteLine("Graph ID is being overwritten unexpectedly.");
             graphId = id;
         }
 
+        //
         // For equation simplification
+        //
         public int multiplier { get; set; }
         public virtual List<GroundedClause> CollectTerms()
         {

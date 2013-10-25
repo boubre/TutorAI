@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
+using System.Diagnostics;
 
 namespace GeometryTutorLib.GenericAbstractSyntax
 {
@@ -46,11 +47,11 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             //
             // Does this equation have one side which is isolated (an atomic expression)?
             //
-            int atomicSide = ((Equation)c).OneSideAtomic();
+            int atomicSide = ((Equation)c).GetAtomicity();
             Equation eq = (Equation)c;
             GroundedClause atomicExp = null;
             GroundedClause otherSide = null;
-            switch(atomicSide)
+            switch (atomicSide)
             {
                 case Equation.LEFT_ATOMIC:
                     atomicExp = eq.lhs;
@@ -81,33 +82,40 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 foreach (SegmentEquation se in segmentCandEqs)
                 {
                     KeyValuePair<List<GroundedClause>, GroundedClause> cl;
-                    if (atomicExp != null)
+                    SegmentEquation newEq = (SegmentEquation)c;
+
+                    // If the new equation was deduced from this equation, do not perform another substitution
+                    if (!newEq.HasAlgebraicPredecessor(se.graphId))
                     {
-                        // Check to see if the other stored equation is dually atomic as
-                        // we will want to substitute the old eq into the new one
-                        int seAtomic = se.OneSideAtomic();
-                        if (seAtomic != Equation.BOTH_ATOMIC)
+                        // One side of the equation is atomic
+                        if (atomicExp != null)
                         {
-                            // Simple sub of new equation into old
-                            cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, atomicExp, otherSide);
+                            // Check to see if the other stored equation is dually atomic as
+                            // we will want to substitute the old eq into the new one
+                            int seAtomic = se.GetAtomicity();
+                            if (seAtomic != Equation.BOTH_ATOMIC)
+                            {
+                                // Simple sub of new equation into old
+                                cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, atomicExp, otherSide);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                            }
+                            else if (seAtomic == Equation.BOTH_ATOMIC)
+                            {
+                                // Dual sub of old equation into new
+                                cl = PerformSegmentSubstitution((SegmentEquation)eq, se, se.lhs, se.rhs);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                                cl = PerformSegmentSubstitution((SegmentEquation)eq, se, se.rhs, se.lhs);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                            }
+                        }
+                        // We have both sides atomic; try to sub in the other side
+                        else
+                        {
+                            cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, eq.lhs, eq.rhs);
+                            if (cl.Value != null) newGrounded.Add(cl);
+                            cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, eq.rhs, eq.lhs);
                             if (cl.Value != null) newGrounded.Add(cl);
                         }
-                        else if (seAtomic == Equation.BOTH_ATOMIC)
-                        {
-                            // Dual sub of old equation into new
-                            cl = PerformSegmentSubstitution((SegmentEquation)eq, se, se.lhs, se.rhs);
-                            if (cl.Value != null) newGrounded.Add(cl);
-                            cl = PerformSegmentSubstitution((SegmentEquation)eq, se, se.rhs, se.lhs);
-                            if (cl.Value != null) newGrounded.Add(cl);
-                        }
-                    }
-                    // We have both sides atomic; try to sub in the other side
-                    else
-                    {
-                        cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, eq.lhs, eq.rhs);
-                        if (cl.Value != null) newGrounded.Add(cl);
-                        cl = PerformSegmentSubstitution(se, (SegmentEquation)eq, eq.rhs, eq.lhs);
-                        if (cl.Value != null) newGrounded.Add(cl);
                     }
                 }
 
@@ -117,34 +125,45 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             {
                 foreach (AngleMeasureEquation ae in angleCandEqs)
                 {
-                    KeyValuePair<List<GroundedClause>, GroundedClause> cl;
-                    if (atomicExp != null)
+                    AngleMeasureEquation newEq = (AngleMeasureEquation)c;
+
+                    if (!newEq.HasAlgebraicPredecessor(ae.graphId))
                     {
-                        // Check to see if the other stored equation is dually atomic as
-                        // we will want to substitute the old eq into the new one
-                        int seAtomic = ae.OneSideAtomic();
-                        if (seAtomic != Equation.BOTH_ATOMIC)
-                        {
-                            // Simple sub of new equation into old
-                            cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, atomicExp, otherSide);
-                            if (cl.Value != null) newGrounded.Add(cl);
-                        }
-                        else if (seAtomic == Equation.BOTH_ATOMIC)
-                        {
-                            // Dual sub of old equation into new
-                            cl = PerformAngleSubstitution((AngleMeasureEquation)eq, ae, ae.lhs, ae.rhs);
-                            if (cl.Value != null) newGrounded.Add(cl);
-                            cl = PerformAngleSubstitution((AngleMeasureEquation)eq, ae, ae.rhs, ae.lhs);
-                            if (cl.Value != null) newGrounded.Add(cl);
-                        }
+                        Debug.WriteLine(newEq + " is a predecessor of " + ae.graphId + " and will not be substituted again.");
                     }
-                    // We have both sides atomic; try to sub in the other side
-                    else
+                    // If the new equation was deduced from this equation, do not perform another substitution
+                    if (!newEq.HasAlgebraicPredecessor(ae.graphId))
                     {
-                        cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, eq.lhs, eq.rhs);
-                        if (cl.Value != null) newGrounded.Add(cl);
-                        cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, eq.rhs, eq.lhs);
-                        if (cl.Value != null) newGrounded.Add(cl);
+                        KeyValuePair<List<GroundedClause>, GroundedClause> cl;
+                        // One side of the equation is atomic
+                        if (atomicExp != null)
+                        {
+                            // Check to see if the other stored equation is dually atomic as
+                            // we will want to substitute the old eq into the new one
+                            int seAtomic = ae.GetAtomicity();
+                            if (seAtomic != Equation.BOTH_ATOMIC)
+                            {
+                                // Simple sub of new equation into old
+                                cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, atomicExp, otherSide);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                            }
+                            else if (seAtomic == Equation.BOTH_ATOMIC)
+                            {
+                                // Dual sub of old equation into new
+                                cl = PerformAngleSubstitution((AngleMeasureEquation)eq, ae, ae.lhs, ae.rhs);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                                cl = PerformAngleSubstitution((AngleMeasureEquation)eq, ae, ae.rhs, ae.lhs);
+                                if (cl.Value != null) newGrounded.Add(cl);
+                            }
+                        }
+                        // We have both sides atomic; try to sub in the other side
+                        else
+                        {
+                            cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, eq.lhs, eq.rhs);
+                            if (cl.Value != null) newGrounded.Add(cl);
+                            cl = PerformAngleSubstitution(ae, (AngleMeasureEquation)eq, eq.rhs, eq.lhs);
+                            if (cl.Value != null) newGrounded.Add(cl);
+                        }
                     }
                 }
 
@@ -157,7 +176,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         private static KeyValuePair<List<GroundedClause>, GroundedClause> PerformSegmentSubstitution(SegmentEquation eq, SegmentEquation subbedEq,
                                                                                                      GroundedClause toFind, GroundedClause toSub)
         {
-            if (!eq.Contains(toFind)) return new KeyValuePair<List<GroundedClause>,GroundedClause>(null, null);
+            if (!eq.Contains(toFind)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
 
             // Make a deep copy of the parts of the equation
             SegmentEquation newSE = new SegmentEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy(), NAME);
@@ -171,8 +190,14 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             antecedent.Add(subbedEq);
             GroundedClause.ConstructClauseLinks(antecedent, newSE);
 
-            return new KeyValuePair<List<GroundedClause>,GroundedClause>(antecedent, newSE);
-         }
+            // Add both equations to the predecessor list to prevent cycling of equation substitutions
+            newSE.directAlgebraicPredecessors.Add(eq.graphId);
+            newSE.directAlgebraicPredecessors.Add(subbedEq.graphId);
+            // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
+            Utilities.AddUniqueList<int>(newSE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
+
+            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newSE);
+        }
 
         private static KeyValuePair<List<GroundedClause>, GroundedClause> PerformAngleSubstitution(AngleMeasureEquation eq, AngleMeasureEquation subbedEq,
                                                                                                    GroundedClause toFind, GroundedClause toSub)
@@ -190,6 +215,12 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             antecedent.Add(eq);
             antecedent.Add(subbedEq);
             GroundedClause.ConstructClauseLinks(antecedent, newAE);
+
+            // Add to the predecessor list to prevent cycling of equation substitutions
+            newAE.directAlgebraicPredecessors.Add(eq.graphId);
+            newAE.directAlgebraicPredecessors.Add(subbedEq.graphId);
+            // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
+            Utilities.AddUniqueList<int>(newAE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
 
             return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAE);
         }

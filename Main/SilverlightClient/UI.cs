@@ -409,6 +409,8 @@ namespace LiveGeometry
                 Debug.WriteLine("--------------------");
             }
             Debug.WriteLine("=====END=====");
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult);
         }
     }
 }

@@ -124,6 +124,7 @@ namespace LiveGeometry
                     figures.Add(new ConcreteSegment(intersection, segments[j].Point2));
                     figures.Add(new InMiddle(intersection, segments[i], "Intrinsic"));
                     figures.Add(new InMiddle(intersection, segments[j], "Intrinsic"));
+                    figures.Add(new Intersection(intersection, segments[i], segments[j], "Intrinsic"));
                 }
             }
         }
@@ -167,14 +168,39 @@ namespace LiveGeometry
                 {
                     if (segment.Point1.X == point.X || segment.Point1.Y == point.Y ||
                         segment.Point2.X == point.X || segment.Point2.Y == point.Y)
+                    {
                         continue;
+                    }
                     else if (isInMiddle(segment.Point1, point, segment.Point2))
-                        clauses.Add(new InMiddle(point, segment, "Intrinsic"));
+                    {
+                        if (isMidpoint(segment.Point1, point, segment.Point2))
+                        {
+                            clauses.Add(new ConcreteMidpoint(point, segment, "Given"));
+                        }
+                        else
+                        {
+                            clauses.Add(new InMiddle(point, segment, "Intrinsic"));
+                        }
+                    }
                 }
             }
         }
 
         /// <summary>
+        /// Tests to see if point b is the midpoint of points a and c.
+        /// </summary>
+        /// <param name="a">A point</param>
+        /// <param name="b">A point</param>
+        /// <param name="c">A point</param>
+        /// <returns>TRUE if b is in the midpoint of b and c</returns>
+        private bool isMidpoint(ConcretePoint a, ConcretePoint b, ConcretePoint c)
+        {
+            const double EPSILON = 0.00000001;
+
+            return (a.X + c.X) / 2 - b.X < EPSILON && (a.Y + c.Y) / 2 - b.Y < EPSILON;
+        }
+
+                /// <summary>
         /// Tests to see if point b is in the middle of points a and c.
         /// </summary>
         /// <param name="a">A point</param>

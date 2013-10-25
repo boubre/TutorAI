@@ -90,6 +90,26 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return other;
         }
 
+        //
+        // Each segment is congruent to itself
+        //
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause gc)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            ConcreteSegment segment = gc as ConcreteSegment;
+
+            if (segment == null) return newGrounded;
+
+            ConcreteCongruentSegments ccss = new ConcreteCongruentSegments(segment, segment, "Reflexive");
+
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(segment);
+            GroundedClause.ConstructClauseLinks(antecedent, ccss);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+
+            return newGrounded;
+        }
+
         public override string ToString() { return "Segment(" + Point1.ToString() + ", " + Point2.ToString() + ")"; }
     }
 }

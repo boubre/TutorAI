@@ -27,6 +27,15 @@ namespace GeometryTutorLib
             list.Add(obj);
         }
 
+        // Makes a list containing a single element
+        public static void AddUniqueList<T>(List<T> list, List<T> objList)
+        {
+            foreach (T o in objList)
+            {
+                AddUnique<T>(list, o);
+            }
+        }
+
         public static int GCD(int a, int b)
         {
             return b == 0 ? a : GCD(b, a % b);

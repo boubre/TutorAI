@@ -9,8 +9,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     {
         public GroundedClause lhs { get; private set; }
         public GroundedClause rhs { get; private set; }
+
+        public List<int> directAlgebraicPredecessors { get; private set; }
         protected int numSubstitutions; // The number of substitution 'levels' required to create this equation; this is an attempt to cut off infinite substitutions
         public void AddSubstitutionLevel() { numSubstitutions++; }
+        public bool HasAlgebraicPredecessor(int id) { return directAlgebraicPredecessors.Contains(id); }
+
 
         public Equation() : base() { }
 
@@ -19,14 +23,16 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             lhs = l;
             rhs = r;
             numSubstitutions = 0;
+            directAlgebraicPredecessors = new List<int>();
         }
 
-        public Equation(GroundedClause l, GroundedClause r, string just)
+        public Equation(GroundedClause l, GroundedClause r, string just) : base()
         {
             lhs = l;
             rhs = r;
             justification = just;
             numSubstitutions = 0;
+            directAlgebraicPredecessors = new List<int>();
         }
 
         public override void Substitute(GroundedClause toFind, GroundedClause toSub)
@@ -72,10 +78,10 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public const int NONE_ATOMIC = 0;
         public const int RIGHT_ATOMIC = 1;
         public const int BOTH_ATOMIC = 2;
-        public int OneSideAtomic()
+        public int GetAtomicity()
         {
-            bool leftIs = lhs is ConcreteAngle || lhs is ConcreteSegment;
-            bool rightIs = rhs is ConcreteAngle || rhs is ConcreteSegment;
+            bool leftIs = lhs is ConcreteAngle || lhs is ConcreteSegment || lhs is NumericValue;
+            bool rightIs = rhs is ConcreteAngle || rhs is ConcreteSegment || rhs is NumericValue;
 
             if (leftIs && rightIs) return BOTH_ATOMIC;
             if (!leftIs && !rightIs) return NONE_ATOMIC;

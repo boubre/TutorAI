@@ -12,70 +12,47 @@ namespace GeometryTutorLib.Hypergraph
     //
     public class PathGraph
     {
-        //private class Node
-        //{
-        //    public int d;
-        //    public int pi;
+        //
+        // Are all nodes referred to in the hyperedges?
+        //
+        private bool ValidateEdgesAndNodes(List<int> nodes, List<Hypergraph.HyperEdge> edges)
+        {
+            foreach (Hypergraph.HyperEdge edge in edges)
+            {
+                foreach (int src in edge.sourceNodes)
+                {
+                    if (!nodes.Contains(src))
+                    {
+                        Debug.WriteLine("ValidateEdgesAndNodes: Expected to find node (" + src + ") in edges. Did not.");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
-        //    public Node() { d = 0; pi = -1; }
-        //}
+        //
+        // Basic Graph verirication and construction which requires the user specify the number of vertices.
+        //
+        public PathGraph(int originalSz, List<int> ns, List<Hypergraph.HyperEdge> es)
+        {
+            if (!ValidateEdgesAndNodes(ns, es)) return;
 
-        //private class Edge
-        //{
-        //    public int from;
-        //    public int to;
-        //    public int weight;
-        //    public bool reversed; // Unused for now
+            numVerts = originalSz;
+            vertexList = new List<Edge>[numVerts];
 
-        //    public Edge(int f, int t, int w) { from = f; to = t; weight = w; reversed = false; }
-        //}
-
-        //private Node[] nodes;
-        //private Edge[] edges;
-
-        ////
-        //// Are all nodes referred to in the hyperedges?
-        ////
-        //private bool ValidateEdgesAndNodes(List<int> nodes, List<Hypergraph.HyperEdge> edges)
-        //{
-        //    foreach (Hypergraph.HyperEdge edge in edges)
-        //    {
-        //        foreach (int src in edge.sourceNodes)
-        //        {
-        //            if (!nodes.Contains(src))
-        //            {
-        //                Debug.WriteLine("ValidateEdgesAndNodes: Expected to find node (" + src + ") in edges. Did not.");
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
-
-        //public PathGraph(int originalSz, List<int> ns, List<Hypergraph.HyperEdge> es)
-        //{
-        //    if (!ValidateEdgesAndNodes(ns, es)) return;
-
-        //    nodes = new Node[originalSz];
-
-        //    List<Edge> regEdges = new List<Edge>();
-
-        //    foreach (int n in ns)
-        //    {
-        //        nodes[n] = new Node();
-        //    }
-
-        //    // Create a graph with the edges: hyperedges -> edges   
-        //    foreach (Hypergraph.HyperEdge edge in es)
-        //    {
-        //        foreach (int src in edge.sourceNodes)
-        //        {
-
-        //        }
-        //    }
-
-        //    edges = regEdges.ToArray();
-        //}
+            //
+            // Construct the graph by creating all the edges: hyperedges -> edges
+            //
+            foreach (Hypergraph.HyperEdge edge in es)
+            {
+                foreach (int sourceNode in edge.sourceNodes)
+                {
+                    // (from, to, weight = # source nodes, reversed?
+                    AddEdge(sourceNode, edge.targetNode, edge.sourceNodes.Count, false, edge);
+                }
+            }
+        }
 
         //
         // This graph represents a basic graph.
@@ -103,18 +80,17 @@ namespace GeometryTutorLib.Hypergraph
                 public int to;
                 public int weight;
                 public bool reversed;
+                public Hypergraph.HyperEdge hyperedge;
 
-                public Edge(int f, int t, int w, bool rev) { from = f; to = t; weight = w; reversed = rev; }
-                public Edge(Edge e) { from = e.from; to = e.to; weight = e.weight; reversed = e.reversed; } // copy constructor
-            }
+                public Edge(int f, int t, int w, bool rev, Hypergraph.HyperEdge he) { from = f; to = t; weight = w; reversed = rev; hyperedge = he; }
+                public Edge(Edge e) { from = e.from; to = e.to; weight = e.weight; reversed = e.reversed; hyperedge = e.hyperedge; } // copy constructor
 
-            //
-            // Basic Graph constructor which requires the user specify the number of vertices.
-            //
-            public PathGraph(int n)
-            {
-                numVerts = n;
-                vertexList = new List<Edge>[numVerts];
+                public override bool Equals(object obj)
+                {
+                    Edge e = obj as Edge;
+                    if (e == null) return false;
+                    return from == e.from && to == e.to;
+                }
             }
 
             //
@@ -146,14 +122,16 @@ namespace GeometryTutorLib.Hypergraph
             //
             // Adds the specified edge to the graph; if the List does not exist, we create it and add the Edge 
             //
-            public void AddEdge(int u, int v, int weight, bool rev)
+            public void AddEdge(int u, int v, int weight, bool rev, Hypergraph.HyperEdge hyperedge)
             {
                 // create the list, if needed
                 if (vertexList[u] == null)
                 {
                     vertexList[u] = new List<Edge>();
                 }
-                vertexList[u].Add(new Edge(u, v, weight, rev));
+
+                // Do not allow duplicate edges
+                Utilities.AddUnique<Edge>(vertexList[u], new Edge(u, v, weight, rev, hyperedge));
             }
 
             //
@@ -180,7 +158,7 @@ namespace GeometryTutorLib.Hypergraph
                 }
 
                 // Add the edge like normal if it did not exist already
-                vertexList[u].Add(new Edge(u, v, w, rev));
+                vertexList[u].Add(new Edge(u, v, w, rev, null));
             }
 
             //
@@ -206,7 +184,7 @@ namespace GeometryTutorLib.Hypergraph
             {
                 int weight = GetWeight(u, v);
                 ResetEdge(u, v);
-                AddEdge(v, u, weight, true);
+                AddEdge(v, u, weight, true, null);
             }
 
             //
@@ -243,7 +221,7 @@ namespace GeometryTutorLib.Hypergraph
 
                         foreach (Edge e in vertexList[u])
                         {
-                            newVertexList[2 * u + 1].Add(new Edge(2 * u + 1, 2 * e.to, e.weight, false));
+                            newVertexList[2 * u + 1].Add(new Edge(2 * u + 1, 2 * e.to, e.weight, false, e.hyperedge));
                         }
                     }
                 }
@@ -256,7 +234,7 @@ namespace GeometryTutorLib.Hypergraph
                     if (newVertexList[2 * u] == null)
                     {
                         newVertexList[2 * u] = new List<Edge>();
-                        newVertexList[2 * u].Add(new Edge(2 * u, 2 * u + 1, 0, false));
+                        newVertexList[2 * u].Add(new Edge(2 * u, 2 * u + 1, 0, false, null));
                     }
                 }
 

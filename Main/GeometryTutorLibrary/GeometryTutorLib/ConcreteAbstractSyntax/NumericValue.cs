@@ -18,6 +18,13 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return value.ToString();
         }
 
+        public override bool Contains(GroundedClause clause) 
+        {
+            NumericValue clauseValue = clause as NumericValue;
+            if (clauseValue == null) return false;
+            return value == clauseValue.value;
+        }
+
         public override bool Equals(Object obj)
         {
             NumericValue valObj = obj as NumericValue;

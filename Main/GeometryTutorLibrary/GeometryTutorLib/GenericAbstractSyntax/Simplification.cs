@@ -19,17 +19,20 @@ namespace GeometryTutorLib.GenericAbstractSyntax
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             Equation eq = c as Equation;
 
             // Do we have an equation?
-            if (eq == null) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (eq == null) return newGrounded;
 
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            // Is the equation 0 = 0?
+            if (eq.lhs.Equals(new NumericValue(0)) && eq.rhs.Equals(new NumericValue(0))) return newGrounded;
 
+            //
             // Ideally, flattening would:
             // Remove all subtractions -> adding a negative instead
             // Distribute subtraction or multiplication over addition
-
+            //
             // Flatten the equation so that each side is a sum of atomic expressions
             Equation copyEq = (Equation)eq.DeepCopy();
             FlatEquation flattened = new FlatEquation(copyEq.lhs.CollectTerms(), copyEq.rhs.CollectTerms());
@@ -61,9 +64,17 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 inflated = new SegmentEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), NAME);
             }
 
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(eq);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, inflated));
-            GroundedClause.ConstructClauseLinks(antecedent, inflated);
+            // Did we actually perform any simplification? If not, do not generate a new equation.
+            if (!inflated.Equals(eq))
+            {
+                // Simplified equations should inherit the algebraic predecessors of the the original equation as well as the original node
+                Utilities.AddUniqueList<int>(inflated.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
+                Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.graphId);
+
+                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(eq);
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, inflated));
+                GroundedClause.ConstructClauseLinks(antecedent, inflated);
+            }
 
             return newGrounded;
         }

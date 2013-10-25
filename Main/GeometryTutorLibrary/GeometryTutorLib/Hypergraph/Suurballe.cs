@@ -94,8 +94,8 @@ namespace GeometryTutorLib.Hypergraph
         // w(u, v) : weight from vertex u to vertex v
         // Reduces the shortest path of a node (if necessary) and updates the value of the node in the heap (DecreaseKey)
         //
-        void Relax(int u, int v, int w, FibonacciHeap<int> heap)
-        //void Relax(int u, int v, int w,  MinHeap heap)
+        //void Relax(int u, int v, int w, FibonacciHeap<int> heap)
+        void Relax(int u, int v, int w, MinHeap heap)
         //void Relax(int u, int v, int w,  NaiveMinContainer<int> heap)
         {
             //
@@ -129,9 +129,8 @@ namespace GeometryTutorLib.Hypergraph
             // Create the min-Fibonacci Heap by pushing all vertices onto the Heap
             //
             int numV = graph.NumVertices();
-            FibonacciHeap<int> vertices = new FibonacciHeap<int>();
-            //MinHeap vertices = new MinHeap(numV);
-            //NaiveMinContainer<int> vertices = new NaiveMinContainer<int>();
+            //FibonacciHeap<int> vertices = new FibonacciHeap<int>();
+            MinHeap vertices = new MinHeap(numV);
             for (int i = 0; i < numV; i++) // VertexValues node : shortPathEst)
             {
                 // Insert the weight, d, which is the short path to node i
@@ -277,105 +276,105 @@ namespace GeometryTutorLib.Hypergraph
         //
         private int combinePaths(List<int> first, List<int> second, int fLength, int sLength,
                 List<int> newFirst, List<int> newSecond)
-	{
-		int weightToSubtract = 0; // Weight of the common edges we will subtract from the actual length of the shortest path
+        {
+            int weightToSubtract = 0; // Weight of the common edges we will subtract from the actual length of the shortest path
 
-		List<List<int>> secondPathBlocks = new List<List<int>>();
-		List<int> currentBlock = new List<int>();
-		Dictionary<int, int> reversedEdges = new Dictionary<int, int>(); 
-		for (int s = 0; s < second.Count - 1; s++)
-		{
-			currentBlock.Add(second.ElementAt(s));
+            List<List<int>> secondPathBlocks = new List<List<int>>();
+            List<int> currentBlock = new List<int>();
+            Dictionary<int, int> reversedEdges = new Dictionary<int, int>();
+            for (int s = 0; s < second.Count - 1; s++)
+            {
+                currentBlock.Add(second.ElementAt(s));
 
-			if (graph.IsReversed(second.ElementAt(s), second.ElementAt(s+1)))
-			{
-				// Save the reversed edge to create blocks for the first path
-				reversedEdges.Add(second.ElementAt(s+1), second.ElementAt(s));
+                if (graph.IsReversed(second.ElementAt(s), second.ElementAt(s + 1)))
+                {
+                    // Save the reversed edge to create blocks for the first path
+                    reversedEdges.Add(second.ElementAt(s + 1), second.ElementAt(s));
 
-				// Add this block to the list of blocks
-				secondPathBlocks.Add(currentBlock);
+                    // Add this block to the list of blocks
+                    secondPathBlocks.Add(currentBlock);
 
-				// Create a new block
-				currentBlock = new List<int>();
+                    // Create a new block
+                    currentBlock = new List<int>();
 
-				// The weight of the edges we will remove from the path
-				weightToSubtract += graph.GetWeight(second.ElementAt(s), second.ElementAt(s + 1));
-			}
-		}
-		// Add the last node to the last block
-		currentBlock.Add(second.ElementAt(second.Count - 1));
-		// Add the last block to the list
-		secondPathBlocks.Add(currentBlock);
+                    // The weight of the edges we will remove from the path
+                    weightToSubtract += graph.GetWeight(second.ElementAt(s), second.ElementAt(s + 1));
+                }
+            }
+            // Add the last node to the last block
+            currentBlock.Add(second.ElementAt(second.Count - 1));
+            // Add the last block to the list
+            secondPathBlocks.Add(currentBlock);
 
-		if (DEBUG) Debug.WriteLine("Number of Reversals: " + reversedEdges.Count);
+            if (DEBUG) Debug.WriteLine("Number of Reversals: " + reversedEdges.Count);
 
-		// There are no shared edges
-		if (!reversedEdges.Any())
-		{
-			newFirst.AddRange(first);
-			newSecond.AddRange(second);
-			return fLength + sLength;
-		}
+            // There are no shared edges
+            if (!reversedEdges.Any())
+            {
+                newFirst.AddRange(first);
+                newSecond.AddRange(second);
+                return fLength + sLength;
+            }
 
-		List<int>[] firstPathBlks = new List<int>[reversedEdges.Count + 1];
-		currentBlock = new List<int>();
-		int blockCount = 0;
-		for (int f = 0; f < first.Count - 1; f++)
-		{
-			// The edges will be reversed from what they were
-			int fromVertex = first.ElementAt(f);
-			int toVertex = first.ElementAt(f+1);
-            
-			currentBlock.Add(first.ElementAt(f));
+            List<int>[] firstPathBlks = new List<int>[reversedEdges.Count + 1];
+            currentBlock = new List<int>();
+            int blockCount = 0;
+            for (int f = 0; f < first.Count - 1; f++)
+            {
+                // The edges will be reversed from what they were
+                int fromVertex = first.ElementAt(f);
+                int toVertex = first.ElementAt(f + 1);
 
-			// We found a reversed edge
-			if (reversedEdges.ContainsKey(fromVertex))
-			{
-				// Add this block to the list of blocks
-				firstPathBlks[blockCount++] = currentBlock;
+                currentBlock.Add(first.ElementAt(f));
 
-				// Create a new block
-				currentBlock = new List<int>();
-			}
-		}
-		// Add the goal node to the last block
-		currentBlock.Add(first.ElementAt(first.Count - 1));
-		firstPathBlks[blockCount++] = currentBlock;
+                // We found a reversed edge
+                if (reversedEdges.ContainsKey(fromVertex))
+                {
+                    // Add this block to the list of blocks
+                    firstPathBlks[blockCount++] = currentBlock;
 
-		//
-		// Combine the blocks into two distinct paths
-		//
-		// Do so for the first path, initially
-		int actualLastVertex = first.ElementAt(first.Count - 1);
+                    // Create a new block
+                    currentBlock = new List<int>();
+                }
+            }
+            // Add the goal node to the last block
+            currentBlock.Add(first.ElementAt(first.Count - 1));
+            firstPathBlks[blockCount++] = currentBlock;
 
-		// Start the first list
-		newFirst.AddRange(firstPathBlks[0]);
-		bool fromFirstPath = true;		
+            //
+            // Combine the blocks into two distinct paths
+            //
+            // Do so for the first path, initially
+            int actualLastVertex = first.ElementAt(first.Count - 1);
 
-		// Loop while we do not have an entire path
-		int currentLastVertex = newFirst.ElementAt(newFirst.Count - 1);
-		while(currentLastVertex != actualLastVertex)
-		{
-			fromFirstPath = !fromFirstPath;			
-			newFirst.AddRange(getNextBlock(reversedEdges, firstPathBlks, secondPathBlocks, fromFirstPath, currentLastVertex));
-			currentLastVertex = newFirst.ElementAt(newFirst.Count - 1);
-		}
+            // Start the first list
+            newFirst.AddRange(firstPathBlks[0]);
+            bool fromFirstPath = true;
 
-		// Start the second list
-		newSecond.AddRange(secondPathBlocks.ElementAt(0));
-		fromFirstPath = false;
+            // Loop while we do not have an entire path
+            int currentLastVertex = newFirst.ElementAt(newFirst.Count - 1);
+            while (currentLastVertex != actualLastVertex)
+            {
+                fromFirstPath = !fromFirstPath;
+                newFirst.AddRange(getNextBlock(reversedEdges, firstPathBlks, secondPathBlocks, fromFirstPath, currentLastVertex));
+                currentLastVertex = newFirst.ElementAt(newFirst.Count - 1);
+            }
 
-		// Loop while we do not have an entire path
-		currentLastVertex = newSecond.ElementAt(newSecond.Count - 1);
-		while(currentLastVertex != actualLastVertex)
-		{
-			fromFirstPath = !fromFirstPath;			
-			newSecond.AddRange(getNextBlock(reversedEdges, firstPathBlks, secondPathBlocks, fromFirstPath, currentLastVertex));
-			currentLastVertex = newSecond.ElementAt(newSecond.Count - 1);
-		}
+            // Start the second list
+            newSecond.AddRange(secondPathBlocks.ElementAt(0));
+            fromFirstPath = false;
 
-		return fLength + sLength - 2 * weightToSubtract;
-	}
+            // Loop while we do not have an entire path
+            currentLastVertex = newSecond.ElementAt(newSecond.Count - 1);
+            while (currentLastVertex != actualLastVertex)
+            {
+                fromFirstPath = !fromFirstPath;
+                newSecond.AddRange(getNextBlock(reversedEdges, firstPathBlks, secondPathBlocks, fromFirstPath, currentLastVertex));
+                currentLastVertex = newSecond.ElementAt(newSecond.Count - 1);
+            }
+
+            return fLength + sLength - 2 * weightToSubtract;
+        }
 
         //
         // Given a vertex-disjoint path, return the condensed path by removing the x' to x'' expansions
@@ -402,6 +401,15 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Update the start and goal nodes for vertex-disjoint analysis
         //
+        public void SetStartGoalNodes(int start, int goal)
+        {
+            startNode = start;
+            goalNode = goal;
+        }
+
+        //
+        // Update the start and goal nodes for vertex-disjoint analysis
+        //
         private void updateStartGoalNodes(int start, int goal)
         {
             startNode = 2 * (start - 1);
@@ -412,74 +420,74 @@ namespace GeometryTutorLib.Hypergraph
         // Find the dual-shortest paths of the PathGraph; implements Suurballe's algorithm
         //
         public long dualShortestPath(int start, int goal, List<int> actualPath1, List<int> actualPath2)
-	{
-		actualPath1.Clear();
-		actualPath2.Clear();
+        {
+            actualPath1.Clear();
+            actualPath2.Clear();
 
-		// Are the given start and goal nodes valid?
-		if (start <= 0 || goal > graph.NumVertices() || goal <= 0 || start > graph.NumVertices())
-		{
-            Debug.WriteLine("Start Node or Goal Node specified is invalid.");
-			return -1;
-		}
+            // Are the given start and goal nodes valid?
+            if (start <= 0 || goal > graph.NumVertices() || goal <= 0 || start > graph.NumVertices())
+            {
+                Debug.WriteLine("Start Node or Goal Node specified is invalid.");
+                return -1;
+            }
 
-		// Create a new PathGraph such that every node is duplicated and split into x' and x''
-		// Incoming nodes go to x', outgoing edges go from x''
-		// The weight between x' and x'' is zero 0
-		graph.InduceVertexDisjoint();
-		updateStartGoalNodes(start, goal);
+            // Create a new PathGraph such that every node is duplicated and split into x' and x''
+            // Incoming nodes go to x', outgoing edges go from x''
+            // The weight between x' and x'' is zero 0
+            graph.InduceVertexDisjoint();
+            updateStartGoalNodes(start, goal);
 
-		//
-		// Find the first shortest path using Dijkstra's algorithm
-		//
-		List<int> firstPath = new List<int>();
-		int firstLength = Dijkstra(firstPath);
+            //
+            // Find the first shortest path using Dijkstra's algorithm
+            //
+            List<int> firstPath = new List<int>();
+            int firstLength = Dijkstra(firstPath);
 
-		// Check if a path existed
-		if (firstLength == -1)
-		{
-			Debug.WriteLine("No first path was found: (" + start + ", " + goal + ")");
-			return -1;
-		}
+            // Check if a path existed
+            if (firstLength == -1)
+            {
+                Debug.WriteLine("No first path was found: (" + start + ", " + goal + ")");
+                return -1;
+            }
 
-		if (DEBUG) Debug.WriteLine("First Path: with length (" + firstLength + ")");
+            if (DEBUG) Debug.WriteLine("First Path: with length (" + firstLength + ")");
 
-		//
-		// Reverse the used edges
-		//
-		reverseShortestPathEdges(firstPath);
+            //
+            // Reverse the used edges
+            //
+            reverseShortestPathEdges(firstPath);
 
-		//
-		// Find the second shortest path using Dijkstra's algorithm on the PathGraph with reversed edges
-		//
-		List<int> secondPath = new List<int>();
-		int secondLength = Dijkstra(secondPath);
+            //
+            // Find the second shortest path using Dijkstra's algorithm on the PathGraph with reversed edges
+            //
+            List<int> secondPath = new List<int>();
+            int secondLength = Dijkstra(secondPath);
 
-		// Check if a path existed
-		if (secondLength == -1)
-		{
-			Debug.WriteLine("No second path was found: (" + start + ", " + goal + ")");
-			return -1;
-		}
+            // Check if a path existed
+            if (secondLength == -1)
+            {
+                Debug.WriteLine("No second path was found: (" + start + ", " + goal + ")");
+                return -1;
+            }
 
-		if (DEBUG) Debug.WriteLine("Second Path: with length (" + secondLength + ")");
+            if (DEBUG) Debug.WriteLine("Second Path: with length (" + secondLength + ")");
 
-		//
-		// Compare the paths looking for common edges
-		// Calculate the length of the dual-shortest paths subtracting the common edges
-		// Split the paths to creates two vertex-disjoint paths
-		//
-		List<int> tempPath1 = new List<int>();
-		List<int> tempPath2 = new List<int>();
-		int combinedPathLength = combinePaths(firstPath, secondPath, firstLength, secondLength, tempPath1, tempPath2);
+            //
+            // Compare the paths looking for common edges
+            // Calculate the length of the dual-shortest paths subtracting the common edges
+            // Split the paths to creates two vertex-disjoint paths
+            //
+            List<int> tempPath1 = new List<int>();
+            List<int> tempPath2 = new List<int>();
+            int combinedPathLength = combinePaths(firstPath, secondPath, firstLength, secondLength, tempPath1, tempPath2);
 
-		//
-		// Condense the path back down from x'->x'' to x
-		//
-		condensePath(tempPath1, actualPath1);
-		condensePath(tempPath2, actualPath2);
+            //
+            // Condense the path back down from x'->x'' to x
+            //
+            condensePath(tempPath1, actualPath1);
+            condensePath(tempPath2, actualPath2);
 
-		return combinedPathLength;
-	}
+            return combinedPathLength;
+        }
     }
 }
