@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class SSS : CongruentTriangleAxiom
     {
@@ -152,7 +152,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             List<GroundedClause> antecedent = new List<GroundedClause>(conSegments);
             antecedent.Add(ct1);
             antecedent.Add(ct2);
-            GroundedClause.ConstructClauseLinks(antecedent, ccts);
 
             // There are 3 distinct congruent segments
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));

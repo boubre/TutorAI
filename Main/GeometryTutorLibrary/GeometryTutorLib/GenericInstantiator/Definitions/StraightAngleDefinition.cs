@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class StraightAngleDefinition : Definition
     {
@@ -37,7 +37,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                                 ConcreteAngle newAngle = new ConcreteAngle(cc.points[i], cc.points[j], cc.points[k]);
                                 List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cc);
                                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngle));
-                                GroundedClause.ConstructClauseLinks(antecedent, newAngle);
                             }
                         }
                     }

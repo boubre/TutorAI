@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class SegmentAdditionAxiom : Axiom
     {
@@ -25,8 +25,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(im);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
-            
-            GroundedClause.ConstructClauseLinks(antecedent, eq);
+           
 
             return newGrounded;
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class SAS : CongruentTriangleAxiom
     {
@@ -191,7 +191,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 antecedent.Add(ct2);
 
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
-                GroundedClause.ConstructClauseLinks(antecedent, ccts);
 
 
                 // Add all the corresponding parts as new congruent clauses

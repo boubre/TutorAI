@@ -188,7 +188,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
                 AngleMeasureEquation angEq = new AngleMeasureEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
                 List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
                 newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
-                GroundedClause.ConstructClauseLinks(antecedent, angEq);
             }
 
             return newClauses;

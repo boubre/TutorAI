@@ -60,14 +60,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return other;
         }
 
-        public override GroundedClause Flatten()
-        {
-            leftExp = leftExp.Flatten();
-            rightExp = rightExp.Flatten();
-
-            return this;
-        }
-
         public override string ToString()
         {
             return "(" + leftExp.ToString() + " + " + rightExp.ToString() + ")";

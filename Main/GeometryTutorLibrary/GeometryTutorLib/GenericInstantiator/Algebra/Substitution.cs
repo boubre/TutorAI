@@ -5,7 +5,7 @@ using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 using System.Diagnostics;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class Substitution : GenericRule
     {
@@ -85,7 +85,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                     SegmentEquation newEq = (SegmentEquation)c;
 
                     // If the new equation was deduced from this equation, do not perform another substitution
-                    if (!newEq.HasAlgebraicPredecessor(se.graphId))
+                    if (!newEq.HasAlgebraicPredecessor(se))
                     {
                         // One side of the equation is atomic
                         if (atomicExp != null)
@@ -127,12 +127,12 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                 {
                     AngleMeasureEquation newEq = (AngleMeasureEquation)c;
 
-                    if (!newEq.HasAlgebraicPredecessor(ae.graphId))
+                    if (!newEq.HasAlgebraicPredecessor(ae))
                     {
-                        Debug.WriteLine(newEq + " is a predecessor of " + ae.graphId + " and will not be substituted again.");
+                        //Debug.WriteLine(newEq + " is a predecessor of " + ae.equationId + " and will not be substituted again.");
                     }
                     // If the new equation was deduced from this equation, do not perform another substitution
-                    if (!newEq.HasAlgebraicPredecessor(ae.graphId))
+                    if (!newEq.HasAlgebraicPredecessor(ae))
                     {
                         KeyValuePair<List<GroundedClause>, GroundedClause> cl;
                         // One side of the equation is atomic
@@ -183,16 +183,14 @@ namespace GeometryTutorLib.GenericAbstractSyntax
 
             // Substitute into the copy
             newSE.Substitute(toFind, toSub);
-            newSE.AddSubstitutionLevel();
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(eq);
             antecedent.Add(subbedEq);
-            GroundedClause.ConstructClauseLinks(antecedent, newSE);
 
             // Add both equations to the predecessor list to prevent cycling of equation substitutions
-            newSE.directAlgebraicPredecessors.Add(eq.graphId);
-            newSE.directAlgebraicPredecessors.Add(subbedEq.graphId);
+            newSE.directAlgebraicPredecessors.Add(eq.equationId);
+            newSE.directAlgebraicPredecessors.Add(subbedEq.equationId);
             // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
             Utilities.AddUniqueList<int>(newSE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
 
@@ -209,16 +207,15 @@ namespace GeometryTutorLib.GenericAbstractSyntax
 
             // Substitute into the copy
             newAE.Substitute(toFind, toSub);
-            newAE.AddSubstitutionLevel();
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(eq);
             antecedent.Add(subbedEq);
-            GroundedClause.ConstructClauseLinks(antecedent, newAE);
 
             // Add to the predecessor list to prevent cycling of equation substitutions
-            newAE.directAlgebraicPredecessors.Add(eq.graphId);
-            newAE.directAlgebraicPredecessors.Add(subbedEq.graphId);
+            newAE.AddAlgebraicPredecessor(eq);
+            newAE.AddAlgebraicPredecessor(subbedEq);
+
             // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
             Utilities.AddUniqueList<int>(newAE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
 

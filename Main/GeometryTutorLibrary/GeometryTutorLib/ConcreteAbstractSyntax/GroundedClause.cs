@@ -15,9 +15,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public GroundedClause()
         {
             justification = "";
-            successors = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            predecessors = new List<KeyValuePair<GroundedClause, List<GroundedClause>>>();
-            graphId = -1;
             multiplier = 1;
         }
 
@@ -25,34 +22,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         protected string justification;
         public string GetJustification() { return justification; }
         public void SetJustification(string j) { justification = j; }
-
-        //
-        // For the Hypergraph
-        //
-        private List<KeyValuePair<List<GroundedClause>, GroundedClause>> successors = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-        private List<KeyValuePair<GroundedClause, List<GroundedClause>>> predecessors = new List<KeyValuePair<GroundedClause, List<GroundedClause>>>();
-        public List<KeyValuePair<List<GroundedClause>, GroundedClause>> GetSuccessors() { return successors; }
-        public List<KeyValuePair<GroundedClause, List<GroundedClause>>> GetPredecessors() { return predecessors; }
-
-        public void AddSuccessorEdge(KeyValuePair<List<GroundedClause>, GroundedClause> edge) { successors.Add(edge); }
-        public void AddPredecessorEdge(KeyValuePair<GroundedClause, List<GroundedClause>> edge) { predecessors.Add(edge); }
-
-        public static void ConstructClauseLinks(List<GroundedClause> antecedent, GroundedClause consequent)
-        {
-            KeyValuePair<List<GroundedClause>, GroundedClause> succEdge = new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, consequent);
-
-            foreach (GroundedClause ante in antecedent)
-            {
-                ante.AddSuccessorEdge(succEdge);
-            }
-            consequent.AddPredecessorEdge(new KeyValuePair<GroundedClause, List<GroundedClause>>(consequent, antecedent));
-        }
-
-        public int graphId { get; private set; }
-        public void SetID(int id)
-        {
-            graphId = id;
-        }
 
         //
         // For equation simplification
@@ -68,7 +37,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         //
         public virtual bool Contains(GroundedClause clause) { return false; }
         public virtual void Substitute(GroundedClause c1, GroundedClause c2) { }
-        public virtual GroundedClause Flatten() { return this; }
         public virtual GroundedClause DeepCopy() { return (GroundedClause)this.MemberwiseClone(); }
 
         /// <summary>

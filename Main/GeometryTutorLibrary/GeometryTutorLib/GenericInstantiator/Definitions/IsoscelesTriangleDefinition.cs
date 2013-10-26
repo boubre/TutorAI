@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class IsoscelesTriangleDefinition : Definition
     {
@@ -65,7 +66,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                         // This triangle is isosceles
                         tri.MakeIsosceles(); // Make any new nodes?
 
-                        //Console.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
+                        Debug.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
 
                         // There should be only one possible Isosceles triangle from this congruent segments
                         break;
@@ -86,7 +87,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                         // This triangle is isosceles
                         tri.MakeIsosceles(); // Make any new nodes?
 
-                        //Console.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
+                        Debug.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
 
                         // There should be only one possible Isosceles triangle from this congruent segments
                         break;
@@ -109,7 +110,8 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                         // This triangle is isosceles
                         newTriangle.MakeIsosceles(); // Make any new nodes?
 
-                        //Console.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
+                        Debug.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
+
                         foundIso = true;
                         break;
                     }
@@ -124,7 +126,7 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                             // This triangle is isosceles
                             newTriangle.MakeIsosceles(); // Make any new nodes?
 
-                            //Console.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
+                            Debug.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
 
                             break;
                         }

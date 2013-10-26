@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class MidpointDefinition : Definition
     {
@@ -32,9 +32,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             InMiddle im = new InMiddle(cm.midpoint, cm.segment, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
 
-            // Hypergraph
-            GroundedClause.ConstructClauseLinks(antecedent, im);
-
             //
             // Midpoint(M, Segment(A, B)) -> AM = MB
             //
@@ -43,7 +40,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             SegmentEquation strictEq = new SegmentEquation(left, right, NAME);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, strictEq));
-            GroundedClause.ConstructClauseLinks(antecedent, strictEq);
 
             //
             // Midpoint(M, Segment(A, B)) -> AM + MB = AB
@@ -52,14 +48,12 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             SegmentEquation generalEq = new SegmentEquation(sum, cm.segment, NAME);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, generalEq));
-            GroundedClause.ConstructClauseLinks(antecedent, generalEq);
 
             //
             // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
             //
             ConcreteCongruentSegments ccss = new ConcreteCongruentSegments(left, right, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
-            GroundedClause.ConstructClauseLinks(antecedent, ccss);
 
             return newGrounded;
         }

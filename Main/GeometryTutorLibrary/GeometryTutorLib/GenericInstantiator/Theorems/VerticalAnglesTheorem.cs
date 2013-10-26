@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class VerticalAnglesTheorem : Theorem
     {
@@ -31,16 +31,11 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             ConcreteCongruentAngles cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set1, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
 
-            // Hypergraph
-            GroundedClause.ConstructClauseLinks(antecedent, cca1);
-
             // Congruent(Angle(A, X, D), Angle(C, X, B))
             ConcreteAngle ang1Set2 = new ConcreteAngle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2);
             ConcreteAngle ang2Set2 = new ConcreteAngle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1);
             ConcreteCongruentAngles cca2 = new ConcreteCongruentAngles(ang1Set2, ang2Set2, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca2));
-
-            GroundedClause.ConstructClauseLinks(antecedent, cca2);
 
             return newGrounded;
         }

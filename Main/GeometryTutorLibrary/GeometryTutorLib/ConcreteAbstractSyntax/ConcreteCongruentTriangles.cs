@@ -114,14 +114,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             foreach (ConcreteCongruentAngles ccas in congAngles)
             {
                 newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccas));
-                GroundedClause.ConstructClauseLinks(antecedent, ccas);
             }
 
             List<GroundedClause> congSegments = GenerateCPCTCSegments(orderedTriOnePts, orderedTriTwoPts);
             foreach (GroundedClause ccss in congSegments)
             {
                 newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
-                GroundedClause.ConstructClauseLinks(antecedent, ccss);
             }
 
             return newClauses;

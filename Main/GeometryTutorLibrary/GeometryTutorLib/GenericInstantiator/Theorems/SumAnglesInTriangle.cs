@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class SumAnglesInTriangle : Theorem
     {
@@ -33,7 +33,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
-            GroundedClause.ConstructClauseLinks(antecedent, eq);
 
             return newGrounded;
         }

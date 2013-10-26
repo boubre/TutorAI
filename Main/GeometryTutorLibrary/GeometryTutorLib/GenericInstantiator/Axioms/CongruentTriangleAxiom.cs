@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
-    public abstract class Definition : GenericRule
+    public abstract class CongruentTriangleAxiom : Axiom
     {
+
     }
 }

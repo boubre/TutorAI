@@ -28,10 +28,39 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return cs1.Equals(cs) || cs2.Equals(cs);
         }
 
+        // Return the number of shared segments in both congruences
+        public override int SharesNumClauses(ConcreteCongruent thatCC)
+        {
+            ConcreteCongruentSegments ccss = thatCC as ConcreteCongruentSegments;
+
+            if (ccss == null) return 0;
+
+            int numShared = cs1.Equals(ccss.cs1) || cs1.Equals(ccss.cs2) ? 1 : 0;
+            numShared += cs2.Equals(ccss.cs1) || cs2.Equals(ccss.cs1) ? 1 : 0;
+
+            return numShared;
+        }
+
+        // Return the shared segment in both congruences
+        public ConcreteSegment SegmentShared(ConcreteCongruentSegments thatCC)
+        {
+            if (SharesNumClauses(thatCC) != 1) return null;
+
+            return cs1.Equals(thatCC.cs1) || cs1.Equals(thatCC.cs2) ? cs1 : cs2;
+        }
+
+        // Given one of the segments in the pair, return the other
+        public ConcreteSegment OtherSegment(ConcreteSegment cs)
+        {
+            if (cs.Equals(cs1)) return cs2;
+            if (cs.Equals(cs2)) return cs1;
+            return null;
+        }
+
         public ConcreteSegment GetFirstSegment() { return cs1; }
         public ConcreteSegment GetSecondSegment() { return cs2; }
 
-        public bool IsReflexive()
+        public override bool IsReflexive()
         {
             return cs1.Equals(cs2);
         }

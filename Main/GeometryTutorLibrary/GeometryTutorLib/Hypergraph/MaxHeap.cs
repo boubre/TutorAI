@@ -7,7 +7,7 @@ namespace GeometryTutorLib.Hypergraph
 {
     //
     // A classic Max-heap implementation done so with an array 
-    // ExtractMin and decreaseKey are O(log n)
+    // ExtractMax and decreaseKey are O(log n)
     //
     public class MaxHeap
     {

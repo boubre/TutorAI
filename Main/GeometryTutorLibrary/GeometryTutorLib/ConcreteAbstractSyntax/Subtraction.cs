@@ -11,15 +11,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
 
         public Subtraction(GroundedClause l, GroundedClause r) : base(l, r) { }
 
-        public override GroundedClause Flatten()
-        {
-            leftExp = leftExp.Flatten();
-
-            rightExp = new Multiplication(new NumericValue(-1), rightExp);
-
-            return this;
-        }
-
         public override List<GroundedClause> CollectTerms()
         {
             List<GroundedClause> list = new List<GroundedClause>();

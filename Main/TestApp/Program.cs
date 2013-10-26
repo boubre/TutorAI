@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
-using GeometryTutorLib.GenericAbstractSyntax;
+using GeometryTutorLib.GenericInstantiator;
 using System.Diagnostics;
 using GeometryTutorLib.Hypergraph;
 
@@ -53,10 +53,11 @@ namespace Geometry_Testbed
             clauses.Add(b);
             clauses.Add(t);
 
-            GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
-            graph.ConstructGraph();
-            graph.DebugDumpClauses();
-            graph.DebugDumpClauses();
+            Instantiator instantiator = new Instantiator();
+            instantiator.Instantiate(clauses);
+
+            //            graph.ConstructGraph();
+            //graph.DebugDumpClauses();
         }
 
         private static void TestMidpointTheoremFigure()
@@ -77,9 +78,11 @@ namespace Geometry_Testbed
             clauses.Add(segment);
             clauses.Add(mid);
 
-            GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
-            graph.ConstructGraph();
-            graph.ConstructGraphRepresentation();
+            Instantiator instantiator = new Instantiator();
+            Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
+
+            //graph.ConstructGraph();
+            //graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
 
             int[] srcArr = { 1 };
@@ -87,9 +90,9 @@ namespace Geometry_Testbed
             int[] goalArr = { 5, 6, 7, 8, 9, 10 };
             List<int> goals = new List<int>(goalArr);
 
-            graph.Pebble(src, goals);
-            Debug.WriteLine("Path from 1 to 11:");
-            graph.PrintPath(1, 11);
+            //graph.Pebble(src, goals);
+            //Debug.WriteLine("Path from 1 to 11:");
+            //graph.PrintPath(1, 11);
             //graph.ConstructPath(src, goals);
             //graph.ConstructDualPaths(src, goals);
         }
@@ -140,10 +143,12 @@ namespace Geometry_Testbed
             clauses.Add(ccss1);
             clauses.Add(ccss2);
 
-            GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
-            graph.ConstructGraph();
-            graph.ConstructGraphRepresentation();
-            graph.DebugDumpClauses();
+            Instantiator instantiator = new Instantiator();
+            instantiator.Instantiate(clauses);
+
+            //graph.ConstructGraph();
+            //graph.ConstructGraphRepresentation();
+            //graph.DebugDumpClauses();
 
             int[] srcArr = { 2, 3, 4, 5, 6, 7, 8 };
             List<int> src = new List<int>(srcArr);
@@ -195,20 +200,20 @@ namespace Geometry_Testbed
             clauses.Add(mid1);
             clauses.Add(mid2);
 
-            GeometryTutorLib.Hypergraph.Hypergraph graph = new GeometryTutorLib.Hypergraph.Hypergraph(clauses);
-            graph.ConstructGraph();
-            graph.ConstructGraphRepresentation();
+            Instantiator instantiator = new Instantiator();
+            Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
+
+            //graph.ConstructGraph();
+            //graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
-            //            Console.WriteLine("Constructing all Paths:");
 
             int[] srcArr = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
             List<int> src = new List<int>(srcArr);
             int[] goalArr = { 84 };
             List<int> goals = new List<int>(goalArr);
 
-            graph.Pebble(src, goals);
-
-            graph.PrintAllPathsToInteresting(2);
+            //graph.Pebble(src, goals);
+            //graph.PrintAllPathsToInteresting(2);
         }
 
         static void Main(string[] args)

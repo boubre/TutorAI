@@ -5,7 +5,7 @@ using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 using System.Diagnostics;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class Simplification : GenericRule
     {
@@ -37,17 +37,17 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             Equation copyEq = (Equation)eq.DeepCopy();
             FlatEquation flattened = new FlatEquation(copyEq.lhs.CollectTerms(), copyEq.rhs.CollectTerms());
 
-            Debug.WriteLine("Equation prior to simplification: " + flattened.ToString());
+            //Debug.WriteLine("Equation prior to simplification: " + flattened.ToString());
 
             // Combine terms only on each side (do not cross =)
             FlatEquation combined = CombineLikeTerms(flattened);
 
-            Debug.WriteLine("Equation after like terms combined on both sides: " + combined);
+            //Debug.WriteLine("Equation after like terms combined on both sides: " + combined);
 
             // Combine terms across the equal sign
             FlatEquation across = CombineLikeTermsAcrossEqual(combined);
 
-            Debug.WriteLine("Equation after simplifying both sides: " + across);
+            //Debug.WriteLine("Equation after simplifying both sides: " + across);
 
             //
             // Inflate the equation
@@ -69,11 +69,10 @@ namespace GeometryTutorLib.GenericAbstractSyntax
             {
                 // Simplified equations should inherit the algebraic predecessors of the the original equation as well as the original node
                 Utilities.AddUniqueList<int>(inflated.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
-                Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.graphId);
+                Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.equationId);
 
                 List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(eq);
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, inflated));
-                GroundedClause.ConstructClauseLinks(antecedent, inflated);
             }
 
             return newGrounded;

@@ -268,9 +268,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             tri.SegmentA.SetJustification("Intrinsic");
             tri.SegmentB.SetJustification("Intrinsic");
             tri.SegmentC.SetJustification("Intrinsic");
-            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentA);
-            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentB);
-            GroundedClause.ConstructClauseLinks(antecedent, tri.SegmentC);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentA));
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentB));
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentC));

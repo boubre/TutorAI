@@ -33,6 +33,40 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return ca1.Equals(cca.ca1) && ca2.Equals(cca.ca2) || ca1.Equals(cca.ca2) && ca2.Equals(cca.ca1);
         }
 
+        public override bool IsReflexive()
+        {
+            return ca1.Equals(ca2);
+        }
+
+        // Return the number of shared angles in both congruences
+        public override int SharesNumClauses(ConcreteCongruent thatCC)
+        {
+            ConcreteCongruentAngles ccas = thatCC as ConcreteCongruentAngles;
+
+            if (ccas == null) return 0;
+
+            int numShared = ca1.Equals(ccas.ca1) || ca1.Equals(ccas.ca2) ? 1 : 0;
+            numShared += ca2.Equals(ccas.ca1) || ca2.Equals(ccas.ca1) ? 1 : 0;
+
+            return numShared;
+        }
+
+        // Return the shared angle in both congruences
+        public ConcreteAngle SegmentShared(ConcreteCongruentAngles thatCC)
+        {
+            if (SharesNumClauses(thatCC) != 1) return null;
+
+            return ca1.Equals(thatCC.ca1) || ca1.Equals(thatCC.ca2) ? ca1 : ca2;
+        }
+
+        // Given one of the angles in the pair, return the other
+        public ConcreteAngle OtherAngle(ConcreteAngle cs)
+        {
+            if (cs.Equals(ca1)) return ca2;
+            if (cs.Equals(ca2)) return ca1;
+            return null;
+        }
+
         public void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             //Console.WriteLine("To Be Implemented");

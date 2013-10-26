@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
-namespace GeometryTutorLib.GenericAbstractSyntax
+namespace GeometryTutorLib.GenericInstantiator
 {
     public class AngleAdditionAxiom : Axiom
     {
@@ -48,7 +48,6 @@ namespace GeometryTutorLib.GenericAbstractSyntax
                     List<GroundedClause> antecedent = new List<GroundedClause>();
                     antecedent.Add(newAngle);
                     antecedent.Add(ang);
-                    GroundedClause.ConstructClauseLinks(antecedent, eq);
 
                     newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
                 }

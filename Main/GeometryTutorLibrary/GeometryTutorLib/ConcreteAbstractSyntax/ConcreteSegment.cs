@@ -104,7 +104,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             ConcreteCongruentSegments ccss = new ConcreteCongruentSegments(segment, segment, "Reflexive");
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(segment);
-            GroundedClause.ConstructClauseLinks(antecedent, ccss);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
 
             return newGrounded;

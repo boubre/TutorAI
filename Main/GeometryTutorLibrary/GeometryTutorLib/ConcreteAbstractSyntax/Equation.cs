@@ -10,28 +10,28 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public GroundedClause lhs { get; private set; }
         public GroundedClause rhs { get; private set; }
 
+        public int equationId { get; private set; }
+        public void SetId(int id) { equationId = id; }
         public List<int> directAlgebraicPredecessors { get; private set; }
-        protected int numSubstitutions; // The number of substitution 'levels' required to create this equation; this is an attempt to cut off infinite substitutions
-        public void AddSubstitutionLevel() { numSubstitutions++; }
-        public bool HasAlgebraicPredecessor(int id) { return directAlgebraicPredecessors.Contains(id); }
-
+        public bool HasAlgebraicPredecessor(Equation eq) { return directAlgebraicPredecessors.Contains(eq.equationId); }
+        public void AddAlgebraicPredecessor(Equation eq) { directAlgebraicPredecessors.Add(eq.equationId); }
 
         public Equation() : base() { }
 
         public Equation(GroundedClause l, GroundedClause r) : base()
         {
+            equationId = -1;
             lhs = l;
             rhs = r;
-            numSubstitutions = 0;
             directAlgebraicPredecessors = new List<int>();
         }
 
         public Equation(GroundedClause l, GroundedClause r, string just) : base()
         {
+            equationId = -1;
             lhs = l;
             rhs = r;
             justification = just;
-            numSubstitutions = 0;
             directAlgebraicPredecessors = new List<int>();
         }
 
@@ -89,15 +89,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             if (rightIs) return RIGHT_ATOMIC;
 
             return NONE_ATOMIC;
-        }
-
-        public FlatEquation FlattenEquation()
-        {
-            Equation copyEq = (Equation)DeepCopy();
-
-//            FlatEquation flattened = new FlatEquation(copyEq.lhs, copyEq.rhs);
-
-            return new FlatEquation(); // NEED TO CHANGE
         }
 
         public override string ToString()
