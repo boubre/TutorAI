@@ -18,6 +18,13 @@ namespace GeometryTutorLib
             Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(figure);
 
             graph.DebugDumpClauses();
+
+            Pebbler.PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
+
+            int[] srcArr = { 1 };
+            List<int> src = new List<int>(srcArr);
+
+            pebblerGraph.GenerateAllPaths(src);
         }
     }
 }

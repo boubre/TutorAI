@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.Hypergraph
+namespace GeometryTutorLib.Pebbler
 {
     //
     // A classic Max-heap implementation done so with an array 

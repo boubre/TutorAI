@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.Hypergraph
+namespace GeometryTutorLib.Pebbler
 {
     //
     // Implements a node for the Minimum container (can use MinHeap or Fibonacci Heap).

@@ -6,6 +6,7 @@ using GeometryTutorLib.ConcreteAbstractSyntax;
 using GeometryTutorLib.GenericInstantiator;
 using System.Diagnostics;
 using GeometryTutorLib.Hypergraph;
+using GeometryTutorLib.Pebbler;
 
 namespace Geometry_Testbed
 {
@@ -81,20 +82,16 @@ namespace Geometry_Testbed
             Instantiator instantiator = new Instantiator();
             Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
 
-            //graph.ConstructGraph();
-            //graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
 
-            int[] srcArr = { 1 };
-            List<int> src = new List<int>(srcArr);
-            int[] goalArr = { 5, 6, 7, 8, 9, 10 };
-            List<int> goals = new List<int>(goalArr);
+            PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
 
-            //graph.Pebble(src, goals);
-            //Debug.WriteLine("Path from 1 to 11:");
-            //graph.PrintPath(1, 11);
-            //graph.ConstructPath(src, goals);
-            //graph.ConstructDualPaths(src, goals);
+            pebblerGraph.DebugDumpClauses();
+
+            int[] srcArr = { 2 };
+            List<int> src = new List<int>(srcArr);
+
+            pebblerGraph.GenerateAllPaths(src);
         }
 
         private static void TestFigureSix()
@@ -207,22 +204,21 @@ namespace Geometry_Testbed
             //graph.ConstructGraphRepresentation();
             graph.DebugDumpClauses();
 
-            int[] srcArr = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-            List<int> src = new List<int>(srcArr);
-            int[] goalArr = { 84 };
-            List<int> goals = new List<int>(goalArr);
+            PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
 
-            //graph.Pebble(src, goals);
-            //graph.PrintAllPathsToInteresting(2);
+            int[] srcArr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            List<int> src = new List<int>(srcArr);
+
+            pebblerGraph.GenerateAllPaths(src);
         }
 
         static void Main(string[] args)
         {
-            //TestMidpointTheoremFigure();
+            TestMidpointTheoremFigure();
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
-            TestEntireFigure();
+            //TestEntireFigure();
             //TestSimplification();
             //TestSimplificationConstants();
             //TestSimpleSubstitution();

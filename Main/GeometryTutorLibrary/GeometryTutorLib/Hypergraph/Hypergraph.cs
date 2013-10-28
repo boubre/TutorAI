@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 using GeometryTutorLib.GenericInstantiator;
+using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {
@@ -34,6 +35,40 @@ namespace GeometryTutorLib.Hypergraph
         }
 
         public int Size() { return vertices.Count; }
+
+        public PebblerHypergraph<T> GetPebblerHypergraph()
+        {
+            //
+            // Strictly create the nodes
+            //
+            PebblerHyperNode<T>[] pebblerNodes = new PebblerHyperNode<T>[vertices.Count];
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                pebblerNodes[v] = vertices[v].CreatePebblerNode();
+            }
+
+            //
+            // Non-redundantly create all hyperedges
+            //
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                foreach (HyperEdge<A> edge in vertices[v].successorEdges)
+                {
+                    // Only add once to all nodes when this is the 'minimum' source node
+                    if (v == edge.sourceNodes.Min())
+                    {
+                        PebblerHyperEdge newEdge = new PebblerHyperEdge(edge.sourceNodes, edge.targetNode);
+                        foreach (int src in edge.sourceNodes)
+                        {
+                            pebblerNodes[src].AddSuccessorEdge(newEdge);
+                        }
+                        pebblerNodes[edge.targetNode].AddPredecessorEdge(edge.targetNode, edge.sourceNodes);
+                    }
+                }
+            }
+
+            return new PebblerHypergraph<T>(pebblerNodes);
+        }
 
         //
         // Check if the graph contains this specific grounded clause
@@ -161,8 +196,8 @@ namespace GeometryTutorLib.Hypergraph
             StringBuilder edgeStr = new StringBuilder();
             for (int v = 0; v < vertices.Count; v++)
             {
-                if (vertices[v].data is ConcreteCongruent)
-                {
+                //if (vertices[v].data is ConcreteCongruent)
+                //{
                     if (vertices[v].predecessorEdges.Any())
                     {
                         edgeStr = new StringBuilder();
@@ -176,7 +211,7 @@ namespace GeometryTutorLib.Hypergraph
                     }
 
                     Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
-                }
+                //}
             }
 
 

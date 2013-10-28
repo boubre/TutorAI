@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BridgeUItoBackEnd.cs" />
     <Compile Include="ConcreteAbstractSyntax\Addition.cs" />
     <Compile Include="ConcreteAbstractSyntax\AngleMeasureEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\ArithmeticNode.cs" />
@@ -64,35 +65,40 @@
     <Compile Include="ConcreteAbstractSyntax\NumericValue.cs" />
     <Compile Include="ConcreteAbstractSyntax\SegmentEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\Subtraction.cs" />
-    <Compile Include="GenericAbstractSyntax\AngleAdditionAxiom.cs" />
-    <Compile Include="GenericAbstractSyntax\ASA.cs" />
-    <Compile Include="GenericAbstractSyntax\Axiom.cs" />
-    <Compile Include="GenericAbstractSyntax\CongruentTriangleAxiom.cs" />
-    <Compile Include="GenericAbstractSyntax\Definition.cs" />
-    <Compile Include="GenericAbstractSyntax\GenericRule.cs" />
-    <Compile Include="GenericAbstractSyntax\HypotenuseLeg.cs" />
-    <Compile Include="GenericAbstractSyntax\IsoscelesTriangleDefinition.cs" />
-    <Compile Include="GenericAbstractSyntax\MidpointDefinition.cs" />
-    <Compile Include="GenericAbstractSyntax\SAS.cs" />
-    <Compile Include="GenericAbstractSyntax\SegmentAdditionAxiom.cs" />
-    <Compile Include="GenericAbstractSyntax\Simplification.cs" />
-    <Compile Include="GenericAbstractSyntax\SSS.cs" />
-    <Compile Include="GenericAbstractSyntax\StraightAngleDefinition.cs" />
-    <Compile Include="GenericAbstractSyntax\Substitution.cs" />
-    <Compile Include="GenericAbstractSyntax\SumAnglesInTriangle.cs" />
-    <Compile Include="GenericAbstractSyntax\Theorem.cs" />
-    <Compile Include="GenericAbstractSyntax\VerticalAnglesTheorem.cs" />
-    <Compile Include="Hypergraph\FibonacciHeap.cs" />
-    <Compile Include="Hypergraph\HeapNode.cs" />
-    <Compile Include="Hypergraph\Suurballe.cs" />
-    <Compile Include="Hypergraph\MinHeap.cs" />
-    <Compile Include="Hypergraph\PathGraph.cs" />
+    <Compile Include="GenericInstantiator\Axioms\AngleAdditionAxiom.cs" />
+    <Compile Include="GenericInstantiator\Axioms\ASA.cs" />
+    <Compile Include="GenericInstantiator\Axioms\Axiom.cs" />
+    <Compile Include="GenericInstantiator\Axioms\CongruentTriangleAxiom.cs" />
+    <Compile Include="GenericInstantiator\Definitions\Definition.cs" />
+    <Compile Include="GenericInstantiator\GenericRule.cs" />
+    <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
+    <Compile Include="GenericInstantiator\Definitions\IsoscelesTriangleDefinition.cs" />
+    <Compile Include="GenericInstantiator\Definitions\MidpointDefinition.cs" />
+    <Compile Include="GenericInstantiator\Axioms\SAS.cs" />
+    <Compile Include="GenericInstantiator\Axioms\SegmentAdditionAxiom.cs" />
+    <Compile Include="GenericInstantiator\Algebra\Simplification.cs" />
+    <Compile Include="GenericInstantiator\Axioms\SSS.cs" />
+    <Compile Include="GenericInstantiator\Definitions\StraightAngleDefinition.cs" />
+    <Compile Include="GenericInstantiator\Algebra\Substitution.cs" />
+    <Compile Include="GenericInstantiator\Theorems\SumAnglesInTriangle.cs" />
+    <Compile Include="GenericInstantiator\Theorems\Theorem.cs" />
+    <Compile Include="GenericInstantiator\Theorems\VerticalAnglesTheorem.cs" />
+    <Compile Include="GenericInstantiator\Instantiator.cs" />
+    <Compile Include="Pebbler\Path.cs" />
+    <Compile Include="Pebbler\PathGenerator.cs" />
+    <Compile Include="Pebbler\Pebbler.cs" />
+    <Compile Include="Hypergraph\TransposeHyperEdge.cs" />
+    <Compile Include="Hypergraph\HyperEdge.cs" />
+    <Compile Include="Hypergraph\HyperNode.cs" />
+    <Compile Include="Pebbler\MaxHeap.cs" />
+    <Compile Include="Pebbler\HeapNode.cs" />
     <Compile Include="Hypergraph\Hypergraph.cs" />
+    <Compile Include="Pebbler\PebblerHyperEdge.cs" />
+    <Compile Include="Pebbler\PebblerHypergraph.cs" />
+    <Compile Include="Pebbler\PebblerHyperNode.cs" />
+    <Compile Include="Pebbler\PebblerTransposeHyperEdge.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

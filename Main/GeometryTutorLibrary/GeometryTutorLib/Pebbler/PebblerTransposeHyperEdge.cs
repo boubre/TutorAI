@@ -2,33 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {
     //
     // Provides representation of a predecessor edge
     //
-    public class TransposeHyperEdge<A>
+    public class PebblerTransposeHyperEdge
     {
-        // Allows us to note how the edge was derived
-        public A annotation { get; private set; }
-
         public List<int> targetNodes;
         public int source;
+
         public bool visited;
 
-        public TransposeHyperEdge(int src, List<int> targets, A annot)
+        public PebblerTransposeHyperEdge(int src, List<int> targets)
         {
             targetNodes = targets;
             source = src;
             visited = false;
-            annotation = annot;
-        }
-
-        public PebblerTransposeHyperEdge CreatePebblerTransposeEdge()
-        {
-            return new PebblerTransposeHyperEdge(source, targetNodes);
         }
 
         public override string ToString()

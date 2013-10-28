@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {
@@ -25,6 +26,11 @@ namespace GeometryTutorLib.Hypergraph
             visited = false;
             numNegArgs = src.Count;
             annotation = annot;
+        }
+
+        public PebblerHyperEdge CreatePebblerEdge()
+        {
+            return new PebblerHyperEdge(sourceNodes, targetNode);
         }
 
         // The source nodes and target must be the same for equality.

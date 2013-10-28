@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.GenericInstantiator;
 using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {
@@ -29,32 +30,28 @@ namespace GeometryTutorLib.Hypergraph
             predecessorEdges.Add(tEdge);
         }
 
-        public bool pebbled;
-
-        // For path creation; represents the predecessor set of nodes
-        public List<int> pi;
-
         public HyperNode(T d, int i)
         {
             id = i;
             data = d;
-            pebbled = false;
            
             successorNodes = new List<int>();
             successorEdges = new List<HyperEdge<A>>();
             predecessorNodes = new List<int>();
             predecessorEdges = new List<TransposeHyperEdge<A>>();
+        }
 
-            pi = new List<int>();
+        // Creating a shallow copy of this node as a pebbler node
+        public PebblerHyperNode<T> CreatePebblerNode()
+        {
+            return new PebblerHyperNode<T>(data, id);
         }
 
         public override string ToString()
         {
             string retS = data.ToString() + "\t\t\t\t= { ";
 
-            retS += id + ", Pebbled(";
-            retS += pebbled + "), ";
-            retS += "SuccN={";
+            retS += id + "SuccN={";
             foreach (int n in successorNodes) retS += n + ",";
             if (successorNodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
             retS += "}, SuccE = { ";
@@ -66,9 +63,6 @@ namespace GeometryTutorLib.Hypergraph
             retS += "}, PredE = { ";
             //foreach (TransposeHyperEdge edge in predecessorEdges) { retS += edge.ToString() + ", "; }
             //retS += "}, PI = { ";
-            retS += "}, PI = { ";
-            foreach (int p in pi) { retS += p + ", "; }
-            if (pi.Count != 0) retS = retS.Substring(0, retS.Length - 2);
             retS += " } }";
 
             return retS;
