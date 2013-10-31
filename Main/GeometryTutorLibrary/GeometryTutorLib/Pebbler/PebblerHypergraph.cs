@@ -36,17 +36,36 @@ namespace GeometryTutorLib.Pebbler
         //
         public void Pebble(List<int> src)
         {
+            Stopwatch stopwatch = new Stopwatch();
+
+            // Begin timing
+            stopwatch.Start();
+
             // Pebble all start vertices
             foreach (int s in src)
             {
                 Traverse(s);
             }
 
+            // Stop timing
+            stopwatch.Stop();
+
             Debug.WriteLine("Vertices after pebbling:");
             for (int i = 0; i < vertices.Length; i++)
             {
                 Debug.WriteLine(vertices[i].id + ": pebbled(" + vertices[i].pebbled + ")");
             }
+
+            Debug.WriteLine("All Paths:");
+            pathGenerator.GenerateAllPaths();
+
+            TimeSpan ts = stopwatch.Elapsed;
+            // Format and display the TimeSpan value. 
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+
+            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
+            Debug.WriteLine("Number of Unique Paths / Problems: " + pathGenerator.GetPaths().Count);
         }
 
         //

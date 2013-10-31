@@ -84,6 +84,9 @@
     <Compile Include="GenericInstantiator\Theorems\Theorem.cs" />
     <Compile Include="GenericInstantiator\Theorems\VerticalAnglesTheorem.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
+    <Compile Include="Pebbler\Problem.cs" />
+    <Compile Include="Pebbler\Forest.cs" />
+    <Compile Include="Pebbler\TreeNode.cs" />
     <Compile Include="Pebbler\Path.cs" />
     <Compile Include="Pebbler\PathGenerator.cs" />
     <Compile Include="Pebbler\Pebbler.cs" />

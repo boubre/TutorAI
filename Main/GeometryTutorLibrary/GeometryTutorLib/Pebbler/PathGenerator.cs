@@ -13,6 +13,8 @@ namespace GeometryTutorLib.Pebbler
         private List<Path>[,] paths;
         private List<PebblerHyperEdge> edges;
 
+        private Forest<int> reversePaths;
+
         public PathGenerator(int n)
         {
             reachable = new bool[n, n];
@@ -27,6 +29,46 @@ namespace GeometryTutorLib.Pebbler
             }
 
             edges = new List<PebblerHyperEdge>();
+            //reversePaths = new Forest<int>();
+
+            problems = new List<Problem>();
+        }
+
+        private List<Problem> problems;
+
+        //
+        // If U |- n is a problem:
+        //   let v \in U such that V |- v is a problem then
+        //   generate a new problem: (U \ v) \bigcup V |- n provided: (U \ v) \bigcup V != { n } AND 
+        //
+        public void GeneratePaths(Problem firstNewProblem)
+        {
+            List<Problem> worklist = new List<Problem>();
+            worklist.Add(firstNewProblem);
+
+            while (worklist.Any())
+            {
+                // Acquire a new element to work on
+                Problem thisNewProblem = worklist[0];
+                worklist.RemoveAt(0);
+
+                foreach (Problem oldProblem in problems)
+                {
+                    // Can we combine? That is, is the new goal in the old source; even more specifically,
+                    // avoid a cycle by checking that the old goal is not in the thisNew source
+                    if (oldProblem.InSource(thisNewProblem.goal) && !thisNewProblem.InSource(oldProblem.goal) && !thisNewProblem.InPath(oldProblem.goal))
+                    {
+                        // To avoid a cycle, avoid deducing this same node
+                        if (!oldProblem.HasGoal(thisNewProblem.goal))
+                        {
+                            Utilities.AddUnique(worklist, oldProblem.CombineAndCreateNewProblem(thisNewProblem));
+                        }
+                    }
+                }
+
+                // Add this new edge as a problem
+                Utilities.AddUnique(problems, thisNewProblem);
+            }
         }
 
         //
@@ -36,7 +78,38 @@ namespace GeometryTutorLib.Pebbler
         {
             Debug.WriteLine("Considering Edge: " + edge.ToString());
             AddToReachability(edge);
+            //AddToForest(edge);
+
             edges.Add(edge);
+            GeneratePaths(new Problem(edge.sourceNodes, edge.targetNode, edges.Count));
+        }
+
+        public void GenerateAllPaths()
+        {
+            foreach (Problem problem in problems)
+            {
+                Debug.WriteLine(problem.ToString());
+            }
+        }
+
+        public List<Problem> GetPaths()
+        {
+            return problems;
+        }
+
+        //
+        // Adds to the forest under the following specification:
+        // if a_1, ..., a_n  |- b is a pebbled edge then we add this edge
+        // as a node in the tree if b exists as a leaf (root b with children a_1...a_n)
+        // otherwise we add a new tree rooted at b with children a_1...a_n
+        //
+        public void AddToForest(PebblerHyperEdge edge)
+        {
+            if (reversePaths.AddToLeaf(edge.targetNode, edge.sourceNodes) == 0)
+            {
+                reversePaths.AddNewTree(edge.targetNode, edge.sourceNodes);
+            }
+            Debug.WriteLine("Forest: \n" + reversePaths.ToString());
         }
 
         //
@@ -67,11 +140,11 @@ namespace GeometryTutorLib.Pebbler
                     if (reachable[r, src])
                     {
                         reachable[r, edge.targetNode] = true;
-                        Debug.WriteLine("Deep Setting Predecessor <" + r + ", " + edge.targetNode + ">");
+                        //Debug.WriteLine("Deep Setting Predecessor <" + r + ", " + edge.targetNode + ">");
 
-                        DeepPredecessorSet(r, src, edge);
+                        // DeepPredecessorSet(r, src, edge);
 
-                        Debug.WriteLine("After deep Setting Predecessor (Paths): \n" + this.ToString());
+                        //Debug.WriteLine("After deep Setting Predecessor (Paths): \n" + this.ToString());
                     }
                 }
             }
@@ -86,11 +159,11 @@ namespace GeometryTutorLib.Pebbler
                     if (reachable[edge.targetNode, r])
                     {
                         reachable[src, r] = true;
-                        Debug.WriteLine("Deep Setting Successor <" + src + ", " + r + ">");
+                        //Debug.WriteLine("Deep Setting Successor <" + src + ", " + r + ">");
 
-                        DeepSuccessorSet(src, r, edge);
+                        // DeepSuccessorSet(src, r, edge);
 
-                        Debug.WriteLine("After deep Setting Successor (Paths): \n" + this.ToString());
+                        //Debug.WriteLine("After deep Setting Successor (Paths): \n" + this.ToString());
                     }
                 }
             }
