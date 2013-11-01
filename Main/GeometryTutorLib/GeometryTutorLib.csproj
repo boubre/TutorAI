@@ -1,39 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2BAA33E9-4CF7-4962-A32C-3988DC64F63A}</ProjectGuid>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2ED63907-AF71-49B4-BDC5-470B70E17061}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeometryTutorLib</RootNamespace>
     <AssemblyName>GeometryTutorLib</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile2</TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core">
+      <HintPath>$(TargetFrameworkDirectory)System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="BridgeUItoBackEnd.cs" />
     <Compile Include="ConcreteAbstractSyntax\Addition.cs" />
@@ -53,11 +75,11 @@
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
-    <Compile Include="ConcreteAbstractSyntax\FlatEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
     <Compile Include="ConcreteAbstractSyntax\EqualSegments.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\FlatEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\GroundedClause.cs" />
     <Compile Include="ConcreteAbstractSyntax\InMiddle.cs" />
     <Compile Include="ConcreteAbstractSyntax\Intersection.cs" />
@@ -65,46 +87,56 @@
     <Compile Include="ConcreteAbstractSyntax\NumericValue.cs" />
     <Compile Include="ConcreteAbstractSyntax\SegmentEquation.cs" />
     <Compile Include="ConcreteAbstractSyntax\Subtraction.cs" />
+    <Compile Include="GenericInstantiator\Algebra\Simplification.cs" />
+    <Compile Include="GenericInstantiator\Algebra\Substitution.cs" />
     <Compile Include="GenericInstantiator\Axioms\AngleAdditionAxiom.cs" />
     <Compile Include="GenericInstantiator\Axioms\ASA.cs" />
     <Compile Include="GenericInstantiator\Axioms\Axiom.cs" />
     <Compile Include="GenericInstantiator\Axioms\CongruentTriangleAxiom.cs" />
-    <Compile Include="GenericInstantiator\Definitions\Definition.cs" />
-    <Compile Include="GenericInstantiator\GenericRule.cs" />
-    <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
-    <Compile Include="GenericInstantiator\Definitions\IsoscelesTriangleDefinition.cs" />
-    <Compile Include="GenericInstantiator\Definitions\MidpointDefinition.cs" />
     <Compile Include="GenericInstantiator\Axioms\SAS.cs" />
     <Compile Include="GenericInstantiator\Axioms\SegmentAdditionAxiom.cs" />
-    <Compile Include="GenericInstantiator\Algebra\Simplification.cs" />
     <Compile Include="GenericInstantiator\Axioms\SSS.cs" />
+    <Compile Include="GenericInstantiator\Definitions\Definition.cs" />
+    <Compile Include="GenericInstantiator\Definitions\IsoscelesTriangleDefinition.cs" />
+    <Compile Include="GenericInstantiator\Definitions\MidpointDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\StraightAngleDefinition.cs" />
-    <Compile Include="GenericInstantiator\Algebra\Substitution.cs" />
+    <Compile Include="GenericInstantiator\GenericRule.cs" />
+    <Compile Include="GenericInstantiator\Instantiator.cs" />
+    <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
     <Compile Include="GenericInstantiator\Theorems\SumAnglesInTriangle.cs" />
     <Compile Include="GenericInstantiator\Theorems\Theorem.cs" />
     <Compile Include="GenericInstantiator\Theorems\VerticalAnglesTheorem.cs" />
-    <Compile Include="GenericInstantiator\Instantiator.cs" />
-    <Compile Include="Pebbler\Problem.cs" />
+    <Compile Include="Hypergraph\HyperEdge.cs" />
+    <Compile Include="Hypergraph\Hypergraph.cs" />
+    <Compile Include="Hypergraph\HyperNode.cs" />
+    <Compile Include="Hypergraph\PathFinding\FibonacciHeap.cs" />
+    <Compile Include="Hypergraph\PathFinding\MinHeap.cs" />
+    <Compile Include="Hypergraph\PathFinding\Suurballe.cs" />
+    <Compile Include="Hypergraph\PathGraph.cs" />
+    <Compile Include="Hypergraph\TransposeHyperEdge.cs" />
     <Compile Include="Pebbler\Forest.cs" />
-    <Compile Include="Pebbler\TreeNode.cs" />
+    <Compile Include="Pebbler\HeapNode.cs" />
+    <Compile Include="Pebbler\MaxHeap.cs" />
     <Compile Include="Pebbler\Path.cs" />
     <Compile Include="Pebbler\PathGenerator.cs" />
     <Compile Include="Pebbler\Pebbler.cs" />
-    <Compile Include="Hypergraph\TransposeHyperEdge.cs" />
-    <Compile Include="Hypergraph\HyperEdge.cs" />
-    <Compile Include="Hypergraph\HyperNode.cs" />
-    <Compile Include="Pebbler\MaxHeap.cs" />
-    <Compile Include="Pebbler\HeapNode.cs" />
-    <Compile Include="Hypergraph\Hypergraph.cs" />
     <Compile Include="Pebbler\PebblerHyperEdge.cs" />
     <Compile Include="Pebbler\PebblerHypergraph.cs" />
     <Compile Include="Pebbler\PebblerHyperNode.cs" />
     <Compile Include="Pebbler\PebblerTransposeHyperEdge.cs" />
+    <Compile Include="Pebbler\Problem.cs" />
+    <Compile Include="Pebbler\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -15,9 +15,9 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Are all nodes referred to in the hyperedges?
         //
-        private bool ValidateEdgesAndNodes(List<int> nodes, List<Hypergraph.HyperEdge> edges)
+        private bool ValidateEdgesAndNodes(List<int> nodes, List<Hypergraph.HyperEdge<Object>> edges)
         {
-            foreach (Hypergraph.HyperEdge edge in edges)
+            foreach (Hypergraph.HyperEdge<Object> edge in edges)
             {
                 foreach (int src in edge.sourceNodes)
                 {
@@ -34,7 +34,7 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Basic Graph verirication and construction which requires the user specify the number of vertices.
         //
-        public PathGraph(int originalSz, List<int> ns, List<Hypergraph.HyperEdge> es)
+        public PathGraph(int originalSz, List<int> ns, List<Hypergraph.HyperEdge<Object>> es)
         {
             if (!ValidateEdgesAndNodes(ns, es)) return;
 
@@ -44,7 +44,7 @@ namespace GeometryTutorLib.Hypergraph
             //
             // Construct the graph by creating all the edges: hyperedges -> edges
             //
-            foreach (Hypergraph.HyperEdge edge in es)
+            foreach (Hypergraph.HyperEdge<Object> edge in es)
             {
                 foreach (int sourceNode in edge.sourceNodes)
                 {
@@ -80,9 +80,9 @@ namespace GeometryTutorLib.Hypergraph
                 public int to;
                 public int weight;
                 public bool reversed;
-                public Hypergraph.HyperEdge hyperedge;
+                public Hypergraph.HyperEdge<Object> hyperedge;
 
-                public Edge(int f, int t, int w, bool rev, Hypergraph.HyperEdge he) { from = f; to = t; weight = w; reversed = rev; hyperedge = he; }
+                public Edge(int f, int t, int w, bool rev, Hypergraph.HyperEdge<Object> he) { from = f; to = t; weight = w; reversed = rev; hyperedge = he; }
                 public Edge(Edge e) { from = e.from; to = e.to; weight = e.weight; reversed = e.reversed; hyperedge = e.hyperedge; } // copy constructor
 
                 public override bool Equals(object obj)
@@ -122,7 +122,7 @@ namespace GeometryTutorLib.Hypergraph
             //
             // Adds the specified edge to the graph; if the List does not exist, we create it and add the Edge 
             //
-            public void AddEdge(int u, int v, int weight, bool rev, Hypergraph.HyperEdge hyperedge)
+            public void AddEdge(int u, int v, int weight, bool rev, Hypergraph.HyperEdge<Object> hyperedge)
             {
                 // create the list, if needed
                 if (vertexList[u] == null)

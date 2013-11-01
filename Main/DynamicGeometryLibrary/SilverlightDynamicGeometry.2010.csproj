@@ -320,6 +320,12 @@
     <Compile Include="UI\StatusBar.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeometryTutorLib\GeometryTutorLib.csproj">
+      <Project>{2ed63907-af71-49b4-bdc5-470b70e17061}</Project>
+      <Name>GeometryTutorLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

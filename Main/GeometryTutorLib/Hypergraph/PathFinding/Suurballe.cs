@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using System.Text;
+using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {

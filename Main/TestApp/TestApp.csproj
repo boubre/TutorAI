@@ -48,8 +48,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeometryTutorLibrary\GeometryTutorLib\GeometryTutorLib.csproj">
-      <Project>{2baa33e9-4cf7-4962-a32c-3988dc64f63a}</Project>
+    <ProjectReference Include="..\GeometryTutorLib\GeometryTutorLib.csproj">
+      <Project>{2ed63907-af71-49b4-bdc5-470b70e17061}</Project>
       <Name>GeometryTutorLib</Name>
     </ProjectReference>
   </ItemGroup>
