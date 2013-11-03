@@ -46,6 +46,19 @@ namespace DynamicGeometry
         public virtual bool HideHints { get; set; }
         public virtual Math.lengthUnit DistanceUnit { get; set; } // Used by Measurement subclasses.  Not yet implemented throughout.
 
+        private double defaultSnapSpacing = .2;
+        public virtual double DefaultSnapSpacing
+        {
+            get
+            {
+                return defaultSnapSpacing;
+            }
+            private set
+            {
+                defaultSnapSpacing = value;
+            }
+        }
+
         private double snapGridSpacing = 1;
         public virtual double SnapGridSpacing
         {

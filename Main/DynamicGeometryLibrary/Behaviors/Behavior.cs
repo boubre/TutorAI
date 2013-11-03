@@ -356,6 +356,8 @@ namespace DynamicGeometry
             var result = e.GetPosition(ParentCanvas);
             result = ToLogical(result);
 
+            result = Math.GetSnapToGridPosition(Settings.Instance.DefaultSnapSpacing, result);
+
             if (snapToCenter)
             {
                 result = Math.GetSnapToSegmentCenterPosition(result, new List<Segment>(Drawing.Figures.Where(f => f.Visible).ToSegments(result)));
