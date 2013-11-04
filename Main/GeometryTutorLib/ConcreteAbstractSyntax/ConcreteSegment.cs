@@ -26,6 +26,9 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point2 = p2;
             Length = ConcretePoint.calcDistance(p1, p2);
             Slope = (p2.Y - p1.Y) / (p2.X - p1.X);
+
+            Point1.getSuperFigures().Add(this);
+            Point2.getSuperFigures().Add(this);
         }
 
         internal void BuildUnparse(StringBuilder sb, int tabDepth)
