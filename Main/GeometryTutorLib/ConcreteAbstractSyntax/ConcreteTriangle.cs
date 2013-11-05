@@ -44,6 +44,8 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point1 = SegmentA.Point1;
             Point2 = SegmentA.Point2;
             Point3 = Point1.Equals(SegmentB.Point1) || Point2.Equals(SegmentB.Point1) ? SegmentB.Point2 : SegmentB.Point1;
+
+            addSuperFigureToDependencies();
         }
 
         public ConcreteTriangle(ConcretePoint a, ConcretePoint b, ConcretePoint c) : base()
@@ -59,21 +61,22 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             isRight = isRightTriangle();
             provenRight = false;
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
+
+            addSuperFigureToDependencies();
         }
 
-        public ConcreteTriangle(List<ConcretePoint> pts) : base()
+        public ConcreteTriangle(List<ConcretePoint> pts) :
+            this(pts.ElementAt(0), pts.ElementAt(1), pts.ElementAt(2)) { }
+
+        /// </summary>
+        private void addSuperFigureToDependencies()
         {
-            Point1 = pts.ElementAt(0);
-            Point2 = pts.ElementAt(1);
-            Point3 = pts.ElementAt(2);
-
-            SegmentA = new ConcreteSegment(Point1, Point2);
-            SegmentB = new ConcreteSegment(Point1, Point3);
-            SegmentC = new ConcreteSegment(Point2, Point3);
-
-            isRight = isRightTriangle();
-            provenRight = false;
-            isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
+            SegmentA.getSuperFigures().Add(this);
+            SegmentB.getSuperFigures().Add(this);
+            SegmentC.getSuperFigures().Add(this);
+            Point1.getSuperFigures().Add(this);
+            Point2.getSuperFigures().Add(this);
+            Point3.getSuperFigures().Add(this);
         }
 
         public void SetProvenToBeRight()
