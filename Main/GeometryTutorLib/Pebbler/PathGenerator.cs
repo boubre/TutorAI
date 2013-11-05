@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace GeometryTutorLib.Pebbler
 {
@@ -10,31 +11,34 @@ namespace GeometryTutorLib.Pebbler
     {
         // Matrix to indicate if, from a node, we can reach another node.
         private bool[,] reachable;
-        private List<Path>[,] paths;
+//        private List<Path>[,] paths;
         private List<PebblerHyperEdge> edges;
+        private SharedPebbledNodeList sharedEdgeList;
 
-        private Forest<int> reversePaths;
-
-        public PathGenerator(int n)
+        public PathGenerator(int n, SharedPebbledNodeList sharedData)
         {
             reachable = new bool[n, n];
 
-            paths = new List<Path>[n, n];
-            for (int r = 0; r < paths.GetLength(0); r++)
-            {
-                for (int c = 0; c < paths.GetLength(1); c++)
-                {
-                    paths[r, c] = new List<Path>();
-                }
-            }
+            //paths = new List<Path>[n, n];
+            //for (int r = 0; r < paths.GetLength(0); r++)
+            //{
+            //    for (int c = 0; c < paths.GetLength(1); c++)
+            //    {
+            //        paths[r, c] = new List<Path>();
+            //    }
+            //}
 
             edges = new List<PebblerHyperEdge>();
             //reversePaths = new Forest<int>();
 
             problems = new List<Problem>();
+            sharedEdgeList = sharedData;
+
+            pathHashMap = new PathHashMap(n);
         }
 
         private List<Problem> problems;
+        private PathHashMap pathHashMap;
 
         //
         // If U |- n is a problem:
@@ -52,24 +56,63 @@ namespace GeometryTutorLib.Pebbler
                 Problem thisNewProblem = worklist[0];
                 worklist.RemoveAt(0);
 
-                foreach (Problem oldProblem in problems)
+                // Acquire the old problems in which we can combine with the problem under consideration
+                List<Problem> oldApplicableProblems = pathHashMap.Get(thisNewProblem.goal);
+
+                if (oldApplicableProblems != null)
                 {
-                    // Can we combine? That is, is the new goal in the old source; even more specifically,
-                    // avoid a cycle by checking that the old goal is not in the thisNew source
-                    if (oldProblem.InSource(thisNewProblem.goal) && !thisNewProblem.InSource(oldProblem.goal) && !thisNewProblem.InPath(oldProblem.goal))
+                    foreach (Problem oldProblem in oldApplicableProblems)
                     {
-                        // To avoid a cycle, avoid deducing this same node
-                        if (!oldProblem.HasGoal(thisNewProblem.goal))
+                        // Can we combine? That is, is the new goal in the old source; even more specifically,
+                        // avoid a cycle by checking that the old goal is not in the thisNew source
+                        if (!thisNewProblem.InSource(oldProblem.goal) && !thisNewProblem.InPath(oldProblem.goal))
                         {
-                            Utilities.AddUnique(worklist, oldProblem.CombineAndCreateNewProblem(thisNewProblem));
+                            // To avoid a cycle, avoid deducing this same node
+                            if (!oldProblem.HasGoal(thisNewProblem.goal))
+                            {
+                                Utilities.AddUnique(worklist, oldProblem.CombineAndCreateNewProblem(thisNewProblem));
+                            }
                         }
                     }
                 }
 
-                // Add this new edge as a problem
-                Utilities.AddUnique(problems, thisNewProblem);
+                // Add this new edge as a problem, but avoid redundancy
+                if (Utilities.AddUnique(problems, thisNewProblem))
+                {
+                    pathHashMap.Put(thisNewProblem);
+                }
             }
         }
+
+        //public void GeneratePaths(Problem firstNewProblem)
+        //{
+        //    List<Problem> worklist = new List<Problem>();
+        //    worklist.Add(firstNewProblem);
+
+        //    while (worklist.Any())
+        //    {
+        //        // Acquire a new element to work on
+        //        Problem thisNewProblem = worklist[0];
+        //        worklist.RemoveAt(0);
+
+        //        foreach (Problem oldProblem in problems)
+        //        {
+        //            // Can we combine? That is, is the new goal in the old source; even more specifically,
+        //            // avoid a cycle by checking that the old goal is not in the thisNew source
+        //            if (oldProblem.InSource(thisNewProblem.goal) && !thisNewProblem.InSource(oldProblem.goal) && !thisNewProblem.InPath(oldProblem.goal))
+        //            {
+        //                // To avoid a cycle, avoid deducing this same node
+        //                if (!oldProblem.HasGoal(thisNewProblem.goal))
+        //                {
+        //                    Utilities.AddUnique(worklist, oldProblem.CombineAndCreateNewProblem(thisNewProblem));
+        //                }
+        //            }
+        //        }
+
+        //        // Add this new edge as a problem
+        //        Utilities.AddUnique(problems, thisNewProblem);
+        //    }
+        //}
 
         //
         // Adds a hyperedge to the reachability matrix as well as the predecessor matrix
@@ -84,13 +127,31 @@ namespace GeometryTutorLib.Pebbler
             GeneratePaths(new Problem(edge.sourceNodes, edge.targetNode, edges.Count));
         }
 
+        //
+        // Consumer thread executes this method
+        //
         public void GenerateAllPaths()
         {
+            while (!sharedEdgeList.IsReadingAndWritingComplete()) // busy waiting?
+            {
+                // Acquire the new edge
+                PebblerHyperEdge edge = sharedEdgeList.ReadEdge();
+
+                // Create the corresponding problems
+                Problem newProblem = new Problem(edge.sourceNodes, edge.targetNode, problems.Count);
+
+                // Create the problem paths / solutions
+                GeneratePaths(newProblem);
+            }
+
+            Debug.WriteLine("-------------------");
             foreach (Problem problem in problems)
             {
                 Debug.WriteLine(problem.ToString());
             }
-        }
+
+            //Debug.WriteLine("Path Map (Size: " + pathHashMap.size + "): \n" + pathHashMap.ToString());
+         }
 
         public List<Problem> GetPaths()
         {
@@ -103,14 +164,14 @@ namespace GeometryTutorLib.Pebbler
         // as a node in the tree if b exists as a leaf (root b with children a_1...a_n)
         // otherwise we add a new tree rooted at b with children a_1...a_n
         //
-        public void AddToForest(PebblerHyperEdge edge)
-        {
-            if (reversePaths.AddToLeaf(edge.targetNode, edge.sourceNodes) == 0)
-            {
-                reversePaths.AddNewTree(edge.targetNode, edge.sourceNodes);
-            }
-            Debug.WriteLine("Forest: \n" + reversePaths.ToString());
-        }
+        //public void AddToForest(PebblerHyperEdge edge)
+        //{
+        //    if (reversePaths.AddToLeaf(edge.targetNode, edge.sourceNodes) == 0)
+        //    {
+        //        reversePaths.AddNewTree(edge.targetNode, edge.sourceNodes);
+        //    }
+        //    Debug.WriteLine("Forest: \n" + reversePaths.ToString());
+        //}
 
         //
         // Adds a hyperedge to the reachability matrix; [r, c] indicates is there exists a path from r -> c
@@ -127,7 +188,7 @@ namespace GeometryTutorLib.Pebbler
                 reachable[src, edge.targetNode] = true;
                 Debug.WriteLine("Setting <" + src + ", " + edge.targetNode + ">");
 
-                paths[src, edge.targetNode].Add(newP); // What about target?
+                //paths[src, edge.targetNode].Add(newP); // What about target?
             }
 
             //
@@ -172,152 +233,152 @@ namespace GeometryTutorLib.Pebbler
         //
         // Any predecessor of a source node can now reach the target.
         //
-        private void DeepPredecessorSet(int predOfSource, int source, PebblerHyperEdge edge)
-        {
-            List<Path> allNewPaths = new List<Path>();
-            List<Path> tempAllPaths = new List<Path>();
+        //private void DeepPredecessorSet(int predOfSource, int source, PebblerHyperEdge edge)
+        //{
+        //    List<Path> allNewPaths = new List<Path>();
+        //    List<Path> tempAllPaths = new List<Path>();
 
-            // This is the base for all new paths
-            foreach (Path singleRtoSrcPath in paths[predOfSource, source])
-            {
-                Path newPath = new Path(singleRtoSrcPath);
-                newPath.AddToPath(edge);
-                allNewPaths.Add(newPath);
+        //    // This is the base for all new paths
+        //    foreach (Path singleRtoSrcPath in paths[predOfSource, source])
+        //    {
+        //        Path newPath = new Path(singleRtoSrcPath);
+        //        newPath.AddToPath(edge);
+        //        allNewPaths.Add(newPath);
 
-            }
+        //    }
 
-            // Collect all other path combinations from r to otherSource
-            // Does so in a powerset-style construction
-            foreach (int otherSrc in edge.sourceNodes)
-            {
-                if (source != otherSrc)
-                {
-                    for (int c = 0; c < paths.GetLength(1); c++)
-                    {
-                        foreach (Path singleRtoOtherSrcPath in paths[c, otherSrc])
-                        {
-                            foreach (Path newPath in allNewPaths)
-                            {
-                                // Make a copy
-                                Path newPathCopy = new Path(newPath);
+        //    // Collect all other path combinations from r to otherSource
+        //    // Does so in a powerset-style construction
+        //    foreach (int otherSrc in edge.sourceNodes)
+        //    {
+        //        if (source != otherSrc)
+        //        {
+        //            for (int c = 0; c < paths.GetLength(1); c++)
+        //            {
+        //                foreach (Path singleRtoOtherSrcPath in paths[c, otherSrc])
+        //                {
+        //                    foreach (Path newPath in allNewPaths)
+        //                    {
+        //                        // Make a copy
+        //                        Path newPathCopy = new Path(newPath);
 
-                                newPathCopy.AddToPath(singleRtoOtherSrcPath);
-                                tempAllPaths.Add(newPathCopy);
-                            }
-                        }
-                    }
+        //                        newPathCopy.AddToPath(singleRtoOtherSrcPath);
+        //                        tempAllPaths.Add(newPathCopy);
+        //                    }
+        //                }
+        //            }
 
-                    // if no predecessors of the otherSrc, don't overwrite the established paths
-                    if (tempAllPaths.Any()) allNewPaths = tempAllPaths;
-                }
-            }
+        //            // if no predecessors of the otherSrc, don't overwrite the established paths
+        //            if (tempAllPaths.Any()) allNewPaths = tempAllPaths;
+        //        }
+        //    }
 
-            paths[predOfSource, edge.targetNode].AddRange(allNewPaths);
-        }
+        //    //paths[predOfSource, edge.targetNode].AddRange(allNewPaths);
+        //}
 
-        //
-        // Any successor of the target can now be reached by the source nodes
-        //
-        private void DeepSuccessorSet(int source, int succOfTarget, PebblerHyperEdge edge)
-        {
-            List<Path> allNewPaths = new List<Path>();
+        ////
+        //// Any successor of the target can now be reached by the source nodes
+        ////
+        //private void DeepSuccessorSet(int source, int succOfTarget, PebblerHyperEdge edge)
+        //{
+        //    List<Path> allNewPaths = new List<Path>();
 
-            // Collect all path combinations from src to target
-            // Does so in a powerset-style construction
+        //    // Collect all path combinations from src to target
+        //    // Does so in a powerset-style construction
 
-            // Initialize the powerset construction with the first source node
-            allNewPaths = paths[edge.sourceNodes[0], edge.targetNode];
+        //    // Initialize the powerset construction with the first source node
+        //    allNewPaths = paths[edge.sourceNodes[0], edge.targetNode];
 
-            for (int i = 1; i < edge.sourceNodes.Count; i++)
-            {
-                List<Path> tempAllPaths = new List<Path>();
-                foreach (Path newPath in allNewPaths)
-                {
-                    foreach (Path singleSrcToTargetPath in paths[edge.sourceNodes[i], edge.targetNode])
-                    {
-                        // Make a copy
-                        Path newPathCopy = new Path(newPath);
+        //    for (int i = 1; i < edge.sourceNodes.Count; i++)
+        //    {
+        //        List<Path> tempAllPaths = new List<Path>();
+        //        foreach (Path newPath in allNewPaths)
+        //        {
+        //            foreach (Path singleSrcToTargetPath in paths[edge.sourceNodes[i], edge.targetNode])
+        //            {
+        //                // Make a copy
+        //                Path newPathCopy = new Path(newPath);
 
-                        newPathCopy.AddToPath(singleSrcToTargetPath);
-                        tempAllPaths.Add(newPathCopy);
-                    }
-                }
-                allNewPaths = tempAllPaths;
-            }
+        //                newPathCopy.AddToPath(singleSrcToTargetPath);
+        //                tempAllPaths.Add(newPathCopy);
+        //            }
+        //        }
+        //        allNewPaths = tempAllPaths;
+        //    }
 
-            //
-            // Add the new edge (source to target) to all the paths
-            //
-            foreach (Path newPath in allNewPaths)
-            {
-                newPath.AddToPath(edge);
-            }
+        //    //
+        //    // Add the new edge (source to target) to all the paths
+        //    //
+        //    foreach (Path newPath in allNewPaths)
+        //    {
+        //        newPath.AddToPath(edge);
+        //    }
 
-            //
-            // For all nodes reachable from target to c, define the new path
-            //
-            for (int c = 0; c < reachable.GetLength(1); c++)
-            {
-                if (paths[edge.targetNode, c].Any())
-                {
-                    List<Path> tempAllPaths = new List<Path>();
-                    foreach (Path newPath in allNewPaths)
-                    {
-                        foreach (Path singleTargetToRPath in paths[edge.targetNode, c])
-                        {
-                            // Make a copy
-                            Path newPathCopy = new Path(newPath);
+        //    //
+        //    // For all nodes reachable from target to c, define the new path
+        //    //
+        //    for (int c = 0; c < reachable.GetLength(1); c++)
+        //    {
+        //        if (paths[edge.targetNode, c].Any())
+        //        {
+        //            List<Path> tempAllPaths = new List<Path>();
+        //            foreach (Path newPath in allNewPaths)
+        //            {
+        //                foreach (Path singleTargetToRPath in paths[edge.targetNode, c])
+        //                {
+        //                    // Make a copy
+        //                    Path newPathCopy = new Path(newPath);
 
-                            newPathCopy.AddToPath(singleTargetToRPath);
-                            tempAllPaths.Add(newPathCopy);
-                        }
-                    }
-                    paths[source, c].AddRange(tempAllPaths);
-                }
-            }
-        }
+        //                    newPathCopy.AddToPath(singleTargetToRPath);
+        //                    tempAllPaths.Add(newPathCopy);
+        //                }
+        //            }
+        //            paths[source, c].AddRange(tempAllPaths);
+        //        }
+        //    }
+        //}
 
         public override string ToString()
         {
             StringBuilder s = new StringBuilder();
 
             // Print the reachability matrix
-            //s.Append("   ");
-            //for (int c = 0; c < reachable.GetLength(1); c++)
-            //{
-            //    s.Append((c % 10) + " ");
-            //}
-            //s.AppendLine();
-            //for (int r = 0; r < reachable.GetLength(0); r++)
-            //{
-            //    s.Append(r + ": ");
-            //    for (int c = 0; c < reachable.GetLength(1); c++)
-            //    {
-            //        s.Append((reachable[r, c] ? "T" : "F") + " ");
-            //    }
-            //    s.AppendLine();
-            //}
+            s.Append("   ");
+            for (int c = 0; c < reachable.GetLength(1); c++)
+            {
+                s.Append((c % 10) + " ");
+            }
+            s.AppendLine();
+            for (int r = 0; r < reachable.GetLength(0); r++)
+            {
+                s.Append(r + ": ");
+                for (int c = 0; c < reachable.GetLength(1); c++)
+                {
+                    s.Append((reachable[r, c] ? "T" : "F") + " ");
+                }
+                s.AppendLine();
+            }
 
 
             //
             // Print all paths
             //
-            s.AppendLine();
-            for (int r = 0; r < reachable.GetLength(0); r++)
-            {
-                for (int c = 0; c < reachable.GetLength(1); c++)
-                {
-                    if (paths[r, c].Any())
-                    {
-                        s.AppendLine("<" + r + ", " + c + ">: ");
-                        foreach (Path path in paths[r, c])
-                        {
-                            s.AppendLine("\t" + path.ToString());
-                        }
-                    }
-                }
-                s.AppendLine();
-            }
+            //s.AppendLine();
+            //for (int r = 0; r < reachable.GetLength(0); r++)
+            //{
+            //    for (int c = 0; c < reachable.GetLength(1); c++)
+            //    {
+            //        if (paths[r, c].Any())
+            //        {
+            //            s.AppendLine("<" + r + ", " + c + ">: ");
+            //            foreach (Path path in paths[r, c])
+            //            {
+            //                s.AppendLine("\t" + path.ToString());
+            //            }
+            //        }
+            //    }
+            //    s.AppendLine();
+            //}
 
             return s.ToString();
         }

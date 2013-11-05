@@ -17,9 +17,11 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment SegmentA { get; private set; }
         public ConcreteSegment SegmentB { get; private set; }
         public ConcreteSegment SegmentC { get; private set; }
-        public bool isRight             { get; private set; }
+        protected bool isRight;
+        public bool provenRight { get; private set; }
         public ConcreteAngle rightAngle { get; private set; }
-        public bool isIsosceles         { get; private set; }
+        protected bool isIsosceles;
+        public bool provenIsosceles { get; private set; }
         private readonly double EPSILON = 0.00001;
 
 
@@ -36,6 +38,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             SegmentB = b;
             SegmentC = c;
             isRight = isRightTriangle();
+            provenRight = false;
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
 
             Point1 = SegmentA.Point1;
@@ -54,6 +57,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             SegmentC = new ConcreteSegment(b, c);
 
             isRight = isRightTriangle();
+            provenRight = false;
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
         }
 
@@ -68,7 +72,13 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             SegmentC = new ConcreteSegment(Point2, Point3);
 
             isRight = isRightTriangle();
+            provenRight = false;
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
+        }
+
+        public void SetProvenToBeRight()
+        {
+            provenRight = true;
         }
 
         public List<ConcretePoint> GetPoints()
@@ -237,6 +247,45 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             if (!cs.HasPoint(Point3)) return Point3;
 
             return null;
+        }
+
+        public ConcretePoint OtherPoint(ConcretePoint p1, ConcretePoint p2)
+        {
+            if (SegmentA.HasPoint(p1) && SegmentA.HasPoint(p2)) return OtherPoint(SegmentA);
+            if (SegmentB.HasPoint(p1) && SegmentB.HasPoint(p2)) return OtherPoint(SegmentB);
+            if (SegmentC.HasPoint(p1) && SegmentC.HasPoint(p2)) return OtherPoint(SegmentC);
+
+            return null;
+        }
+
+        //
+        // Returns the longest side of the triangle; arbitary choice if equal and longest
+        //
+        public ConcreteSegment GetLongestSide()
+        {
+            if (SegmentA.Length > SegmentB.Length)
+            {
+                if (SegmentA.Length > SegmentC.Length)
+                {
+                    return SegmentA;
+                }
+            }
+            else if (SegmentB.Length > SegmentC.Length)
+            {
+                return SegmentB;
+            }
+
+            return SegmentC;
+        }
+
+        //
+        // return the hypotenuse if we know we have a right triangle
+        //
+        public ConcreteSegment GetHypotenuse()
+        {
+            if (!isRight) return null;
+
+            return GetLongestSide();
         }
 
         //

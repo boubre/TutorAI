@@ -194,7 +194,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
             Utilities.AddUniqueList<int>(newSE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newSE);
+            return Simplification.Instantiate(antecedent, newSE);
         }
 
         private static KeyValuePair<List<GroundedClause>, GroundedClause> PerformAngleSubstitution(AngleMeasureEquation eq, AngleMeasureEquation subbedEq,
@@ -219,7 +219,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Add all direct algebraic predecessors to the list to prevent cycling of equation substitutions
             Utilities.AddUniqueList<int>(newAE.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAE);
+            return Simplification.Instantiate(antecedent, newAE);
         }
     }
 }

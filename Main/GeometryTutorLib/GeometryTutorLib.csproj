@@ -75,6 +75,8 @@
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Parallel.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Perpendicular.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
     <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
     <Compile Include="ConcreteAbstractSyntax\EqualSegments.cs" />
@@ -109,11 +111,8 @@
     <Compile Include="Hypergraph\HyperEdge.cs" />
     <Compile Include="Hypergraph\Hypergraph.cs" />
     <Compile Include="Hypergraph\HyperNode.cs" />
-    <Compile Include="Hypergraph\PathFinding\FibonacciHeap.cs" />
-    <Compile Include="Hypergraph\PathFinding\MinHeap.cs" />
-    <Compile Include="Hypergraph\PathFinding\Suurballe.cs" />
-    <Compile Include="Hypergraph\PathGraph.cs" />
     <Compile Include="Hypergraph\TransposeHyperEdge.cs" />
+    <Compile Include="Pebbler\PathHashMap.cs" />
     <Compile Include="Pebbler\Forest.cs" />
     <Compile Include="Pebbler\HeapNode.cs" />
     <Compile Include="Pebbler\MaxHeap.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Pebbler\PebblerHyperNode.cs" />
     <Compile Include="Pebbler\PebblerTransposeHyperEdge.cs" />
     <Compile Include="Pebbler\Problem.cs" />
+    <Compile Include="Pebbler\SharedPebbledNodeList.cs" />
     <Compile Include="Pebbler\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />

@@ -20,11 +20,12 @@ namespace GeometryTutorLib
         }
 
         // Makes a list containing a single element
-        public static void AddUnique<T>(List<T> list, T obj)
+        public static bool AddUnique<T>(List<T> list, T obj)
         {
-            if (list.Contains(obj)) return;
+            if (list.Contains(obj)) return false;
 
             list.Add(obj);
+            return true;
         }
 
         // Makes a list containing a single element

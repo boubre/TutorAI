@@ -79,19 +79,19 @@ namespace Geometry_Testbed
             clauses.Add(segment);
             clauses.Add(mid);
 
-            Instantiator instantiator = new Instantiator();
-            Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
+            //Instantiator instantiator = new Instantiator();
+            //Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
 
-            graph.DebugDumpClauses();
+            //graph.DebugDumpClauses();
 
-            PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
+            //PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
 
-            pebblerGraph.DebugDumpClauses();
+            //pebblerGraph.DebugDumpClauses();
 
-            int[] srcArr = { 2 };
-            List<int> src = new List<int>(srcArr);
+            //int[] srcArr = { 2 };
+            //List<int> src = new List<int>(srcArr);
 
-            pebblerGraph.GenerateAllPaths(src);
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void TestFigureSix()
@@ -197,24 +197,25 @@ namespace Geometry_Testbed
             clauses.Add(mid1);
             clauses.Add(mid2);
 
-            Instantiator instantiator = new Instantiator();
-            Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
+            //Instantiator instantiator = new Instantiator();
+            //Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
 
-            //graph.ConstructGraph();
-            //graph.ConstructGraphRepresentation();
-            graph.DebugDumpClauses();
+            ////graph.ConstructGraph();
+            ////graph.ConstructGraphRepresentation();
+            //graph.DebugDumpClauses();
 
-            PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
+            //PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
 
-            int[] srcArr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-            List<int> src = new List<int>(srcArr);
+            //int[] srcArr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+            //List<int> src = new List<int>(srcArr);
 
-            pebblerGraph.GenerateAllPaths(src);
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         static void Main(string[] args)
         {
-            TestMidpointTheoremFigure();
+            HLTest1();
+            //TestMidpointTheoremFigure();
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
@@ -222,6 +223,57 @@ namespace Geometry_Testbed
             //TestSimplification();
             //TestSimplificationConstants();
             //TestSimpleSubstitution();
+        }
+
+        private static void HLTest1()
+        {
+            //
+            // Tri ABC is congruent to Tri DEF
+            //
+            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
+            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
+            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
+            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
+            ConcreteSegment s12 = new ConcreteSegment(p12, p13);
+            ConcreteTriangle t1 = new ConcreteTriangle(p11, p12, p13);
+            t1.SetProvenToBeRight();
+
+            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
+            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
+            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
+            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
+            ConcreteSegment s22 = new ConcreteSegment(p22, p23);
+            ConcreteTriangle t2 = new ConcreteTriangle(p21, p22, p23);
+            t2.SetProvenToBeRight();
+
+            //
+            // Congruent Segments and Angle
+            //
+            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
+
+            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(p11);
+            clauses.Add(p12);
+            clauses.Add(p13);
+            clauses.Add(s11);
+            clauses.Add(s12);
+            clauses.Add(t1);
+
+            clauses.Add(p21);
+            clauses.Add(p22);
+            clauses.Add(p23);
+            clauses.Add(s21);
+            clauses.Add(s22);
+            clauses.Add(t2);
+
+            clauses.Add(ccs1);
+            clauses.Add(ccs2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+
         }
 
         private static void TestSimpleSubstitution()
@@ -255,7 +307,7 @@ namespace Geometry_Testbed
 
             SegmentEquation se = new SegmentEquation(sumr, sumr);
 
-            Simplification.Instantiate(se);
+            //Simplification.Instantiate(se);
         }
 
         private static void TestSimplification()
@@ -279,7 +331,7 @@ namespace Geometry_Testbed
 
             SegmentEquation se = new SegmentEquation(add3, product);
 
-            Simplification.Instantiate(se);
+           // Simplification.Instantiate(se);
         }
 
         private static void TestStraightAngleDefinition()

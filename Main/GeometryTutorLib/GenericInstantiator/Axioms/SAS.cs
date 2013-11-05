@@ -242,7 +242,8 @@ namespace GeometryTutorLib.GenericInstantiator
             // for each pair of congruent segments, is the given angle the included angle?
             for (int i = 0; i < segmentPairs.Count; i++)
             {
-                for (int j = 0; j < anglePairs.Count; j++)
+                // CTA: Changed from j = 0; so the next condition is pointless
+                for (int j = i + 1; j < segmentPairs.Count; j++)
                 {
                     // Don't compare a set of congruent segments to itself
                     if (i != j)

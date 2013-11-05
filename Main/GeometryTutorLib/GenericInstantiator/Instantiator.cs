@@ -113,7 +113,6 @@ namespace GeometryTutorLib.GenericInstantiator
                     //List<KeyValuePair<List<GroundedClause>, GroundedClause>> returnedEqs= Substitution.Instantiate(clause);
 
                     HandleDeducedClauses(worklist, Substitution.Instantiate(clause));
-                    HandleDeducedClauses(worklist, Simplification.Instantiate(clause));
                     HandleDeducedClauses(worklist, ConcreteCongruent.Instantiate(clause));
                 }
                 else if (clause is ConcreteMidpoint)
@@ -136,7 +135,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, SSS.Instantiate(clause));
                     HandleDeducedClauses(worklist, SAS.Instantiate(clause));
                     //HandleDeducedClauses(worklist, ASA.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
+                    HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, ConcreteCongruent.Instantiate(clause));
                 }
@@ -147,7 +146,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, SSS.Instantiate(clause));
                     HandleDeducedClauses(worklist, SAS.Instantiate(clause));
                     //HandleDeducedClauses(worklist, ASA.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
+                    HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                 }
             }

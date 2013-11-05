@@ -17,16 +17,18 @@ namespace GeometryTutorLib.GenericInstantiator
         //     A + B = B + C -> A = C
         //     A + B = 2B + C -> A = B + C
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static KeyValuePair<List<GroundedClause>, GroundedClause> Instantiate(List<GroundedClause> originalAntecedent, GroundedClause originalConsequent)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            Equation eq = c as Equation;
+            Equation eq = originalConsequent as Equation;
 
             // Do we have an equation?
-            if (eq == null) return newGrounded;
+            if (eq == null) throw new ArgumentException();
 
-            // Is the equation 0 = 0?
-            if (eq.lhs.Equals(new NumericValue(0)) && eq.rhs.Equals(new NumericValue(0))) return newGrounded;
+            // Is the equation 0 = 0? This should be allowed at it indicates a tautology
+            if (eq.lhs.Equals(new NumericValue(0)) && eq.rhs.Equals(new NumericValue(0)))
+            {
+                return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, originalConsequent);
+            }
 
             //
             // Ideally, flattening would:
@@ -55,27 +57,30 @@ namespace GeometryTutorLib.GenericInstantiator
             Equation inflated = null;
             GroundedClause singleLeftExp = InflateEntireSide(across.lhsExps);
             GroundedClause singleRightExp = InflateEntireSide(across.rhsExps);
+            string newJustification = eq.GetJustification() + " and " + NAME;
             if (eq is SegmentEquation)
             {
-                inflated = new SegmentEquation(singleLeftExp, singleRightExp, NAME);
+                inflated = new SegmentEquation(singleLeftExp, singleRightExp, newJustification);
             }
             else if (eq is AngleMeasureEquation)
             {
-                inflated = new SegmentEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), NAME);
+                inflated = new SegmentEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), newJustification);
             }
 
-            // Did we actually perform any simplification? If not, do not generate a new equation.
-            if (!inflated.Equals(eq))
+            // If simplifying didn't do anything, return the original equation
+            if (inflated.Equals(eq))
             {
-                // Simplified equations should inherit the algebraic predecessors of the the original equation as well as the original node
-                Utilities.AddUniqueList<int>(inflated.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
-                Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.equationId);
-
-                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(eq);
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, inflated));
+                return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, originalConsequent);
             }
 
-            return newGrounded;
+            //
+            // Did we actually perform any simplification? If not, do not generate a new equation.
+            //
+            // Simplified equations should inherit the algebraic predecessors of the the original equation as well as the original node
+            Utilities.AddUniqueList<int>(inflated.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
+            Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.equationId);
+
+            return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, inflated);
         }
 
         //
