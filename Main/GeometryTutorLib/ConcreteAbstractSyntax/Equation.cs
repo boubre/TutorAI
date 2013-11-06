@@ -95,5 +95,43 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         {
             return "Equation(" + lhs + " = " + rhs + "): " + justification;
         }
+
+        private static readonly string SEGMENT_NAME = "Congruent Segments Imply Equal Lengths";
+        private static readonly string ANGLE_NAME = "Congruent Angles Imply Equal Measure";
+
+        //
+        // Congruent(Segment(A, B), Segment(C, D)) -> AB = CD
+        // Congruent(Angle(A, B, C), Angle(D, E, F)) -> m\angle ABC = m\angle DEF
+        //
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (!(clause is ConcreteCongruentSegments || clause is ConcreteCongruentAngles)) return newGrounded;
+
+            // For hyperedge construction
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(clause);
+
+            // Congruent(Segment(A, B), Segment(C, D)) -> AB = CD
+            if (clause is ConcreteCongruentAngles)
+            {
+                ConcreteCongruentAngles ccas = clause as ConcreteCongruentAngles;
+
+                AngleMeasureEquation angEq = new AngleMeasureEquation(ccas.ca1.DeepCopy(), ccas.ca2.DeepCopy(), ANGLE_NAME);
+
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+            }
+            // Congruent(Angle(A, B, C), Angle(D, E, F)) -> m\angle ABC = m\angle DEF
+            else if (clause is ConcreteCongruentSegments)
+            {
+                ConcreteCongruentSegments ccss = clause as ConcreteCongruentSegments;
+
+                SegmentEquation segEq = new SegmentEquation(ccss.cs1.DeepCopy(), ccss.cs2.DeepCopy(), SEGMENT_NAME);
+
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, segEq));
+            }
+
+            return newGrounded;
+        }
     }
 }

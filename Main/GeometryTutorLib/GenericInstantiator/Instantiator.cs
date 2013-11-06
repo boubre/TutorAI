@@ -87,6 +87,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 if (clause is ConcreteAngle)
                 {
+                    HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
                     //HandleDeducedClauses(worklist, ConcreteAngle.Instantiate(null, clause));
                     //HandleDeducedClauses(worklist, AngleBisector.Instantiate(clause));
                 }
@@ -129,6 +130,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     //HandleDeducedClauses(worklist, ASA.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
                     HandleDeducedClauses(worklist, ConcreteCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, Equation.Instantiate(clause));
                 }
                 else if (clause is ConcreteCongruentSegments)
                 {
@@ -138,6 +140,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, ConcreteCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, Equation.Instantiate(clause));
                 }
                 else if (clause is ConcreteTriangle)
                 {
@@ -148,6 +151,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     //HandleDeducedClauses(worklist, ASA.Instantiate(clause));
                     HandleDeducedClauses(worklist, HypotenuseLeg.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
                 }
             }
 

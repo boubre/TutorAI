@@ -32,6 +32,9 @@ namespace GeometryTutorLib.GenericInstantiator
             InMiddle im = new InMiddle(cm.midpoint, cm.segment, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
 
+
+            // CTA: BEGIN deletion
+
             //
             // Midpoint(M, Segment(A, B)) -> AM = MB
             //
@@ -48,6 +51,8 @@ namespace GeometryTutorLib.GenericInstantiator
             SegmentEquation generalEq = new SegmentEquation(sum, cm.segment, NAME);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, generalEq));
+
+            // CTA: END deletion
 
             //
             // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))

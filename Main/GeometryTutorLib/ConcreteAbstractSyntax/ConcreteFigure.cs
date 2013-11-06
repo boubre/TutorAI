@@ -8,7 +8,8 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     public abstract class ConcreteFigure : GroundedClause
     {
         protected List<ConcreteFigure> superFigures;
-                protected ConcreteFigure()
+        
+        protected ConcreteFigure()
         {
             superFigures = new List<ConcreteFigure>();
         }

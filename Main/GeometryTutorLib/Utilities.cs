@@ -41,6 +41,12 @@ namespace GeometryTutorLib
         {
             return b == 0 ? a : GCD(b, a % b);
         }
+
+        public static readonly double EPSILON = 0.00001;
+        public static bool CompareValues(double a, double b)
+        {
+            return Math.Abs(a - b) < EPSILON;
+        }
     }
 
     public class Stopwatch

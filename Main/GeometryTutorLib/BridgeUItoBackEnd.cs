@@ -28,8 +28,25 @@ namespace GeometryTutorLib
 
             Hypergraph.Hypergraph<ConcreteAbstractSyntax.GroundedClause, int> graph = instantiator.Instantiate(figure);
 
-            graph.DebugDumpClauses();
+            graph.DumpNonEquationClauses();
+            graph.DumpEquationClauses();
+            graph.DumpClauseEdges();
 
+           // GeneratePaths(graph);
+
+            // Stop timing
+            stopwatch.Stop();
+
+            TimeSpan ts = stopwatch.Elapsed;
+            // Format and display the TimeSpan value. 
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+
+            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
+        }
+
+        private static void GeneratePaths(Hypergraph.Hypergraph<ConcreteAbstractSyntax.GroundedClause, int> graph)
+        {
             Pebbler.PathGenerator pathGenerator = null;
 
             // Create the Pebbler version of the hypergraph (all integer representation)
@@ -44,8 +61,8 @@ namespace GeometryTutorLib
 
             // For testing purposes, pebble from this start node only
             int start = 0;
-            int stop = 37; // figure.Count;
-            stop = stop < graph.Size() ? stop : graph.Size() - 1; 
+            int stop = 50;
+            stop = stop < graph.Size() ? stop : graph.Size() - 1;
             List<int> srcs = new List<int>();
             for (int i = start; i <= stop; i++)
             {
@@ -80,36 +97,16 @@ namespace GeometryTutorLib
                 Debug.WriteLine(e);
             }
 
-            // Pebble
-            //pebblerGraph.GenerateAllPaths();
-
-            // Generate the paths found.
-            //Debug.WriteLine("All Paths:");
-            //pathGenerator.GenerateAllPaths();
-
             //
             // End Analysis Code
             //
-
-            // Stop timing
-            stopwatch.Stop();
-
             Debug.WriteLine("Vertices after pebbling:");
             for (int i = 0; i < pebblerGraph.vertices.Length; i++)
             {
                 Debug.WriteLine(pebblerGraph.vertices[i].id + ": pebbled(" + pebblerGraph.vertices[i].pebbled + ")");
             }
 
-            TimeSpan ts = stopwatch.Elapsed;
-            // Format and display the TimeSpan value. 
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-
-            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
             Debug.WriteLine("Number of Unique Paths / Problems: " + pathGenerator.GetPaths().Count);
-            //
-            // End timing Code
-            //
         }
     }
 }

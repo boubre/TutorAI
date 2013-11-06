@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
     /// <summary>
     /// Represents an angle (degrees), defined by 3 points.
     /// </summary>
-    public class ConcreteAngle : GroundedClause
+    public class ConcreteAngle : ConcreteFigure
     {
         public ConcretePoint A { get; private set; }
         public ConcretePoint B { get; private set; }
@@ -57,6 +57,8 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             this.A = pts.ElementAt(0);
             this.B = pts.ElementAt(1);
             this.C = pts.ElementAt(2);
+            ray1 = new ConcreteSegment(A, B);
+            ray2 = new ConcreteSegment(B, C);
             this.measure = toDegrees(findAngle(A, B, C));
         }
 
@@ -154,6 +156,17 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return null;
         }
 
+        //
+        // Given one ray of the angle, return the other ray
+        //
+        public ConcreteSegment OtherRay(ConcreteSegment seg)
+        {
+            if (ray1.Equals(seg)) return ray2;
+            if (ray2.Equals(seg)) return ray1;
+
+            return null;
+        }
+
         public bool IsIncludedAngle(ConcreteSegment seg1, ConcreteSegment seg2)
         {
             return seg1.Equals(ray1) && seg2.Equals(ray2) || seg1.Equals(ray2) && seg2.Equals(ray1);
@@ -175,6 +188,19 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public override bool Contains(GroundedClause target)
         {
             return this.Equals(target);
+        }
+
+        //
+        // Is the given angle the same as this angle? that is, the vertex is the same and the rays coincide
+        // (not necessarily with the same endpoints)
+        // Can't just be collinear, must be collinear and on same side of an angle
+        //
+        public bool Equates(ConcreteAngle thatAngle)
+        {
+            if (!this.GetVertex().Equals(thatAngle.GetVertex())) return false;
+
+            return (ray1.RayOverlays(thatAngle.ray1) && ray2.RayOverlays(thatAngle.ray2)) ||
+                   (ray2.RayOverlays(thatAngle.ray1) && ray1.RayOverlays(thatAngle.ray2));
         }
 
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause pred, GroundedClause c)

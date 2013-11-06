@@ -83,7 +83,7 @@ namespace GeometryTutorLib.Pebbler
                 }
             }
 
-           //System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + this +  problemToInsert + " = " + newProblem + "\n-----------------------");
+//System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + this +  problemToInsert + " = " + newProblem + "\n-----------------------");
 
             return newProblem;
         }

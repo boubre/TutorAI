@@ -21,6 +21,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteCongruent() : base()
         {
             congruentId = -1;
+            directCongruentPredecessors = new List<int>();
         }
 
         public virtual int SharesNumClauses(ConcreteCongruent thatCC)

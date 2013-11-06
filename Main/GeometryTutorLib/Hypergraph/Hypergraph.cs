@@ -238,6 +238,84 @@ namespace GeometryTutorLib.Hypergraph
             Debug.WriteLine(edgeStr);
         }
 
+        public void DumpNonEquationClauses()
+        {
+            Debug.WriteLine("Non-Equation Clauses:\n");
+
+            StringBuilder edgeStr = new StringBuilder();
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                if (!(vertices[v].data is Equation))
+                {
+                    if (vertices[v].predecessorEdges.Any())
+                    {
+                        edgeStr = new StringBuilder();
+                        edgeStr.Append("{ ");
+                        foreach (int s in vertices[v].predecessorEdges[0].targetNodes)
+                        {
+                            edgeStr.Append(s + " ");
+                        }
+                        edgeStr.Remove(edgeStr.Length - 1, 1);
+                        edgeStr.Append(" }");
+                    }
+
+                    Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
+                }
+            }
+        }
+
+        public void DumpEquationClauses()
+        {
+            Debug.WriteLine("Equation Clauses:\n");
+
+            StringBuilder edgeStr = new StringBuilder();
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                if (vertices[v].data is Equation)
+                {
+                    if (vertices[v].predecessorEdges.Any())
+                    {
+                        edgeStr = new StringBuilder();
+                        edgeStr.Append("{ ");
+                        foreach (int s in vertices[v].predecessorEdges[0].targetNodes)
+                        {
+                            edgeStr.Append(s + " ");
+                        }
+                        edgeStr.Remove(edgeStr.Length - 1, 1);
+                        edgeStr.Append(" }");
+                    }
+
+                    Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
+                }
+            }
+        }
+
+        public void DumpClauseEdges()
+        {
+            Debug.WriteLine("\n Clause Edges: ");
+
+            StringBuilder edgeStr = new StringBuilder();
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                if (vertices[v].successorEdges.Any())
+                {
+                    edgeStr.Append(v + ": {");
+                    foreach (HyperEdge<A> edge in vertices[v].successorEdges)
+                    {
+                        edgeStr.Append(" { ");
+                        foreach (int s in edge.sourceNodes)
+                        {
+                            edgeStr.Append(s + " ");
+                        }
+                        edgeStr.Append("} -> " + edge.targetNode + ", ");
+                    }
+                    edgeStr.Remove(edgeStr.Length - 2, 2);
+                    edgeStr.Append(" }\n");
+                }
+            }
+            Debug.WriteLine(edgeStr);
+        }
+
         //// Finds all source nodes (nodes that have no predecessor).
         //private void IdentifyAllSourceNodes()
         //{

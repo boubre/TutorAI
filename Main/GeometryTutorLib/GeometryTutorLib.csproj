@@ -104,6 +104,7 @@
     <Compile Include="GenericInstantiator\Definitions\StraightAngleDefinition.cs" />
     <Compile Include="GenericInstantiator\GenericRule.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
+    <Compile Include="GenericInstantiator\Theorems\ExteriorAngleEqualSumRemoteAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
     <Compile Include="GenericInstantiator\Theorems\SumAnglesInTriangle.cs" />
     <Compile Include="GenericInstantiator\Theorems\Theorem.cs" />
@@ -118,7 +119,6 @@
     <Compile Include="Pebbler\MaxHeap.cs" />
     <Compile Include="Pebbler\Path.cs" />
     <Compile Include="Pebbler\PathGenerator.cs" />
-    <Compile Include="Pebbler\Pebbler.cs" />
     <Compile Include="Pebbler\PebblerHyperEdge.cs" />
     <Compile Include="Pebbler\PebblerHypergraph.cs" />
     <Compile Include="Pebbler\PebblerHyperNode.cs" />

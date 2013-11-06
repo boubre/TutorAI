@@ -19,17 +19,7 @@ namespace GeometryTutorLib.Pebbler
         {
             reachable = new bool[n, n];
 
-            //paths = new List<Path>[n, n];
-            //for (int r = 0; r < paths.GetLength(0); r++)
-            //{
-            //    for (int c = 0; c < paths.GetLength(1); c++)
-            //    {
-            //        paths[r, c] = new List<Path>();
-            //    }
-            //}
-
             edges = new List<PebblerHyperEdge>();
-            //reversePaths = new Forest<int>();
 
             problems = new List<Problem>();
             sharedEdgeList = sharedData;
@@ -55,6 +45,8 @@ namespace GeometryTutorLib.Pebbler
                 // Acquire a new element to work on
                 Problem thisNewProblem = worklist[0];
                 worklist.RemoveAt(0);
+
+
 
                 // Acquire the old problems in which we can combine with the problem under consideration
                 List<Problem> oldApplicableProblems = pathHashMap.Get(thisNewProblem.goal);

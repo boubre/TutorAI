@@ -142,8 +142,10 @@ namespace GeometryTutorLib.GenericInstantiator
                                                                                                    List<ConcreteCongruentSegments> applicSegments,
                                                                                                    List<ConcreteCongruentAngles> applicAngles)
         {
-
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            // Has this congruence been established before? If so, do not deduce it again.
+            if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
 
             // Check all other segments
             foreach (ConcreteCongruentSegments ccs in unifyCandSegments)
@@ -180,10 +182,14 @@ namespace GeometryTutorLib.GenericInstantiator
                     triangleTwo.Add(pair.Value);
                 }
 
+                // Indicate that these two triangles are congruent to avoid deducing this again later.
+                ct1.AddCongruentTriangle(ct2);
+                ct2.AddCongruentTriangle(ct1);
+
                 ConcreteCongruentTriangles ccts = new ConcreteCongruentTriangles(new ConcreteTriangle(triangleOne),
                                                                                  new ConcreteTriangle(triangleTwo), NAME);
-//                int congreuntKey = deducedCongruentTriangles.Count;
-//                deducedCongruentTriangles.Add(ccts);
+                //                int congreuntKey = deducedCongruentTriangles.Count;
+                //                deducedCongruentTriangles.Add(ccts);
 
                 // Hypergraph
                 List<GroundedClause> antecedent = new List<GroundedClause>(congruences);

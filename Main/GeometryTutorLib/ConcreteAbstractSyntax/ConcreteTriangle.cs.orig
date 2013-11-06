@@ -17,16 +17,12 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment SegmentA { get; private set; }
         public ConcreteSegment SegmentB { get; private set; }
         public ConcreteSegment SegmentC { get; private set; }
-        public ConcreteAngle AngleA { get; private set; }
-        public ConcreteAngle AngleB { get; private set; }
-        public ConcreteAngle AngleC { get; private set; }
         protected bool isRight;
         public bool provenRight { get; private set; }
         public ConcreteAngle rightAngle { get; private set; }
         protected bool isIsosceles;
         public bool provenIsosceles { get; private set; }
         private readonly double EPSILON = 0.00001;
-        private List<ConcreteTriangle> congruencePairs;
 
 
         /// <summary>
@@ -49,12 +45,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point2 = SegmentA.Point2;
             Point3 = Point1.Equals(SegmentB.Point1) || Point2.Equals(SegmentB.Point1) ? SegmentB.Point2 : SegmentB.Point1;
 
-            AngleA = new ConcreteAngle(Point1, Point2, Point3);
-            AngleB = new ConcreteAngle(Point2, Point3, Point1);
-            AngleC = new ConcreteAngle(Point3, Point1, Point2);
-
-            congruencePairs = new List<ConcreteTriangle>();
-
             addSuperFigureToDependencies();
         }
 
@@ -72,18 +62,19 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             provenRight = false;
             isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
 
-            AngleA = new ConcreteAngle(Point1, Point2, Point3);
-            AngleB = new ConcreteAngle(Point2, Point3, Point1);
-            AngleC = new ConcreteAngle(Point3, Point1, Point2);
-
-            congruencePairs = new List<ConcreteTriangle>();
-
             addSuperFigureToDependencies();
         }
 
         public ConcreteTriangle(List<ConcretePoint> pts) :
             this(pts.ElementAt(0), pts.ElementAt(1), pts.ElementAt(2)) { }
 
+<<<<<<< HEAD
+            isRight = isRightTriangle();
+            provenRight = false;
+            isIsosceles = false; // Being isosceles must be given in the problem IsIsosceles();
+=======
+        /// <summary>
+        /// Should only be called by the constructor to add this triangle as a super figure to the segments and points.
         /// </summary>
         private void addSuperFigureToDependencies()
         {
@@ -93,9 +84,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             Point1.getSuperFigures().Add(this);
             Point2.getSuperFigures().Add(this);
             Point3.getSuperFigures().Add(this);
-            AngleA.getSuperFigures().Add(this);
-            AngleB.getSuperFigures().Add(this);
-            AngleC.getSuperFigures().Add(this);
+>>>>>>> 1992c78d5b0aa32eac0bd049ecc51a926fa25b85
         }
 
         public void SetProvenToBeRight()
@@ -210,30 +199,9 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return SegmentA.Equals(cs) || SegmentB.Equals(cs) || SegmentC.Equals(cs);
         }
 
-        // Does this triangle have this specific angle with these vertices
-        private bool HasThisSpecificAngle(ConcreteAngle ca)
-        {
-            return (HasSegment(ca.ray1) && HasSegment(ca.ray2)); // Could call SharedVertex
-        }
-
-        // Does the given angle correspond to any of the angles?
-        public bool ExtendsAnAngle(ConcreteAngle ca)
-        {
-            if (AngleA.Equates(ca)) return true;
-            if (AngleB.Equates(ca)) return true;
-            if (AngleC.Equates(ca)) return true;
-
-            return false;
-        }
-
-        //
-        // Check directly if this angle is in the triangle
-        // Also check indirectly that the given angle is an extension (subangle) of this angle
-        // That is, all the rays are shared and the vertex is shared, but the endpoint of rays may be different
-        //
         public bool HasAngle(ConcreteAngle ca)
         {
-            return HasThisSpecificAngle(ca) || ExtendsAnAngle(ca);
+            return (HasSegment(ca.ray1) && HasSegment(ca.ray2)); // Could call SharedVertex
         }
 
         public ConcreteSegment SharesSide(ConcreteTriangle cs)
@@ -281,24 +249,6 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             // If the shared vertex between the segments is the vertex of this given angle, then
             // the angle is the included angle as desired
             return s1.SharedVertex(s2).Equals(a.GetVertex());
-        }
-
-        // Of the congruent pair, return the segment that applies to this triangle
-        public ConcreteSegment GetSegment(ConcreteCongruentSegments ccss)
-        {
-            if (HasSegment(ccss.cs1)) return ccss.cs1;
-            if (HasSegment(ccss.cs2)) return ccss.cs2;
-
-            return null;
-        }
-
-        public bool HasPoint(ConcretePoint p)
-        {
-            if (Point1.Equals(p)) return true;
-            if (Point2.Equals(p)) return true;
-            if (Point3.Equals(p)) return true;
-
-            return false;
         }
         
         public ConcretePoint OtherPoint(ConcreteSegment cs)
@@ -362,8 +312,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         }
 
         // 
-        // Triangle(A, B, C) -> Segment(A, B), Segment(B, C), Segment(A, C),
-        //                      Angle(A, B, C), Angle(B, C, A), Angle(C, A, B)
+        // Triangle(A, B, C) -> Segment(A, B), Segment(B, C), Segment(A, C)
         //
         // RightTriangle(A, B, C) -> Segment(A, B), Segment(B, C), Segment(A, C), m\angle ABC = 90^o
         //
@@ -383,108 +332,10 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentB));
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentC));
 
-            tri.AngleA.SetJustification("Intrinsic");
-            tri.AngleB.SetJustification("Intrinsic");
-            tri.AngleC.SetJustification("Intrinsic");
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleA));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleB));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleC));
-
             // If this is a right triangle, generate the FOL equation
             if (tri.isRight) newGrounded.AddRange(ConcreteAngle.Instantiate(tri, tri.rightAngle));
 
             return newGrounded;
-        }
-
-        private ConcreteAngle GetAngleWithVertex(ConcretePoint p)
-        {
-            if (AngleA.GetVertex().Equals(p)) return AngleA;
-            if (AngleB.GetVertex().Equals(p)) return AngleB;
-            if (AngleC.GetVertex().Equals(p)) return AngleC;
-
-            return null;
-        }
-
-        //
-        // Is the given angle directly exterior to this triangle?
-        //
-        // The triangle must share a side with the angle, the non-shared side must extend the adjacent side
-        public bool HasExteriorAngle(ConcreteAngle extAngle)
-        {
-            // Disallow any angle in this triangle (since it technically satisfies the requirements)
-            if (HasAngle(extAngle)) return false;
-
-            // Determine which angle in the triangle has the same vertex as the input angle
-            ConcreteAngle triangleAngle = GetAngleWithVertex(extAngle.GetVertex());
-
-            if (triangleAngle == null) return false;
-
-            // Acquire the ray that is shared between the angle and the triangle
-            ConcreteSegment sharedSegment = triangleAngle.SharedRay(extAngle);
-
-            if (sharedSegment == null) return false;
-
-            // Acquire the other side of the triangle
-            ConcreteSegment otherTriangleSegment = triangleAngle.OtherRay(sharedSegment);
-
-            if (otherTriangleSegment == null) return false;
-
-            // Acquire the ray that is not shared
-            ConcreteSegment exteriorSegment = extAngle.OtherRay(sharedSegment);
-
-            if (exteriorSegment == null) return false;
-
-            //           DISALLOW                                     ALLOW
-            //              /                                           /
-            //             / \                                         / \
-            //            /TRI\                                       /TRI\
-            //           /-----\                                     /-----\
-            //                 /                                            \
-            //                /                                              \
-            //               /                                                \
-            System.Diagnostics.Debug.WriteLine("HasExteriorAngle");
-            return otherTriangleSegment.IsCollinearWith(exteriorSegment);
-        }
-
-        //
-        // Given a point on the triangle, return the two angles not at that vertex
-        //
-        public void AcquireRemoteAngles(ConcretePoint givenVertex, out ConcreteAngle remote1, out ConcreteAngle remote2)
-        {
-            remote1 = null;
-            remote2 = null;
-
-            if (!HasPoint(givenVertex)) return;
-
-            if (AngleA.GetVertex().Equals(givenVertex))
-            {
-                remote1 = AngleB;
-                remote2 = AngleC;
-            }
-            else if (AngleB.GetVertex().Equals(givenVertex))
-            {
-                remote1 = AngleA;
-                remote2 = AngleC;
-            }
-            else
-            {
-                remote1 = AngleA;
-                remote2 = AngleB;
-            }
-        }
-
-        //
-        // Have we deduced a congrunence between this triangle and t already?
-        //
-        public bool HasEstablishedCongruence(ConcreteTriangle t)
-        {
-            return congruencePairs.Contains(t);
-        }
-
-        // Add to the list of congruent triangles
-        public void AddCongruentTriangle(ConcreteTriangle t)
-        {
-            congruencePairs.Add(t);
         }
 
         public override string ToString() { return "Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ")"; }

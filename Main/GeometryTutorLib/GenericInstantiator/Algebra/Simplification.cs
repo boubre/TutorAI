@@ -64,7 +64,7 @@ namespace GeometryTutorLib.GenericInstantiator
             }
             else if (eq is AngleMeasureEquation)
             {
-                inflated = new SegmentEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), newJustification);
+                inflated = new AngleMeasureEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), newJustification);
             }
 
             // If simplifying didn't do anything, return the original equation
