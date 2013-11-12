@@ -104,6 +104,7 @@
     <Compile Include="GenericInstantiator\Definitions\StraightAngleDefinition.cs" />
     <Compile Include="GenericInstantiator\GenericRule.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
+    <Compile Include="GenericInstantiator\Theorems\CongruentAnglesParallelIntersection.cs" />
     <Compile Include="GenericInstantiator\Theorems\ExteriorAngleEqualSumRemoteAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
     <Compile Include="GenericInstantiator\Theorems\SumAnglesInTriangle.cs" />

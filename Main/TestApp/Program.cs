@@ -191,6 +191,9 @@ namespace Geometry_Testbed
             ConcretePoint c = new ConcretePoint("C", 4, 0);
             ConcretePoint d = new ConcretePoint("D", 0, 0);
 
+            ConcretePoint e = new ConcretePoint("E", 1, 5); 
+            ConcretePoint f = new ConcretePoint("F", 6, 5);
+
             ConcreteSegment cd = new ConcreteSegment(c, d);
             ConcreteSegment ad = new ConcreteSegment(a, d);
             ConcreteSegment bc = new ConcreteSegment(b, c);
@@ -202,6 +205,7 @@ namespace Geometry_Testbed
             ConcreteSegment mc = new ConcreteSegment(m, c);
             ConcreteSegment md = new ConcreteSegment(m, d);
 
+
             ConcreteTriangle rightOne = new ConcreteTriangle(ad, cd, ac, "Given");
             ConcreteTriangle rightTwo = new ConcreteTriangle(bc, cd, bd, "Given");
 
@@ -212,8 +216,10 @@ namespace Geometry_Testbed
 
             Intersection inter = new Intersection(m, ac, bd, "Given");
 
+
             ConcreteMidpoint mid1 = new ConcreteMidpoint(m, ac, "Given");
             ConcreteMidpoint mid2 = new ConcreteMidpoint(m, bd, "Given");
+
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -240,6 +246,8 @@ namespace Geometry_Testbed
             clauses.Add(mid1);
             clauses.Add(mid2);
 
+           
+
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
@@ -252,10 +260,12 @@ namespace Geometry_Testbed
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
-            TestEntireFigure();
+            //TestEntireFigure();
             //TestSimplification();
             //TestSimplificationConstants();
             //TestSimpleSubstitution();
+
+            TestParallel();
         }
 
         private static void HLTest1()
@@ -326,6 +336,45 @@ namespace Geometry_Testbed
 
             Substitution.Instantiate(ame1);
             Substitution.Instantiate(ame2);
+        }
+
+        private static void TestParallel()
+        {
+            ConcretePoint a = new ConcretePoint("A", 0, 2);
+            ConcretePoint b = new ConcretePoint("B", 6, 2);
+            ConcretePoint e = new ConcretePoint("E", 0, 6);
+            ConcretePoint f = new ConcretePoint("F", 6, 6);
+            ConcretePoint g = new ConcretePoint("G", 0, 0);
+            ConcretePoint h = new ConcretePoint("H", 12, 24);
+            ConcreteSegment ab = new ConcreteSegment(a, b);
+            ConcreteSegment ef = new ConcreteSegment(e, f);  //to be parallel with ab
+            ConcreteSegment gh = new ConcreteSegment(g, h);
+
+            Parallel abef = new Parallel(ab, ef, "Given");
+            Intersection abgh = new Intersection(new ConcretePoint("I1",1,2),ab,gh,"Given");
+            Intersection efgh = new Intersection(new ConcretePoint("I2",3, 6), ef, gh, "Given");
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(a);
+            clauses.Add(b);
+            clauses.Add(e);
+            clauses.Add(f);
+            clauses.Add(g);
+            clauses.Add(h);
+
+            clauses.Add(ab); //to test paralell
+            clauses.Add(ef); //to test paralell
+            clauses.Add(abgh);
+            clauses.Add(efgh);
+            clauses.Add(abef); //to test paralell
+
+             
+
+            Generate(abef);  //???
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+
         }
 
         private static void TestSimplificationConstants()

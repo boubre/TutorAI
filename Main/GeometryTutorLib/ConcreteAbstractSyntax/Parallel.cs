@@ -6,7 +6,8 @@ using System.Text;
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
-    /// Describes a point that lies on a segmant.
+    /// Describes a property associated with two segments that are paralell. 
+    /// Not based on actual coordinates of the two segments
     /// </summary>
     public class Parallel : Descriptor
     {
@@ -14,10 +15,10 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcreteSegment segment2 { get; private set; }
 
         /// <summary>
-        /// Create a new InMiddle statement
+        /// Create a new Paralell statement
         /// </summary>
-        /// <param name="p">A point that lies on the segment</param>
-        /// <param name="segment">A segment</param>
+        /// <param name="segment1">First segment</param>
+        /// <param name="segment2">Second segment</param>
         public Parallel(ConcreteSegment segment1, ConcreteSegment segment2, string just) : base()
         {
             this.segment1 = segment1;
@@ -31,6 +32,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
+        //TODO: Figure out what this is for
         public override bool Equals(Object obj)
         {
             Parallel p = obj as Parallel;
