@@ -32,7 +32,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             return base.GetHashCode();
         }
 
-        //TODO: Figure out what this is for
+
         public override bool Equals(Object obj)
         {
             Parallel p = obj as Parallel;

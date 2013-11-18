@@ -75,6 +75,7 @@
     <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
     <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteSupplementaryAngles.cs" />
     <Compile Include="ConcreteAbstractSyntax\Parallel.cs" />
     <Compile Include="ConcreteAbstractSyntax\Perpendicular.cs" />
     <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
@@ -105,6 +106,9 @@
     <Compile Include="GenericInstantiator\GenericRule.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentAnglesParallelIntersection.cs" />
+    <Compile Include="GenericInstantiator\Theorems\ParallelSegmentsTransitivity.cs" />
+    <Compile Include="GenericInstantiator\Theorems\PerpendicularParallelTransversal.cs" />
+    <Compile Include="GenericInstantiator\Theorems\SupplementaryAnglesParallelIntersection.cs" />
     <Compile Include="GenericInstantiator\Theorems\ExteriorAngleEqualSumRemoteAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
     <Compile Include="GenericInstantiator\Theorems\SumAnglesInTriangle.cs" />

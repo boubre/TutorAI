@@ -6,39 +6,28 @@ using System.Text;
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
-    /// Describes a point that lies on a segmant.
+    /// Special case of intersection
     /// </summary>
-    public class Perpendicular : Descriptor
+    public class Perpendicular : Intersection
     {
-        public Intersection intersection { get; private set; }
+        public Perpendicular intersection { get; private set; }
 
-        /// <summary>
-        /// Create a new InMiddle statement
-        /// </summary>
-        /// <param name="p">A point that lies on the segment</param>
-        /// <param name="segment">A segment</param>
-        public Perpendicular(Intersection inter, string just) : base()
+        public override string ToString()
         {
-            this.intersection = inter;
-            justification = just;
+            return "Perpendicular Intersect(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + "): " + justification;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            Intersection inter = obj as Intersection;
+            if (inter == null) return false;
+            return intersect.Equals(inter.intersect) && lhs.Equals(inter.lhs) && rhs.Equals(inter.rhs);
         }
 
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!
             return base.GetHashCode();
-        }
-
-        public override bool Equals(Object obj)
-        {
-            Perpendicular p = obj as Perpendicular;
-            if (p == null) return false;
-            return intersection.Equals(p.intersection);
-        }
-
-        public override string ToString()
-        {
-            return "Perpendicular(" + intersection.ToString() + "): " + justification;
         }
     }
 }

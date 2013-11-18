@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 
+//placeholder, perpendicular intersections not correctly implemented yet
 
 namespace GeometryTutorLib.GenericInstantiator
 {
 
 
-    public class CongruentAnglesParallelIntersection : Theorem
+    public class PerpendicularParallelTransversal : Theorem
     {
-        private readonly static string NAME = "Congruent Alternate Interior Angles from Parallel Intersection";
+        private readonly static string NAME = "Perpendicular traversal of parallel segments";
 
-        public CongruentAnglesParallelIntersection() { }
+        public PerpendicularParallelTransversal() { }
 
         private static List<Intersection> candIntersection = new List<Intersection>(); //All intersections found
         private static List<Parallel> candParallel = new List<Parallel>();  //All parallel sets found
@@ -21,15 +22,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<GroundedClause> antecedent;
         
 
-        //TODO: this currently describes something else
-        // Intersect(X, Segment(A, B), Segment(C, D)) -> Congruent(Angle(A, X, C), Angle(B, X, D)),
-        //                                               Congruent(Angle(A, X, D), Angle(C, X, B))
+
+      
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
             
             //Exit if c is neither a parallel set nor an intersection
-            if (!(c is Parallel) && !(c is Intersection)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (!(c is Parallel) && !(c is Intersection) && !(c is Perpendicular)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             List<Intersection> foundCand = new List<Intersection>(); //Variable holding intersections that will used for theorem
 

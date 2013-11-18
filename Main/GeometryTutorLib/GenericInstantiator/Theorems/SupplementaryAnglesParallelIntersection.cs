@@ -9,11 +9,11 @@ namespace GeometryTutorLib.GenericInstantiator
 {
 
 
-    public class CongruentAnglesParallelIntersection : Theorem
+    public class SupplementaryAnglesParallelIntersection : Theorem
     {
-        private readonly static string NAME = "Congruent Alternate Interior Angles from Parallel Intersection";
+        private readonly static string NAME = "Same Side Supplementary Angles from Parallel Intersection";
 
-        public CongruentAnglesParallelIntersection() { }
+        public SupplementaryAnglesParallelIntersection() { }
 
         private static List<Intersection> candIntersection = new List<Intersection>(); //All intersections found
         private static List<Parallel> candParallel = new List<Parallel>();  //All parallel sets found
@@ -87,48 +87,34 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             
-            //TODO: Make sure there will only be one set of intersections found at a time
+
             if (foundCand.Count() > 1)
             {
                 antecedent.AddRange((IEnumerable<GroundedClause>)(foundCand));  //Add the two intersections to antecedent
-                ConcreteCongruentAngles cca1;
-                ConcreteCongruentAngles cca2;
+                ConcreteSupplementaryAngles cca1;
+                ConcreteSupplementaryAngles cca2;
                 
-                //TODO: Not sure how math works here
+
                 ConcreteAngle ang1Set1 = new ConcreteAngle(foundCand[0].lhs.Point1, foundCand[0].intersect, foundCand[0].rhs.Point1);
                 ConcreteAngle ang2Set1 = new ConcreteAngle(foundCand[0].lhs.Point2, foundCand[0].intersect, foundCand[0].rhs.Point1);
                 ConcreteAngle ang1Set2 = new ConcreteAngle(foundCand[1].lhs.Point1, foundCand[1].intersect, foundCand[1].rhs.Point1);
                 ConcreteAngle ang2Set2 = new ConcreteAngle(foundCand[1].lhs.Point2, foundCand[1].intersect, foundCand[1].rhs.Point1);
 
-                //Decide which angles match, cover perpendicular case
-                if (ang1Set1.measure <= ang2Set1.measure)
+                //Supplementary angles will be the matching angles on different segments
+                //TODO: Make sure they're on the same side
+                if (ang1Set1.measure == ang1Set2.measure)
                 {
-                    if (ang1Set2.measure <= ang2Set2.measure)
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang1Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang2Set2, NAME);
-                    }
-                    else
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang1Set2, NAME);
-                    }
+                    cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang1Set2, NAME);
+                    cca2 = new ConcreteSupplementaryAngles(ang2Set1, ang2Set2, NAME);
                 }
                 else
                 {
-                    if (ang1Set2.measure <= ang2Set2.measure)
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang1Set2, NAME);
-                    }
-                    else
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang1Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang2Set2, NAME);
-                    }
+                    cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang2Set2, NAME);
+                    cca2 = new ConcreteSupplementaryAngles(ang2Set1, ang1Set2, NAME);
                 }
 
-                //Add the two new congruent angle sets
+                
+                //Add the two new supplementary angle sets
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca2));
             

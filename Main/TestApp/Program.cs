@@ -365,13 +365,14 @@ namespace Geometry_Testbed
 
             clauses.Add(ab); //to test paralell
             clauses.Add(ef); //to test paralell
+            clauses.Add(abef); //to test paralell
             clauses.Add(abgh);
             clauses.Add(efgh);
-            clauses.Add(abef); //to test paralell
+
 
              
 
-            Generate(abef);  //???
+
 
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
 
