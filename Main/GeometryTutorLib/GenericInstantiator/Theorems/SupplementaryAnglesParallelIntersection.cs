@@ -33,6 +33,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
             List<Intersection> foundCand = new List<Intersection>(); //Variable holding intersections that will used for theorem
 
+            Parallel foundParallelSet = null;
+            ConcreteSegment foundTransversal;
+
             // The list of new grounded clauses if they are deduced
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -53,6 +56,9 @@ namespace GeometryTutorLib.GenericInstantiator
                         var query2 = candIntersection.Where(m => m.lhs.Equals(group.Key)).Concat(candIntersection.Where(m => m.rhs.Equals(group.Key)));
                         var query3 = candIntersection.Where(m => m.lhs.Equals(newParallel.segment1) || m.lhs.Equals(newParallel.segment2) || m.rhs.Equals(newParallel.segment1) || m.rhs.Equals(newParallel.segment2));
                         foundCand.AddRange(query3);
+
+                        foundParallelSet = newParallel;
+                        foundTransversal = group.Key;
 
                         antecedent = Utilities.MakeList<GroundedClause>(newParallel); //Add parallel set to antecedents
                         
@@ -78,6 +84,9 @@ namespace GeometryTutorLib.GenericInstantiator
                             var query3 = candIntersection.Where(m => m.lhs.Equals(p.segment1) || m.lhs.Equals(p.segment2) || m.rhs.Equals(p.segment1) || m.rhs.Equals(p.segment2));
                             foundCand.AddRange(query3);
 
+                            foundParallelSet = p;
+                            foundTransversal = group.Key;
+
                             antecedent = Utilities.MakeList<GroundedClause>(p);
                            
                         }
@@ -93,15 +102,44 @@ namespace GeometryTutorLib.GenericInstantiator
                 antecedent.AddRange((IEnumerable<GroundedClause>)(foundCand));  //Add the two intersections to antecedent
                 ConcreteSupplementaryAngles cca1;
                 ConcreteSupplementaryAngles cca2;
+
+                int seg1index;
+                int seg2index;
+
+                //Match first and second intersection points with first and second segments
+                if (foundCand[0].lhs == foundParallelSet.segment1 || foundCand[0].rhs == foundParallelSet.segment1)
+                {
+                    seg1index = 0;
+                    seg2index = 1;
+                }
+                else
+                {
+                    seg1index = 1;
+                    seg2index = 0;
+                }
+
+
+                ConcreteAngle ang1Seg1 = new ConcreteAngle(foundParallelSet.segment1.Point1, foundCand[seg1index].intersect, foundCand[seg2index].intersect);
+                ConcreteAngle ang2Seg1 = new ConcreteAngle(foundParallelSet.segment1.Point2, foundCand[seg1index].intersect, foundCand[seg2index].intersect);
+                ConcreteAngle ang1Seg2 = new ConcreteAngle(foundParallelSet.segment2.Point1, foundCand[seg2index].intersect, foundCand[seg1index].intersect);
+                ConcreteAngle ang2Seg2 = new ConcreteAngle(foundParallelSet.segment2.Point2, foundCand[seg2index].intersect, foundCand[seg1index].intersect);
                 
 
+
+                /*
                 ConcreteAngle ang1Set1 = new ConcreteAngle(foundCand[0].lhs.Point1, foundCand[0].intersect, foundCand[0].rhs.Point1);
                 ConcreteAngle ang2Set1 = new ConcreteAngle(foundCand[0].lhs.Point2, foundCand[0].intersect, foundCand[0].rhs.Point1);
                 ConcreteAngle ang1Set2 = new ConcreteAngle(foundCand[1].lhs.Point1, foundCand[1].intersect, foundCand[1].rhs.Point1);
                 ConcreteAngle ang2Set2 = new ConcreteAngle(foundCand[1].lhs.Point2, foundCand[1].intersect, foundCand[1].rhs.Point1);
-
+                */
                 //Supplementary angles will be the matching angles on different segments
                 //TODO: Make sure they're on the same side
+
+                cca1 = new ConcreteSupplementaryAngles(ang1Seg1, ang2Seg1, NAME);
+                cca2 = new ConcreteSupplementaryAngles(ang1Seg2, ang2Seg2, NAME);
+
+
+                /*
                 if (ang1Set1.measure == ang1Set2.measure)
                 {
                     cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang1Set2, NAME);
@@ -112,7 +150,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang2Set2, NAME);
                     cca2 = new ConcreteSupplementaryAngles(ang2Set1, ang1Set2, NAME);
                 }
-
+                */
                 
                 //Add the two new supplementary angle sets
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));

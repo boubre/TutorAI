@@ -10,6 +10,7 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
         public ConcretePoint intersect { get; private set; }
         public ConcreteSegment lhs { get; private set; }
         public ConcreteSegment rhs { get; private set; }
+        public bool isPerpendicular { get; private set; }
 
         public Intersection() : base() { }
 
@@ -18,7 +19,23 @@ namespace GeometryTutorLib.ConcreteAbstractSyntax
             intersect = i;
             lhs = l;
             rhs = r;
+            isPerpendicular = false;
             justification = just;
+        }
+
+        public Intersection(ConcretePoint i, ConcreteSegment l, ConcreteSegment r, bool bPerpendicular, string just)
+            : base()
+        {
+            intersect = i;
+            lhs = l;
+            rhs = r;
+            isPerpendicular = bPerpendicular;
+            justification = just;
+        }
+
+        public void setPerpendicular(bool bPerpendicular)
+        {
+            isPerpendicular = bPerpendicular;
         }
 
         public override string ToString()

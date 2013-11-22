@@ -6,28 +6,44 @@ using System.Text;
 namespace GeometryTutorLib.ConcreteAbstractSyntax
 {
     /// <summary>
-    /// Special case of intersection
+    /// Describes a property associated with two segments that are perpendicular. 
+    /// Not based on actual angles of intersection, currently
     /// </summary>
-    public class Perpendicular : Intersection
+    public class Perpendicular : Descriptor
     {
-        public Perpendicular intersection { get; private set; }
+        public ConcreteSegment segment1 { get; private set; }
+        public ConcreteSegment segment2 { get; private set; }
 
-        public override string ToString()
+        /// <summary>
+        /// Create a new Perpendicular statement
+        /// </summary>
+        /// <param name="segment1">First segment</param>
+        /// <param name="segment2">Second segment</param>
+        public Perpendicular(ConcreteSegment segment1, ConcreteSegment segment2, string just)
+            : base()
         {
-            return "Perpendicular Intersect(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + "): " + justification;
-        }
-
-        public override bool Equals(Object obj)
-        {
-            Intersection inter = obj as Intersection;
-            if (inter == null) return false;
-            return intersect.Equals(inter.intersect) && lhs.Equals(inter.lhs) && rhs.Equals(inter.rhs);
+            this.segment1 = segment1;
+            this.segment2 = segment2;
+            justification = just;
         }
 
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!
             return base.GetHashCode();
+        }
+
+
+        public override bool Equals(Object obj)
+        {
+            Perpendicular p = obj as Perpendicular;
+            if (p == null) return false;
+            return (segment1.Equals(p.segment1) && segment2.Equals(p.segment2)) || (segment1.Equals(p.segment2) && segment2.Equals(p.segment1));
+        }
+
+        public override string ToString()
+        {
+            return "Perpendicular(" + segment1.ToString() + ", " + segment2.ToString() + "): " + justification;
         }
     }
 }

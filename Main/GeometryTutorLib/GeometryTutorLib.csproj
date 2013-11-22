@@ -99,6 +99,7 @@
     <Compile Include="GenericInstantiator\Axioms\SAS.cs" />
     <Compile Include="GenericInstantiator\Axioms\SegmentAdditionAxiom.cs" />
     <Compile Include="GenericInstantiator\Axioms\SSS.cs" />
+    <Compile Include="GenericInstantiator\Definitions\PerpendicularSegments.cs" />
     <Compile Include="GenericInstantiator\Definitions\Definition.cs" />
     <Compile Include="GenericInstantiator\Definitions\IsoscelesTriangleDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\MidpointDefinition.cs" />

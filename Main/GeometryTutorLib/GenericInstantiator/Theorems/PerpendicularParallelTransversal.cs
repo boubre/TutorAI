@@ -18,6 +18,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
         private static List<Intersection> candIntersection = new List<Intersection>(); //All intersections found
         private static List<Parallel> candParallel = new List<Parallel>();  //All parallel sets found
+        private static List<Perpendicular> candPerpendicular = new List<Perpendicular>();  //All parallel sets found
 
         private static List<GroundedClause> antecedent;
         
@@ -29,7 +30,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             
             //Exit if c is neither a parallel set nor an intersection
-            if (!(c is Parallel) && !(c is Intersection) && !(c is Perpendicular)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (!(c is Parallel) && !(c is Intersection)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             List<Intersection> foundCand = new List<Intersection>(); //Variable holding intersections that will used for theorem
 
@@ -51,9 +52,12 @@ namespace GeometryTutorLib.GenericInstantiator
                     {
                         //If a segment that intersected both parallel lines was found, find the intersection objects.  
                         var query2 = candIntersection.Where(m => m.lhs.Equals(group.Key)).Concat(candIntersection.Where(m => m.rhs.Equals(group.Key)));
-                        var query3 = candIntersection.Where(m => m.lhs.Equals(newParallel.segment1) || m.lhs.Equals(newParallel.segment2) || m.rhs.Equals(newParallel.segment1) || m.rhs.Equals(newParallel.segment2));
-                        foundCand.AddRange(query3);
-
+                        var query3 = query2.Where(m => m.lhs.Equals(newParallel.segment1) || m.lhs.Equals(newParallel.segment2) || m.rhs.Equals(newParallel.segment1) || m.rhs.Equals(newParallel.segment2));
+                        if (query3.Any(m => m.isPerpendicular == true) && query3.Any(m => m.isPerpendicular == false))
+                        {
+                            //if there exists both an intersection that is labeled perpendicular and an intersection that is not labeled perpendicular
+                            foundCand.AddRange(query3);
+                        }
                         antecedent = Utilities.MakeList<GroundedClause>(newParallel); //Add parallel set to antecedents
                         
                     }
@@ -74,9 +78,15 @@ namespace GeometryTutorLib.GenericInstantiator
                     {
                         if (group.Contains(p.segment1) && group.Contains(p.segment2))
                         {
+                            //list intersections involving intersecting segement and two paralell segments 
                             var query2 = candIntersection.Where(m => m.lhs.Equals(group.Key)).Concat(candIntersection.Where(m => m.rhs.Equals(group.Key)));
-                            var query3 = candIntersection.Where(m => m.lhs.Equals(p.segment1) || m.lhs.Equals(p.segment2) || m.rhs.Equals(p.segment1) || m.rhs.Equals(p.segment2));
+                            var query3 = query2.Where(m => m.lhs.Equals(p.segment1) || m.lhs.Equals(p.segment2) || m.rhs.Equals(p.segment1) || m.rhs.Equals(p.segment2));
+
+                        if (query3.Any(m => m.isPerpendicular == true) && query3.Any(m => m.isPerpendicular == false))
+                        {
+                            //if there exists both an intersection that is labeled perpendicular and an intersection that is not labeled perpendicular
                             foundCand.AddRange(query3);
+                        }
 
                             antecedent = Utilities.MakeList<GroundedClause>(p);
                            
@@ -91,46 +101,16 @@ namespace GeometryTutorLib.GenericInstantiator
             if (foundCand.Count() > 1)
             {
                 antecedent.AddRange((IEnumerable<GroundedClause>)(foundCand));  //Add the two intersections to antecedent
-                ConcreteCongruentAngles cca1;
-                ConcreteCongruentAngles cca2;
                 
-                //TODO: Not sure how math works here
-                ConcreteAngle ang1Set1 = new ConcreteAngle(foundCand[0].lhs.Point1, foundCand[0].intersect, foundCand[0].rhs.Point1);
-                ConcreteAngle ang2Set1 = new ConcreteAngle(foundCand[0].lhs.Point2, foundCand[0].intersect, foundCand[0].rhs.Point1);
-                ConcreteAngle ang1Set2 = new ConcreteAngle(foundCand[1].lhs.Point1, foundCand[1].intersect, foundCand[1].rhs.Point1);
-                ConcreteAngle ang2Set2 = new ConcreteAngle(foundCand[1].lhs.Point2, foundCand[1].intersect, foundCand[1].rhs.Point1);
+                int index;
 
-                //Decide which angles match, cover perpendicular case
-                if (ang1Set1.measure <= ang2Set1.measure)
-                {
-                    if (ang1Set2.measure <= ang2Set2.measure)
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang1Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang2Set2, NAME);
-                    }
-                    else
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang1Set2, NAME);
-                    }
-                }
-                else
-                {
-                    if (ang1Set2.measure <= ang2Set2.measure)
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang1Set2, NAME);
-                    }
-                    else
-                    {
-                        cca1 = new ConcreteCongruentAngles(ang1Set1, ang1Set2, NAME);
-                        cca2 = new ConcreteCongruentAngles(ang2Set1, ang2Set2, NAME);
-                    }
-                }
+                index = (foundCand[0].isPerpendicular == false) ? 0 : 1;
+                foundCand[index].setPerpendicular(true);
+                Perpendicular newPerpendicular = new Perpendicular(foundCand[index].lhs,foundCand[index].rhs, NAME);
+                
 
-                //Add the two new congruent angle sets
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca2));
+                //Add the new perpendicular set
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPerpendicular));
             
             }
 

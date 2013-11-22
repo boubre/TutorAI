@@ -109,11 +109,14 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, VerticalAnglesTheorem.Instantiate(clause));
                     HandleDeducedClauses(worklist, CongruentAnglesParallelIntersection.Instantiate(clause));
                     HandleDeducedClauses(worklist, SupplementaryAnglesParallelIntersection.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularParallelTransversal.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularSegments.Instantiate(clause));
                 }
                 else if (clause is Parallel)
                 {
                     HandleDeducedClauses(worklist, CongruentAnglesParallelIntersection.Instantiate(clause));
                     HandleDeducedClauses(worklist, SupplementaryAnglesParallelIntersection.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularParallelTransversal.Instantiate(clause));
                 }
                 else if (clause is Equation)
                 {

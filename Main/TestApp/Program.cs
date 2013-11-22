@@ -346,13 +346,19 @@ namespace Geometry_Testbed
             ConcretePoint f = new ConcretePoint("F", 6, 6);
             ConcretePoint g = new ConcretePoint("G", 0, 0);
             ConcretePoint h = new ConcretePoint("H", 12, 24);
+            ConcretePoint j = new ConcretePoint("J", 3, 0);
+            ConcretePoint k = new ConcretePoint("K", 3, 9);
             ConcreteSegment ab = new ConcreteSegment(a, b);
             ConcreteSegment ef = new ConcreteSegment(e, f);  //to be parallel with ab
             ConcreteSegment gh = new ConcreteSegment(g, h);
+            ConcreteSegment jk = new ConcreteSegment(j, k); //perpendicular
 
             Parallel abef = new Parallel(ab, ef, "Given");
             Intersection abgh = new Intersection(new ConcretePoint("I1",1,2),ab,gh,"Given");
             Intersection efgh = new Intersection(new ConcretePoint("I2",3, 6), ef, gh, "Given");
+            Intersection abjk = new Intersection(new ConcretePoint("I3", 3, 2), ab, jk, true,"Given");
+            Intersection efjk = new Intersection(new ConcretePoint("I4", 3, 6), ef, jk, "Given");
+            
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -362,12 +368,16 @@ namespace Geometry_Testbed
             clauses.Add(f);
             clauses.Add(g);
             clauses.Add(h);
-
+            clauses.Add(j);
+            clauses.Add(k);
+            clauses.Add(jk);
             clauses.Add(ab); //to test paralell
             clauses.Add(ef); //to test paralell
             clauses.Add(abef); //to test paralell
             clauses.Add(abgh);
             clauses.Add(efgh);
+            clauses.Add(abjk);
+            clauses.Add(efjk);
 
 
              
