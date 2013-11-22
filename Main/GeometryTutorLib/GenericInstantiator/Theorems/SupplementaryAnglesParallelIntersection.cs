@@ -135,22 +135,21 @@ namespace GeometryTutorLib.GenericInstantiator
                 //Supplementary angles will be the matching angles on different segments
                 //TODO: Make sure they're on the same side
 
-                cca1 = new ConcreteSupplementaryAngles(ang1Seg1, ang2Seg1, NAME);
-                cca2 = new ConcreteSupplementaryAngles(ang1Seg2, ang2Seg2, NAME);
 
 
-                /*
-                if (ang1Set1.measure == ang1Set2.measure)
+
+                
+                if (ang1Seg1.measure == ang1Seg2.measure)
                 {
-                    cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang1Set2, NAME);
-                    cca2 = new ConcreteSupplementaryAngles(ang2Set1, ang2Set2, NAME);
+                    cca1 = new ConcreteSupplementaryAngles(ang1Seg1, ang2Seg2, NAME);
+                    cca2 = new ConcreteSupplementaryAngles(ang1Seg2, ang2Seg1, NAME);
                 }
                 else
                 {
-                    cca1 = new ConcreteSupplementaryAngles(ang1Set1, ang2Set2, NAME);
-                    cca2 = new ConcreteSupplementaryAngles(ang2Set1, ang1Set2, NAME);
+                    cca1 = new ConcreteSupplementaryAngles(ang1Seg1, ang1Seg2, NAME);
+                    cca2 = new ConcreteSupplementaryAngles(ang2Seg1, ang2Seg2, NAME);
                 }
-                */
+                
                 
                 //Add the two new supplementary angle sets
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
