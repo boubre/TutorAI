@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAbstractSyntax;
 

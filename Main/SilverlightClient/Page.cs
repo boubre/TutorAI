@@ -28,6 +28,8 @@ namespace LiveGeometry
 
         public Page(IDictionary<string, string> initParams)
         {
+            initParseWorker();
+
             UseLayoutRounding = true;
 
             MEFHost.Instance.RegisterExtensionAssemblyFromType<Page>();

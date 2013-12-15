@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -15,6 +16,16 @@ namespace LiveGeometry
 {
     public partial class Page
     {
+        private BackgroundWorker parseWorker = new BackgroundWorker();
+        private List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult;
+
+        private void initParseWorker()
+        {
+            parseWorker.WorkerReportsProgress = false;
+            parseWorker.WorkerSupportsCancellation = false;
+            parseWorker.DoWork += new DoWorkEventHandler(BackgroundWorker_ParseToAST);
+        }
+
         void Page_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             try
@@ -394,15 +405,25 @@ namespace LiveGeometry
 
         void ParseToAst()
         {
-            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-            List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult = parser.ParseDrawing();
-            parser.calculateIntersections(parseResult);
-            parser.calculateInMiddle(parseResult);
-            parser.calculateLineEquality(parseResult);
-            parser.calculateMidpoints(parseResult);
-            parser.calculateTriangles(parseResult);
-            parseResult = parser.removeDuplicates(parseResult);
+            if (parseWorker.IsBusy != true)
+            {
+                //Do front-end parsing on UI thread
+                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
+                parseResult = parser.ParseDrawing();
+                parser.calculateIntersections(parseResult);
+                parser.calculateInMiddle(parseResult);
+                parser.calculateLineEquality(parseResult);
+                parser.calculateMidpoints(parseResult);
+                parser.calculateTriangles(parseResult);
+                parseResult = parser.removeDuplicates(parseResult);
+                
+                // Do back-end computation on background worker
+                parseWorker.RunWorkerAsync();
+            }
+        }
 
+        void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
+        {
             foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
             {
                 Debug.WriteLine(gc);
