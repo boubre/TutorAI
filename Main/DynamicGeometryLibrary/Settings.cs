@@ -39,6 +39,7 @@ namespace DynamicGeometry
         public virtual bool AutoLabelPoints { get; set; }
         public virtual bool ShowGrid { get; set; }
         public virtual bool ShowFigureExplorer { get; set; }
+        public virtual bool ShowAIDebugWindow { get; set; }
         public virtual bool EnableOrtho { get; set; }
         public virtual bool EnableSnapToGrid { get; set; }
         public virtual bool EnableSnapToPoint { get; set; }

@@ -28,6 +28,7 @@ namespace LiveGeometry
 
         public Page(IDictionary<string, string> initParams)
         {
+            System.Windows.Threading.SmartDispatcher.Initialize();
             initParseWorker();
 
             UseLayoutRounding = true;
@@ -41,6 +42,8 @@ namespace LiveGeometry
             drawingHost = new DrawingHost();
             AddBehaviors();
             this.Content = drawingHost;
+
+            UIDebugPublisher = drawingHost.AIDebugWindow.MakeUIDebugPublisher();
             
             InitParams = initParams;
             var settings = Application.Current.Host.Settings;

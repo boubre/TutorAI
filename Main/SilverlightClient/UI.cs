@@ -18,6 +18,7 @@ namespace LiveGeometry
     {
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult;
+        private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
 
         private void initParseWorker()
         {
@@ -416,7 +417,7 @@ namespace LiveGeometry
                 parser.calculateMidpoints(parseResult);
                 parser.calculateTriangles(parseResult);
                 parseResult = parser.removeDuplicates(parseResult);
-                
+
                 // Do back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
@@ -431,6 +432,7 @@ namespace LiveGeometry
             }
             Debug.WriteLine("=====END=====");
 
+            UIDebugPublisher.publishString("Publish string example");
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult);
         }
     }

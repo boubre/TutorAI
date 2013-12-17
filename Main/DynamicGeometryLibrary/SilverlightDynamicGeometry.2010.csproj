@@ -289,6 +289,7 @@
     <Compile Include="Serialization\IniFile.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SmartDispatcher.cs" />
     <Compile Include="Styles\FigureStyle.cs" />
     <Compile Include="Styles\BackgroundStyle.cs" />
     <Compile Include="Styles\IFigureStyle.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Styles\StyleManager.cs" />
     <Compile Include="Styles\StylePicker.cs" />
     <Compile Include="Styles\TextStyle.cs" />
+    <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />
     <Compile Include="UI\CommandSystem\CompositeCommandObserver.cs" />
