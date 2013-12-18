@@ -144,7 +144,6 @@
     <Compile Include="GenericInstantiator\GenericRule.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
     <Compile Include="GenericInstantiator\Theorems\AAS.cs" />
-    <Compile Include="GenericInstantiator\Theorems\CongruentAnglesParallelIntersection.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentSidesInTriangleImplyCongruentAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\AltIntCongruentAnglesImplyParallel.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentAdjacentAnglesImplyPerpendicular.cs" />

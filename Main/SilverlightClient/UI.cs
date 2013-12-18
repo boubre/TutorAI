@@ -17,7 +17,7 @@ namespace LiveGeometry
     public partial class Page
     {
         private BackgroundWorker parseWorker = new BackgroundWorker();
-        private List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult;
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
 
         private void initParseWorker()
@@ -425,6 +425,7 @@ namespace LiveGeometry
 
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
             {
                 Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");

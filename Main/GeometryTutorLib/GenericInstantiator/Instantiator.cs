@@ -200,7 +200,6 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is Parallel)
                 {
-                    HandleDeducedClauses(worklist, CongruentAnglesParallelIntersection.Instantiate(clause));
                     HandleDeducedClauses(worklist, TriangleProportionality.Instantiate(clause));
                     HandleDeducedClauses(worklist, CorrespondingAnglesOfParallelLines.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
