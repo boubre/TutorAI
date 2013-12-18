@@ -406,6 +406,18 @@ namespace LiveGeometry
 
         void ParseToAst()
         {
+<<<<<<< HEAD
+            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult = parser.ParseDrawing();
+            parser.calculateIntersections(parseResult);
+            parser.calculateInMiddle(parseResult);
+            parser.calculateLineEquality(parseResult);
+            parser.calculateMidpoints(parseResult);
+            parser.calculateTriangles(parseResult);
+            parseResult = parser.removeDuplicates(parseResult);
+
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
+=======
             if (parseWorker.IsBusy != true)
             {
                 //Do front-end parsing on UI thread
@@ -425,14 +437,21 @@ namespace LiveGeometry
 
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
             {
                 Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");
             }
             Debug.WriteLine("=====END=====");
 
-            UIDebugPublisher.publishString("Publish string example");
+<<<<<<< HEAD
+            // The givens have to be differentiated from the intrisic clauses
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+=======
+            UIDebugPublisher.publishString("Publish string example");
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult);
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
         }
     }
 }

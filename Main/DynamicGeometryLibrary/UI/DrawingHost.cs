@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DynamicGeometry.UI;
 
 namespace DynamicGeometry
 {
@@ -26,6 +27,7 @@ namespace DynamicGeometry
         public PropertyGrid PropertyGrid { get; set; }
         public StatusBar StatusBar { get; set; }
         public FigureExplorer FigureExplorer { get; set; }
+        public AIDebugWindow AIDebugWindow { get; set; }
 
         protected ScrollViewer propertyGridScrollViewer;
 
@@ -37,6 +39,7 @@ namespace DynamicGeometry
         public Command CommandTogglePolar { get; set; }
         public Command CommandToggleSnapToCenter { get; set; }
         public Command CommandShowFigureExplorer { get; set; }
+        public Command CommandShowAIDebugWindow { get; set; }
 
         public DrawingHost()
         {
@@ -49,6 +52,7 @@ namespace DynamicGeometry
         {
             this.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             this.RowDefinitions.Add(new RowDefinition());
+            this.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             this.ColumnDefinitions.Add(new ColumnDefinition());
             this.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
@@ -57,18 +61,25 @@ namespace DynamicGeometry
             CreatePropertyGrid();
             CreateStatusBar();
             CreateFigureExplorer();
+            CreateAIDebugWindow();
 
             this.Children.Add(Ribbon);
             this.Children.Add(DrawingControl);
             this.Children.Add(propertyGridScrollViewer);
             this.Children.Add(StatusBar);
             this.Children.Add(FigureExplorer);
+            this.Children.Add(AIDebugWindow);
 
             FigureExplorer.Visible = Settings.Instance.ShowFigureExplorer;
+            AIDebugWindow.Visible = Settings.Instance.ShowAIDebugWindow;
 
-            Grid.SetColumnSpan(Ribbon, 2);
-            Grid.SetColumn(FigureExplorer, 1);
+            Grid.SetColumnSpan(Ribbon, 3);
+            Grid.SetColumn(FigureExplorer, 2);
+            Grid.SetColumn(DrawingControl, 1);
+            Grid.SetColumn(propertyGridScrollViewer, 1);
+            Grid.SetColumn(StatusBar, 1);
             Grid.SetRow(FigureExplorer, 1);
+            Grid.SetRow(AIDebugWindow, 1);
             Grid.SetRow(DrawingControl, 1);
             Grid.SetRow(propertyGridScrollViewer, 1);
             Grid.SetRow(StatusBar, 1);
@@ -81,6 +92,7 @@ namespace DynamicGeometry
             CommandTogglePolar = new Command(TogglePolar, new CheckBox(), "Polar", BehaviorCategories.Selection);
             CommandToggleSnapToCenter = new Command(ToggleSnapToCenter, new CheckBox(), "Snap to Center", BehaviorCategories.Selection);
             CommandShowFigureExplorer = new Command(ToggleFigureExplorer, new CheckBox() { IsChecked = FigureExplorer.Visible }, "Figure List", BehaviorCategories.Drawing);
+            CommandShowAIDebugWindow = new Command(ToggleAIDebugWindow, new CheckBox() { IsChecked = AIDebugWindow.Visible }, "AI Output", BehaviorCategories.Drawing);
         }
 
         protected void CreateFigureExplorer()
@@ -91,6 +103,15 @@ namespace DynamicGeometry
                 MaxWidth = 400
             };
             FigureExplorer.SelectionChanged += FigureExplorer_SelectionChanged;
+        }
+
+        protected void CreateAIDebugWindow()
+        {
+            AIDebugWindow = new AIDebugWindow()
+            {
+                MinWidth = 200,
+                MaxWidth = 400
+            };
         }
 
         bool guard = false; // to prevent reentrancy
@@ -217,6 +238,18 @@ namespace DynamicGeometry
                 FigureExplorer.ItemsSource = null;
                 FigureExplorer.ItemsSource = CurrentDrawing.Figures;
                 FigureExplorer.Visible = true;
+            }
+        }
+
+        public void ToggleAIDebugWindow()
+        {
+            if (AIDebugWindow.Visible)
+            {
+                AIDebugWindow.Visible = false;
+            }
+            else
+            {
+                AIDebugWindow.Visible = true;
             }
         }
 

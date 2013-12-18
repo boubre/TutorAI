@@ -170,19 +170,36 @@ namespace Geometry_Testbed
             Point c = new Point("C", 4, 0);
             Point d = new Point("D", 0, 0);
 
+<<<<<<< HEAD
             Segment cd = new Segment(c, d);
             Segment ad = new Segment(a, d);
             Segment bc = new Segment(b, c);
             Segment bd = new Segment(b, d);
             Segment ac = new Segment(a, c);
+=======
+            ConcretePoint e = new ConcretePoint("E", 1, 5); 
+            ConcretePoint f = new ConcretePoint("F", 6, 5);
+
+            ConcreteSegment cd = new ConcreteSegment(c, d);
+            ConcreteSegment ad = new ConcreteSegment(a, d);
+            ConcreteSegment bc = new ConcreteSegment(b, c);
+            ConcreteSegment bd = new ConcreteSegment(b, d);
+            ConcreteSegment ac = new ConcreteSegment(a, c);
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
 
             Segment am = new Segment(a, m);
             Segment mb = new Segment(m, b);
             Segment mc = new Segment(m, c);
             Segment md = new Segment(m, d);
 
+<<<<<<< HEAD
             Triangle rightOne = new Triangle(ad, cd, ac, "Given");
             RightTriangle rightTwo = new RightTriangle(bc, cd, bd, "Given");
+=======
+
+            ConcreteTriangle rightOne = new ConcreteTriangle(ad, cd, ac, "Given");
+            ConcreteTriangle rightTwo = new ConcreteTriangle(bc, cd, bd, "Given");
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
 
             Triangle isoOne = new Triangle(am, md, ad, "Given");
             Triangle isoTwo = new Triangle(mb, mc, bc, "Given");
@@ -191,6 +208,7 @@ namespace Geometry_Testbed
 
             Intersection inter = new Intersection(m, ac, bd, "Given");
 
+<<<<<<< HEAD
             Intersection inter10 = new Intersection(m, am, bd, "Given");
             Intersection inter11 = new Intersection(m, mc, bd, "Given");
             Intersection inter12 = new Intersection(m, mb, ac, "Given");
@@ -359,6 +377,11 @@ namespace Geometry_Testbed
             Triangle rightTwo = new Triangle(bc, mb, mc, "Given");
             rightTwo.SetProvenToBeRight();
             Triangle iso = new Triangle(ab, bc, ac, "Given");
+=======
+
+            ConcreteMidpoint mid1 = new ConcreteMidpoint(m, ac, "Given");
+            ConcreteMidpoint mid2 = new ConcreteMidpoint(m, bd, "Given");
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
 
 
             List<GroundedClause> clauses = new List<GroundedClause>();
@@ -378,6 +401,7 @@ namespace Geometry_Testbed
             clauses.Add(rightOne);
             clauses.Add(rightTwo);
 
+<<<<<<< HEAD
             //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
@@ -1074,6 +1098,11 @@ namespace Geometry_Testbed
             givens.Add(cas1);
 
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+=======
+           
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
         }
 
         static void Main(string[] args)
@@ -1094,6 +1123,7 @@ namespace Geometry_Testbed
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
+<<<<<<< HEAD
             //TestAlternateInterior();
             //TestSameSideSupplementary();
          //TestInterleavingSimilarTriangles();
@@ -1322,6 +1352,14 @@ namespace Geometry_Testbed
             clauses.Add(eq2);
 
             //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+=======
+            //TestEntireFigure();
+            //TestSimplification();
+            //TestSimplificationConstants();
+            //TestSimpleSubstitution();
+
+            TestParallel();
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
         }
 
         private static void HLTest1()

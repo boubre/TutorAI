@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BridgeUItoBackEnd.cs" />
+<<<<<<< HEAD
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />
     <Compile Include="ConcreteAST\Desciptors\AngleBisector.cs" />
@@ -120,6 +121,40 @@
     <Compile Include="ConcreteAST\Equations\NumericValue.cs" />
     <Compile Include="ConcreteAST\Equations\AlgebraicSegmentEquation.cs" />
     <Compile Include="ConcreteAST\Equations\Operations\Subtraction.cs" />
+=======
+    <Compile Include="ConcreteAbstractSyntax\Addition.cs" />
+    <Compile Include="ConcreteAbstractSyntax\AngleMeasureEquation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ArithmeticNode.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ArithmeticOperation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteAngle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCollinear.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruent.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentAngles.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentSegments.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteCongruentTriangles.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteEquilateralTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteFigure.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteIsoscelesTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteMidpoint.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcretePoint.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteSegment.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteTriangle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\ConcreteSupplementaryAngles.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Parallel.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Perpendicular.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Descriptor.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Equal.cs" />
+    <Compile Include="ConcreteAbstractSyntax\EqualSegments.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Equation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\FlatEquation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\GroundedClause.cs" />
+    <Compile Include="ConcreteAbstractSyntax\InMiddle.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Intersection.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Multiplication.cs" />
+    <Compile Include="ConcreteAbstractSyntax\NumericValue.cs" />
+    <Compile Include="ConcreteAbstractSyntax\SegmentEquation.cs" />
+    <Compile Include="ConcreteAbstractSyntax\Subtraction.cs" />
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
     <Compile Include="GenericInstantiator\Algebra\Simplification.cs" />
     <Compile Include="GenericInstantiator\Algebra\TransitiveSubstitution.cs" />
     <Compile Include="GenericInstantiator\Axioms\CongruentCorrespondingAnglesImplyParallel.cs" />
@@ -132,17 +167,22 @@
     <Compile Include="GenericInstantiator\Axioms\SASCongruence.cs" />
     <Compile Include="GenericInstantiator\Axioms\SegmentAdditionAxiom.cs" />
     <Compile Include="GenericInstantiator\Axioms\SSS.cs" />
+<<<<<<< HEAD
     <Compile Include="GenericInstantiator\Definitions\AngleBisectorDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\AltitudeDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\MedianDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\RightTriangleDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\SegmentBisectorDefinition.cs" />
+=======
+    <Compile Include="GenericInstantiator\Definitions\PerpendicularSegments.cs" />
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
     <Compile Include="GenericInstantiator\Definitions\Definition.cs" />
     <Compile Include="GenericInstantiator\Definitions\IsoscelesTriangleDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\MidpointDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\StraightAngleDefinition.cs" />
     <Compile Include="GenericInstantiator\GenericRule.cs" />
     <Compile Include="GenericInstantiator\Instantiator.cs" />
+<<<<<<< HEAD
     <Compile Include="GenericInstantiator\Theorems\AAS.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentAnglesParallelIntersection.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentSidesInTriangleImplyCongruentAngles.cs" />
@@ -164,6 +204,12 @@
     <Compile Include="GenericInstantiator\Theorems\AcuteAnglesInRightTriangleComplementary.cs" />
     <Compile Include="GenericInstantiator\Theorems\TriangleProportionality.cs" />
     <Compile Include="GenericInstantiator\Theorems\SameSideSuppleAnglesImplyParallel.cs" />
+=======
+    <Compile Include="GenericInstantiator\Theorems\CongruentAnglesParallelIntersection.cs" />
+    <Compile Include="GenericInstantiator\Theorems\ParallelSegmentsTransitivity.cs" />
+    <Compile Include="GenericInstantiator\Theorems\PerpendicularParallelTransversal.cs" />
+    <Compile Include="GenericInstantiator\Theorems\SupplementaryAnglesParallelIntersection.cs" />
+>>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
     <Compile Include="GenericInstantiator\Theorems\ExteriorAngleEqualSumRemoteAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\HypotenuseLeg.cs" />
     <Compile Include="GenericInstantiator\Theorems\CongruentAnglesInTriangleImplyCongruentSides.cs" />
