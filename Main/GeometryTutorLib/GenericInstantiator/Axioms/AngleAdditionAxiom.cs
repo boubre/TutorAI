@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -11,50 +11,62 @@ namespace GeometryTutorLib.GenericInstantiator
         private readonly static string NAME = "Angle Addition Axiom";
 
         // Candidate angles
-        private static List<ConcreteAngle> unifyCandAngles = new List<ConcreteAngle>();
+        private static List<Angle> unifyCandAngles = new List<Angle>();
 
         //
         // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is ConcreteAngle)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            ConcreteAngle newAngle = (ConcreteAngle)c;
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!unifyCandAngles.Any())
-            {
-                unifyCandAngles.Add(newAngle);
-                return newGrounded;
-            }
+            if (!(c is Angle)) return newGrounded;
+
+            Angle newAngle = c as Angle;
 
             //
             // Determine if another angle in the candidate unify list can be combined with this new angle
             //
-            foreach (ConcreteAngle ang in unifyCandAngles)
+            foreach (Angle ang in unifyCandAngles)
             {
-                ConcreteSegment shared = newAngle.SharesOneRayAndHasSameVertex(ang);
-                if (shared != null)
-                {
-                    ConcretePoint vertex = ang.GetVertex();
-                    ConcretePoint exteriorPt1 = ang.OtherPoint(shared);
-                    ConcretePoint exteriorPt2 = newAngle.OtherPoint(shared);
-                    ConcreteAngle angle = new ConcreteAngle(exteriorPt1, vertex, exteriorPt2);
-                    Addition sum = new Addition(newAngle, ang);
-                    AngleMeasureEquation eq = new AngleMeasureEquation(sum, angle, NAME);
-
-                    // For hypergraph construction
-                    List<GroundedClause> antecedent = new List<GroundedClause>();
-                    antecedent.Add(newAngle);
-                    antecedent.Add(ang);
-
-                    newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));
-                }
+                newGrounded.AddRange(InstantiateAngles(newAngle, ang));
             }
 
             // Add this angle to the unifying candidates
             unifyCandAngles.Add(newAngle);
+
+            return newGrounded;
+        }
+
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAngles(Angle angle1, Angle angle2)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            // An angle may have multiple names
+            if (angle1.Equates(angle2)) return newGrounded;
+
+            if (!angle1.GetVertex().Equals(angle2.GetVertex())) return newGrounded;
+
+            // Determine the shared segment if we have an adjacent situation
+            Segment shared = angle1.IsAdjacentTo(angle2);
+
+            if (shared == null) return newGrounded;
+
+            // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
+            Point vertex = angle1.GetVertex();
+            Point exteriorPt1 = angle2.OtherPoint(shared);
+            Point exteriorPt2 = angle1.OtherPoint(shared);
+            Angle newAngle = new Angle(exteriorPt1, vertex, exteriorPt2);
+            Addition sum = new Addition(angle1, angle2);
+            GeometricAngleEquation geoAngEq = new GeometricAngleEquation(sum, newAngle, NAME);
+            geoAngEq.MakeAxiomatic(); // This is an axiomatic equation
+
+            // For hypergraph construction
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(angle1);
+            antecedent.Add(angle2);
+
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, geoAngEq));
 
             return newGrounded;
         }

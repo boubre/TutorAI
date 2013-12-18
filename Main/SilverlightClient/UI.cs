@@ -395,7 +395,7 @@ namespace LiveGeometry
         void ParseToAst()
         {
             DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-            List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult = parser.ParseDrawing();
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult = parser.ParseDrawing();
             parser.calculateIntersections(parseResult);
             parser.calculateInMiddle(parseResult);
             parser.calculateLineEquality(parseResult);
@@ -403,14 +403,15 @@ namespace LiveGeometry
             parser.calculateTriangles(parseResult);
             parseResult = parser.removeDuplicates(parseResult);
 
-            foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
             {
                 Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");
             }
             Debug.WriteLine("=====END=====");
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult);
+            // The givens have to be differentiated from the intrisic clauses
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
         }
     }
 }

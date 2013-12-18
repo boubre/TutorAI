@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -19,17 +19,17 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            ConcreteTriangle tri = c as ConcreteTriangle;
+            Triangle tri = c as Triangle;
             if (tri == null) return newGrounded;
 
             // Generate, by definition the sum of the three angles equal 180^o
-            ConcreteAngle a1 = new ConcreteAngle(tri.Point1, tri.Point2, tri.Point3);
-            ConcreteAngle a2 = new ConcreteAngle(tri.Point3, tri.Point1, tri.Point2);
-            ConcreteAngle a3 = new ConcreteAngle(tri.Point2, tri.Point3, tri.Point1);
+            Angle a1 = new Angle(tri.Point1, tri.Point2, tri.Point3);
+            Angle a2 = new Angle(tri.Point3, tri.Point1, tri.Point2);
+            Angle a3 = new Angle(tri.Point2, tri.Point3, tri.Point1);
             Addition add = new Addition(a1, a2);
             Addition overallAdd = new Addition(add, a3);
             NumericValue value = new NumericValue(180); // Sum is 180^o
-            AngleMeasureEquation eq = new AngleMeasureEquation(overallAdd, value, NAME);
+            GeometricAngleEquation eq = new GeometricAngleEquation(overallAdd, value, NAME);
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq));

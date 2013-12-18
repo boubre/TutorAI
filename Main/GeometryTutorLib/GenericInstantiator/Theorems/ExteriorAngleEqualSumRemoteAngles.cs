@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -10,9 +10,8 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Exterior Angle is Equal to the Sum of Remote Interior Angles";
 
-        private static List<ConcreteTriangle> unifyCandTris = new List<ConcreteTriangle>();
-        private static List<ConcreteAngle> unifyCandAngles = new List<ConcreteAngle>();
-        //        private static List<ConcreteCongruentSegments> unifyCandSegments = new List<ConcreteCongruentSegments>();
+        private static List<Triangle> unifyCandTris = new List<Triangle>();
+        private static List<Angle> unifyCandAngles = new List<Angle>();
 
         //
         // Triangle(A, B, C), Angle(D, A, B) -> Equation(m\angle DAB = m\angle ABC + m\angle BCA)
@@ -21,14 +20,14 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!(c is ConcreteTriangle) && !(c is ConcreteAngle)) return newGrounded;
+            if (!(c is Triangle) && !(c is Angle)) return newGrounded;
 
-            if (c is ConcreteTriangle)
+            if (c is Triangle)
             {
-                ConcreteTriangle tri = c as ConcreteTriangle;
+                Triangle tri = c as Triangle;
 
                 // Given the new triangle, are any of the old angles exterior angles of this triangle?
-                foreach (ConcreteAngle extAngle in unifyCandAngles)
+                foreach (Angle extAngle in unifyCandAngles)
                 {
                     if (tri.HasExteriorAngle(extAngle))
                     {
@@ -39,12 +38,12 @@ namespace GeometryTutorLib.GenericInstantiator
                 // Add to the list of candidate triangles
                 unifyCandTris.Add(tri);
             }
-            else if (c is ConcreteAngle)
+            else if (c is Angle)
             {
-                ConcreteAngle extAngle = c as ConcreteAngle;
+                Angle extAngle = c as Angle;
 
                 // Given the new angle, do any of the old triangles have this exterior angle?
-                foreach (ConcreteTriangle tri in unifyCandTris)
+                foreach (Triangle tri in unifyCandTris)
                 {
                     if (tri.HasExteriorAngle(extAngle))
                     {
@@ -59,13 +58,13 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> ConstructExteriorRelationship(ConcreteTriangle tri, ConcreteAngle extAngle)
+        private static KeyValuePair<List<GroundedClause>, GroundedClause> ConstructExteriorRelationship(Triangle tri, Angle extAngle)
         {
             //
             // Acquire the remote angles
             //
-            ConcreteAngle remote1 = null;
-            ConcreteAngle remote2 = null;
+            Angle remote1 = null;
+            Angle remote2 = null;
 
             tri.AcquireRemoteAngles(extAngle.GetVertex(), out remote1, out remote2);
 
@@ -73,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Construct the new equation
             //
             Addition sum = new Addition(remote1, remote2);
-            AngleMeasureEquation eq = new AngleMeasureEquation(extAngle, sum, NAME);
+            GeometricAngleEquation eq = new GeometricAngleEquation(extAngle, sum, NAME);
 
             //
             // For the hypergraph

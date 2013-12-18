@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -17,10 +17,11 @@ namespace GeometryTutorLib.GenericInstantiator
             InMiddle im = (InMiddle)c;
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new  List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            ConcreteSegment s1 = new ConcreteSegment(im.segment.Point1, im.point);
-            ConcreteSegment s2 = new ConcreteSegment(im.point, im.segment.Point2);
+            Segment s1 = new Segment(im.segment.Point1, im.point);
+            Segment s2 = new Segment(im.point, im.segment.Point2);
             Addition sum = new Addition(s1, s2);
-            SegmentEquation eq = new SegmentEquation(sum, im.segment, NAME);
+            GeometricSegmentEquation eq = new GeometricSegmentEquation(sum, im.segment, NAME);
+            eq.MakeAxiomatic();
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(im);

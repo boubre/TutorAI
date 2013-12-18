@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -19,9 +19,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is ConcreteCollinear)) return null;
+            if (!(c is Collinear)) return null;
 
-            ConcreteCollinear cc = (ConcreteCollinear)c;
+            Collinear cc = (Collinear)c;
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             for (int i = 0; i < cc.points.Count - 2; i++)
@@ -34,7 +34,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         {
                             if (j != k)
                             {
-                                ConcreteAngle newAngle = new ConcreteAngle(cc.points[i], cc.points[j], cc.points[k]);
+                                Angle newAngle = new Angle(cc.points[i], cc.points[j], cc.points[k]);
                                 List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cc);
                                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngle));
                             }

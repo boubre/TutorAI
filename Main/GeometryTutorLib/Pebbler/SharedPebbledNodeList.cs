@@ -53,9 +53,11 @@ namespace GeometryTutorLib.Pebbler
                     try
                     {
                         // Waits for the Monitor.Pulse in WriteEdge
-                        Monitor.Wait(this);
+                        // Add a timeout in case nothing is ever written...
+                        Monitor.Wait(this /* , new TimeSpan(1000)*/);
 
-                        //CTA: Should add a timeout in case nothing is ever written...
+                        // If this timed out, return invalid
+                        //if (!edgeList.Any()) return null;
                     }
                     catch (SynchronizationLockException e)
                     {

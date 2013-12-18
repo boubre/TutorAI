@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -18,23 +18,39 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is Intersection)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            Intersection inter = (Intersection)c;
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
+            if (!(c is Intersection)) return newGrounded;
+
+            Intersection inter = c as Intersection;
+
+            //
+            // Verify that this intersection is composed of two overlapping segments
+            // That is, we do not allow a segment to stand on another:
+            //      \
+            //       \
+            //        \
+            //   ______\_______
+            //
+            if (inter.StandsOn()) return newGrounded;
+
+            //
+            // Otherwise, they overlap creating vertical angles
+            //
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(inter);
 
             // Congruent(Angle(A, X, C), Angle(B, X, D))
-            ConcreteAngle ang1Set1 = new ConcreteAngle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1);
-            ConcreteAngle ang2Set1 = new ConcreteAngle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2);
-            ConcreteCongruentAngles cca1 = new ConcreteCongruentAngles(ang1Set1, ang2Set1, NAME);
+            Angle ang1Set1 = new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1);
+            Angle ang2Set1 = new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2);
+            GeometricCongruentAngles cca1 = new GeometricCongruentAngles(ang1Set1, ang2Set1, NAME);
+            cca1.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
 
             // Congruent(Angle(A, X, D), Angle(C, X, B))
-            ConcreteAngle ang1Set2 = new ConcreteAngle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2);
-            ConcreteAngle ang2Set2 = new ConcreteAngle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1);
-            ConcreteCongruentAngles cca2 = new ConcreteCongruentAngles(ang1Set2, ang2Set2, NAME);
+            Angle ang1Set2 = new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2);
+            Angle ang2Set2 = new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1);
+            GeometricCongruentAngles cca2 = new GeometricCongruentAngles(ang1Set2, ang2Set2, NAME);
+            cca2.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca2));
 
             return newGrounded;

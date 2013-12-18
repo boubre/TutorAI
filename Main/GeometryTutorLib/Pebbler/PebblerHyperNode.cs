@@ -8,41 +8,32 @@ namespace GeometryTutorLib.Pebbler
 {
     public class PebblerHyperNode<T>
     {
-        public T data;
+        public T data; // Original Hypergraph representation
+        public int id; // index of original hypergraph node
 
-        public int id;
+        public List<int> nodes;
+        public List<PebblerHyperEdge> edges;
 
-        public List<int> successorNodes;
-        public List<int> predecessorNodes;
-
-        public List<PebblerHyperEdge> successorEdges;
-        public List<PebblerTransposeHyperEdge> predecessorEdges;
-
-        public bool pebbled;
+        // Coloration of the edge when pebbled
+        public PebblerColorType pebble;
 
         public PebblerHyperNode(T thatData, int thatId)
         {
             id = thatId;
             data = thatData;
-            pebbled = false;
+            pebble = PebblerColorType.NO_PEBBLE;
 
-            successorEdges = new List<PebblerHyperEdge>();
-            predecessorEdges = new List<PebblerTransposeHyperEdge>();
+            edges = new List<PebblerHyperEdge>();
         }
 
-        public void AddSuccessorEdge(PebblerHyperEdge edge)
+        public void AddEdge(PebblerHyperEdge edge)
         {
-            successorEdges.Add(edge);
+            edges.Add(edge);
         }
 
-        public void AddSuccessorEdge(List<int> src, int target)
+        public void AddEdge(List<int> src, int target)
         {
-            successorEdges.Add(new PebblerHyperEdge(src, target));
-        }
-
-        public void AddPredecessorEdge(int source, List<int> target)
-        {
-            predecessorEdges.Add(new PebblerTransposeHyperEdge(source, target));
+            edges.Add(new PebblerHyperEdge(src, target));
         }
 
         public override string ToString()
@@ -50,16 +41,17 @@ namespace GeometryTutorLib.Pebbler
             string retS = data.ToString() + "\t\t\t\t= { ";
 
             retS += id + ", Pebbled(";
-            retS += pebbled + "), ";
+            if (pebble == PebblerColorType.NO_PEBBLE) retS += "NONE";
+            if (pebble == PebblerColorType.RED_FORWARD) retS += "RED";
+            if (pebble == PebblerColorType.BLUE_BACKWARD) retS += "BLUE";
+            if (pebble == PebblerColorType.PURPLE_BOTH) retS += "PURPLE";
+            retS += "), ";
             retS += "SuccN={";
-            foreach (int n in successorNodes) retS += n + ",";
-            if (successorNodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
+            foreach (int n in nodes) retS += n + ",";
+            if (nodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
             retS += "}, SuccE = { ";
-            foreach (PebblerHyperEdge edge in successorEdges) { retS += edge.ToString() + ", "; }
-            if (successorEdges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
-            retS += " } }, PredN={";
-            foreach (int n in predecessorNodes) retS += n + ",";
-            if (predecessorNodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
+            foreach (PebblerHyperEdge edge in edges) { retS += edge.ToString() + ", "; }
+            if (edges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
             retS += " } }";
 
             return retS;

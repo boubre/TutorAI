@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -11,130 +11,124 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Definition of Isosceles Triangle";
 
+        private IsoscelesTriangleDefinition() { }
+        private static readonly IsoscelesTriangleDefinition thisDescriptor = new IsoscelesTriangleDefinition();
+
         public static Boolean MayUnifyWith(GroundedClause c)
         {
-            return (c is ConcreteCongruentSegments) || (c is EqualSegments) || (c is ConcreteTriangle);
+            return (c is CongruentSegments) || (c is Triangle);
         }
 
-        private static List<EqualSegments> unifyCandEqSegments = new List<EqualSegments>();
-        private static List<ConcreteCongruentSegments> unifyCandCongSegments = new List<ConcreteCongruentSegments>();
-        private static List<ConcreteTriangle> unifyCandTriangles = new List<ConcreteTriangle>();
+        private static List<CongruentSegments> candSegs = new List<CongruentSegments>();
+        private static List<Triangle> candTris = new List<Triangle>();
 
         //
         // In order for two triangles to be isosceles, we require the following:
-        //    Triangle(A, B, C), Equal(Segment(A, B), Segment(B, C)) -> IsoscelesTriangle(A, B, C)
         //
         //    Triangle(A, B, C), Congruent(Segment(A, B), Segment(B, C)) -> IsoscelesTriangle(A, B, C)
         //
+        //  This does not generate a new clause explicitly; it simply strengthens the existent object
+        //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!MayUnifyWith(c)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            //
-            // Do we have enough information for unification?
-            //
-            if (c is ConcreteCongruentSegments && !unifyCandTriangles.Any())
-            {
-                unifyCandCongSegments.Add((ConcreteCongruentSegments)c);
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            }
-            else if (c is EqualSegments && !unifyCandTriangles.Any())
-            {
-                unifyCandEqSegments.Add((EqualSegments)c);
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            }
-            else if (c is ConcreteTriangle && !(unifyCandEqSegments.Any() || unifyCandCongSegments.Any()))
-            {
-                unifyCandTriangles.Add((ConcreteTriangle)c);
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            }
-
             // The list of new grounded clauses if they are deduced
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (!MayUnifyWith(c)) return newGrounded;
 
             //
             // Unify
             //
-            if (c is ConcreteCongruentSegments)
+            if (c is CongruentSegments)
             {
-                ConcreteCongruentSegments ccss = (ConcreteCongruentSegments)c;
+                CongruentSegments css = c as CongruentSegments;
 
-                foreach (ConcreteTriangle tri in unifyCandTriangles)
+                // Only generate or add to possible congruent pairs if this is a non-reflexive relation
+                if (!css.IsReflexive())
                 {
-                    if (tri.HasSegment(ccss.cs1) && tri.HasSegment(ccss.cs2))
+                    for (int t = 0; t < candTris.Count; t++)
                     {
-                        // This triangle is isosceles
-                        tri.MakeIsosceles(); // Make any new nodes?
+                        if (candTris[t].HasSegment(css.cs1) && candTris[t].HasSegment(css.cs2))
+                        {
+//                            candTris[t].MakeIsosceles();
 
-                        Debug.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
+                            newGrounded.Add(StregnthenToIsosceles(candTris[t], css));
 
-                        // There should be only one possible Isosceles triangle from this congruent segments
-                        break;
+                            // There should be only one possible Isosceles triangle from this congruent segments
+                            // So we can remove this relationship and triangle from consideration
+                            candTris.RemoveAt(t);
+
+                            return newGrounded;
+                        }
                     }
+
+                    candSegs.Add(c as CongruentSegments);
                 }
 
-                unifyCandCongSegments.Add((ConcreteCongruentSegments)c);
                 return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
-            else if (c is EqualSegments)
+
+            else if (c is Triangle)
             {
-                EqualSegments eqSegments = (EqualSegments)c;
+                // Don't strengthen an Isosceles to an Isosceles triangle
+                if (c is IsoscelesTriangle) return InstantiateGivenDefinition(c as IsoscelesTriangle);
 
-                foreach (ConcreteTriangle tri in unifyCandTriangles)
-                {
-                    if (tri.HasSegment(eqSegments.segment1) && tri.HasSegment(eqSegments.segment2))
-                    {
-                        // This triangle is isosceles
-                        tri.MakeIsosceles(); // Make any new nodes?
+                Triangle newTriangle = c as Triangle;
 
-                        Debug.WriteLine("Is an Isosceles Triangle: " + tri.ToString());
-
-                        // There should be only one possible Isosceles triangle from this congruent segments
-                        break;
-                    }
-                }
-
-                unifyCandEqSegments.Add((EqualSegments)c);
-            }
-            else if (c is ConcreteTriangle)
-            {
-                ConcreteTriangle newTriangle = (ConcreteTriangle)c;
                 //
                 // Do any of the congruent segment pairs merit calling this new triangle isosceles?
                 //
-                bool foundIso = false;
-                foreach (ConcreteCongruentSegments ccss in unifyCandCongSegments)
+                for (int cs = 0; cs < candSegs.Count; cs++)
                 {
-                    if (newTriangle.HasSegment(ccss.cs1) && newTriangle.HasSegment(ccss.cs2))
+                    // No need to check for this, in theory, since we never add any reflexive expressions to the list
+                    if (!candSegs[cs].IsReflexive())
                     {
-                        // This triangle is isosceles
-                        newTriangle.MakeIsosceles(); // Make any new nodes?
-
-                        Debug.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
-
-                        foundIso = true;
-                        break;
-                    }
-                }
-
-                if (!foundIso)
-                {
-                    foreach (EqualSegments eqSegs in unifyCandEqSegments)
-                    {
-                        if (newTriangle.HasSegment(eqSegs.segment1) && newTriangle.HasSegment(eqSegs.segment2))
+                        if (newTriangle.HasSegment(candSegs[cs].cs1) && newTriangle.HasSegment(candSegs[cs].cs2))
                         {
-                            // This triangle is isosceles
-                            newTriangle.MakeIsosceles(); // Make any new nodes?
+//                            newTriangle.MakeIsosceles();
 
-                            Debug.WriteLine("Is an Isosceles Triangle: " + newTriangle.ToString());
+                            newGrounded.Add(StregnthenToIsosceles(newTriangle, candSegs[cs]));
 
-                            break;
+                            return newGrounded;
                         }
                     }
                 }
 
-                unifyCandTriangles.Add(newTriangle);
+                // Add the the list of candidates if it was not determined isosceles now.
+                candTris.Add(newTriangle);
             }
+
+            return newGrounded;
+        }
+
+        //
+        // DO NOT generate a new clause, instead, report the result and generate all applicable
+        // clauses attributed to this strengthening of a triangle from scalene to isosceles
+        //
+        private static KeyValuePair<List<GroundedClause>, GroundedClause> StregnthenToIsosceles(Triangle tri, CongruentSegments ccss)
+        {
+            Strengthened newStrengthened = new Strengthened(tri, new IsoscelesTriangle(tri, "Strengthened"), NAME);
+
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(ccss);
+            antecedent.Add(tri);
+
+            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newStrengthened);
+        }
+
+        //
+        // IsoscelesTriangle(A, B, C) -> Congruent(Segment(A, B), Segment(A, C))
+        //
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateGivenDefinition(IsoscelesTriangle iso)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            GeometricCongruentSegments gcs = new GeometricCongruentSegments(iso.leg1, iso.leg2, NAME);
+
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(iso);
+
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcs));
 
             return newGrounded;
         }

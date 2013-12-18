@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 using System.Diagnostics;
 
 namespace GeometryTutorLib.GenericInstantiator
@@ -17,17 +17,16 @@ namespace GeometryTutorLib.GenericInstantiator
         //     A + B = B + C -> A = C
         //     A + B = 2B + C -> A = B + C
         //
-        public static KeyValuePair<List<GroundedClause>, GroundedClause> Instantiate(List<GroundedClause> originalAntecedent, GroundedClause originalConsequent)
+        public static Equation Simplify(Equation original)
         {
-            Equation eq = originalConsequent as Equation;
-
             // Do we have an equation?
-            if (eq == null) throw new ArgumentException();
+            if (original == null) throw new ArgumentException();
 
             // Is the equation 0 = 0? This should be allowed at it indicates a tautology
-            if (eq.lhs.Equals(new NumericValue(0)) && eq.rhs.Equals(new NumericValue(0)))
+            if (original.lhs.Equals(new NumericValue(0)) && original.rhs.Equals(new NumericValue(0)))
             {
-                return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, originalConsequent);
+                throw new ArgumentException("Should not have an equation that is 0 = 0: " + original.ToString());
+                // return original;
             }
 
             //
@@ -36,7 +35,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Distribute subtraction or multiplication over addition
             //
             // Flatten the equation so that each side is a sum of atomic expressions
-            Equation copyEq = (Equation)eq.DeepCopy();
+            Equation copyEq = (Equation)original.DeepCopy();
             FlatEquation flattened = new FlatEquation(copyEq.lhs.CollectTerms(), copyEq.rhs.CollectTerms());
 
             //Debug.WriteLine("Equation prior to simplification: " + flattened.ToString());
@@ -49,7 +48,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Combine terms across the equal sign
             FlatEquation across = CombineLikeTermsAcrossEqual(combined);
 
-            //Debug.WriteLine("Equation after simplifying both sides: " + across);
+             //Debug.WriteLine("Equation after simplifying both sides: " + across);
 
             //
             // Inflate the equation
@@ -57,30 +56,35 @@ namespace GeometryTutorLib.GenericInstantiator
             Equation inflated = null;
             GroundedClause singleLeftExp = InflateEntireSide(across.lhsExps);
             GroundedClause singleRightExp = InflateEntireSide(across.rhsExps);
-            string newJustification = eq.GetJustification() + " and " + NAME;
-            if (eq is SegmentEquation)
+            string newJustification = original.GetJustification() + " and " + NAME;
+            if (original is AlgebraicSegmentEquation)
             {
-                inflated = new SegmentEquation(singleLeftExp, singleRightExp, newJustification);
+                inflated = new AlgebraicSegmentEquation(singleLeftExp, singleRightExp, newJustification);
             }
-            else if (eq is AngleMeasureEquation)
+            else if (original is GeometricSegmentEquation)
             {
-                inflated = new AngleMeasureEquation(InflateEntireSide(across.lhsExps), InflateEntireSide(across.rhsExps), newJustification);
+                inflated = new GeometricSegmentEquation(singleLeftExp, singleRightExp, newJustification);
+            }
+            else if (original is AlgebraicAngleEquation)
+            {
+                inflated = new AlgebraicAngleEquation(singleLeftExp, singleRightExp, newJustification);
+            }
+            else if (original is GeometricAngleEquation)
+            {
+                inflated = new GeometricAngleEquation(singleLeftExp, singleRightExp, newJustification);
             }
 
             // If simplifying didn't do anything, return the original equation
-            if (inflated.Equals(eq))
+            if (inflated.Equals(original))
             {
-                return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, originalConsequent);
+                return original;
             }
 
-            //
-            // Did we actually perform any simplification? If not, do not generate a new equation.
-            //
             // Simplified equations should inherit the algebraic predecessors of the the original equation as well as the original node
-            Utilities.AddUniqueList<int>(inflated.directAlgebraicPredecessors, eq.directAlgebraicPredecessors);
-            Utilities.AddUnique<int>(inflated.directAlgebraicPredecessors, eq.equationId);
+            //Utilities.AddUniqueList<int>(inflated.predecessors, original.predecessors);
+            //Utilities.AddUnique<int>(inflated.predecessors, original.clauseId);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(originalAntecedent, inflated);
+            return inflated;
         }
 
         //
@@ -118,14 +122,14 @@ namespace GeometryTutorLib.GenericInstantiator
 
             if (side.Count <= 1)
             {
-                singleExp = InflateTerm(side.ElementAt(0));
+                singleExp = InflateTerm(side[0]);
             }
             else
             {
-                singleExp = new Addition(InflateTerm(side.ElementAt(0)), InflateTerm(side.ElementAt(1)));
+                singleExp = new Addition(InflateTerm(side[0]), InflateTerm(side[1]));
                 for (int i = 2; i < side.Count; i++)
                 {
-                    singleExp = new Addition(singleExp, InflateTerm(side.ElementAt(i)));
+                    singleExp = new Addition(singleExp, InflateTerm(side[i]));
                 }
             }
 
@@ -158,7 +162,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 if (!checkedExp[i])
                 {
-                    GroundedClause iExp = sideExps.ElementAt(i);
+                    GroundedClause iExp = sideExps[i];
 
                     // Collect all constants specially
                     if (iExp is NumericValue)
@@ -172,21 +176,29 @@ namespace GeometryTutorLib.GenericInstantiator
                         for (int j = i + 1; j < sideExps.Count; j++)
                         {
                             // If same node, add to the list
-                            if (sideExps.ElementAt(i).Equals(sideExps.ElementAt(j)))
+                            if (sideExps[i].StructurallyEquals(sideExps[j]))
                             {
-                                likeTerms.Add(sideExps.ElementAt(j));
+                                likeTerms.Add(sideExps[j]);
                                 checkedExp[j] = true;
                             }
                         }
 
                         // Combine all the terms together into one node
-                        GroundedClause copyExp = iExp.DeepCopy();
+                        GroundedClause copyExp = iExp.DeepCopy(); // Note, iExp represents the 'first' like term
                         foreach (GroundedClause term in likeTerms)
                         {
                             copyExp.multiplier += term.multiplier;
                         }
 
-                        simp.Add(copyExp);
+                        // If everything cancels, add a 0 to the equation
+                        if (copyExp.multiplier == 0)
+                        {
+                            constants.Add(new NumericValue(0));
+                        }
+                        else
+                        {
+                            simp.Add(copyExp);
+                        }
                     }
                 }
 
@@ -215,72 +227,47 @@ namespace GeometryTutorLib.GenericInstantiator
             List<GroundedClause> leftSimp = new List<GroundedClause>();
             List<GroundedClause> rightSimp = new List<GroundedClause>();
 
+            // The resultant constant values on the left / right sides
+            KeyValuePair<int, int> constantPair = HandleConstants(eq);
+
             bool[] rightCheckedExp = new bool[eq.rhsExps.Count];
             foreach (GroundedClause lExp in eq.lhsExps)
             {
-                int rightExpIndex = eq.rhsExps.IndexOf(lExp);
-
-                //
-                // Left expression has like term on the right?
-                //
-                if (rightExpIndex == -1) // it doesn't have a like term
+                if (!(lExp is NumericValue))
                 {
-                    if (!(lExp is NumericValue))
+                    int rightExpIndex = StructuralIndex(eq.rhsExps, lExp);
+
+                    //
+                    // Left expression has like term on the right?
+                    //
+                    // it doesn't have a like term
+                    if (rightExpIndex == -1)
                     {
-                        leftSimp.Add(lExp); // No need to copy since it's a copy already
+                        leftSimp.Add(lExp);
                     }
                     //
-                    // Check the special case of a numeric value
+                    // Expression has like term on the right
                     //
                     else
                     {
-                        // Normally the constant is at the end of the equation; so start looking there.
-                        for (int j = eq.rhsExps.Count - 1; j >= 0; j--)
+                        rightCheckedExp[rightExpIndex] = true;
+                        GroundedClause rExp = eq.rhsExps[rightExpIndex];
+                        GroundedClause copyExp = lExp.DeepCopy();
+
+                        // Seek to keep positive values for the resultant, simplified expression
+                        if (lExp.multiplier - rExp.multiplier > 0)
                         {
-                            NumericValue rhsNumeric = eq.rhsExps.ElementAt(j) as NumericValue;
-                            if (rhsNumeric != null)
-                            {
-                                rightCheckedExp[j] = true;
-
-                                // Seek to keep positive values for the resultant, simplified expression
-                                if (((NumericValue)lExp).value - rhsNumeric.value > 0)
-                                {
-                                    leftSimp.Add(new NumericValue(((NumericValue)lExp).value - rhsNumeric.value));
-                                }
-                                else if (rhsNumeric.value - ((NumericValue)lExp).value > 0)
-                                {
-                                    rightSimp.Add(new NumericValue(rhsNumeric.value - ((NumericValue)lExp).value));
-                                }
-                                else // Cancelation of the terms
-                                {
-                                }
-                                // There's only one constant so break out.
-                                break;
-                            }
+                            copyExp.multiplier = lExp.multiplier - rExp.multiplier;
+                            leftSimp.Add(copyExp);
                         }
-                    }
-
-                }
-                // Expression matches
-                else
-                {
-                    rightCheckedExp[rightExpIndex] = true;
-                    GroundedClause rExp = eq.rhsExps.ElementAt(rightExpIndex);
-                    GroundedClause copyExp = lExp.DeepCopy(); // arbitrary if left or right
-
-                    // Seek to keep positive values for the resultant, simplified expression
-                    if (lExp.multiplier - rExp.multiplier > 0)
-                    {
-                        copyExp.multiplier = lExp.multiplier - rExp.multiplier;
-                        leftSimp.Add(copyExp);
-                    }
-                    else if (rExp.multiplier - lExp.multiplier > 0)
-                    {
-                        copyExp.multiplier = rExp.multiplier - lExp.multiplier;
-                        rightSimp.Add(copyExp);
-                    }
-                    else // Cancelation of the terms
-                    {
+                        else if (rExp.multiplier - lExp.multiplier > 0)
+                        {
+                            copyExp.multiplier = rExp.multiplier - lExp.multiplier;
+                            rightSimp.Add(copyExp);
+                        }
+                        else // Cancelation of the terms
+                        {
+                        }
                     }
                 }
             }
@@ -288,11 +275,17 @@ namespace GeometryTutorLib.GenericInstantiator
             // Pick up all the expressions on the right hand side which were not like terms of those on the left
             for (int i = 0; i < eq.rhsExps.Count; i++)
             {
-                if (!rightCheckedExp[i])
+                if (!rightCheckedExp[i] && !(eq.rhsExps[i] is NumericValue))
                 {
-                    rightSimp.Add(eq.rhsExps.ElementAt(i));
+                    rightSimp.Add(eq.rhsExps[i]);
                 }
             }
+
+            //
+            // Add back the constant to the correct side
+            //
+            if (constantPair.Key != 0) leftSimp.Add(new NumericValue(constantPair.Key));
+            if (constantPair.Value != 0) rightSimp.Add(new NumericValue(constantPair.Value));
 
             //
             // Now check coefficients: both sides all have coefficients that evenly divide the other side.
@@ -300,10 +293,10 @@ namespace GeometryTutorLib.GenericInstantiator
             if (leftSimp.Any() && rightSimp.Any())
             {
                 // Calculate the gcd
-                int gcd = leftSimp.ElementAt(0).multiplier;
+                int gcd = leftSimp[0].multiplier;
                 for (int i = 1; i < leftSimp.Count; i++)
                 {
-                    gcd = Utilities.GCD(gcd, leftSimp.ElementAt(i).multiplier);
+                    gcd = Utilities.GCD(gcd, leftSimp[i].multiplier);
                 }
                 foreach (GroundedClause rExp in rightSimp)
                 {
@@ -329,6 +322,50 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!rightSimp.Any()) rightSimp.Add(new NumericValue(0));
 
             return new FlatEquation(leftSimp, rightSimp);
+        }
+
+        //
+        // Returns a positive constant on the LHS or RHS as appropriate.
+        //
+        private static KeyValuePair<int, int> HandleConstants(FlatEquation eq)
+        {
+            int lhs = CollectConstants(eq.lhsExps);
+            int rhs = CollectConstants(eq.rhsExps);
+
+            int simpLeft = lhs > rhs ? lhs - rhs : 0;
+            int simpRight = rhs > lhs ? rhs - lhs : 0;
+
+            return new KeyValuePair<int, int>(simpLeft, simpRight);
+        }
+
+        //
+        // Sum the constants on one side of an equation
+        //
+        private static int CollectConstants(List<GroundedClause> side)
+        {
+            int result = 0;
+
+            foreach (GroundedClause term in side)
+            {
+                if (term is NumericValue)
+                {
+                    result += term.multiplier * (term as NumericValue).value;
+                }
+            }
+
+            return result;
+        }
+
+        private static int StructuralIndex(List<GroundedClause> side, GroundedClause term)
+        {
+            for (int r = 0; r < side.Count; r++)
+            {
+                if (side[r].StructurallyEquals(term))
+                {
+                    return r;
+                }
+            }
+            return -1;
         }
     }
 }

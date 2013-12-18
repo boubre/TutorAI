@@ -6,26 +6,27 @@ using GeometryTutorLib.Pebbler;
 
 namespace GeometryTutorLib.Hypergraph
 {
+    //
+    // This class represents both forward and backward edges in the hypergraph.
+    //
     public class HyperEdge<A>
     {
         // Allows us to note how the edge was derived
         public A annotation;
 
         public List<int> sourceNodes;
-        public List<int> pebbles; // Contains all source nodes that have been pebbled: for each source node, there is a 'standard edge' that must be pebbled
-
         public int targetNode;
-        public bool visited;
-        public int numNegArgs; // Number of false atoms in a clause; in this case, init to number of source nodes
 
         public HyperEdge(List<int> src, int target, A annot)
         {
             sourceNodes = src;
-            pebbles = new List<int>(); // If empty, we assume all false (not pebbled)
             targetNode = target;
-            visited = false;
-            numNegArgs = src.Count;
             annotation = annot;
+
+            if (src.Contains(target))
+            {
+                throw new ArgumentException("There exists a direct cycle in a hyperedge: " + this);
+            }
         }
 
         public PebblerHyperEdge CreatePebblerEdge()
@@ -57,6 +58,8 @@ namespace GeometryTutorLib.Hypergraph
 
             return targetNode == consequent;
         }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {

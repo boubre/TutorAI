@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
@@ -13,11 +13,11 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static Boolean MayUnifyWith(GroundedClause c)
         {
-            return c is ConcreteTriangle || c is ConcreteCongruentSegments;
+            return c is Triangle || c is CongruentSegments;
         }
 
-        private static List<ConcreteTriangle> unifyCandTris = new List<ConcreteTriangle>();
-        private static List<ConcreteCongruentSegments> unifyCandSegments = new List<ConcreteCongruentSegments>();
+        private static List<Triangle> unifyCandTris = new List<Triangle>();
+        private static List<CongruentSegments> unifyCandSegments = new List<CongruentSegments>();
 
         //
         // In order for two triangles to be congruent, we require the following:
@@ -34,19 +34,19 @@ namespace GeometryTutorLib.GenericInstantiator
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
             // Do we have a segment or triangle?
-            if (!(c is ConcreteCongruentSegments) && !(c is ConcreteTriangle)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (!(c is CongruentSegments) && !(c is Triangle)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             //
             // Do we have enough information for unification?
             //
-            if (c is ConcreteCongruentSegments && (unifyCandSegments.Count < 2 || unifyCandTris.Count <= 1))
+            if (c is CongruentSegments && (unifyCandSegments.Count < 2 || unifyCandTris.Count <= 1))
             {
-                unifyCandSegments.Add((ConcreteCongruentSegments)c);
+                unifyCandSegments.Add((CongruentSegments)c);
                 return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
-            else if (c is ConcreteTriangle && (!unifyCandTris.Any() || unifyCandSegments.Count < 3))
+            else if (c is Triangle && (!unifyCandTris.Any() || unifyCandSegments.Count < 3))
             {
-                unifyCandTris.Add((ConcreteTriangle)c);
+                unifyCandTris.Add((Triangle)c);
                 return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
 
@@ -54,22 +54,22 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // If this is a new segment, check for congruent triangles with this new piece of information
-            if (c is ConcreteCongruentSegments)
+            if (c is CongruentSegments)
             {
-                ConcreteCongruentSegments newCs = (ConcreteCongruentSegments)c;
+                CongruentSegments newCs = (CongruentSegments)c;
 
                 // Check all combinations of triangles to see if they are congruent
                 // This congruence must include the new segment congruence
                 for (int i = 0; i < unifyCandTris.Count; i++)
                 {
-                    for (int j = 1; j < unifyCandTris.Count; j++)
+                    for (int j = i + 1; j < unifyCandTris.Count; j++)
                     {
-                        // Do not compare a triangle to itself
-                        if (i != j)
+                        Triangle ct1 = unifyCandTris[i];
+                        Triangle ct2 = unifyCandTris[j];
+
+                        if (!ct1.WasDeducedCongruent(ct2))
                         {
-                            ConcreteTriangle ct1 = unifyCandTris.ElementAt(i);
-                            ConcreteTriangle ct2 = unifyCandTris.ElementAt(j);
-                            List<ConcreteCongruentSegments> applicCongruents = new List<ConcreteCongruentSegments>();
+                            List<CongruentSegments> applicCongruents = new List<CongruentSegments>();
 
                             // First, compare the new congruent segment; if it fails, ignore this pair of triangles
                             if (newCs.LinksTriangles(ct1, ct2))
@@ -77,7 +77,7 @@ namespace GeometryTutorLib.GenericInstantiator
                                 applicCongruents.Add(newCs);
 
                                 // Check all other segments
-                                foreach (ConcreteCongruentSegments ccs in unifyCandSegments)
+                                foreach (CongruentSegments ccs in unifyCandSegments)
                                 {
                                     // Does this segment link the two triangles?
                                     if (ccs.LinksTriangles(ct1, ct2))
@@ -98,17 +98,17 @@ namespace GeometryTutorLib.GenericInstantiator
                 unifyCandSegments.Add(newCs);
             }
             // If this is a new triangle, check for triangles which may be congruent to this new triangle
-            else if (c is ConcreteTriangle)
+            else if (c is Triangle)
             {
-                ConcreteTriangle candidateTri = (ConcreteTriangle)c; 
-                foreach (ConcreteTriangle ct in unifyCandTris)
+                Triangle candidateTri = (Triangle)c;
+                foreach (Triangle ct in unifyCandTris)
                 {
                     //
                     // Is this concrete triangle congruent to the new candidate?
                     //
                     // Find all applicable congruent segments for both triangles
-                    List<ConcreteCongruentSegments> applicCongruents = new List<ConcreteCongruentSegments>();
-                    foreach (ConcreteCongruentSegments ccs in unifyCandSegments)
+                    List<CongruentSegments> applicCongruents = new List<CongruentSegments>();
+                    foreach (CongruentSegments ccs in unifyCandSegments)
                     {
                         // Does this segment link the two triangles?
                         if (ccs.LinksTriangles(ct, candidateTri))
@@ -118,7 +118,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     }
 
                     // Generate the new clause
-                    List<KeyValuePair<List<GroundedClause>, GroundedClause>> newG = CheckForSSS(ct, (ConcreteTriangle)c, applicCongruents);
+                    List<KeyValuePair<List<GroundedClause>, GroundedClause>> newG = CheckForSSS(ct, (Triangle)c, applicCongruents);
                     newGrounded.AddRange(newG);
                 }
 
@@ -132,16 +132,16 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Given these two triangles and the set of 3 congruent segment pairs, is this a complete SSS?
         //
-        private static bool IsSpecificSSS(ConcreteTriangle ct1, ConcreteTriangle ct2, List<ConcreteCongruentSegments> segmentPairs)
+        private static bool IsSpecificSSS(Triangle ct1, Triangle ct2, List<CongruentSegments> segmentPairs)
         {
-            List<ConcreteSegment> triangleOneSegments = new List<ConcreteSegment>();
-            List<ConcreteSegment> triangleTwoSegments = new List<ConcreteSegment>();
+            List<Segment> triangleOneSegments = new List<Segment>();
+            List<Segment> triangleTwoSegments = new List<Segment>();
 
             // For each congruent pair, if the segments in question are unique
-            foreach (ConcreteCongruentSegments ccss in segmentPairs)
+            foreach (CongruentSegments ccss in segmentPairs)
             {
-                ConcreteSegment triOneSeg = ct1.GetSegment(ccss);
-                ConcreteSegment triTwoSeg = ct2.GetSegment(ccss);
+                Segment triOneSeg = ct1.GetSegment(ccss);
+                Segment triTwoSeg = ct2.GetSegment(ccss);
 
                 // If a side of a triangle is already in the list, this will not create a true SSS scenario
                 if (triangleOneSegments.Contains(triOneSeg) || triangleTwoSegments.Contains(triTwoSeg)) return false;
@@ -153,20 +153,20 @@ namespace GeometryTutorLib.GenericInstantiator
             // They must each contain 3 segments to account for all 3 sides of the triangle
             return triangleOneSegments.Count == 3 && triangleTwoSegments.Count == 3;
         }
-        
+
         //
         // Of all the congruent segment pairs, choose a subset of 3. Exhaustively check all; if they work, return the set.
         //
-        private static List<ConcreteCongruentSegments> IsTrueSSS(ConcreteTriangle ct1, ConcreteTriangle ct2, List<ConcreteCongruentSegments> conSegments)
+        private static List<CongruentSegments> IsTrueSSS(Triangle ct1, Triangle ct2, List<CongruentSegments> conSegments)
         {
-            List<ConcreteCongruentSegments> subset;
+            List<CongruentSegments> subset;
 
             // construct the subset in a hack way using 3 loops to guarantee we generate ALL subsets exhaustively
             for (int one = 0; one < conSegments.Count; one++)
             {
                 for (int two = one + 1; two < conSegments.Count; two++)
                 {
-                    subset = new List<ConcreteCongruentSegments>();
+                    subset = new List<CongruentSegments>();
                     for (int three = two + 1; three < conSegments.Count; three++)
                     {
                         subset.Add(conSegments[one]);
@@ -184,31 +184,31 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Return all the corresponing points from the two triangles and Congruence Pairs
         //
-        private static List<KeyValuePair<ConcretePoint, ConcretePoint>> MakePointPairs(ConcreteTriangle ct1, ConcreteTriangle ct2, List<ConcreteCongruentSegments> congruentPairs)
+        private static List<KeyValuePair<Point, Point>> MakePointPairs(Triangle ct1, Triangle ct2, List<CongruentSegments> congruentPairs)
         {
-            List<KeyValuePair<ConcretePoint, ConcretePoint>> pointPairs = new List<KeyValuePair<ConcretePoint,ConcretePoint>>();
+            List<KeyValuePair<Point, Point>> pointPairs = new List<KeyValuePair<Point, Point>>();
 
             // we could write this without loops, but loops allow extension to more sides (if we have a generalpolygon)
-            
+
             // Take all combinations of Congruent Segment Pairs and find the common vertex in both triangles; those are the corresponding points
             for (int i = 0; i < congruentPairs.Count - 1; i++)
             {
                 for (int j = i + 1; j < congruentPairs.Count; j++)
                 {
-                    ConcreteSegment triOneSeg1 = ct1.GetSegment(congruentPairs[i]);
-                    ConcreteSegment triTwoSeg1 = ct2.GetSegment(congruentPairs[i]);
+                    Segment triOneSeg1 = ct1.GetSegment(congruentPairs[i]);
+                    Segment triTwoSeg1 = ct2.GetSegment(congruentPairs[i]);
 
-                    ConcreteSegment triOneSeg2 = ct1.GetSegment(congruentPairs[j]);
-                    ConcreteSegment triTwoSeg2 = ct2.GetSegment(congruentPairs[j]);
+                    Segment triOneSeg2 = ct1.GetSegment(congruentPairs[j]);
+                    Segment triTwoSeg2 = ct2.GetSegment(congruentPairs[j]);
 
-                    pointPairs.Add(new KeyValuePair<ConcretePoint, ConcretePoint>(triOneSeg1.SharedVertex(triOneSeg2), triTwoSeg1.SharedVertex(triTwoSeg2)));
+                    pointPairs.Add(new KeyValuePair<Point, Point>(triOneSeg1.SharedVertex(triOneSeg2), triTwoSeg1.SharedVertex(triTwoSeg2)));
                 }
             }
 
             return pointPairs;
-       }
+        }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckForSSS(ConcreteTriangle ct1, ConcreteTriangle ct2, List<ConcreteCongruentSegments> conSegments)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckForSSS(Triangle ct1, Triangle ct2, List<CongruentSegments> conSegments)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -224,26 +224,26 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // For debug only
             //
-            Debug.WriteLine("SSS In Triangles: " + ct1 + ", " + ct2);
-            foreach (GroundedClause gc in conSegments)
-            {
-                Debug.WriteLine("\t\t" + gc.ToString());
-            }
+            //Debug.WriteLine("SSS In Triangles: " + ct1 + ", " + ct2);
+            //foreach (GroundedClause gc in conSegments)
+            //{
+            //    Debug.WriteLine("\t\t" + gc.ToString());
+            //}
             // End debug only
 
 
             // Acquire the 3 actual congruent pairs that make this SSS
-            List<ConcreteCongruentSegments> congruencePairs = IsTrueSSS(ct1, ct2, conSegments);
+            List<CongruentSegments> congruencePairs = IsTrueSSS(ct1, ct2, conSegments);
 
             // Not SSS if this is true
             if (congruencePairs == null) return newGrounded;
 
-            List<KeyValuePair<ConcretePoint, ConcretePoint>> correspondingVertices = MakePointPairs(ct1, ct2, congruencePairs);
+            List<KeyValuePair<Point, Point>> correspondingVertices = MakePointPairs(ct1, ct2, congruencePairs);
 
             // Create the congruence between the triangles
-            List<ConcretePoint> triangleOne = new List<ConcretePoint>();
-            List<ConcretePoint> triangleTwo = new List<ConcretePoint>();
-            foreach (KeyValuePair<ConcretePoint, ConcretePoint> pair in correspondingVertices)
+            List<Point> triangleOne = new List<Point>();
+            List<Point> triangleTwo = new List<Point>();
+            foreach (KeyValuePair<Point, Point> pair in correspondingVertices)
             {
                 triangleOne.Add(pair.Key);
                 triangleTwo.Add(pair.Value);
@@ -253,24 +253,24 @@ namespace GeometryTutorLib.GenericInstantiator
             ct1.AddCongruentTriangle(ct2);
             ct2.AddCongruentTriangle(ct1);
 
-            ConcreteCongruentTriangles ccts = new ConcreteCongruentTriangles(new ConcreteTriangle(triangleOne),
-                                                                             new ConcreteTriangle(triangleTwo), NAME);
+            GeometricCongruentTriangles ccts = new GeometricCongruentTriangles(new Triangle(triangleOne),
+                                                                               new Triangle(triangleTwo), NAME);
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
-            foreach (ConcreteCongruentSegments ccss in congruencePairs) { antecedent.Add(ccss); }
+            foreach (CongruentSegments ccss in congruencePairs) { antecedent.Add(ccss); }
             antecedent.Add(ct1);
             antecedent.Add(ct2);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
 
             // Add all the corresponding parts as new congruent clauses
-            newGrounded.AddRange(ConcreteCongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
+            newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
 
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateAllAngleClauses(ConcreteCongruentTriangles ccts, GroundedClause[] facts, string NAME)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateAllAngleClauses(CongruentTriangles ccts, GroundedClause[] facts, string NAME)
         {
             //
             // Is this triangle reflexively congruent; all three sides shared?
@@ -284,8 +284,8 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // This map will contain all points in Triangle 1 which corresponsd directly to the points of Triangle 2
             //
-            List<ConcretePoint> orderedTriOnePts = new List<ConcretePoint>();
-            List<ConcretePoint> orderedTriTwoPts = new List<ConcretePoint>();
+            List<Point> orderedTriOnePts = new List<Point>();
+            List<Point> orderedTriTwoPts = new List<Point>();
 
             //
             // Is there one shared side?
@@ -299,7 +299,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Triangle ABD \cong
             // Triangle DCA
-            ConcreteSegment cs = ccts.ct1.SharesSide(ccts.ct2);
+            Segment cs = ccts.ct1.SharesSide(ccts.ct2);
             if (cs != null)
             {
                 orderedTriOnePts.Add(cs.Point1);
@@ -318,16 +318,16 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
 
                 // Create two lists of three points from each triangle
-                List<ConcretePoint> triangleOne = ccts.ct1.GetPoints();
-                List<ConcretePoint> triangleTwo = ccts.ct2.GetPoints();
+                List<Point> triangleOne = ccts.ct1.GetPoints();
+                List<Point> triangleTwo = ccts.ct2.GetPoints();
 
                 // Construct the map
                 for (int i = 0; i < facts.Length; i++)
                 {
-                    KeyValuePair<ConcretePoint, ConcretePoint> pair = GeneratePair((ConcreteCongruentSegments)facts[i],
-                                                                                   (ConcreteCongruentSegments)facts[i + 1 < facts.Length ? i + 1 : 0]);
+                    KeyValuePair<Point, Point> pair = GeneratePair((CongruentSegments)facts[i],
+                                                                                   (CongruentSegments)facts[i + 1 < facts.Length ? i + 1 : 0]);
 
-                    ConcretePoint p = pair.Key;
+                    Point p = pair.Key;
                     if (triangleOne.Contains(p))
                     {
                         orderedTriOnePts.Add(pair.Key);
@@ -341,18 +341,18 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
             }
 
-            return ConcreteCongruentTriangles.GenerateCPCTC(ccts, orderedTriOnePts, orderedTriTwoPts);
+            return CongruentTriangles.GenerateCPCTC(ccts, orderedTriOnePts, orderedTriTwoPts);
         }
 
-        private static KeyValuePair<ConcretePoint, ConcretePoint> GeneratePair(ConcreteCongruentSegments s1, ConcreteCongruentSegments s2)
+        private static KeyValuePair<Point, Point> GeneratePair(CongruentSegments s1, CongruentSegments s2)
         {
-            ConcretePoint vertexOne = s1.GetFirstSegment().SharedVertex(s2.GetFirstSegment());
+            Point vertexOne = s1.GetFirstSegment().SharedVertex(s2.GetFirstSegment());
             vertexOne = vertexOne == null ? s1.GetSecondSegment().SharedVertex(s2.GetFirstSegment()) : vertexOne;
 
-            ConcretePoint vertexTwo = s2.GetSecondSegment().SharedVertex(s1.GetFirstSegment());
+            Point vertexTwo = s2.GetSecondSegment().SharedVertex(s1.GetFirstSegment());
             vertexTwo = vertexTwo == null ? s2.GetSecondSegment().SharedVertex(s1.GetSecondSegment()) : vertexTwo;
 
-            return new KeyValuePair<ConcretePoint, ConcretePoint>(vertexOne, vertexTwo);
+            return new KeyValuePair<Point, Point>(vertexOne, vertexTwo);
         }
     }
 }

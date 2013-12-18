@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib.ConcreteAbstractSyntax;
+using GeometryTutorLib.ConcreteAST;
 using GeometryTutorLib.GenericInstantiator;
 using System.Diagnostics;
 using GeometryTutorLib.Hypergraph;
@@ -12,40 +12,13 @@ namespace Geometry_Testbed
 {
     class Program
     {
-        private static void Generate(GroundedClause c)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = SAS.Instantiate(c);
-
-            if (newClauses == null || !newClauses.Any())
-            {
-                // Console.WriteLine("No new clauses created.");
-            }
-            else
-            {
-                foreach (KeyValuePair<List<GroundedClause>, GroundedClause> gc in newClauses)
-                {
-                    //Console.WriteLine(gc.ToString());
-                }
-
-                //               Console.ReadLine();
-
-                //
-                // Cycle the 'new', deduced clauses
-                //
-                //foreach (GroundedClause newGC in newClauses)
-                //{
-                //    Generate(newGC);
-                //}
-            }
-        }
-
         private static void TestSumAnglesInTriangle()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
-            ConcretePoint b = new ConcretePoint("B", 4, 3);
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
 
-            ConcreteTriangle t = new ConcreteTriangle(a, m, b);
+            Triangle t = new Triangle(a, m, b);
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -54,70 +27,88 @@ namespace Geometry_Testbed
             clauses.Add(b);
             clauses.Add(t);
 
-            Instantiator instantiator = new Instantiator();
-            instantiator.Instantiate(clauses);
-
-            //            graph.ConstructGraph();
-            //graph.DebugDumpClauses();
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void TestMidpointTheoremFigure()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
-            ConcretePoint b = new ConcretePoint("B", 4, 3);
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 0);
 
-            ConcreteSegment segment = new ConcreteSegment(a, b);
+            Segment ab = new Segment(a, b);
+            Segment am = new Segment(a, m);
+            Segment mb = new Segment(m, b);
 
-            ConcreteMidpoint mid = new ConcreteMidpoint(m, segment, "Given");
+            InMiddle im = new InMiddle(m, ab, "Intrinsic");
+            Midpoint mid = new Midpoint(m, ab, "Given");
 
-            List<GroundedClause> clauses = new List<GroundedClause>();
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(ab);
+            intrinsic.Add(am);
+            intrinsic.Add(mb);
+            intrinsic.Add(im);
 
-            clauses.Add(a);
-            clauses.Add(m);
-            clauses.Add(b);
-            clauses.Add(segment);
-            clauses.Add(mid);
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(mid);
 
-            //Instantiator instantiator = new Instantiator();
-            //Hypergraph<GroundedClause, int> graph = instantiator.Instantiate(clauses);
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
 
-            //graph.DebugDumpClauses();
+        private static void TestMidpointTheorem()
+        {
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 0);
 
-            //PebblerHypergraph<GroundedClause> pebblerGraph = graph.GetPebblerHypergraph();
+            Segment am = new Segment(a, m);
+            Segment ab = new Segment(a, b);
+            Segment bm = new Segment(b, m);
 
-            //pebblerGraph.DebugDumpClauses();
+            Midpoint mid = new Midpoint(m, ab, "Given");
 
-            //int[] srcArr = { 2 };
-            //List<int> src = new List<int>(srcArr);
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(am);
+            intrinsic.Add(ab);
+            intrinsic.Add(bm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(mid);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
         }
 
         private static void TestFigureSix()
         {
-            ConcretePoint x = new ConcretePoint("X", 0, 0);
-            ConcretePoint m = new ConcretePoint("M", 2, 0);
-            ConcretePoint y = new ConcretePoint("Y", 4, 0);
-            ConcretePoint t = new ConcretePoint("T", -1, 2);
-            ConcretePoint n = new ConcretePoint("N", 1, 2); 
-            ConcretePoint z = new ConcretePoint("Z", -2, 2);
+            Point x = new Point("X", 0, 0);
+            Point m = new Point("M", 2, 0);
+            Point y = new Point("Y", 4, 0);
+            Point t = new Point("T", -1, 2);
+            Point n = new Point("N", 1, 2); 
+            Point z = new Point("Z", -2, 2);
 
-            ConcreteTriangle ztn = new ConcreteTriangle(z, t, n);
-            ConcreteTriangle tnm = new ConcreteTriangle(t, n, m);
-            ConcreteTriangle nmy = new ConcreteTriangle(n, m, y);
-            ConcreteTriangle txm = new ConcreteTriangle(t, x, m);
+            Triangle ztn = new Triangle(z, t, n);
+            Triangle tnm = new Triangle(t, n, m);
+            Triangle nmy = new Triangle(n, m, y);
+            Triangle txm = new Triangle(t, x, m);
 
-            ConcreteSegment zx = new ConcreteSegment(z, x);
-            ConcreteSegment zy = new ConcreteSegment(z, y);
-            ConcreteSegment xy = new ConcreteSegment(x, y);
+            Segment zx = new Segment(z, x);
+            Segment zy = new Segment(z, y);
+            Segment xy = new Segment(x, y);
 
-            ConcreteMidpoint midT = new ConcreteMidpoint(t, zx, "Given");
-            ConcreteMidpoint midN = new ConcreteMidpoint(n, zy, "Given");
-            ConcreteMidpoint midM = new ConcreteMidpoint(m, xy, "Given");
+            Midpoint midT = new Midpoint(t, zx, "Given");
+            Midpoint midN = new Midpoint(n, zy, "Given");
+            Midpoint midM = new Midpoint(m, xy, "Given");
 
-            ConcreteCongruentSegments ccss1 = new ConcreteCongruentSegments(new ConcreteSegment(t, n), new ConcreteSegment(x, m), "Given");
-            ConcreteCongruentSegments ccss2 = new ConcreteCongruentSegments(new ConcreteSegment(n, m), new ConcreteSegment(t, x), "Given");
+            GeometricCongruentSegments ccss1 = new GeometricCongruentSegments(new Segment(t, n), new Segment(x, m), "Given");
+            GeometricCongruentSegments ccss2 = new GeometricCongruentSegments(new Segment(n, m), new Segment(t, x), "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -140,33 +131,21 @@ namespace Geometry_Testbed
             clauses.Add(ccss1);
             clauses.Add(ccss2);
 
-            Instantiator instantiator = new Instantiator();
-            instantiator.Instantiate(clauses);
-
-            //graph.ConstructGraph();
-            //graph.ConstructGraphRepresentation();
-            //graph.DebugDumpClauses();
-
-            int[] srcArr = { 2, 3, 4, 5, 6, 7, 8 };
-            List<int> src = new List<int>(srcArr);
-            int[] goalArr = { 36 };
-            List<int> goals = new List<int>(goalArr);
-
-            //graph.ConstructPath(src, goals);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void TestExteriorAngleSum()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
-            ConcretePoint b = new ConcretePoint("B", 4, 3);
-            ConcretePoint c = new ConcretePoint("C", 4, 0);
-            ConcretePoint d = new ConcretePoint("D", 0, 0);
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
 
-            ConcreteTriangle dmctriangle = new ConcreteTriangle(d, m, c);
-            ConcreteAngle acdAngle = new ConcreteAngle(a, c, d);
-            ConcreteAngle amdAngle = new ConcreteAngle(a, m, d);
-            ConcreteAngle bmcAngle = new ConcreteAngle(b, m, c);
+            Triangle dmctriangle = new Triangle(d, m, c);
+            Angle acdAngle = new Angle(a, c, d);
+            Angle amdAngle = new Angle(a, m, d);
+            Angle bmcAngle = new Angle(b, m, c);
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -180,45 +159,1117 @@ namespace Geometry_Testbed
             clauses.Add(amdAngle);
             clauses.Add(bmcAngle);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
-        private static void TestEntireFigure()
+        private static void TestClassicOverlappingRightTriangleFigure()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
-            ConcretePoint b = new ConcretePoint("B", 4, 3);
-            ConcretePoint c = new ConcretePoint("C", 4, 0);
-            ConcretePoint d = new ConcretePoint("D", 0, 0);
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
 
-            ConcreteSegment cd = new ConcreteSegment(c, d);
-            ConcreteSegment ad = new ConcreteSegment(a, d);
-            ConcreteSegment bc = new ConcreteSegment(b, c);
-            ConcreteSegment bd = new ConcreteSegment(b, d);
-            ConcreteSegment ac = new ConcreteSegment(a, c);
+            Segment cd = new Segment(c, d);
+            Segment ad = new Segment(a, d);
+            Segment bc = new Segment(b, c);
+            Segment bd = new Segment(b, d);
+            Segment ac = new Segment(a, c);
 
-            ConcreteSegment am = new ConcreteSegment(a, m);
-            ConcreteSegment mb = new ConcreteSegment(m, b);
-            ConcreteSegment mc = new ConcreteSegment(m, c);
-            ConcreteSegment md = new ConcreteSegment(m, d);
+            Segment am = new Segment(a, m);
+            Segment mb = new Segment(m, b);
+            Segment mc = new Segment(m, c);
+            Segment md = new Segment(m, d);
 
-            ConcreteTriangle rightOne = new ConcreteTriangle(ad, cd, ac, "Given");
-            ConcreteTriangle rightTwo = new ConcreteTriangle(bc, cd, bd, "Given");
+            Triangle rightOne = new Triangle(ad, cd, ac, "Given");
+            RightTriangle rightTwo = new RightTriangle(bc, cd, bd, "Given");
 
-            ConcreteTriangle isoOne = new ConcreteTriangle(am, md, ad, "Given");
-            ConcreteTriangle isoTwo = new ConcreteTriangle(mb, mc, bc, "Given");
+            Triangle isoOne = new Triangle(am, md, ad, "Given");
+            Triangle isoTwo = new Triangle(mb, mc, bc, "Given");
 
-            ConcreteTriangle bottomIso = new ConcreteTriangle(mc, md, cd, "Given");
+            Triangle bottomIso = new Triangle(mc, md, cd, "Given");
 
             Intersection inter = new Intersection(m, ac, bd, "Given");
 
-            ConcreteMidpoint mid1 = new ConcreteMidpoint(m, ac, "Given");
-            ConcreteMidpoint mid2 = new ConcreteMidpoint(m, bd, "Given");
+            Intersection inter10 = new Intersection(m, am, bd, "Given");
+            Intersection inter11 = new Intersection(m, mc, bd, "Given");
+            Intersection inter12 = new Intersection(m, mb, ac, "Given");
+            Intersection inter13 = new Intersection(m, md, ac, "Given");
+            Intersection inter14 = new Intersection(m, am, mb, "Given");
+            Intersection inter15 = new Intersection(m, mb, mc, "Given");
+            Intersection inter16 = new Intersection(m, mc, md, "Given");
+            Intersection inter17 = new Intersection(m, md, am, "Given");
+
+            Intersection inter2 = new Intersection(a, ac, ad, "Given");
+            Intersection inter3 = new Intersection(b, bc, bd, "Given");
+            Intersection inter4 = new Intersection(c, bc, ac, "Given");
+            Intersection inter5 = new Intersection(c, cd, bc, "Given");
+            Intersection inter6 = new Intersection(c, cd, ac, "Given");
+
+            Intersection inter7 = new Intersection(d, ad, cd, "Given");
+            Intersection inter8 = new Intersection(d, ad, bd, "Given");
+            Intersection inter9 = new Intersection(d, cd, bd, "Given");
+
+            Midpoint mid1 = new Midpoint(m, ac, "Given");
+            Midpoint mid2 = new Midpoint(m, bd, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(cd);
+            intrinsic.Add(ad);
+            intrinsic.Add(bc);
+            intrinsic.Add(bd);
+            intrinsic.Add(ac);
+            intrinsic.Add(am);
+            intrinsic.Add(mb);
+            intrinsic.Add(mc);
+            intrinsic.Add(md);
+            intrinsic.Add(rightOne);
+            intrinsic.Add(rightTwo);
+            intrinsic.Add(isoOne);
+            intrinsic.Add(isoTwo);
+            intrinsic.Add(bottomIso);
+            intrinsic.Add(inter);
+            intrinsic.Add(inter2);
+            intrinsic.Add(inter3);
+            intrinsic.Add(inter4);
+            intrinsic.Add(inter5);
+            intrinsic.Add(inter6);
+            intrinsic.Add(inter7);
+            intrinsic.Add(inter8);
+            intrinsic.Add(inter9);
+            intrinsic.Add(inter10);
+            intrinsic.Add(inter11);
+            intrinsic.Add(inter12);
+            intrinsic.Add(inter13);
+            intrinsic.Add(inter14);
+            intrinsic.Add(inter15);
+            intrinsic.Add(inter16);
+            intrinsic.Add(inter17);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(mid1);
+            givens.Add(mid2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        //      A
+        //     /|\
+        //    / | \
+        //   /  |  \
+        //  /___|___\
+        //  B   M    C
+        private static void TestIsoscelesTriangleFigure()
+        {
+            Point a = new Point("A", 2, 6);
+            Point m = new Point("M", 2, 0);
+            Point b = new Point("B", 0, 0);
+            Point c = new Point("C", 4, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment am = new Segment(a, m);
+            Segment ac = new Segment(a, c);
+            Segment bm = new Segment(b, m);
+            Segment mc = new Segment(m, c);
+
+            Segment bc = new Segment(b, c);
+
+            IsoscelesTriangle original = new IsoscelesTriangle(ac, ab, bc, "Given");
+
+            Triangle left = new Triangle(ab, bm, am, "Given");
+            Triangle right = new Triangle(ac, mc, am, "Given");
+
+            Intersection inter1 = new Intersection(a, ab, ac, "Given");
+            Intersection inter2 = new Intersection(a, ab, am, "Given");
+            Intersection inter3 = new Intersection(a, am, ac, "Given");
+
+            Intersection inter4 = new Intersection(m, am, bc, "Given");
+            Intersection inter5 = new Intersection(m, bm, mc, "Given");
+
+            Intersection inter6 = new Intersection(b, ab, bm, "Given");
+            Intersection inter7 = new Intersection(b, ab, bc, "Given");
+
+            Intersection inter8 = new Intersection(c, ac, mc, "Given");
+            Intersection inter9 = new Intersection(c, ac, bc, "Given");
+
+            Angle bac = new Angle(b, a, c);
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(am);
+            intrinsic.Add(ac);
+            intrinsic.Add(bm);
+            intrinsic.Add(mc);
+            intrinsic.Add(bc);
+
+            intrinsic.Add(original);
+            intrinsic.Add(left);
+            intrinsic.Add(right);
+
+            intrinsic.Add(inter1);
+            intrinsic.Add(inter2);
+            intrinsic.Add(inter3);
+            intrinsic.Add(inter4);
+            intrinsic.Add(inter5);
+            intrinsic.Add(inter6);
+            intrinsic.Add(inter7);
+            intrinsic.Add(inter8);
+            intrinsic.Add(inter9);
+
+            intrinsic.Add(bac);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            AngleBisector angBisector = new AngleBisector(bac, am, "Given");
+            givens.Add(angBisector);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestIsoscelesTriangle()
+        {
+            Point a = new Point("A", -2, 0);
+            Point m = new Point("M", 0, 0);
+            Point b = new Point("B", 0, 3);
+            Point c = new Point("C", 2, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment bc = new Segment(b, c);
+            Segment ac = new Segment(a, c);
+            Segment mb = new Segment(m, b);
+            Segment am = new Segment(a, m);
+            Segment mc = new Segment(m, c);
+
+            Midpoint mid = new Midpoint(m, ac, "Given");
+            //Intersection inter = new Intersection(m, mb, ac, "Given");
+
+            Triangle rightOne = new Triangle(ab, mb, am, "Given");
+            rightOne.SetProvenToBeRight();
+            Triangle rightTwo = new Triangle(bc, mb, mc, "Given");
+            rightTwo.SetProvenToBeRight();
+            Triangle iso = new Triangle(ab, bc, ac, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
             clauses.Add(a);
             clauses.Add(m);
+            clauses.Add(b);
+            clauses.Add(c);
+            clauses.Add(ab);
+            clauses.Add(bc);
+            clauses.Add(ac);
+            clauses.Add(mb);
+            clauses.Add(am);
+            clauses.Add(mc);
+            clauses.Add(mid);
+            clauses.Add(iso);
+            clauses.Add(rightOne);
+            clauses.Add(rightTwo);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+        }
+
+        private static void TestParallel()
+        {
+            Point a = new Point("A", 0, 2);
+            Point b = new Point("B", 6, 2);
+            Point e = new Point("E", 0, 6);
+            Point f = new Point("F", 6, 6);
+            Point g = new Point("G", 0, 0);
+            Point h = new Point("H", 12, 24);
+            Segment ab = new Segment(a, b);
+            Segment ef = new Segment(e, f);  //to be GeometricParallel with ab
+            Segment gh = new Segment(g, h);
+
+            GeometricParallel abef = new GeometricParallel(ab, ef, "Given");
+            Intersection abgh = new Intersection(new Point("I1",1,2),ab,gh,"Given");
+            Intersection efgh = new Intersection(new Point("I2",3, 6), ef, gh, "Given");
+
+            List<GroundedClause> figure = new List<GroundedClause>();
+            List<GroundedClause> givens = new List<GroundedClause>();
+
+            figure.Add(a);
+            figure.Add(b);
+            figure.Add(e);
+            figure.Add(f);
+            figure.Add(g);
+            figure.Add(h);
+
+            figure.Add(ab); //to test paralell
+            figure.Add(ef); //to test paralell
+            figure.Add(abgh);
+            figure.Add(efgh);
+            givens.Add(abef); //to test paralell
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(figure, givens);
+        }
+
+        private static void TestAlternateInterior()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            Angle amn = new Angle(a, m, n);
+            Angle dnm = new Angle(d, n, m);
+
+            GeometricParallel gParallel = new GeometricParallel(ab, cd, "Given");
+            // CongruentAngles cas = new CongruentAngles(amn, dnm, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(amn);
+            intrinsic.Add(dnm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(gParallel);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestCorrespondingAngleImplyParallel()
+        {
+            //       /\
+            //      /  \
+            //     /____\
+            //    / \  / \
+            //   /________\
+            //
+            //
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            //Angle amn = new Angle(a, m, n);
+            //Angle cnq = new Angle(c, n, q);
+
+            Angle pmb = new Angle(p, m, b);
+            Angle pnd = new Angle(p, n, d);
+
+            CongruentAngles cas = new CongruentAngles(pmb, pnd, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(pmb);
+            intrinsic.Add(pnd);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSameSideSupplementary()
+        {
+            //       /\
+            //      /  \
+            //     /____\
+            //    / \  / \
+            //   /________\
+            //
+            //
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            Angle bmn = new Angle(b, m, n);
+            Angle dnm = new Angle(d, n, m);
+
+            Supplementary supp = new Supplementary(bmn, dnm, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(bmn);
+            intrinsic.Add(dnm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(supp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestInterleavingSimilarTriangles()
+        {
+            //       /\
+            //      /  \
+            //     /____\
+            //    / \  / \
+            //   /________\
+            //
+            //
+            Point a = new Point("A", 2, 12);
+            Point d = new Point("D", 1.5, 9); // (1,3)
+            Point e = new Point("E", 2.5, 9); // (3, 3)
+            Point x = new Point("X", 2, 18 / 2.5); // (2, 2)
+            Point b = new Point("B", 0, 0);
+            Point c = new Point("C", 4, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment ac = new Segment(a, c);
+            Segment bc = new Segment(b, c);
+            Segment be = new Segment(b, e);
+            Segment bx = new Segment(b, x);
+
+            Segment ad = new Segment(a, d);
+            Segment cd = new Segment(c, d);
+            Segment de = new Segment(d, e);
+            Segment db = new Segment(d, b);
+            Segment ae = new Segment(a, e);
+
+            Segment ex = new Segment(e, x);
+            Segment ec = new Segment(e, c);
+            Segment xc = new Segment(x, c);
+            Segment xd = new Segment(x, d);
+
+            Triangle one = new Triangle(ad, de, ae, "Intrinsic");
+            Triangle two = new Triangle(de, ex, xd, "Intrinsic");
+
+            Triangle whole = new Triangle(ab, ac, bc, "Intrinsic");
+
+            Triangle leftOne = new Triangle(ab, be, ae, "Intrinsic");
+            Triangle leftTwo = new Triangle(db, de, be, "Intrinsic");
+
+            Triangle rightOne = new Triangle(ac, ad, cd, "Intrinsic");
+            Triangle rightTwo = new Triangle(ec, cd, de, "Intrinsic");
+
+            Triangle bxd = new Triangle(bx, db, xd, "Intrinsic");
+            Triangle cxe = new Triangle(xc, ex, ec, "Intrinsic");
+            Triangle bxc = new Triangle(bx, xc, bc, "Intrinsic");
+
+            Triangle bec = new Triangle(be, ec, bc, "Intrinsic");
+            Triangle cdb = new Triangle(cd, db, bc, "Intrinsic");
+
+            Intersection interLeft = new Intersection(d, ab, cd, "Intrinsic");
+            Intersection interRight = new Intersection(e, ac, be, "Intrinsic");
+            Intersection interMain = new Intersection(x, cd, be, "Intrinsic");
+
+            Intersection i2 = new Intersection(b, be, ab, "Intrinsic");
+            Intersection i3 = new Intersection(b, bc, ab, "Intrinsic");
+            Intersection i4 = new Intersection(b, bc, be, "Intrinsic");
+
+            Intersection i5 = new Intersection(c, ac, cd, "Intrinsic");
+            Intersection i6 = new Intersection(c, ac, bc, "Intrinsic");
+            Intersection i7 = new Intersection(c, cd, bc, "Intrinsic");
+
+            Intersection i8 = new Intersection(d, cd, de, "Intrinsic");
+            Intersection i9 = new Intersection(d, ab, de, "Intrinsic");
+            Intersection i10 = new Intersection(e, de, ac, "Intrinsic");
+
+            InMiddle im1 = new InMiddle(x, be, "Intrinsic");
+            InMiddle im2 = new InMiddle(d, ab, "Intrinsic");
+            InMiddle im3 = new InMiddle(e, ac, "Intrinsic");
+            InMiddle im4 = new InMiddle(x, cd, "Intrinsic");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(d);
+            intrinsic.Add(e);
+            intrinsic.Add(x);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(ac);
+            intrinsic.Add(bc);
+            intrinsic.Add(be);
+            intrinsic.Add(bx);
+            intrinsic.Add(ad);
+            intrinsic.Add(cd);
+            intrinsic.Add(de);
+            intrinsic.Add(db);
+            intrinsic.Add(ae);
+            intrinsic.Add(ex);
+            intrinsic.Add(ec);
+            intrinsic.Add(xc);
+            intrinsic.Add(xd);
+
+            intrinsic.Add(one);
+            intrinsic.Add(two);
+            intrinsic.Add(whole);
+            intrinsic.Add(leftOne);
+            intrinsic.Add(leftTwo);
+            intrinsic.Add(rightOne);
+            intrinsic.Add(rightTwo);
+            intrinsic.Add(bxc);
+            intrinsic.Add(bxd);
+            intrinsic.Add(cxe);
+            intrinsic.Add(bec);
+            intrinsic.Add(cdb);
+
+            intrinsic.Add(im1);
+            intrinsic.Add(im2);
+            intrinsic.Add(im3);
+            intrinsic.Add(im4);
+
+            intrinsic.Add(interLeft);
+            intrinsic.Add(interRight);
+            intrinsic.Add(interMain);
+
+            intrinsic.Add(i2);
+            intrinsic.Add(i3);
+            intrinsic.Add(i4);
+            intrinsic.Add(i5);
+            intrinsic.Add(i6);
+            intrinsic.Add(i7);
+            intrinsic.Add(i8);
+            intrinsic.Add(i9);
+            intrinsic.Add(i10);
+
+            GeometricCongruentTriangles cts = new GeometricCongruentTriangles(leftOne, rightOne, "Given");
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cts);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestCongruentAdjacentAngles()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point m = new Point("M", 2, 0);
+            Point p = new Point("P", 2, -1);
+            Point q = new Point("Q", 2, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment pq = new Segment(p, q);
+
+            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
+
+            Angle amp = new Angle(a, m, p);
+            Angle bmp = new Angle(b, m, p);
+
+            CongruentAngles cas = new CongruentAngles(amp, bmp, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(m);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(inter);
+
+            intrinsic.Add(amp);
+            intrinsic.Add(bmp);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestPerpendicularImplyCongruentAdjacentAngles()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point m = new Point("M", 2, 0);
+            Point p = new Point("P", 2, -1);
+            Point q = new Point("Q", 2, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment pq = new Segment(p, q);
+
+            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
+
+            Angle amp = new Angle(a, m, p);
+            Angle bmp = new Angle(b, m, p);
+
+            Perpendicular perp = new Perpendicular(inter, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(m);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(inter);
+
+            intrinsic.Add(amp);
+            intrinsic.Add(bmp);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(perp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestPerpendicularImplyComplementary()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 0, 4);
+            Point d = new Point("D", 2, 2);
+
+            Segment ab = new Segment(a, b);
+            Segment ac = new Segment(a, c);
+            Segment ad = new Segment(a, d);
+
+            Intersection inter1 = new Intersection(a, ab, ac, "Intrinsic");
+            Intersection inter2 = new Intersection(a, ab, ad, "Intrinsic");
+            Intersection inter3 = new Intersection(a, ac, ad, "Intrinsic");
+
+            Angle bad = new Angle(b, a, d);
+            Angle dac = new Angle(d, a, c);
+
+            Perpendicular perp = new Perpendicular(inter1, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(ac);
+            intrinsic.Add(ad);
+
+            intrinsic.Add(inter1);
+            intrinsic.Add(inter2);
+            intrinsic.Add(inter3);
+
+            intrinsic.Add(bad);
+            intrinsic.Add(dac);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(perp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSupplementCongruence()
+        {
+            Point a = new Point("A", 5, 5);
+            Point b = new Point("B", 1, 1);
+            Point c = new Point("C", 4, 1);
+
+            Point d = new Point("D", 14, 5);
+            Point e = new Point("E", 10, 1);
+            Point f = new Point("F", 13, 1);
+
+            Angle abc = new Angle(a, b, c);
+            Angle def = new Angle(d, e, f);
+
+            GeometricCongruentAngles cas = new GeometricCongruentAngles(abc, def, "Given");
+
+            Point m = new Point("M", 4, 4);
+            Point n = new Point("N", 0, 0);
+            Point p = new Point("P", -4, 0);
+
+            Point r = new Point("R", -5, 5);
+            Point s = new Point("S", -9, 1);
+            Point t = new Point("T", -13, 1);
+
+            Angle mnp = new Angle(m, n, p);
+            Angle rst = new Angle(r, s, t);
+
+            Supplementary supp1 = new Supplementary(abc, mnp, "Given");
+            Supplementary supp2 = new Supplementary(def, rst, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+
+            intrinsic.Add(d);
+            intrinsic.Add(e);
+            intrinsic.Add(f);
+
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+
+            intrinsic.Add(r);
+            intrinsic.Add(s);
+            intrinsic.Add(t);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+            givens.Add(supp1);
+            givens.Add(supp2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestAngleBisectorTheorem()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 0, 6);
+            Point c = new Point("C", 6, 0);
+
+            Point d = new Point("D", 5, 5);
+
+            Angle bac = new Angle(b, a, c);
+            Segment bisector = new Segment(a, d);
+
+            AngleBisector ab = new AngleBisector(bac, bisector, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+
+            intrinsic.Add(bac);
+            intrinsic.Add(bisector);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(ab);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestAngleBisectorIsPerpendicularBisector()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 3, 4);
+            Point c = new Point("C", 6, 0);
+            Point m = new Point("M", 3, 0);
+
+            Segment bisector = new Segment(b, m);
+            Segment leg1 = new Segment(a, b);
+            Segment leg2 = new Segment(b, c);
+            Segment baseSeg = new Segment(a, c);
+
+            Intersection inter = new Intersection(m, bisector, baseSeg, "Intrinsic");
+
+            Angle abc = new Angle(a, b, c);
+            AngleBisector ab = new AngleBisector(abc, bisector, "Given");
+
+            IsoscelesTriangle iso = new IsoscelesTriangle(leg1, leg2, baseSeg, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(m);
+            intrinsic.Add(bisector);
+            intrinsic.Add(leg1);
+            intrinsic.Add(leg2);
+            intrinsic.Add(baseSeg);
+
+            intrinsic.Add(inter);
+            intrinsic.Add(abc);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(ab);
+            givens.Add(iso);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSimpleIntersection()
+        {
+            Point p = new Point("P", 3, 3);
+            Point s = new Point("S", 0, 0);
+            Point t = new Point("T", 4, -4);
+            Point r = new Point("R", -3, 3);
+            Point q = new Point("Q", -4, -4);
+
+            Segment pq = new Segment(p, q);
+            Segment rt = new Segment(r, t);
+
+            Segment rs = new Segment(r, s);
+            Segment st = new Segment(s, t);
+            Segment ps = new Segment(p, s);
+            Segment sq = new Segment(s, q);
+
+            Intersection inter = new Intersection(s, rt, pq, "Intrinsic");
+            InMiddle im1 = new InMiddle(s, rt, "Intrinsic");
+            InMiddle im2 = new InMiddle(s, pq, "Intrinsic");
+
+            GeometricCongruentSegments css1 = new GeometricCongruentSegments(rs, ps, "Given");
+            GeometricCongruentSegments css2 = new GeometricCongruentSegments(st, sq, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(p);
+            intrinsic.Add(s);
+            intrinsic.Add(t);
+            intrinsic.Add(r);
+            intrinsic.Add(q);
+            intrinsic.Add(pq);
+            intrinsic.Add(rt);
+            intrinsic.Add(rs);
+            intrinsic.Add(st);
+            intrinsic.Add(ps);
+            intrinsic.Add(sq);
+            intrinsic.Add(im1);
+            intrinsic.Add(im2);
+
+            intrinsic.Add(inter);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(css1);
+            givens.Add(css2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        // Orange book: Page 34: #33
+        private static void TestRaysMakeATriangle()
+        {
+            Point a = new Point("A", -3, 0);
+            Point b = new Point("B", 0, 4);
+            Point c = new Point("C", 3, 0);
+            Point x = new Point("X", -5, 0);
+            Point y = new Point("Y", -6, -4);
+            Point w = new Point("W", 6, 0);
+            Point z = new Point("Z", 6, -4);
+
+            Segment bz = new Segment(b, z);
+            Segment by = new Segment(b, y);
+
+            Segment xw = new Segment(x, w);
+
+            Segment ab = new Segment(a, b);
+            Segment ac = new Segment(a, c);
+            Segment bc = new Segment(b, c);
+
+            Angle bca = new Angle(b, c, a);
+            Angle cab = new Angle(c, a, b);
+
+            Triangle tri = new Triangle(ab, ac, bc, "Intrinsic");
+            
+            Intersection inter1 = new Intersection(a, by, xw, "Intrinsic");
+            Intersection inter2 = new Intersection(c, bz, xw, "Intrinsic");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(x);
+            intrinsic.Add(y);
+            intrinsic.Add(w);
+            intrinsic.Add(z);
+            intrinsic.Add(bz);
+            intrinsic.Add(by);
+            intrinsic.Add(xw);
+            intrinsic.Add(ab);
+            intrinsic.Add(ac);
+            intrinsic.Add(bc);
+
+            intrinsic.Add(bca);
+            intrinsic.Add(cab);
+
+            intrinsic.Add(inter1);
+            intrinsic.Add(inter2);
+
+            intrinsic.Add(tri);
+
+            GeometricCongruentAngles cas1 = new GeometricCongruentAngles(bca, cab, "Given");
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas1);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        static void Main(string[] args)
+        {
+         //TestIsoscelesTriangleFigure();
+            //TestRaysMakeATriangle();
+            //TestSimpleIntersection();
+            //TestAngleBisectorIsPerpendicularBisector();
+         //TestClassicOverlappingRightTriangleFigure();
+            //TestParallel();
+            //TestIsoscelesTriangle();
+            //IsolatedCongruenceEquationTest();
+            //IsolatedEquationTest();
+            //SSSTest5();
+            //TestExteriorAngleSum();
+            //HLTest1();
+         TestMidpointTheoremFigure();
+            //SASTest1();
+            //TestSumAnglesInTriangle();
+            //TestFigureSix();
+            //TestAlternateInterior();
+            //TestSameSideSupplementary();
+         //TestInterleavingSimilarTriangles();
+            //TestSimplification();
+            //TestSimplificationConstants();
+            //TestSimpleSubstitution();
+            //TestCorrespondingAngles();
+            //TestCorrespondingAngleImplyParallel();
+            //TestCongruentAdjacentAngles();
+            //TestPerpendicularImplyCongruentAdjacentAngles();
+            //TestPerpendicularImplyComplementary();
+            //TestSupplementCongruence();
+            //TestMidpointTheorem();
+            //TestAngleBisectorTheorem();
+            //TestAcuteAnglesInRightTriangles();
+            //TestThirdAnglesInTriangleCongruent();
+        }
+
+        private static void TestThirdAnglesInTriangleCongruent()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 0, 2);
+            Point c = new Point("C", 4, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment bc = new Segment(b, c);
+            Segment ac = new Segment(a, c);
+
+            Angle abc = new Angle(a, b, c);
+            Angle bac = new Angle(b, a, c);
+
+            Point d = new Point("D", 5, 0);
+            Point e = new Point("E", 5, 2);
+            Point f = new Point("F", 9, 0);
+
+            Segment de = new Segment(d, e);
+            Segment ef = new Segment(e, f);
+            Segment df = new Segment(d, f);
+
+            Angle def = new Angle(d, e, f);
+            Angle edf = new Angle(e, d, f);
+
+            Triangle first = new Triangle(ab, bc, ac, "Intrinsic");
+            Triangle second = new Triangle(de, ef, df, "Intrinsic");
+
+            CongruentAngles cas1 = new CongruentAngles(abc, def, "Given");
+            CongruentAngles cas2 = new CongruentAngles(bac, edf, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(ab);
+            intrinsic.Add(bc);
+            intrinsic.Add(ac);
+            intrinsic.Add(de);
+            intrinsic.Add(ef);
+            intrinsic.Add(df);
+
+            intrinsic.Add(abc);
+            intrinsic.Add(bac);
+
+            intrinsic.Add(def);
+            intrinsic.Add(edf);
+
+            intrinsic.Add(first);
+            intrinsic.Add(second);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+
+            givens.Add(cas1);
+            givens.Add(cas2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestAcuteAnglesInRightTriangles()
+        {
+            Point a = new Point("A", 0, 3);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
+
+            Segment cd = new Segment(c, d);
+            Segment ad = new Segment(a, d);
+            Segment bc = new Segment(b, c);
+            Segment bd = new Segment(b, d);
+            Segment ac = new Segment(a, c);
+
+            RightTriangle rightOne = new RightTriangle(ad, cd, ac, "Given");
+            RightTriangle rightTwo = new RightTriangle(bc, cd, bd, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+            List<GroundedClause> givens = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(cd);
+            intrinsic.Add(ad);
+            intrinsic.Add(bc);
+            intrinsic.Add(bd);
+            intrinsic.Add(ac);
+
+            intrinsic.Add(rightOne);
+            intrinsic.Add(rightTwo);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestCorrespondingAngles()
+        {
+            Point a = new Point("A", 0, 2);
+            Point b = new Point("B", 6, 2);
+            Point e = new Point("E", 0, 6);
+            Point f = new Point("F", 6, 6);
+            Point g = new Point("G", 0, 0);
+            Point h = new Point("H", 12, 24);
+            Point x = new Point("X", 1, 2);
+            Point y = new Point("Y", 3, 6);
+
+            Segment ab = new Segment(a, b);
+            Segment ef = new Segment(e, f);  //to be GeometricParallel with ab
+            Segment transversal = new Segment(g, h);
+
+            GeometricParallel parallel = new GeometricParallel(ab, ef, "Given");
+            Intersection abgh = new Intersection(x, ab, transversal, "Given");
+            Intersection efgh = new Intersection(y, ef, transversal, "Given");
+
+            List<GroundedClause> figure = new List<GroundedClause>();
+            List<GroundedClause> givens = new List<GroundedClause>();
+
+            figure.Add(a);
+            figure.Add(b);
+            figure.Add(e);
+            figure.Add(f);
+            figure.Add(g);
+            figure.Add(h);
+            figure.Add(x);
+            figure.Add(y);
+
+            figure.Add(ab);
+            figure.Add(ef);
+            figure.Add(transversal);
+            figure.Add(abgh);
+            figure.Add(efgh);
+            givens.Add(parallel);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(figure, givens);
+        }
+
+        private static void IsolatedCongruenceEquationTest()
+        {
+            // ADC \cong BCD = 90
+            // Triangle ADC
+
+            Point a = new Point("A", 0, 3);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
+
+            Segment cd = new Segment(c, d);
+            Segment ad = new Segment(a, d);
+            Segment bc = new Segment(b, c);
+            Segment bd = new Segment(b, d);
+            Segment ac = new Segment(a, c);
+
+            AlgebraicCongruentAngles aca = new AlgebraicCongruentAngles(new Angle(a, d, c), new Angle(b, c, d), "");
+
+            Triangle rightOne = new Triangle(ad, cd, ac, "Given");
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(a);
             clauses.Add(b);
             clauses.Add(c);
             clauses.Add(d);
@@ -227,35 +1278,49 @@ namespace Geometry_Testbed
             clauses.Add(bc);
             clauses.Add(bd);
             clauses.Add(ac);
-            clauses.Add(am);
-            clauses.Add(mb);
-            clauses.Add(mc);
-            clauses.Add(md);
             clauses.Add(rightOne);
-            clauses.Add(rightTwo);
-            clauses.Add(isoOne);
-            clauses.Add(isoTwo);
-            clauses.Add(bottomIso);
-            clauses.Add(inter);
-            clauses.Add(mid1);
-            clauses.Add(mid2);
+            clauses.Add(aca);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
-        static void Main(string[] args)
+        private static void IsolatedEquationTest()
         {
-            //SSSTest5();
-            //TestExteriorAngleSum();
-            //HLTest1();
-            //TestMidpointTheoremFigure();
-            //SASTest1();
-            //TestSumAnglesInTriangle();
-            //TestFigureSix();
-            TestEntireFigure();
-            //TestSimplification();
-            //TestSimplificationConstants();
-            //TestSimpleSubstitution();
+            // 2MC = AB
+            // 2QF = AB
+            Point A = new Point("A", 0, 0);
+            Point B = new Point("B", 4, 0);
+            Point M = new Point("M", 1, 1);
+            Point C = new Point("C", 1, 3);
+            Point Q = new Point("Q", 0, 0);
+            Point F = new Point("F", 0, -2);
+
+            Segment MC = new Segment(M, C);
+            Segment AB = new Segment(A, B);
+            Segment QF = new Segment(Q, F);
+
+            Multiplication product1 = new Multiplication(new NumericValue(2), MC);
+            Multiplication product2 = new Multiplication(new NumericValue(2), QF);
+
+            Equation eq1 = new GeometricSegmentEquation(product1, AB);
+            Equation eq2 = new GeometricSegmentEquation(product2, AB);
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(A);
+            clauses.Add(B);
+            clauses.Add(M);
+            clauses.Add(C);
+            clauses.Add(Q);
+            clauses.Add(F);
+
+            clauses.Add(MC);
+            clauses.Add(AB);
+            clauses.Add(QF);
+            clauses.Add(eq1);
+            clauses.Add(eq2);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void HLTest1()
@@ -263,28 +1328,28 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p12, p13);
-            ConcreteTriangle t1 = new ConcreteTriangle(p11, p12, p13);
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p12, p13);
+            Triangle t1 = new Triangle(p11, p12, p13);
             t1.SetProvenToBeRight();
 
-            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p22, p23);
-            ConcreteTriangle t2 = new ConcreteTriangle(p21, p22, p23);
+            Point p21 = new Point("D", 4, 0);
+            Point p22 = new Point("E", 4, 2);
+            Point p23 = new Point("F", 7, 0);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p22, p23);
+            Triangle t2 = new Triangle(p21, p22, p23);
             t2.SetProvenToBeRight();
 
             //
             // Congruent Segments and Angle
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
 
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
 
@@ -305,27 +1370,26 @@ namespace Geometry_Testbed
             clauses.Add(ccs1);
             clauses.Add(ccs2);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void TestSimpleSubstitution()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint b = new ConcretePoint("B", 0, 0);
-            ConcretePoint c = new ConcretePoint("C", 3, 0);
-            ConcretePoint d = new ConcretePoint("D", 7, 3);
-            ConcretePoint e = new ConcretePoint("E", 7, 0);
-            ConcretePoint f = new ConcretePoint("F", 10, 0);
+            Point a = new Point("A", 0, 3);
+            Point b = new Point("B", 0, 0);
+            Point c = new Point("C", 3, 0);
+            Point d = new Point("D", 7, 3);
+            Point e = new Point("E", 7, 0);
+            Point f = new Point("F", 10, 0);
 
-            ConcreteAngle ang1 = new ConcreteAngle(a, b, c);
-            ConcreteAngle ang2 = new ConcreteAngle(d, e, f);
+            Angle ang1 = new Angle(a, b, c);
+            Angle ang2 = new Angle(d, e, f);
 
-            AngleMeasureEquation ame1 = new AngleMeasureEquation(ang1, new NumericValue(90));
-            AngleMeasureEquation ame2 = new AngleMeasureEquation(ang2, new NumericValue(90));
+            AlgebraicAngleEquation ame1 = new AlgebraicAngleEquation(ang1, new NumericValue(90));
+            AlgebraicAngleEquation ame2 = new AlgebraicAngleEquation(ang2, new NumericValue(90));
 
-            Substitution.Instantiate(ame1);
-            Substitution.Instantiate(ame2);
+            TransitiveSubstitution.Instantiate(ame1);
+            TransitiveSubstitution.Instantiate(ame2);
         }
 
         private static void TestSimplificationConstants()
@@ -338,22 +1402,22 @@ namespace Geometry_Testbed
                 sumr = new Addition(sumr, new NumericValue(10 - i));
             }
 
-            SegmentEquation se = new SegmentEquation(sumr, sumr);
+            AlgebraicSegmentEquation se = new AlgebraicSegmentEquation(sumr, sumr);
 
             //Simplification.Instantiate(se);
         }
 
         private static void TestSimplification()
         {
-            ConcretePoint a = new ConcretePoint("A", 0, 3);
-            ConcretePoint m = new ConcretePoint("M", 2, 1.5);
-            ConcretePoint b = new ConcretePoint("B", 4, 3);
-            ConcretePoint c = new ConcretePoint("C", 4, 0);
-            ConcretePoint d = new ConcretePoint("D", 0, 0);
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
 
-            ConcreteSegment segmentAM = new ConcreteSegment(a, m);
-            ConcreteSegment segmentMB = new ConcreteSegment(m, b);
-            ConcreteSegment segmentAB = new ConcreteSegment(a, b);
+            Segment segmentAM = new Segment(a, m);
+            Segment segmentMB = new Segment(m, b);
+            Segment segmentAB = new Segment(a, b);
 
             NumericValue two = new NumericValue(2);
 
@@ -362,138 +1426,124 @@ namespace Geometry_Testbed
             Addition add3 = new Addition(add, add2);
             Multiplication product = new Multiplication(two, add3);
 
-            SegmentEquation se = new SegmentEquation(add3, product);
+            AlgebraicSegmentEquation se = new AlgebraicSegmentEquation(add3, product);
 
            // Simplification.Instantiate(se);
         }
 
         private static void TestStraightAngleDefinition()
         {
-            List<ConcretePoint> pts = new List<ConcretePoint>();
+            List<Point> pts = new List<Point>();
             string[] names = { "A", "B", "C", "D", "E", "F", "G", "H" };
 
             for (int i = 0; i < 6; i++)
             {
-                pts.Add(new ConcretePoint(names[i], i, 2 * i));
+                pts.Add(new Point(names[i], i, 2 * i));
             }
 
-            ConcreteCollinear coll = new ConcreteCollinear(pts);
-
-            Generate(coll);
+            Collinear coll = new Collinear(pts, "Given");
         }
 
         private static void TestMidpointDefinition()
         {
-            ConcretePoint pt = new ConcretePoint("M", 0, 0);
-            ConcretePoint end1 = new ConcretePoint("A", -2, -2);
-            ConcretePoint end2 = new ConcretePoint("C", 2, 2);
-            ConcreteSegment segment = new ConcreteSegment(end1, end2);
-            ConcreteMidpoint mid = new ConcreteMidpoint(pt, segment, "Given");
-
-            Generate(mid);
+            Point pt = new Point("M", 0, 0);
+            Point end1 = new Point("A", -2, -2);
+            Point end2 = new Point("C", 2, 2);
+            Segment segment = new Segment(end1, end2);
+            Midpoint mid = new Midpoint(pt, segment, "Given");
         }
 
         private static void TestAngleAdditionAxiom()
         {
-            ConcretePoint top = new ConcretePoint("A", 0, 2);
-            ConcretePoint vertex = new ConcretePoint("V", 0, 0);
-            ConcretePoint right = new ConcretePoint("B", 2, 0);
-            ConcreteAngle firstQuad = new ConcreteAngle(top, vertex, right);
+            Point top = new Point("A", 0, 2);
+            Point vertex = new Point("V", 0, 0);
+            Point right = new Point("B", 2, 0);
+            Angle firstQuad = new Angle(top, vertex, right);
 
-            ConcretePoint bottom = new ConcretePoint("C", 0, -2);
-            ConcretePoint left = new ConcretePoint("D", -2, 0);
-            ConcreteAngle thirdQuad = new ConcreteAngle(left, vertex, bottom);
+            Point bottom = new Point("C", 0, -2);
+            Point left = new Point("D", -2, 0);
+            Angle thirdQuad = new Angle(left, vertex, bottom);
 
-            ConcreteAngle fourthQuad = new ConcreteAngle(right, vertex, bottom);
-
-            Generate(firstQuad);
-            Generate(thirdQuad);
-            Generate(fourthQuad);
+            Angle fourthQuad = new Angle(right, vertex, bottom);
         }
 
         private static void TestSegmentAdditionAxiom()
         {
-            ConcretePoint top = new ConcretePoint("A", 0, 2);
-            ConcretePoint origin = new ConcretePoint("V", 0, 0);
-            ConcretePoint right = new ConcretePoint("B", 2, 0);
-            ConcretePoint bottom = new ConcretePoint("C", 0, -2);
-            ConcretePoint left = new ConcretePoint("D", -2, 0);
+            Point top = new Point("A", 0, 2);
+            Point origin = new Point("V", 0, 0);
+            Point right = new Point("B", 2, 0);
+            Point bottom = new Point("C", 0, -2);
+            Point left = new Point("D", -2, 0);
 
-            ConcreteSegment vertical = new ConcreteSegment(top, bottom);
-            ConcreteSegment horizontal = new ConcreteSegment(left, right);
+            Segment vertical = new Segment(top, bottom);
+            Segment horizontal = new Segment(left, right);
             InMiddle mid1 = new InMiddle(origin, vertical, "Given");
             InMiddle mid2 = new InMiddle(origin, horizontal, "Given");
-
-            Generate(mid1);
-            Generate(mid2);
         }
 
         private static void TestVerticalAnglesTheorem()
         {
-            ConcretePoint top = new ConcretePoint("A", 0, 2);
-            ConcretePoint origin = new ConcretePoint("V", 0, 0);
-            ConcretePoint right = new ConcretePoint("B", 2, 0);
-            ConcretePoint bottom = new ConcretePoint("C", 0, -2);
-            ConcretePoint left = new ConcretePoint("D", -2, 0);
+            Point top = new Point("A", 0, 2);
+            Point origin = new Point("V", 0, 0);
+            Point right = new Point("B", 2, 0);
+            Point bottom = new Point("C", 0, -2);
+            Point left = new Point("D", -2, 0);
 
-            ConcreteSegment vertical = new ConcreteSegment(top, bottom);
-            ConcreteSegment horizontal = new ConcreteSegment(left, right);
+            Segment vertical = new Segment(top, bottom);
+            Segment horizontal = new Segment(left, right);
             Intersection inter = new Intersection(origin, vertical, horizontal, "Given");
 
-            Generate(inter);
+            //Generate(inter);
 
-            top = new ConcretePoint("A", 2, 1);
-            origin = new ConcretePoint("V", 0, 0);
-            right = new ConcretePoint("B", 1, 2);
-            bottom = new ConcretePoint("C", -2, -1);
-            left = new ConcretePoint("D", -1, -2);
+            top = new Point("A", 2, 1);
+            origin = new Point("V", 0, 0);
+            right = new Point("B", 1, 2);
+            bottom = new Point("C", -2, -1);
+            left = new Point("D", -1, -2);
 
-            ConcreteSegment seg1 = new ConcreteSegment(top, bottom);
-            ConcreteSegment seg2 = new ConcreteSegment(left, right);
+            Segment seg1 = new Segment(top, bottom);
+            Segment seg2 = new Segment(left, right);
             inter = new Intersection(origin, seg1, seg2, "Given");
 
-            Generate(inter);
+            //Generate(inter);
         }
 
         private static void TestIsoscelesTriangleDefinition()
         {
-            ConcretePoint a = new ConcretePoint("A", -2, 0);
-            ConcretePoint b = new ConcretePoint("B", 0, 2);
-            ConcretePoint c = new ConcretePoint("C", 2, 0);
-            ConcreteSegment seg1 = new ConcreteSegment(a, b);
-            ConcreteSegment seg2 = new ConcreteSegment(b, c);
+            Point a = new Point("A", -2, 0);
+            Point b = new Point("B", 0, 2);
+            Point c = new Point("C", 2, 0);
+            Segment seg1 = new Segment(a, b);
+            Segment seg2 = new Segment(b, c);
 
-            ConcreteTriangle tri = new ConcreteTriangle(a, b, c);
+            Triangle tri = new Triangle(a, b, c);
 
-            ConcreteCongruentSegments ccss = new ConcreteCongruentSegments(seg1, seg2, "Given");
-
-            Generate(ccss);
-            Generate(tri);
+            GeometricCongruentSegments ccss = new GeometricCongruentSegments(seg1, seg2, "Given");
         }
 
         private static void TestSubstitution()
         {
-            ConcretePoint a = new ConcretePoint("A", -2, 0);
-            ConcretePoint b = new ConcretePoint("B", 0, 2);
-            ConcretePoint c = new ConcretePoint("C", 2, 0);
-            ConcreteSegment seg1 = new ConcreteSegment(a, b);
-            ConcreteSegment seg2 = new ConcreteSegment(b, c);
-            SegmentEquation segEq = new SegmentEquation(seg1, seg2, "Given");
+            Point a = new Point("A", -2, 0);
+            Point b = new Point("B", 0, 2);
+            Point c = new Point("C", 2, 0);
+            Segment seg1 = new Segment(a, b);
+            Segment seg2 = new Segment(b, c);
+            AlgebraicSegmentEquation segEq = new AlgebraicSegmentEquation(seg1, seg2, "Given");
 
-            Generate(segEq);
+            //Generate(segEq);
 
-            ConcretePoint d = new ConcretePoint("D", -2, -1);
-            ConcretePoint e = new ConcretePoint("E", 0, -3);
-            ConcretePoint f = new ConcretePoint("F", 2, -1);
-            ConcreteSegment seg3 = new ConcreteSegment(d, e);
-            ConcreteSegment seg4 = new ConcreteSegment(e, f);
-            SegmentEquation segEq2 = new SegmentEquation(seg3, seg4, "Given");
+            Point d = new Point("D", -2, -1);
+            Point e = new Point("E", 0, -3);
+            Point f = new Point("F", 2, -1);
+            Segment seg3 = new Segment(d, e);
+            Segment seg4 = new Segment(e, f);
+            AlgebraicSegmentEquation segEq2 = new AlgebraicSegmentEquation(seg3, seg4, "Given");
 
-            Generate(segEq2);
+            //Generate(segEq2);
 
-            SegmentEquation segEq3 = new SegmentEquation(seg2, seg3, "Given");
+            AlgebraicSegmentEquation segEq3 = new AlgebraicSegmentEquation(seg2, seg3, "Given");
 
-            Generate(segEq3);
+            //Generate(segEq3);
         }
 
         //
@@ -504,32 +1554,32 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p1 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p2 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p3 = new ConcretePoint("C", 3, 0);
+            Point p1 = new Point("A", 0, 0);
+            Point p2 = new Point("B", 0, 2);
+            Point p3 = new Point("C", 3, 0);
 
-            ConcreteSegment left = new ConcreteSegment(p1, p2);
-            ConcreteSegment bottom = new ConcreteSegment(p1, p3);
-            ConcreteSegment diagonal = new ConcreteSegment(p2, p3);
-            ConcreteTriangle t1 = new ConcreteTriangle(left, bottom, diagonal, "Given");
+            Segment left = new Segment(p1, p2);
+            Segment bottom = new Segment(p1, p3);
+            Segment diagonal = new Segment(p2, p3);
+            Triangle t1 = new Triangle(left, bottom, diagonal, "Given");
 
-            Generate(t1);
+            //Generate(t1);
 
-            ConcreteTriangle t2 = new ConcreteTriangle(left, bottom, diagonal, "Given");
+            Triangle t2 = new Triangle(left, bottom, diagonal, "Given");
 
-            Generate(t2);
+            //Generate(t2);
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(left, left, "Given");
-            Generate(ccs1);
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(left, left, "Given");
+            //Generate(ccs1);
 
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(bottom, bottom, "Given");
-            Generate(ccs2);
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(bottom, bottom, "Given");
+            //Generate(ccs2);
 
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(diagonal, diagonal, "Given");
-            Generate(ccs3);
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(diagonal, diagonal, "Given");
+            //Generate(ccs3);
         }
 
         //
@@ -540,26 +1590,26 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint shared1 = new ConcretePoint("B", 0, 2);
-            ConcretePoint shared2 = new ConcretePoint("C", 3, 0);
+            Point p11 = new Point("A", 0, 0);
+            Point shared1 = new Point("B", 0, 2);
+            Point shared2 = new Point("C", 3, 0);
 
-            ConcreteSegment left = new ConcreteSegment(p11, shared1);
-            ConcreteSegment bottom = new ConcreteSegment(p11, shared2);
-            ConcreteSegment diagonal = new ConcreteSegment(shared1, shared2);
-            ConcreteTriangle t1 = new ConcreteTriangle(left, bottom, diagonal, "Given");
+            Segment left = new Segment(p11, shared1);
+            Segment bottom = new Segment(p11, shared2);
+            Segment diagonal = new Segment(shared1, shared2);
+            Triangle t1 = new Triangle(left, bottom, diagonal, "Given");
 
-            ConcretePoint pt = new ConcretePoint("D", 3, 2);
-            ConcreteSegment top = new ConcreteSegment(pt, shared1);
-            ConcreteSegment right = new ConcreteSegment(pt, shared2);
-            ConcreteTriangle t2 = new ConcreteTriangle(top, right, diagonal, "Given");
+            Point pt = new Point("D", 3, 2);
+            Segment top = new Segment(pt, shared1);
+            Segment right = new Segment(pt, shared2);
+            Triangle t2 = new Triangle(top, right, diagonal, "Given");
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(top, bottom, "Given");
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(left, right, "Given");
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(diagonal, diagonal, "Given");
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(top, bottom, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(left, right, "Given");
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(diagonal, diagonal, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
             clauses.Add(p11);
@@ -582,7 +1632,7 @@ namespace Geometry_Testbed
             clauses.Add(ccs2);
             clauses.Add(ccs3);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
 
         }
 
@@ -594,27 +1644,27 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint shared = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p11, shared);
-            ConcreteSegment s13 = new ConcreteSegment(p12, shared);
-            ConcreteTriangle t1 = new ConcreteTriangle(s11, s12, s13, "Given");
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point shared = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p11, shared);
+            Segment s13 = new Segment(p12, shared);
+            Triangle t1 = new Triangle(s11, s12, s13, "Given");
 
-            ConcretePoint p21 = new ConcretePoint("D", 6, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 6, 2);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p21, shared);
-            ConcreteSegment s23 = new ConcreteSegment(p22, shared);
-            ConcreteTriangle t2 = new ConcreteTriangle(s21, s22, s23, "Given");
+            Point p21 = new Point("D", 6, 0);
+            Point p22 = new Point("E", 6, 2);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p21, shared);
+            Segment s23 = new Segment(p22, shared);
+            Triangle t2 = new Triangle(s21, s22, s23, "Given");
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(s13, s23, "Given");
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(s13, s23, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
             clauses.Add(p11);
@@ -637,7 +1687,7 @@ namespace Geometry_Testbed
             clauses.Add(t1);
             clauses.Add(t2);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void SSSTest3()
@@ -645,37 +1695,28 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF ; order of points and segments changed
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p12, p11);
-            ConcreteSegment s12 = new ConcreteSegment(p11, p13);
-            ConcreteSegment s13 = new ConcreteSegment(p13, p12);
-            ConcreteTriangle t1 = new ConcreteTriangle(s13, s11, s12, "Given");
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p12, p11);
+            Segment s12 = new Segment(p11, p13);
+            Segment s13 = new Segment(p13, p12);
+            Triangle t1 = new Triangle(s13, s11, s12, "Given");
 
-            Generate(t1);
-
-            ConcretePoint p21 = new ConcretePoint("D", 6, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 6, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 3, 2);
-            ConcreteSegment s21 = new ConcreteSegment(p22, p21);
-            ConcreteSegment s22 = new ConcreteSegment(p21, p23);
-            ConcreteSegment s23 = new ConcreteSegment(p23, p22);
-            ConcreteTriangle t2 = new ConcreteTriangle(s22, s21, s23, "Given");
-
-            Generate(t2);
+            Point p21 = new Point("D", 6, 0);
+            Point p22 = new Point("E", 6, 2);
+            Point p23 = new Point("F", 3, 2);
+            Segment s21 = new Segment(p22, p21);
+            Segment s22 = new Segment(p21, p23);
+            Segment s23 = new Segment(p23, p22);
+            Triangle t2 = new Triangle(s22, s21, s23, "Given");
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s21, s11, "Given");
-            Generate(ccs1);
-
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s23, "Given");
-            Generate(ccs2);
-
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(s22, s13, "Given");
-            Generate(ccs3);
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s21, s11, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s23, "Given");
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(s22, s13, "Given");
         }
 
         private static void SSSTest2()
@@ -683,28 +1724,28 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF ; segments congruences seen first
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p11, p13);
-            ConcreteSegment s13 = new ConcreteSegment(p12, p13);
-            ConcreteTriangle t1 = new ConcreteTriangle(s11, s12, s13, "Given");
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p11, p13);
+            Segment s13 = new Segment(p12, p13);
+            Triangle t1 = new Triangle(s11, s12, s13, "Given");
 
-            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p21, p23);
-            ConcreteSegment s23 = new ConcreteSegment(p22, p23);
-            ConcreteTriangle t2 = new ConcreteTriangle(s21, s22, s23, "Given");
+            Point p21 = new Point("D", 4, 0);
+            Point p22 = new Point("E", 4, 2);
+            Point p23 = new Point("F", 7, 0);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p21, p23);
+            Segment s23 = new Segment(p22, p23);
+            Triangle t2 = new Triangle(s21, s22, s23, "Given");
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(s13, s23, "Given");
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(s13, s23, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
             clauses.Add(p11);
@@ -728,7 +1769,7 @@ namespace Geometry_Testbed
             clauses.Add(t1);
             clauses.Add(t2);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void SSSTest1()
@@ -736,28 +1777,28 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p11, p13);
-            ConcreteSegment s13 = new ConcreteSegment(p12, p13);
-            ConcreteTriangle t1 = new ConcreteTriangle(s11, s12, s13, "Given");
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p11, p13);
+            Segment s13 = new Segment(p12, p13);
+            Triangle t1 = new Triangle(s11, s12, s13, "Given");
 
-            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p21, p23);
-            ConcreteSegment s23 = new ConcreteSegment(p22, p23);
-            ConcreteTriangle t2 = new ConcreteTriangle(s21, s22, s23, "Given");
+            Point p21 = new Point("D", 4, 0);
+            Point p22 = new Point("E", 4, 2);
+            Point p23 = new Point("F", 7, 0);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p21, p23);
+            Segment s23 = new Segment(p22, p23);
+            Triangle t2 = new Triangle(s21, s22, s23, "Given");
 
             //
             // Congruent Segments
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
-            ConcreteCongruentSegments ccs3 = new ConcreteCongruentSegments(s13, s23, "Given");
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
+            GeometricCongruentSegments ccs3 = new GeometricCongruentSegments(s13, s23, "Given");
 
             List<GroundedClause> clauses = new List<GroundedClause>();
             clauses.Add(p11);
@@ -780,7 +1821,7 @@ namespace Geometry_Testbed
             clauses.Add(ccs2);
             clauses.Add(ccs3);
 
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+            ////GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
         }
 
         private static void SASTest1()
@@ -788,37 +1829,28 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p12, p13);
-            ConcreteAngle ang1 = new ConcreteAngle(p11, p12, p13);
-            ConcreteTriangle t1 = new ConcreteTriangle(p11, p12, p13);
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p12, p13);
+            Angle ang1 = new Angle(p11, p12, p13);
+            Triangle t1 = new Triangle(p11, p12, p13);
 
-            Generate(t1);
-
-            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p22, p23);
-            ConcreteAngle ang2 = new ConcreteAngle(p21, p22, p23);
-            ConcreteTriangle t2 = new ConcreteTriangle(p21, p22, p23);
-
-            Generate(t2);
+            Point p21 = new Point("D", 4, 0);
+            Point p22 = new Point("E", 4, 2);
+            Point p23 = new Point("F", 7, 0);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p22, p23);
+            Angle ang2 = new Angle(p21, p22, p23);
+            Triangle t2 = new Triangle(p21, p22, p23);
 
             //
             // Congruent Segments and Angle
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
-            Generate(ccs1);
-
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
-            Generate(ccs2);
-
-            ConcreteCongruentAngles cca = new ConcreteCongruentAngles(ang1, ang2, "Given");
-            Generate(cca);
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
+            GeometricCongruentAngles cca = new GeometricCongruentAngles(ang1, ang2, "Given");
         }
 
         private static void SASTest2()
@@ -826,38 +1858,30 @@ namespace Geometry_Testbed
             //
             // Tri ABC is congruent to Tri DEF
             //
-            ConcretePoint p11 = new ConcretePoint("A", 0, 0);
-            ConcretePoint p12 = new ConcretePoint("B", 0, 2);
-            ConcretePoint p13 = new ConcretePoint("C", 3, 0);
-            ConcreteSegment s11 = new ConcreteSegment(p11, p12);
-            ConcreteSegment s12 = new ConcreteSegment(p12, p13);
-            ConcreteAngle ang1 = new ConcreteAngle(p11, p12, p13);
-            ConcreteTriangle t1 = new ConcreteTriangle(p11, p12, p13);
+            Point p11 = new Point("A", 0, 0);
+            Point p12 = new Point("B", 0, 2);
+            Point p13 = new Point("C", 3, 0);
+            Segment s11 = new Segment(p11, p12);
+            Segment s12 = new Segment(p12, p13);
+            Angle ang1 = new Angle(p11, p12, p13);
+            Triangle t1 = new Triangle(p11, p12, p13);
 
 
 
-            ConcretePoint p21 = new ConcretePoint("D", 4, 0);
-            ConcretePoint p22 = new ConcretePoint("E", 4, 2);
-            ConcretePoint p23 = new ConcretePoint("F", 7, 0);
-            ConcreteSegment s21 = new ConcreteSegment(p21, p22);
-            ConcreteSegment s22 = new ConcreteSegment(p22, p23);
-            ConcreteAngle ang2 = new ConcreteAngle(p21, p22, p23);
-            ConcreteTriangle t2 = new ConcreteTriangle(p21, p22, p23);
+            Point p21 = new Point("D", 4, 0);
+            Point p22 = new Point("E", 4, 2);
+            Point p23 = new Point("F", 7, 0);
+            Segment s21 = new Segment(p21, p22);
+            Segment s22 = new Segment(p22, p23);
+            Angle ang2 = new Angle(p21, p22, p23);
+            Triangle t2 = new Triangle(p21, p22, p23);
 
             //
             // Congruent Segments and Angle
             //
-            ConcreteCongruentSegments ccs1 = new ConcreteCongruentSegments(s11, s21, "Given");
-            Generate(ccs1);
-
-            ConcreteCongruentSegments ccs2 = new ConcreteCongruentSegments(s12, s22, "Given");
-            Generate(ccs2);
-
-            ConcreteCongruentAngles cca = new ConcreteCongruentAngles(ang1, ang2, "Given");
-            Generate(cca);
-
-            Generate(t1);
-            Generate(t2);
+            GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
+            GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
+            GeometricCongruentAngles cca = new GeometricCongruentAngles(ang1, ang2, "Given");
         }
     }
 }
