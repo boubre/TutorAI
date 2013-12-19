@@ -30,7 +30,7 @@ namespace LiveGeometry
             CommandSamples = new Command(Samples, GetImageFromResource("Samples.png"), "Samples", "Drawing");
             CommandSettings = new Command(OpenSettings, GetImageFromResource("Repair.png"), "Settings", "Drawing");
             CommandHomepage = new Command(Homepage, GetImageFromResource("Homepage.png"), "Homepage", "Drawing");
-            CommandParse = new Command(ParseToAst, GetImageFromResource("New.png"), "Parse", "Drawing");
+            CommandParse = new Command(ParseToAst, GetImageFromResource("Parse.png"), "Parse", "Parsing");
 
             drawingHost.DrawingControl.CommandUndo.Icon = GetImageFromResource("Undo.png");
             drawingHost.DrawingControl.CommandRedo.Icon = GetImageFromResource("Redo.png");

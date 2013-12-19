@@ -150,6 +150,9 @@
     <Resource Include="..\DynamicGeometryLibrary\Resources\Print.png">
       <Link>Print.png</Link>
     </Resource>
+    <Resource Include="..\DynamicGeometryLibrary\Resources\Parse.png">
+      <Link>Parse.png</Link>
+    </Resource>
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

@@ -92,7 +92,7 @@ namespace DynamicGeometry
             CommandTogglePolar = new Command(TogglePolar, new CheckBox(), "Polar", BehaviorCategories.Selection);
             CommandToggleSnapToCenter = new Command(ToggleSnapToCenter, new CheckBox(), "Snap to Center", BehaviorCategories.Selection);
             CommandShowFigureExplorer = new Command(ToggleFigureExplorer, new CheckBox() { IsChecked = FigureExplorer.Visible }, "Figure List", BehaviorCategories.Drawing);
-            CommandShowAIDebugWindow = new Command(ToggleAIDebugWindow, new CheckBox() { IsChecked = AIDebugWindow.Visible }, "AI Output", BehaviorCategories.Drawing);
+            CommandShowAIDebugWindow = new Command(ToggleAIDebugWindow, new CheckBox() { IsChecked = AIDebugWindow.Visible }, "AI Output", BehaviorCategories.Parsing);
         }
 
         protected void CreateFigureExplorer()
