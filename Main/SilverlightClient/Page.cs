@@ -72,6 +72,9 @@ namespace LiveGeometry
             DownloadDemoFile();
             IsolatedStorage.LoadAllTools();
             IsolatedStorage.RegisterToolStorage();
+
+            parseOptionsWindow = new DynamicGeometry.UI.ParseOptionsWindow();
+            parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);
         }
 
         private void AddBehaviors()

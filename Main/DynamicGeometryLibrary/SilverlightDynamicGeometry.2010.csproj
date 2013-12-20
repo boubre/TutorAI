@@ -313,6 +313,7 @@
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
     <Compile Include="UI\IconBuilder.cs" />
+    <Compile Include="UI\ParseOptionsWindow.cs" />
     <Compile Include="UI\Ribbon\BehaviorToolButton.cs" />
     <Compile Include="UI\Ribbon\ButtonGrid.cs" />
     <Compile Include="UI\Ribbon\CommandToolButton.cs" />

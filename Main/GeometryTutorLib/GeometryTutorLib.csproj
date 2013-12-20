@@ -57,6 +57,7 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assumption.cs" />
     <Compile Include="BridgeUItoBackEnd.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />

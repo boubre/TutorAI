@@ -17,6 +17,7 @@ namespace LiveGeometry
     public partial class Page
     {
         private BackgroundWorker parseWorker = new BackgroundWorker();
+        private DynamicGeometry.UI.ParseOptionsWindow parseOptionsWindow;
         private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
 
@@ -434,6 +435,16 @@ namespace LiveGeometry
 
             UIDebugPublisher.publishString("Publish string example");
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+        }
+
+        void DisplayParseOptions()
+        {
+            parseOptionsWindow.Show();
+        }
+
+        void ParseOptionsWindow_Closed(object sender, EventArgs e)
+        {
+            //Execute parse window closing event
         }
     }
 }
