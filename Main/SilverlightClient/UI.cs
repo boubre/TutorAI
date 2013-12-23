@@ -445,6 +445,7 @@ namespace LiveGeometry
         void ParseOptionsWindow_Closed(object sender, EventArgs e)
         {
             //Execute parse window closing event
+            //Currently, the event does not need to do anything
         }
     }
 }

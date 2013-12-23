@@ -91,5 +91,26 @@ namespace GeometryTutorLib
             Assumptions.Add(new Assumption("SSS Similarity Theorem", AssumptionType.Theorem));
             Assumptions.Add(new Assumption("Triangle Proportionality Theorem", AssumptionType.Theorem));
         }
+
+        public override string ToString()
+        {
+            string assumptionType;
+            switch (Type)
+            {
+                case Assumption.AssumptionType.Axiom:
+                    assumptionType = "Axiom";
+                    break;
+                case Assumption.AssumptionType.Definition:
+                    assumptionType = "Def";
+                    break;
+                case Assumption.AssumptionType.Theorem:
+                    assumptionType = "Thm";
+                    break;
+                default:
+                    assumptionType = "";
+                    break;
+            }
+            return assumptionType + ": " + Name;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using GeometryTutorLib;
@@ -10,8 +11,10 @@ namespace DynamicGeometry.UI
     /// </summary>
     public class ParseOptionsWindow : ChildWindow
     {
+        private ParseGroupWindow parseGroupWindow;
         private ListBox visibibleAssumptions;
-        private List<CheckBox> assumptionCheckboxes;
+        private Dictionary<Assumption, CheckBox> assumptionCheckboxes;
+        private ComboBox groupCombo;
 
         /// <summary>
         /// Create the window.
@@ -19,6 +22,9 @@ namespace DynamicGeometry.UI
         public ParseOptionsWindow()
         {
             Initialize();
+            MakeAssumptionCheckBoxes();
+            parseGroupWindow = new ParseGroupWindow();
+            parseGroupWindow.Closed += new EventHandler(ParseGroupWindow_Closed);
             LayoutDesign();
         }
 
@@ -37,22 +43,48 @@ namespace DynamicGeometry.UI
         /// </summary>
         private void LayoutDesign()
         {
+            //Set up grid
             Grid grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.RowDefinitions.Add(new RowDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
+            //Create group selection box and label
+            StackPanel comboLabelStack = new StackPanel();
+            TextBlock comboLabel = new TextBlock();
+            comboLabel.Text = "Select Group:";
+            comboLabelStack.Children.Add(comboLabel);
+            StackPanel comboStack = new StackPanel() { Orientation = Orientation.Horizontal };
+            Button editGroupButton = new Button();
+            editGroupButton.Content = "Edit";
+            editGroupButton.Margin = new Thickness(0, 0, 5, 0);
+            editGroupButton.Click += new RoutedEventHandler(EditGroupButton_Click);
+            comboStack.Children.Add(editGroupButton);
+            groupCombo = new ComboBox();
+            groupCombo.ItemsSource = ParseGroup.GetParseGroups();
+            groupCombo.SelectionChanged += new SelectionChangedEventHandler(AssumptionGroupChanged);
+            comboStack.Children.Add(groupCombo);
+            comboStack.MaxWidth = 400;
+            comboLabelStack.Children.Add(comboStack);
+            comboLabelStack.Margin = new Thickness(0, 0, 0, 10);
+
+            //Create Assumption checkbox list
             visibibleAssumptions = new ListBox();
             visibibleAssumptions.MaxWidth = 400;
             visibibleAssumptions.MaxHeight = 800;
             visibibleAssumptions.MinWidth = 400;
             visibibleAssumptions.MinHeight = 200;
-            MakeAssumptionCheckBoxes();
-            visibibleAssumptions.ItemsSource = assumptionCheckboxes;
+            groupCombo.SelectedValue = ParseGroup.GetParseGroups().ToArray()[0];
 
+            //Set element locations in grid and add to grid
             Grid.SetColumn(visibibleAssumptions, 0);
-            Grid.SetRow(visibibleAssumptions, 0);
+            Grid.SetRow(visibibleAssumptions, 1);
             grid.Children.Add(visibibleAssumptions);
+            Grid.SetColumn(comboLabelStack, 0);
+            Grid.SetRow(comboLabelStack, 0);
+            grid.Children.Add(comboLabelStack);
 
+            //Set the content of the window to be the newly designed layout
             this.Content = grid;
         }
 
@@ -61,32 +93,78 @@ namespace DynamicGeometry.UI
         /// </summary>
         private void MakeAssumptionCheckBoxes()
         {
-            assumptionCheckboxes = new List<CheckBox>();
+            assumptionCheckboxes = new Dictionary<Assumption, CheckBox>();
             foreach (Assumption assumption in Assumption.GetAssumptions())
             {
                 CheckBox cb = new CheckBox();
                 cb.IsChecked = assumption.Enabled;
                 cb.Checked += new RoutedEventHandler(delegate(object sender, RoutedEventArgs e) { assumption.Enabled = true; });
                 cb.Unchecked += new RoutedEventHandler(delegate(object sender, RoutedEventArgs e) { assumption.Enabled = false; });
-                string assumptionType;
-                switch (assumption.Type)
-                {
-                    case Assumption.AssumptionType.Axiom:
-                        assumptionType = "Axiom";
-                        break;
-                    case Assumption.AssumptionType.Definition:
-                        assumptionType = "Def";
-                        break;
-                    case Assumption.AssumptionType.Theorem:
-                        assumptionType = "Thm";
-                        break;
-                    default:
-                        assumptionType = "";
-                        break;
-                }
-                cb.Content = assumptionType + ": " + assumption.Name;
-                assumptionCheckboxes.Add(cb);
+                cb.Content = assumption.ToString();
+                assumptionCheckboxes.Add(assumption, cb);
             }
+        }
+
+        /// <summary>
+        /// This executes a selection changed event when the group selection combo box has anew item selected.
+        /// The method will update the visibile assumptions to match the selected assumption group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AssumptionGroupChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ParseGroup selected = groupCombo.SelectedItem as ParseGroup;
+            if (selected == null)
+                return;
+            RefreshVisibleItems(selected);
+        }
+
+        /// <summary>
+        /// This executes the click event when the Edit button is clicked.
+        /// The method opens a new window where Assumption groups can be edited.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EditGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            parseGroupWindow.Show();
+        }
+
+        /// <summary>
+        /// This executes the closing event when the Edit Assumptions window is closed.
+        /// The method refreshes the groups list and rebinds the visible assumptions.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ParseGroupWindow_Closed(object sender, EventArgs e)
+        {
+            //Execute assumption window closing event
+            groupCombo.ItemsSource = null;
+            groupCombo.ItemsSource = ParseGroup.GetParseGroups();
+            ParseGroup currentGroup = groupCombo.SelectedItem as ParseGroup;
+            if (currentGroup == null)
+                return;
+            RefreshVisibleItems(currentGroup);
+        }
+
+        /// <summary>
+        /// Refreshes the visible assumption checkboxes.
+        /// </summary>
+        /// <param name="currentGroup">The current group used to filter assumptions.</param>
+        private void RefreshVisibleItems(ParseGroup currentGroup)
+        {
+            List<CheckBox> checkBoxes = new List<CheckBox>();
+            //Add the check box foreach assumption in the group to the list
+            foreach (Assumption a in currentGroup.Assumptions)
+            {
+                CheckBox value;
+                if (assumptionCheckboxes.TryGetValue(a, out value))
+                {
+                    checkBoxes.Add(value);
+                }
+            }
+            visibibleAssumptions.ItemsSource = null;
+            visibibleAssumptions.ItemsSource = checkBoxes;
         }
     }
 }
