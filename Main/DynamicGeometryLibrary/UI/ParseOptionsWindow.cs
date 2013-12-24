@@ -48,6 +48,7 @@ namespace DynamicGeometry.UI
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
             //Create group selection box and label
             StackPanel comboLabelStack = new StackPanel();
@@ -74,7 +75,23 @@ namespace DynamicGeometry.UI
             visibibleAssumptions.MaxHeight = 800;
             visibibleAssumptions.MinWidth = 400;
             visibibleAssumptions.MinHeight = 200;
+            visibibleAssumptions.Margin = new Thickness(0, 0, 0, 10);
             groupCombo.SelectedValue = ParseGroup.GetParseGroups().ToArray()[0];
+
+            //Create Select and Deselect All buttons
+            StackPanel selectDeselectPanel = new StackPanel() { Orientation = Orientation.Horizontal };
+            selectDeselectPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            Button selectBtn = new Button();
+            selectBtn.Content = "Select All";
+            selectBtn.Width = 75;
+            selectBtn.Click += new RoutedEventHandler(SelectAllButton_Click);
+            selectBtn.Margin = new Thickness(0, 0, 10, 0);
+            selectDeselectPanel.Children.Add(selectBtn);
+            Button deselectBtn = new Button();
+            deselectBtn.Content = "Deselect All";
+            deselectBtn.Width = 75;
+            deselectBtn.Click += new RoutedEventHandler(DeselectAllButton_Click);
+            selectDeselectPanel.Children.Add(deselectBtn);
 
             //Set element locations in grid and add to grid
             Grid.SetColumn(visibibleAssumptions, 0);
@@ -83,6 +100,9 @@ namespace DynamicGeometry.UI
             Grid.SetColumn(comboLabelStack, 0);
             Grid.SetRow(comboLabelStack, 0);
             grid.Children.Add(comboLabelStack);
+            Grid.SetColumn(selectDeselectPanel, 0);
+            Grid.SetRow(selectDeselectPanel, 2);
+            grid.Children.Add(selectDeselectPanel);
 
             //Set the content of the window to be the newly designed layout
             this.Content = grid;
@@ -139,6 +159,34 @@ namespace DynamicGeometry.UI
         private void EditGroupButton_Click(object sender, RoutedEventArgs e)
         {
             parseGroupWindow.Show();
+        }
+
+        /// <summary>
+        /// This executes the click event when the Select All Button is clicked.
+        /// All Assumptions in the current group will be checked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CheckBox cb in visibibleAssumptions.Items)
+            {
+                cb.IsChecked = true;
+            }
+        }
+
+        /// <summary>
+        /// This executes the click event when the Deelect All Button is clicked.
+        /// All Assumptions in the current group will be unchecked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeselectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CheckBox cb in visibibleAssumptions.Items)
+            {
+                cb.IsChecked = false;
+            }
         }
 
         /// <summary>

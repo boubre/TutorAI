@@ -102,6 +102,10 @@ namespace DynamicGeometry.UI
             this.Content = outerGrid;
         }
 
+        /// <summary>
+        /// Layout the inner grid, which is the selected and unselected assumption panels and the transfer buttons
+        /// </summary>
+        /// <returns>The inner grid</returns>
         private Grid LayoutInnerGrid()
         {
             Grid grid = new Grid();
@@ -162,6 +166,10 @@ namespace DynamicGeometry.UI
             return grid;
         }
 
+        /// <summary>
+        /// Get all non-predefined parse groups.
+        /// </summary>
+        /// <returns>All non-predefined parse groups.</returns>
         public static List<ParseGroup> GetUserGroups()
         {
             List<ParseGroup> userGroups = new List<ParseGroup>();
@@ -175,6 +183,12 @@ namespace DynamicGeometry.UI
             return userGroups;
         }
 
+        /// <summary>
+        /// This event is executed whem the Group selection is changed.
+        /// The method updates the inner grid with the relevant assumptions.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GroupSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ParseGroup selected = GroupSelector.SelectedValue as ParseGroup;
@@ -184,12 +198,24 @@ namespace DynamicGeometry.UI
             RefreshAssumptionLists(selected);
         }
 
+        /// <summary>
+        /// This event is executed when a Add group button is clicked.
+        /// This methiod clears the AddParseGroupWindow field and displays the window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddGroupButton_Click(object sender, RoutedEventArgs e)
         {
             AddParseGroupWindow.GroupName = "";
             AddParseGroupWindow.Show();
         }
-
+        
+        /// <summary>
+        /// This event is executed when the AddParseGroupWindow is closed.
+        /// The method carries out the action of adding the new group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddGroupWindow_Closed(object sender, EventArgs e)
         {
             if (AddParseGroupWindow.GroupName.Equals(""))
@@ -206,6 +232,12 @@ namespace DynamicGeometry.UI
             RefreshAssumptionLists(selected);
         }
 
+        /// <summary>
+        /// This event is executed when the Remove group button is clicked.
+        /// The method will remove the currently selected group.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RemoveGroupButton_Click(object sender, RoutedEventArgs e)
         {
             ParseGroup selected = GroupSelector.SelectedValue as ParseGroup;
@@ -219,6 +251,12 @@ namespace DynamicGeometry.UI
             RefreshAssumptionLists(selected);
         }
 
+        /// <summary>
+        /// This event is executed when the add assumption buttin is clicked.
+        /// The method will move all selected items in the deselected pane to the selected pane.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddAssumptionButton_Click(object sender, RoutedEventArgs e)
         {
             ParseGroup selectedGroup = GroupSelector.SelectedValue as ParseGroup;
@@ -234,6 +272,12 @@ namespace DynamicGeometry.UI
             RefreshAssumptionLists(selectedGroup);
         }
 
+        /// <summary>
+        /// This event is executed when the remove assumption buttin is clicked.
+        /// The method will move all selected items in the selected pane to the deselected pane.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RemoveAssumptionButton_Click(object sender, RoutedEventArgs e)
         {
             ParseGroup selectedGroup = GroupSelector.SelectedValue as ParseGroup;
@@ -249,6 +293,10 @@ namespace DynamicGeometry.UI
             RefreshAssumptionLists(selectedGroup);
         }
 
+        /// <summary>
+        /// This method refreshes the selected and deselected assumption panes.
+        /// </summary>
+        /// <param name="selected">The current ParseGroup that is selected in the groups pane.</param>
         private void RefreshAssumptionLists(ParseGroup selected)
         {
             //Update selected pane
