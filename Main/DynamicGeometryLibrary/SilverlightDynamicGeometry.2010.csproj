@@ -300,6 +300,7 @@
     <Compile Include="Styles\StyleManager.cs" />
     <Compile Include="Styles\StylePicker.cs" />
     <Compile Include="Styles\TextStyle.cs" />
+    <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DynamicGeometry;
+using DynamicGeometry.UI;
 using ImageTools;
 using ImageTools.IO;
 using ImageTools.IO.Bmp;
@@ -436,7 +437,6 @@ namespace LiveGeometry
             UIDebugPublisher.publishString("Publish string example");
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
         }
-
         void DisplayParseOptions()
         {
             parseOptionsWindow.Show();
@@ -444,8 +444,14 @@ namespace LiveGeometry
 
         void ParseOptionsWindow_Closed(object sender, EventArgs e)
         {
-            //Execute parse window closing event
-            //Currently, the event does not need to do anything
+            if (isolatedSettings.Contains("UserParseGroup"))
+            {
+                isolatedSettings["UserParseGroup"] = ParseGroupWindow.GetUserGroups();
+            }
+            else
+            {
+                isolatedSettings.Add("UserParseGroup", ParseGroupWindow.GetUserGroups());
+            }
         }
     }
 }

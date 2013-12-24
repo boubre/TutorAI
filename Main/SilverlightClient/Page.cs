@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Windows;
 using System.Windows.Browser;
 using System.Windows.Controls;
 using DynamicGeometry;
+using DynamicGeometry.UI;
 using LiveGeometry.LiveGeometryWebServices;
 
 namespace LiveGeometry
@@ -12,6 +14,7 @@ namespace LiveGeometry
     public partial class Page : UserControl
     {
         private DrawingHost drawingHost;
+        private IsolatedStorageSettings isolatedSettings = IsolatedStorageSettings.ApplicationSettings;
 
         private DrawingControl DrawingControl
         {
@@ -73,8 +76,18 @@ namespace LiveGeometry
             IsolatedStorage.LoadAllTools();
             IsolatedStorage.RegisterToolStorage();
 
+            if (isolatedSettings.Contains("UserParseGroup"))
+            {
+                List<ParseGroup> userParseGroups = (List<ParseGroup>)isolatedSettings["UserParseGroup"];
+                foreach (ParseGroup pg in userParseGroups)
+                {
+                    ParseGroup.AddParseGroup(pg.Name, pg.Assumptions);
+                    UIDebugPublisher.publishString(pg.Name);
+                }
+            }
+
             parseOptionsWindow = new DynamicGeometry.UI.ParseOptionsWindow();
-            parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);
+            parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);   
         }
 
         private void AddBehaviors()

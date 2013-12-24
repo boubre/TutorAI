@@ -136,7 +136,7 @@ namespace LiveGeometry
                     }
                 }
             }
-            
+
             [PropertyGridVisible]
             [PropertyGridName("Snap Grid Spacing")]
             public double SnapGridSpacing

@@ -94,7 +94,7 @@ namespace DynamicGeometry.UI
         private void MakeAssumptionCheckBoxes()
         {
             assumptionCheckboxes = new Dictionary<Assumption, CheckBox>();
-            foreach (Assumption assumption in Assumption.GetAssumptions())
+            foreach (Assumption assumption in Assumption.GetAssumptions().Values)
             {
                 CheckBox cb = new CheckBox();
                 cb.IsChecked = assumption.Enabled;
@@ -116,7 +116,18 @@ namespace DynamicGeometry.UI
             ParseGroup selected = groupCombo.SelectedItem as ParseGroup;
             if (selected == null)
                 return;
-            RefreshVisibleItems(selected);
+            List<CheckBox> checkBoxes = new List<CheckBox>();
+            //Add the check box foreach assumption in the group to the list
+            foreach (Assumption a in selected.Assumptions)
+            {
+                CheckBox value;
+                if (assumptionCheckboxes.TryGetValue(a, out value))
+                {
+                    checkBoxes.Add(value);
+                }
+            }
+            visibibleAssumptions.ItemsSource = null;
+            visibibleAssumptions.ItemsSource = checkBoxes;
         }
 
         /// <summary>
@@ -141,30 +152,7 @@ namespace DynamicGeometry.UI
             //Execute assumption window closing event
             groupCombo.ItemsSource = null;
             groupCombo.ItemsSource = ParseGroup.GetParseGroups();
-            ParseGroup currentGroup = groupCombo.SelectedItem as ParseGroup;
-            if (currentGroup == null)
-                return;
-            RefreshVisibleItems(currentGroup);
-        }
-
-        /// <summary>
-        /// Refreshes the visible assumption checkboxes.
-        /// </summary>
-        /// <param name="currentGroup">The current group used to filter assumptions.</param>
-        private void RefreshVisibleItems(ParseGroup currentGroup)
-        {
-            List<CheckBox> checkBoxes = new List<CheckBox>();
-            //Add the check box foreach assumption in the group to the list
-            foreach (Assumption a in currentGroup.Assumptions)
-            {
-                CheckBox value;
-                if (assumptionCheckboxes.TryGetValue(a, out value))
-                {
-                    checkBoxes.Add(value);
-                }
-            }
-            visibibleAssumptions.ItemsSource = null;
-            visibibleAssumptions.ItemsSource = checkBoxes;
+            groupCombo.SelectedValue = ParseGroup.GetParseGroups().ToArray()[0];
         }
     }
 }
