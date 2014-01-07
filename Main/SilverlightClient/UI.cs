@@ -21,6 +21,7 @@ namespace LiveGeometry
         private DynamicGeometry.UI.ParseOptionsWindow parseOptionsWindow;
         private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
+        private ParseController parseController;
 
         private void initParseWorker()
         {
@@ -410,30 +411,40 @@ namespace LiveGeometry
         {
             if (parseWorker.IsBusy != true)
             {
-                //Do front-end parsing on UI thread
-                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-                parseResult = parser.ParseDrawing();
-                parser.calculateIntersections(parseResult);
-                parser.calculateInMiddle(parseResult);
-                parser.calculateLineEquality(parseResult);
-                parser.calculateMidpoints(parseResult);
-                parser.calculateTriangles(parseResult);
-                parseResult = parser.removeDuplicates(parseResult);
+                parseController = new ParseController();
+                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing, parseController);
 
-                // Do back-end computation on background worker
+                //Set up parse chain
+                parseController.addParseAction(() => { parser.ParseDrawing(); });
+                parseController.addParseAction(() => { parseResult = parser.GetParsedFigures(); });
+                parseController.addParseAction(() => { parser.calculateIntersections(parseResult); });
+                parseController.addParseAction(() => { parser.calculateInMiddle(parseResult); });
+                parseController.addParseAction(() => { parser.calculateLineEquality(parseResult); });
+                parseController.addParseAction(() => { parseResult = parser.removeDuplicates(parseResult); });
+                parseController.addParseAction(() => { parser.calculateMidpoints(parseResult); });
+                parseController.addParseAction(() => { parser.calculateTriangles(parseResult); });
+                parseController.addParseAction(() => { parseResult = parser.removeDuplicates(parseResult); });
+
+                // Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
         }
 
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            //Execute Front-End Parse
+            parseController.executeParse();
+
+            //Debug Print
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
             {
                 Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");
+                UIDebugPublisher.publishString(gc.ToString());
             }
             Debug.WriteLine("=====END=====");
-
+            
+            //Execute Back-End
             UIDebugPublisher.publishString("Publish string example");
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
         }

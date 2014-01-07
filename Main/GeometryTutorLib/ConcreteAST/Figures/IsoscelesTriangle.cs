@@ -92,10 +92,5 @@ namespace GeometryTutorLib.ConcreteAST
             return base.Equals(obj);
         }
 
-        public override string ToString()
-        {
-            return "IsoscelesTriangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ")";
-        }
-
     }
 }

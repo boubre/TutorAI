@@ -132,6 +132,7 @@
     <Compile Include="Extensions\Operations\TearOff.cs" />
     <Compile Include="IsolatedStorage.cs" />
     <Compile Include="Page.cs" />
+    <Compile Include="ParseController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\LiveGeometryWebServices\Reference.cs">
       <AutoGen>True</AutoGen>

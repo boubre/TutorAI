@@ -21,6 +21,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Angle AngleB { get; private set; }
         public Angle AngleC { get; private set; }
         protected bool isRight;
+        public bool givenRight { get; set; }
         public bool provenRight { get; protected set; }
         public Angle rightAngle { get; protected set; }
         protected bool isIsosceles;
@@ -57,6 +58,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             isRight = isRightTriangle();
             provenRight = false;
+            givenRight = false;
             isIsosceles = IsIsosceles();
             provenIsosceles = false;
             isEquilateral = IsEquilateral();
@@ -84,6 +86,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             isRight = isRightTriangle();
             provenRight = false;
+            givenRight = false;
             isIsosceles = IsIsosceles();
             provenIsosceles = false;
             isEquilateral = IsEquilateral();
@@ -159,7 +162,7 @@ namespace GeometryTutorLib.ConcreteAST
         /// Determines if this is a right traingle.
         /// </summary>
         /// <returns>TRUE if this is a right triangle.</returns>
-        private bool isRightTriangle()
+        public bool isRightTriangle()
         {
             return Utilities.CompareValues(AngleA.measure, 90) ||
                    Utilities.CompareValues(AngleB.measure, 90) ||
@@ -927,17 +930,18 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (provenIsosceles)
             {
-                str.Append("Isosceles");
+                str.Append("Isosceles ");
             }
             else if (provenEquilateral)
             {
-                str.Append("Equilateral");
+                str.Append("Equilateral ");
             }
             if (provenRight)
             {
-                str.Append("Right");
+                str.Append("Right ");
             }
-            return str + "Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") " + justification;
+            str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + "): " + justification);
+            return str.ToString();
         }
     }
 }
