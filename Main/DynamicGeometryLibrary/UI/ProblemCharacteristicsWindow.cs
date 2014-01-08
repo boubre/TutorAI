@@ -7,6 +7,9 @@ using GeometryTutorLib;
 
 namespace DynamicGeometry.UI
 {
+    /// <summary>
+    /// This window allows the user to edit problem characteristcs for the back-end.
+    /// </summary>
     public class ProblemCharacteristicsWindow : ChildWindow
     {
         private TextBox minWidth, maxWidth, minLength, maxLength;
@@ -38,6 +41,7 @@ namespace DynamicGeometry.UI
         /// </summary>
         private void LayoutDesign()
         {
+            //Set up the grid.
             Grid grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
@@ -45,6 +49,7 @@ namespace DynamicGeometry.UI
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
+            //Create the width characteritic label and inputs
             StackPanel widthPanel = new StackPanel() { Orientation = Orientation.Horizontal };
             widthPanel.Margin = new Thickness(0, 0, 0, 10);
             TextBlock label = new TextBlock();
@@ -63,6 +68,7 @@ namespace DynamicGeometry.UI
             maxWidth.Width = 75;
             widthPanel.Children.Add(maxWidth);
 
+            //Create the length characteritic label and inputs
             StackPanel lengthPanel = new StackPanel() { Orientation = Orientation.Horizontal };
             lengthPanel.Margin = new Thickness(0, 0, 0, 10);
             label = new TextBlock();
@@ -81,6 +87,7 @@ namespace DynamicGeometry.UI
             maxLength.Width = 75;
             lengthPanel.Children.Add(maxLength);
 
+            //Create a label and list of given relationships
             StackPanel givenPanel = new StackPanel();
             givenPanel.Margin = new Thickness(0, 0, 10, 0);
             label = new TextBlock();
@@ -94,6 +101,7 @@ namespace DynamicGeometry.UI
             givenList.ItemsSource = givenCheckboxes.Values;
             givenPanel.Children.Add(givenList);
 
+            //Create a label and list of goal relationships
             StackPanel goalPanel = new StackPanel();
             label = new TextBlock();
             label.Text = "Goal:";
@@ -106,6 +114,7 @@ namespace DynamicGeometry.UI
             goalList.ItemsSource = goalCheckboxes.Values;
             goalPanel.Children.Add(goalList);
 
+            //Arrange items in the grid and add them to the grid.
             Grid.SetColumn(widthPanel, 0);
             Grid.SetRow(widthPanel, 0);
             Grid.SetColumnSpan(widthPanel, 2);
@@ -121,6 +130,7 @@ namespace DynamicGeometry.UI
             Grid.SetRow(goalPanel, 2);
             grid.Children.Add(goalPanel);
 
+            //Set the grid as the content of the window in order to display it.
             this.Content = grid;
         }
 
@@ -153,7 +163,14 @@ namespace DynamicGeometry.UI
                 goalCheckboxes.Add(r, rb);
             }
         }
-
+        
+        /// <summary>
+        /// This event is fired when the problem characteristics window is closed.
+        /// The method will update the problem characteristics to reflect the user input. The relationships from goal and given are not updated here,
+        /// because their clicked and unclicked events already directly update the relationships.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdateOnClose(object sender, EventArgs e)
         {
             problemCharacteristics.LowerWidth = minWidth.Text.Equals("") ? 0 : int.Parse(minWidth.Text);
@@ -172,6 +189,12 @@ namespace DynamicGeometry.UI
             }
         }
 
+        /// <summary>
+        /// This method will ignore all non-numeric and non-backspace keys when added as a KeyDown event to a TextBox.
+        /// This is used to create integer-only text boxes for certain problem characteristics.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NumericTextBoxFilter(object sender, KeyEventArgs e)
         {
             if (!e.Handled && (e.Key < Key.D0 || e.Key > Key.D9) && (e.Key < Key.NumPad0 || e.Key > Key.NumPad9) && e.Key != Key.Back)
