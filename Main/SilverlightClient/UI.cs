@@ -18,7 +18,8 @@ namespace LiveGeometry
     public partial class Page
     {
         private BackgroundWorker parseWorker = new BackgroundWorker();
-        private DynamicGeometry.UI.ParseOptionsWindow parseOptionsWindow;
+        private ParseOptionsWindow parseOptionsWindow;
+        private ProblemCharacteristicsWindow problemCharacteristicsWindow;
         private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
         private ParseController parseController;
@@ -440,7 +441,7 @@ namespace LiveGeometry
             {
                 Debug.WriteLine(gc);
                 Debug.WriteLine("--------------------");
-                UIDebugPublisher.publishString(gc.ToString());
+                //UIDebugPublisher.publishString(gc.ToString());
             }
             Debug.WriteLine("=====END=====");
             
@@ -463,6 +464,16 @@ namespace LiveGeometry
             {
                 isolatedSettings.Add("UserParseGroup", ParseGroupWindow.GetUserGroups());
             }
+        }
+
+        void DisplayProblemCharacteristics()
+        {
+            problemCharacteristicsWindow.Show();
+        }
+
+        void ProblemCharacteristicsWindow_Closed(object sender, EventArgs e)
+        {
+            //Do whatever needs to be done when the problem characteristics window closes
         }
     }
 }

@@ -19,6 +19,7 @@ namespace LiveGeometry
         Command CommandHomepage;
         Command CommandParse;
         Command CommandParseOptions;
+        Command CommandProblemCharacteristics;
 
         public void InitializeToolbar()
         {
@@ -33,6 +34,7 @@ namespace LiveGeometry
             CommandHomepage = new Command(Homepage, GetImageFromResource("Homepage.png"), "Homepage", "Drawing");
             CommandParse = new Command(ParseToAst, GetImageFromResource("Parse.png"), "Parse", "Parsing");
             CommandParseOptions = new Command(DisplayParseOptions, GetImageFromResource("ParseOptions.png"), "Parse Options", "Parsing");
+            CommandProblemCharacteristics = new Command(DisplayProblemCharacteristics, GetImageFromResource("ParseOptions.png"), "Problem Characteristics", "Parsing");
 
             drawingHost.DrawingControl.CommandUndo.Icon = GetImageFromResource("Undo.png");
             drawingHost.DrawingControl.CommandRedo.Icon = GetImageFromResource("Redo.png");
@@ -58,6 +60,7 @@ namespace LiveGeometry
             drawingHost.AddToolbarButton(CommandParse);
             drawingHost.AddToolbarButton(drawingHost.CommandShowAIDebugWindow);
             drawingHost.AddToolbarButton(CommandParseOptions);
+            drawingHost.AddToolbarButton(CommandProblemCharacteristics);
 
             drawingHost.Ribbon.GetPanel("Drawing").HeaderContent.Icon = GetImageFromResource("SaveFormDesign.png");
         }

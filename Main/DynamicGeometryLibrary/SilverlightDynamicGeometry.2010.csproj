@@ -318,6 +318,7 @@
     <Compile Include="UI\ParseGroup.cs" />
     <Compile Include="UI\ParseGroupWindow.cs" />
     <Compile Include="UI\ParseOptionsWindow.cs" />
+    <Compile Include="UI\ProblemCharacteristicsWindow.cs" />
     <Compile Include="UI\Ribbon\BehaviorToolButton.cs" />
     <Compile Include="UI\Ribbon\ButtonGrid.cs" />
     <Compile Include="UI\Ribbon\CommandToolButton.cs" />

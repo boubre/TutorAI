@@ -86,8 +86,10 @@ namespace LiveGeometry
                 }
             }
 
-            parseOptionsWindow = new DynamicGeometry.UI.ParseOptionsWindow();
-            parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);   
+            parseOptionsWindow = new ParseOptionsWindow();
+            parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);
+            problemCharacteristicsWindow = new ProblemCharacteristicsWindow();
+            problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
         }
 
         private void AddBehaviors()
