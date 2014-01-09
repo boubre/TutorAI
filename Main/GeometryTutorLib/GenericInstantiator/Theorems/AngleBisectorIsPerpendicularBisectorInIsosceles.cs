@@ -62,7 +62,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     foreach (Intersection inter in candidateIntersections)
                     {
-                        newGrounded.AddRange(GeneratePerpendicularBisector(streng.strengthened as IsoscelesTriangle, ab, inter));
+                        newGrounded.AddRange(GeneratePerpendicularBisector(streng, ab, inter));
                     }
                 }
 
@@ -100,9 +100,11 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GeneratePerpendicularBisector(IsoscelesTriangle tri, AngleBisector ab, Intersection inter)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GeneratePerpendicularBisector(GroundedClause tri, AngleBisector ab, Intersection inter)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            IsoscelesTriangle isoTri = (tri is Strengthened ? (tri as Strengthened).strengthened : tri) as IsoscelesTriangle;
 
             if (tri is EquilateralTriangle)
             {
@@ -110,14 +112,14 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // Does the Angle Bisector occur at the vertex angle (non-base angles) of the Isosceles triangle?
-            if (!ab.angle.GetVertex().Equals(tri.GetVertexAngle().GetVertex())) return newGrounded;
+            if (!ab.angle.GetVertex().Equals(isoTri.GetVertexAngle().GetVertex())) return newGrounded;
 
             // Is the intersection point between the endpoints of the base of the triangle?
-            if (!Segment.Between(inter.intersect, tri.baseSegment.Point1, tri.baseSegment.Point2)) return newGrounded;
+            if (!Segment.Between(inter.intersect, isoTri.baseSegment.Point1, isoTri.baseSegment.Point2)) return newGrounded;
 
             // Does this intersection define this angle bisector situation? That is, the bisector and base must align with the intersection
             if (!inter.ImpliesRay(ab.bisector)) return newGrounded;
-            if (!inter.HasSegment(tri.baseSegment)) return newGrounded;
+            if (!inter.HasSegment(isoTri.baseSegment)) return newGrounded;
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(tri);
@@ -134,7 +136,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Midpoint(M, Segment(A, B))
             //
-            Midpoint midpt = new Midpoint(inter.intersect, tri.baseSegment, NAME);
+            Midpoint midpt = new Midpoint(inter.intersect, isoTri.baseSegment, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
 
             return newGrounded;

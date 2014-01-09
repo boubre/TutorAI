@@ -41,7 +41,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Problems\ActualProblem.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\McDougallProblems.cs" />
+    <Compile Include="Problems\Indian Text\IndianTextProblems.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page113Problem7.cs" />
     <Compile Include="PebblerHypergraph.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page135Problem21.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\JurgensenProblems.cs" />
+    <Compile Include="Problems\McGraw Hill Geometry\McGrawHillProblems.cs" />
+    <Compile Include="Problems\TransversalsProblem.cs" />
+    <Compile Include="Problems\SimilarTrianglesProblem.cs" />
+    <Compile Include="Problems\CongruentTrianglesProblem.cs" />
+    <Compile Include="Problems\ParallelLinesProblem.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page134Problem6.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page134Problem7.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page62Problems1To6.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Transversals\Page32Problem11To14.cs" />
+    <Compile Include="Problems\Indian Text\InterleavingSimilarTriangles.cs" />
+    <Compile Include="Problems\Indian Text\OverlappingRightTriangles.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page124Figure31.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page155Problem14.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,6 +72,9 @@
       <Project>{2ed63907-af71-49b4-bdc5-470b70e17061}</Project>
       <Name>GeometryTutorLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

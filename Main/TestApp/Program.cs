@@ -12,1090 +12,41 @@ namespace Geometry_Testbed
 {
     class Program
     {
-        private static void TestSumAnglesInTriangle()
+        private static List<ActualProblem> ConstructTestObjects()
         {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 3);
+            List<ActualProblem> problems = new List<ActualProblem>();
 
-            Triangle t = new Triangle(a, m, b);
+            problems.AddRange(JurgensenProblems.GetProblems());
+            problems.AddRange(IndianTextProblems.GetProblems());
 
-            List<GroundedClause> clauses = new List<GroundedClause>();
-
-            clauses.Add(a);
-            clauses.Add(m);
-            clauses.Add(b);
-            clauses.Add(t);
-
-            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-        }
-
-        private static void TestMidpointTheoremFigure()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 0);
-
-            Segment ab = new Segment(a, b);
-            Segment am = new Segment(a, m);
-            Segment mb = new Segment(m, b);
-
-            InMiddle im = new InMiddle(m, ab, "Intrinsic");
-            Midpoint mid = new Midpoint(m, ab, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(ab);
-            intrinsic.Add(am);
-            intrinsic.Add(mb);
-            intrinsic.Add(im);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(mid);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestMidpointTheorem()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 0);
-
-            Segment am = new Segment(a, m);
-            Segment ab = new Segment(a, b);
-            Segment bm = new Segment(b, m);
-
-            Midpoint mid = new Midpoint(m, ab, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(am);
-            intrinsic.Add(ab);
-            intrinsic.Add(bm);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(mid);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestFigureSix()
-        {
-            Point x = new Point("X", 0, 0);
-            Point m = new Point("M", 2, 0);
-            Point y = new Point("Y", 4, 0);
-            Point t = new Point("T", -1, 2);
-            Point n = new Point("N", 1, 2); 
-            Point z = new Point("Z", -2, 2);
-
-            Triangle ztn = new Triangle(z, t, n);
-            Triangle tnm = new Triangle(t, n, m);
-            Triangle nmy = new Triangle(n, m, y);
-            Triangle txm = new Triangle(t, x, m);
-
-            Segment zx = new Segment(z, x);
-            Segment zy = new Segment(z, y);
-            Segment xy = new Segment(x, y);
-
-            Midpoint midT = new Midpoint(t, zx, "Given");
-            Midpoint midN = new Midpoint(n, zy, "Given");
-            Midpoint midM = new Midpoint(m, xy, "Given");
-
-            GeometricCongruentSegments ccss1 = new GeometricCongruentSegments(new Segment(t, n), new Segment(x, m), "Given");
-            GeometricCongruentSegments ccss2 = new GeometricCongruentSegments(new Segment(n, m), new Segment(t, x), "Given");
-
-            List<GroundedClause> clauses = new List<GroundedClause>();
-
-            clauses.Add(x);
-            clauses.Add(m);
-            clauses.Add(y);
-            clauses.Add(t);
-            clauses.Add(n);
-            clauses.Add(z);
-            clauses.Add(ztn);
-            clauses.Add(tnm);
-            clauses.Add(nmy);
-            clauses.Add(txm);
-            clauses.Add(zx);
-            clauses.Add(zy);
-            clauses.Add(xy);
-            clauses.Add(midT);
-            clauses.Add(midN);
-            clauses.Add(midM);
-            clauses.Add(ccss1);
-            clauses.Add(ccss2);
-
-            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-        }
-
-        private static void TestExteriorAngleSum()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 3);
-            Point c = new Point("C", 4, 0);
-            Point d = new Point("D", 0, 0);
-
-            Triangle dmctriangle = new Triangle(d, m, c);
-            Angle acdAngle = new Angle(a, c, d);
-            Angle amdAngle = new Angle(a, m, d);
-            Angle bmcAngle = new Angle(b, m, c);
-
-            List<GroundedClause> clauses = new List<GroundedClause>();
-
-            clauses.Add(a);
-            clauses.Add(m);
-            clauses.Add(b);
-            clauses.Add(c);
-            clauses.Add(d);
-            clauses.Add(dmctriangle);
-            clauses.Add(acdAngle);
-            clauses.Add(amdAngle);
-            clauses.Add(bmcAngle);
-
-            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-        }
-
-        private static void TestClassicOverlappingRightTriangleFigure()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 3);
-            Point c = new Point("C", 4, 0);
-            Point d = new Point("D", 0, 0);
-
-            Segment cd = new Segment(c, d);
-            Segment ad = new Segment(a, d);
-            Segment bc = new Segment(b, c);
-            Segment bd = new Segment(b, d);
-            Segment ac = new Segment(a, c);
-
-            Segment am = new Segment(a, m);
-            Segment mb = new Segment(m, b);
-            Segment mc = new Segment(m, c);
-            Segment md = new Segment(m, d);
-
-            Triangle rightOne = new Triangle(ad, cd, ac, "Given");
-            RightTriangle rightTwo = new RightTriangle(bc, cd, bd, "Given");
-
-            Triangle isoOne = new Triangle(am, md, ad, "Given");
-            Triangle isoTwo = new Triangle(mb, mc, bc, "Given");
-
-            Triangle bottomIso = new Triangle(mc, md, cd, "Given");
-
-            Intersection inter = new Intersection(m, ac, bd, "Given");
-
-            Intersection inter10 = new Intersection(m, am, bd, "Given");
-            Intersection inter11 = new Intersection(m, mc, bd, "Given");
-            Intersection inter12 = new Intersection(m, mb, ac, "Given");
-            Intersection inter13 = new Intersection(m, md, ac, "Given");
-            Intersection inter14 = new Intersection(m, am, mb, "Given");
-            Intersection inter15 = new Intersection(m, mb, mc, "Given");
-            Intersection inter16 = new Intersection(m, mc, md, "Given");
-            Intersection inter17 = new Intersection(m, md, am, "Given");
-
-            Intersection inter2 = new Intersection(a, ac, ad, "Given");
-            Intersection inter3 = new Intersection(b, bc, bd, "Given");
-            Intersection inter4 = new Intersection(c, bc, ac, "Given");
-            Intersection inter5 = new Intersection(c, cd, bc, "Given");
-            Intersection inter6 = new Intersection(c, cd, ac, "Given");
-
-            Intersection inter7 = new Intersection(d, ad, cd, "Given");
-            Intersection inter8 = new Intersection(d, ad, bd, "Given");
-            Intersection inter9 = new Intersection(d, cd, bd, "Given");
-
-            Midpoint mid1 = new Midpoint(m, ac, "Given");
-            Midpoint mid2 = new Midpoint(m, bd, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-            intrinsic.Add(cd);
-            intrinsic.Add(ad);
-            intrinsic.Add(bc);
-            intrinsic.Add(bd);
-            intrinsic.Add(ac);
-            intrinsic.Add(am);
-            intrinsic.Add(mb);
-            intrinsic.Add(mc);
-            intrinsic.Add(md);
-            intrinsic.Add(rightOne);
-            intrinsic.Add(rightTwo);
-            intrinsic.Add(isoOne);
-            intrinsic.Add(isoTwo);
-            intrinsic.Add(bottomIso);
-            intrinsic.Add(inter);
-            intrinsic.Add(inter2);
-            intrinsic.Add(inter3);
-            intrinsic.Add(inter4);
-            intrinsic.Add(inter5);
-            intrinsic.Add(inter6);
-            intrinsic.Add(inter7);
-            intrinsic.Add(inter8);
-            intrinsic.Add(inter9);
-            intrinsic.Add(inter10);
-            intrinsic.Add(inter11);
-            intrinsic.Add(inter12);
-            intrinsic.Add(inter13);
-            intrinsic.Add(inter14);
-            intrinsic.Add(inter15);
-            intrinsic.Add(inter16);
-            intrinsic.Add(inter17);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(mid1);
-            givens.Add(mid2);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        //      A
-        //     /|\
-        //    / | \
-        //   /  |  \
-        //  /___|___\
-        //  B   M    C
-        private static void TestIsoscelesTriangleFigure()
-        {
-            Point a = new Point("A", 2, 6);
-            Point m = new Point("M", 2, 0);
-            Point b = new Point("B", 0, 0);
-            Point c = new Point("C", 4, 0);
-
-            Segment ab = new Segment(a, b);
-            Segment am = new Segment(a, m);
-            Segment ac = new Segment(a, c);
-            Segment bm = new Segment(b, m);
-            Segment mc = new Segment(m, c);
-
-            Segment bc = new Segment(b, c);
-
-            IsoscelesTriangle original = new IsoscelesTriangle(ac, ab, bc, "Given");
-
-            Triangle left = new Triangle(ab, bm, am, "Given");
-            Triangle right = new Triangle(ac, mc, am, "Given");
-
-            Intersection inter1 = new Intersection(a, ab, ac, "Given");
-            Intersection inter2 = new Intersection(a, ab, am, "Given");
-            Intersection inter3 = new Intersection(a, am, ac, "Given");
-
-            Intersection inter4 = new Intersection(m, am, bc, "Given");
-            Intersection inter5 = new Intersection(m, bm, mc, "Given");
-
-            Intersection inter6 = new Intersection(b, ab, bm, "Given");
-            Intersection inter7 = new Intersection(b, ab, bc, "Given");
-
-            Intersection inter8 = new Intersection(c, ac, mc, "Given");
-            Intersection inter9 = new Intersection(c, ac, bc, "Given");
-
-            Angle bac = new Angle(b, a, c);
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(am);
-            intrinsic.Add(ac);
-            intrinsic.Add(bm);
-            intrinsic.Add(mc);
-            intrinsic.Add(bc);
-
-            intrinsic.Add(original);
-            intrinsic.Add(left);
-            intrinsic.Add(right);
-
-            intrinsic.Add(inter1);
-            intrinsic.Add(inter2);
-            intrinsic.Add(inter3);
-            intrinsic.Add(inter4);
-            intrinsic.Add(inter5);
-            intrinsic.Add(inter6);
-            intrinsic.Add(inter7);
-            intrinsic.Add(inter8);
-            intrinsic.Add(inter9);
-
-            intrinsic.Add(bac);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            AngleBisector angBisector = new AngleBisector(bac, am, "Given");
-            givens.Add(angBisector);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestIsoscelesTriangle()
-        {
-            Point a = new Point("A", -2, 0);
-            Point m = new Point("M", 0, 0);
-            Point b = new Point("B", 0, 3);
-            Point c = new Point("C", 2, 0);
-
-            Segment ab = new Segment(a, b);
-            Segment bc = new Segment(b, c);
-            Segment ac = new Segment(a, c);
-            Segment mb = new Segment(m, b);
-            Segment am = new Segment(a, m);
-            Segment mc = new Segment(m, c);
-
-            Midpoint mid = new Midpoint(m, ac, "Given");
-            //Intersection inter = new Intersection(m, mb, ac, "Given");
-
-            Triangle rightOne = new Triangle(ab, mb, am, "Given");
-            rightOne.SetProvenToBeRight();
-            Triangle rightTwo = new Triangle(bc, mb, mc, "Given");
-            rightTwo.SetProvenToBeRight();
-            Triangle iso = new Triangle(ab, bc, ac, "Given");
-
-
-            List<GroundedClause> clauses = new List<GroundedClause>();
-
-            clauses.Add(a);
-            clauses.Add(m);
-            clauses.Add(b);
-            clauses.Add(c);
-            clauses.Add(ab);
-            clauses.Add(bc);
-            clauses.Add(ac);
-            clauses.Add(mb);
-            clauses.Add(am);
-            clauses.Add(mc);
-            clauses.Add(mid);
-            clauses.Add(iso);
-            clauses.Add(rightOne);
-            clauses.Add(rightTwo);
-
-            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-        }
-
-        private static void TestParallel()
-        {
-            Point a = new Point("A", 0, 2);
-            Point b = new Point("B", 6, 2);
-            Point e = new Point("E", 0, 6);
-            Point f = new Point("F", 6, 6);
-            Point g = new Point("G", 0, 0);
-            Point h = new Point("H", 12, 24);
-            Segment ab = new Segment(a, b);
-            Segment ef = new Segment(e, f);  //to be GeometricParallel with ab
-            Segment gh = new Segment(g, h);
-
-            GeometricParallel abef = new GeometricParallel(ab, ef, "Given");
-            Intersection abgh = new Intersection(new Point("I1",1,2),ab,gh,"Given");
-            Intersection efgh = new Intersection(new Point("I2",3, 6), ef, gh, "Given");
-
-            List<GroundedClause> figure = new List<GroundedClause>();
-            List<GroundedClause> givens = new List<GroundedClause>();
-
-            figure.Add(a);
-            figure.Add(b);
-            figure.Add(e);
-            figure.Add(f);
-            figure.Add(g);
-            figure.Add(h);
-
-            figure.Add(ab); //to test paralell
-            figure.Add(ef); //to test paralell
-            figure.Add(abgh);
-            figure.Add(efgh);
-            givens.Add(abef); //to test paralell
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(figure, givens);
-        }
-
-        private static void TestAlternateInterior()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point c = new Point("C", 2, 2);
-            Point d = new Point("D", 8, 2);
-            Point m = new Point("M", 2, 0);
-            Point n = new Point("N", 4, 2);
-            Point p = new Point("P", 1, -1);
-            Point q = new Point("Q", 5, 3);
-
-            Segment ab = new Segment(a, b);
-            Segment cd = new Segment(c, d);
-            Segment pq = new Segment(p, q);
-
-            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
-            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
-
-            Angle amn = new Angle(a, m, n);
-            Angle dnm = new Angle(d, n, m);
-
-            GeometricParallel gParallel = new GeometricParallel(ab, cd, "Given");
-            // CongruentAngles cas = new CongruentAngles(amn, dnm, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-            intrinsic.Add(m);
-            intrinsic.Add(n);
-            intrinsic.Add(p);
-            intrinsic.Add(q);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(cd);
-            intrinsic.Add(pq);
-
-            intrinsic.Add(top);
-            intrinsic.Add(bottom);
-
-            intrinsic.Add(amn);
-            intrinsic.Add(dnm);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(gParallel);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestCorrespondingAngleImplyParallel()
-        {
-            //       /\
-            //      /  \
-            //     /____\
-            //    / \  / \
-            //   /________\
-            //
-            //
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point c = new Point("C", 2, 2);
-            Point d = new Point("D", 8, 2);
-            Point m = new Point("M", 2, 0);
-            Point n = new Point("N", 4, 2);
-            Point p = new Point("P", 1, -1);
-            Point q = new Point("Q", 5, 3);
-
-            Segment ab = new Segment(a, b);
-            Segment cd = new Segment(c, d);
-            Segment pq = new Segment(p, q);
-
-            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
-            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
-
-            //Angle amn = new Angle(a, m, n);
-            //Angle cnq = new Angle(c, n, q);
-
-            Angle pmb = new Angle(p, m, b);
-            Angle pnd = new Angle(p, n, d);
-
-            CongruentAngles cas = new CongruentAngles(pmb, pnd, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-            intrinsic.Add(m);
-            intrinsic.Add(n);
-            intrinsic.Add(p);
-            intrinsic.Add(q);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(cd);
-            intrinsic.Add(pq);
-
-            intrinsic.Add(top);
-            intrinsic.Add(bottom);
-
-            intrinsic.Add(pmb);
-            intrinsic.Add(pnd);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(cas);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestSameSideSupplementary()
-        {
-            //       /\
-            //      /  \
-            //     /____\
-            //    / \  / \
-            //   /________\
-            //
-            //
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point c = new Point("C", 2, 2);
-            Point d = new Point("D", 8, 2);
-            Point m = new Point("M", 2, 0);
-            Point n = new Point("N", 4, 2);
-            Point p = new Point("P", 1, -1);
-            Point q = new Point("Q", 5, 3);
-
-            Segment ab = new Segment(a, b);
-            Segment cd = new Segment(c, d);
-            Segment pq = new Segment(p, q);
-
-            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
-            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
-
-            Angle bmn = new Angle(b, m, n);
-            Angle dnm = new Angle(d, n, m);
-
-            Supplementary supp = new Supplementary(bmn, dnm, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-            intrinsic.Add(m);
-            intrinsic.Add(n);
-            intrinsic.Add(p);
-            intrinsic.Add(q);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(cd);
-            intrinsic.Add(pq);
-
-            intrinsic.Add(top);
-            intrinsic.Add(bottom);
-
-            intrinsic.Add(bmn);
-            intrinsic.Add(dnm);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(supp);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestInterleavingSimilarTriangles()
-        {
-            //       /\
-            //      /  \
-            //     /____\
-            //    / \  / \
-            //   /________\
-            //
-            //
-            Point a = new Point("A", 2, 12);
-            Point d = new Point("D", 1.5, 9); // (1,3)
-            Point e = new Point("E", 2.5, 9); // (3, 3)
-            Point x = new Point("X", 2, 18 / 2.5); // (2, 2)
-            Point b = new Point("B", 0, 0);
-            Point c = new Point("C", 4, 0);
-
-            Segment ab = new Segment(a, b);
-            Segment ac = new Segment(a, c);
-            Segment bc = new Segment(b, c);
-            Segment be = new Segment(b, e);
-            Segment bx = new Segment(b, x);
-
-            Segment ad = new Segment(a, d);
-            Segment cd = new Segment(c, d);
-            Segment de = new Segment(d, e);
-            Segment db = new Segment(d, b);
-            Segment ae = new Segment(a, e);
-
-            Segment ex = new Segment(e, x);
-            Segment ec = new Segment(e, c);
-            Segment xc = new Segment(x, c);
-            Segment xd = new Segment(x, d);
-
-            Triangle one = new Triangle(ad, de, ae, "Intrinsic");
-            Triangle two = new Triangle(de, ex, xd, "Intrinsic");
-
-            Triangle whole = new Triangle(ab, ac, bc, "Intrinsic");
-
-            Triangle leftOne = new Triangle(ab, be, ae, "Intrinsic");
-            Triangle leftTwo = new Triangle(db, de, be, "Intrinsic");
-
-            Triangle rightOne = new Triangle(ac, ad, cd, "Intrinsic");
-            Triangle rightTwo = new Triangle(ec, cd, de, "Intrinsic");
-
-            Triangle bxd = new Triangle(bx, db, xd, "Intrinsic");
-            Triangle cxe = new Triangle(xc, ex, ec, "Intrinsic");
-            Triangle bxc = new Triangle(bx, xc, bc, "Intrinsic");
-
-            Triangle bec = new Triangle(be, ec, bc, "Intrinsic");
-            Triangle cdb = new Triangle(cd, db, bc, "Intrinsic");
-
-            Intersection interLeft = new Intersection(d, ab, cd, "Intrinsic");
-            Intersection interRight = new Intersection(e, ac, be, "Intrinsic");
-            Intersection interMain = new Intersection(x, cd, be, "Intrinsic");
-
-            Intersection i2 = new Intersection(b, be, ab, "Intrinsic");
-            Intersection i3 = new Intersection(b, bc, ab, "Intrinsic");
-            Intersection i4 = new Intersection(b, bc, be, "Intrinsic");
-
-            Intersection i5 = new Intersection(c, ac, cd, "Intrinsic");
-            Intersection i6 = new Intersection(c, ac, bc, "Intrinsic");
-            Intersection i7 = new Intersection(c, cd, bc, "Intrinsic");
-
-            Intersection i8 = new Intersection(d, cd, de, "Intrinsic");
-            Intersection i9 = new Intersection(d, ab, de, "Intrinsic");
-            Intersection i10 = new Intersection(e, de, ac, "Intrinsic");
-
-            InMiddle im1 = new InMiddle(x, be, "Intrinsic");
-            InMiddle im2 = new InMiddle(d, ab, "Intrinsic");
-            InMiddle im3 = new InMiddle(e, ac, "Intrinsic");
-            InMiddle im4 = new InMiddle(x, cd, "Intrinsic");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(d);
-            intrinsic.Add(e);
-            intrinsic.Add(x);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(ac);
-            intrinsic.Add(bc);
-            intrinsic.Add(be);
-            intrinsic.Add(bx);
-            intrinsic.Add(ad);
-            intrinsic.Add(cd);
-            intrinsic.Add(de);
-            intrinsic.Add(db);
-            intrinsic.Add(ae);
-            intrinsic.Add(ex);
-            intrinsic.Add(ec);
-            intrinsic.Add(xc);
-            intrinsic.Add(xd);
-
-            intrinsic.Add(one);
-            intrinsic.Add(two);
-            intrinsic.Add(whole);
-            intrinsic.Add(leftOne);
-            intrinsic.Add(leftTwo);
-            intrinsic.Add(rightOne);
-            intrinsic.Add(rightTwo);
-            intrinsic.Add(bxc);
-            intrinsic.Add(bxd);
-            intrinsic.Add(cxe);
-            intrinsic.Add(bec);
-            intrinsic.Add(cdb);
-
-            intrinsic.Add(im1);
-            intrinsic.Add(im2);
-            intrinsic.Add(im3);
-            intrinsic.Add(im4);
-
-            intrinsic.Add(interLeft);
-            intrinsic.Add(interRight);
-            intrinsic.Add(interMain);
-
-            intrinsic.Add(i2);
-            intrinsic.Add(i3);
-            intrinsic.Add(i4);
-            intrinsic.Add(i5);
-            intrinsic.Add(i6);
-            intrinsic.Add(i7);
-            intrinsic.Add(i8);
-            intrinsic.Add(i9);
-            intrinsic.Add(i10);
-
-            GeometricCongruentTriangles cts = new GeometricCongruentTriangles(leftOne, rightOne, "Given");
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(cts);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestCongruentAdjacentAngles()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point m = new Point("M", 2, 0);
-            Point p = new Point("P", 2, -1);
-            Point q = new Point("Q", 2, 3);
-
-            Segment ab = new Segment(a, b);
-            Segment pq = new Segment(p, q);
-
-            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
-
-            Angle amp = new Angle(a, m, p);
-            Angle bmp = new Angle(b, m, p);
-
-            CongruentAngles cas = new CongruentAngles(amp, bmp, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(m);
-            intrinsic.Add(p);
-            intrinsic.Add(q);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(pq);
-
-            intrinsic.Add(inter);
-
-            intrinsic.Add(amp);
-            intrinsic.Add(bmp);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(cas);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestPerpendicularImplyCongruentAdjacentAngles()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point m = new Point("M", 2, 0);
-            Point p = new Point("P", 2, -1);
-            Point q = new Point("Q", 2, 3);
-
-            Segment ab = new Segment(a, b);
-            Segment pq = new Segment(p, q);
-
-            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
-
-            Angle amp = new Angle(a, m, p);
-            Angle bmp = new Angle(b, m, p);
-
-            Perpendicular perp = new Perpendicular(inter, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(m);
-            intrinsic.Add(p);
-            intrinsic.Add(q);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(pq);
-
-            intrinsic.Add(inter);
-
-            intrinsic.Add(amp);
-            intrinsic.Add(bmp);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(perp);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestPerpendicularImplyComplementary()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 6, 0);
-            Point c = new Point("C", 0, 4);
-            Point d = new Point("D", 2, 2);
-
-            Segment ab = new Segment(a, b);
-            Segment ac = new Segment(a, c);
-            Segment ad = new Segment(a, d);
-
-            Intersection inter1 = new Intersection(a, ab, ac, "Intrinsic");
-            Intersection inter2 = new Intersection(a, ab, ad, "Intrinsic");
-            Intersection inter3 = new Intersection(a, ac, ad, "Intrinsic");
-
-            Angle bad = new Angle(b, a, d);
-            Angle dac = new Angle(d, a, c);
-
-            Perpendicular perp = new Perpendicular(inter1, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-
-            intrinsic.Add(ab);
-            intrinsic.Add(ac);
-            intrinsic.Add(ad);
-
-            intrinsic.Add(inter1);
-            intrinsic.Add(inter2);
-            intrinsic.Add(inter3);
-
-            intrinsic.Add(bad);
-            intrinsic.Add(dac);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(perp);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestSupplementCongruence()
-        {
-            Point a = new Point("A", 5, 5);
-            Point b = new Point("B", 1, 1);
-            Point c = new Point("C", 4, 1);
-
-            Point d = new Point("D", 14, 5);
-            Point e = new Point("E", 10, 1);
-            Point f = new Point("F", 13, 1);
-
-            Angle abc = new Angle(a, b, c);
-            Angle def = new Angle(d, e, f);
-
-            GeometricCongruentAngles cas = new GeometricCongruentAngles(abc, def, "Given");
-
-            Point m = new Point("M", 4, 4);
-            Point n = new Point("N", 0, 0);
-            Point p = new Point("P", -4, 0);
-
-            Point r = new Point("R", -5, 5);
-            Point s = new Point("S", -9, 1);
-            Point t = new Point("T", -13, 1);
-
-            Angle mnp = new Angle(m, n, p);
-            Angle rst = new Angle(r, s, t);
-
-            Supplementary supp1 = new Supplementary(abc, mnp, "Given");
-            Supplementary supp2 = new Supplementary(def, rst, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-
-            intrinsic.Add(d);
-            intrinsic.Add(e);
-            intrinsic.Add(f);
-
-            intrinsic.Add(m);
-            intrinsic.Add(n);
-            intrinsic.Add(p);
-
-            intrinsic.Add(r);
-            intrinsic.Add(s);
-            intrinsic.Add(t);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(cas);
-            givens.Add(supp1);
-            givens.Add(supp2);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestAngleBisectorTheorem()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 0, 6);
-            Point c = new Point("C", 6, 0);
-
-            Point d = new Point("D", 5, 5);
-
-            Angle bac = new Angle(b, a, c);
-            Segment bisector = new Segment(a, d);
-
-            AngleBisector ab = new AngleBisector(bac, bisector, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-
-            intrinsic.Add(bac);
-            intrinsic.Add(bisector);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(ab);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestAngleBisectorIsPerpendicularBisector()
-        {
-            Point a = new Point("A", 0, 0);
-            Point b = new Point("B", 3, 4);
-            Point c = new Point("C", 6, 0);
-            Point m = new Point("M", 3, 0);
-
-            Segment bisector = new Segment(b, m);
-            Segment leg1 = new Segment(a, b);
-            Segment leg2 = new Segment(b, c);
-            Segment baseSeg = new Segment(a, c);
-
-            Intersection inter = new Intersection(m, bisector, baseSeg, "Intrinsic");
-
-            Angle abc = new Angle(a, b, c);
-            AngleBisector ab = new AngleBisector(abc, bisector, "Given");
-
-            IsoscelesTriangle iso = new IsoscelesTriangle(leg1, leg2, baseSeg, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(m);
-            intrinsic.Add(bisector);
-            intrinsic.Add(leg1);
-            intrinsic.Add(leg2);
-            intrinsic.Add(baseSeg);
-
-            intrinsic.Add(inter);
-            intrinsic.Add(abc);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(ab);
-            givens.Add(iso);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestSimpleIntersection()
-        {
-            Point p = new Point("P", 3, 3);
-            Point s = new Point("S", 0, 0);
-            Point t = new Point("T", 4, -4);
-            Point r = new Point("R", -3, 3);
-            Point q = new Point("Q", -4, -4);
-
-            Segment pq = new Segment(p, q);
-            Segment rt = new Segment(r, t);
-
-            Segment rs = new Segment(r, s);
-            Segment st = new Segment(s, t);
-            Segment ps = new Segment(p, s);
-            Segment sq = new Segment(s, q);
-
-            Intersection inter = new Intersection(s, rt, pq, "Intrinsic");
-            InMiddle im1 = new InMiddle(s, rt, "Intrinsic");
-            InMiddle im2 = new InMiddle(s, pq, "Intrinsic");
-
-            GeometricCongruentSegments css1 = new GeometricCongruentSegments(rs, ps, "Given");
-            GeometricCongruentSegments css2 = new GeometricCongruentSegments(st, sq, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(p);
-            intrinsic.Add(s);
-            intrinsic.Add(t);
-            intrinsic.Add(r);
-            intrinsic.Add(q);
-            intrinsic.Add(pq);
-            intrinsic.Add(rt);
-            intrinsic.Add(rs);
-            intrinsic.Add(st);
-            intrinsic.Add(ps);
-            intrinsic.Add(sq);
-            intrinsic.Add(im1);
-            intrinsic.Add(im2);
-
-            intrinsic.Add(inter);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(css1);
-            givens.Add(css2);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        // Orange book: Page 34: #33
-        private static void TestRaysMakeATriangle()
-        {
-            Point a = new Point("A", -3, 0);
-            Point b = new Point("B", 0, 4);
-            Point c = new Point("C", 3, 0);
-            Point x = new Point("X", -5, 0);
-            Point y = new Point("Y", -6, -4);
-            Point w = new Point("W", 6, 0);
-            Point z = new Point("Z", 6, -4);
-
-            Segment bz = new Segment(b, z);
-            Segment by = new Segment(b, y);
-
-            Segment xw = new Segment(x, w);
-
-            Segment ab = new Segment(a, b);
-            Segment ac = new Segment(a, c);
-            Segment bc = new Segment(b, c);
-
-            Angle bca = new Angle(b, c, a);
-            Angle cab = new Angle(c, a, b);
-
-            Triangle tri = new Triangle(ab, ac, bc, "Intrinsic");
-            
-            Intersection inter1 = new Intersection(a, by, xw, "Intrinsic");
-            Intersection inter2 = new Intersection(c, bz, xw, "Intrinsic");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(x);
-            intrinsic.Add(y);
-            intrinsic.Add(w);
-            intrinsic.Add(z);
-            intrinsic.Add(bz);
-            intrinsic.Add(by);
-            intrinsic.Add(xw);
-            intrinsic.Add(ab);
-            intrinsic.Add(ac);
-            intrinsic.Add(bc);
-
-            intrinsic.Add(bca);
-            intrinsic.Add(cab);
-
-            intrinsic.Add(inter1);
-            intrinsic.Add(inter2);
-
-            intrinsic.Add(tri);
-
-            GeometricCongruentAngles cas1 = new GeometricCongruentAngles(bca, cab, "Given");
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(cas1);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+            return problems;
         }
 
         static void Main(string[] args)
         {
-         //TestIsoscelesTriangleFigure();
+            List<ActualProblem> problems = ConstructTestObjects();
+
+            foreach (ActualProblem problem in problems)
+            {
+                problem.Run();
+                problem.Report();
+            }
+
             //TestRaysMakeATriangle();
             //TestSimpleIntersection();
             //TestAngleBisectorIsPerpendicularBisector();
-         //TestClassicOverlappingRightTriangleFigure();
             //TestIsoscelesTriangle();
             //IsolatedCongruenceEquationTest();
             //IsolatedEquationTest();
             //SSSTest5();
             //TestExteriorAngleSum();
             //HLTest1();
-         TestMidpointTheoremFigure();
+         //TestMidpointTheoremFigure();
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
             //TestAlternateInterior();
             //TestSameSideSupplementary();
-         //TestInterleavingSimilarTriangles();
             //TestSimplification();
             //TestSimplificationConstants();
             //TestSimpleSubstitution();
@@ -1882,6 +833,761 @@ namespace Geometry_Testbed
             GeometricCongruentSegments ccs1 = new GeometricCongruentSegments(s11, s21, "Given");
             GeometricCongruentSegments ccs2 = new GeometricCongruentSegments(s12, s22, "Given");
             GeometricCongruentAngles cca = new GeometricCongruentAngles(ang1, ang2, "Given");
+        }
+
+        private static void TestSumAnglesInTriangle()
+        {
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
+
+            Triangle t = new Triangle(a, m, b);
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(a);
+            clauses.Add(m);
+            clauses.Add(b);
+            clauses.Add(t);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+        }
+
+        private static void TestMidpointTheoremFigure()
+        {
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment am = new Segment(a, m);
+            Segment mb = new Segment(m, b);
+
+            InMiddle im = new InMiddle(m, ab, "Intrinsic");
+            Midpoint mid = new Midpoint(m, ab, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(ab);
+            intrinsic.Add(am);
+            intrinsic.Add(mb);
+            intrinsic.Add(im);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(mid);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestMidpointTheorem()
+        {
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 0);
+
+            Segment am = new Segment(a, m);
+            Segment ab = new Segment(a, b);
+            Segment bm = new Segment(b, m);
+
+            Midpoint mid = new Midpoint(m, ab, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(m);
+            intrinsic.Add(b);
+            intrinsic.Add(am);
+            intrinsic.Add(ab);
+            intrinsic.Add(bm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(mid);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestFigureSix()
+        {
+            Point x = new Point("X", 0, 0);
+            Point m = new Point("M", 2, 0);
+            Point y = new Point("Y", 4, 0);
+            Point t = new Point("T", -1, 2);
+            Point n = new Point("N", 1, 2);
+            Point z = new Point("Z", -2, 2);
+
+            Triangle ztn = new Triangle(z, t, n);
+            Triangle tnm = new Triangle(t, n, m);
+            Triangle nmy = new Triangle(n, m, y);
+            Triangle txm = new Triangle(t, x, m);
+
+            Segment zx = new Segment(z, x);
+            Segment zy = new Segment(z, y);
+            Segment xy = new Segment(x, y);
+
+            Midpoint midT = new Midpoint(t, zx, "Given");
+            Midpoint midN = new Midpoint(n, zy, "Given");
+            Midpoint midM = new Midpoint(m, xy, "Given");
+
+            GeometricCongruentSegments ccss1 = new GeometricCongruentSegments(new Segment(t, n), new Segment(x, m), "Given");
+            GeometricCongruentSegments ccss2 = new GeometricCongruentSegments(new Segment(n, m), new Segment(t, x), "Given");
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(x);
+            clauses.Add(m);
+            clauses.Add(y);
+            clauses.Add(t);
+            clauses.Add(n);
+            clauses.Add(z);
+            clauses.Add(ztn);
+            clauses.Add(tnm);
+            clauses.Add(nmy);
+            clauses.Add(txm);
+            clauses.Add(zx);
+            clauses.Add(zy);
+            clauses.Add(xy);
+            clauses.Add(midT);
+            clauses.Add(midN);
+            clauses.Add(midM);
+            clauses.Add(ccss1);
+            clauses.Add(ccss2);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+        }
+
+        private static void TestExteriorAngleSum()
+        {
+            Point a = new Point("A", 0, 3);
+            Point m = new Point("M", 2, 1.5);
+            Point b = new Point("B", 4, 3);
+            Point c = new Point("C", 4, 0);
+            Point d = new Point("D", 0, 0);
+
+            Triangle dmctriangle = new Triangle(d, m, c);
+            Angle acdAngle = new Angle(a, c, d);
+            Angle amdAngle = new Angle(a, m, d);
+            Angle bmcAngle = new Angle(b, m, c);
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(a);
+            clauses.Add(m);
+            clauses.Add(b);
+            clauses.Add(c);
+            clauses.Add(d);
+            clauses.Add(dmctriangle);
+            clauses.Add(acdAngle);
+            clauses.Add(amdAngle);
+            clauses.Add(bmcAngle);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+        }
+
+
+        private static void TestIsoscelesTriangle()
+        {
+            Point a = new Point("A", -2, 0);
+            Point m = new Point("M", 0, 0);
+            Point b = new Point("B", 0, 3);
+            Point c = new Point("C", 2, 0);
+
+            Segment ab = new Segment(a, b);
+            Segment bc = new Segment(b, c);
+            Segment ac = new Segment(a, c);
+            Segment mb = new Segment(m, b);
+            Segment am = new Segment(a, m);
+            Segment mc = new Segment(m, c);
+
+            Midpoint mid = new Midpoint(m, ac, "Given");
+            //Intersection inter = new Intersection(m, mb, ac, "Given");
+
+            Triangle rightOne = new Triangle(ab, mb, am, "Given");
+            rightOne.SetProvenToBeRight();
+            Triangle rightTwo = new Triangle(bc, mb, mc, "Given");
+            rightTwo.SetProvenToBeRight();
+            Triangle iso = new Triangle(ab, bc, ac, "Given");
+
+
+            List<GroundedClause> clauses = new List<GroundedClause>();
+
+            clauses.Add(a);
+            clauses.Add(m);
+            clauses.Add(b);
+            clauses.Add(c);
+            clauses.Add(ab);
+            clauses.Add(bc);
+            clauses.Add(ac);
+            clauses.Add(mb);
+            clauses.Add(am);
+            clauses.Add(mc);
+            clauses.Add(mid);
+            clauses.Add(iso);
+            clauses.Add(rightOne);
+            clauses.Add(rightTwo);
+
+            //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
+        }
+
+        private static void TestParallel()
+        {
+            Point a = new Point("A", 0, 2);
+            Point b = new Point("B", 6, 2);
+            Point e = new Point("E", 0, 6);
+            Point f = new Point("F", 6, 6);
+            Point g = new Point("G", 0, 0);
+            Point h = new Point("H", 12, 24);
+            Segment ab = new Segment(a, b);
+            Segment ef = new Segment(e, f);  //to be GeometricParallel with ab
+            Segment gh = new Segment(g, h);
+
+            GeometricParallel abef = new GeometricParallel(ab, ef, "Given");
+            Intersection abgh = new Intersection(new Point("I1", 1, 2), ab, gh, "Given");
+            Intersection efgh = new Intersection(new Point("I2", 3, 6), ef, gh, "Given");
+
+            List<GroundedClause> figure = new List<GroundedClause>();
+            List<GroundedClause> givens = new List<GroundedClause>();
+
+            figure.Add(a);
+            figure.Add(b);
+            figure.Add(e);
+            figure.Add(f);
+            figure.Add(g);
+            figure.Add(h);
+
+            figure.Add(ab); //to test paralell
+            figure.Add(ef); //to test paralell
+            figure.Add(abgh);
+            figure.Add(efgh);
+            givens.Add(abef); //to test paralell
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(figure, givens);
+        }
+
+        private static void TestAlternateInterior()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            Angle amn = new Angle(a, m, n);
+            Angle dnm = new Angle(d, n, m);
+
+            GeometricParallel gParallel = new GeometricParallel(ab, cd, "Given");
+            // CongruentAngles cas = new CongruentAngles(amn, dnm, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(amn);
+            intrinsic.Add(dnm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(gParallel);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestCorrespondingAngleImplyParallel()
+        {
+            //       /\
+            //      /  \
+            //     /____\
+            //    / \  / \
+            //   /________\
+            //
+            //
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            //Angle amn = new Angle(a, m, n);
+            //Angle cnq = new Angle(c, n, q);
+
+            Angle pmb = new Angle(p, m, b);
+            Angle pnd = new Angle(p, n, d);
+
+            CongruentAngles cas = new CongruentAngles(pmb, pnd, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(pmb);
+            intrinsic.Add(pnd);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSameSideSupplementary()
+        {
+            //       /\
+            //      /  \
+            //     /____\
+            //    / \  / \
+            //   /________\
+            //
+            //
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 2, 2);
+            Point d = new Point("D", 8, 2);
+            Point m = new Point("M", 2, 0);
+            Point n = new Point("N", 4, 2);
+            Point p = new Point("P", 1, -1);
+            Point q = new Point("Q", 5, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment cd = new Segment(c, d);
+            Segment pq = new Segment(p, q);
+
+            Intersection top = new Intersection(m, ab, pq, "Intrinsic");
+            Intersection bottom = new Intersection(n, cd, pq, "Intrinsic");
+
+            Angle bmn = new Angle(b, m, n);
+            Angle dnm = new Angle(d, n, m);
+
+            Supplementary supp = new Supplementary(bmn, dnm, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(cd);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(top);
+            intrinsic.Add(bottom);
+
+            intrinsic.Add(bmn);
+            intrinsic.Add(dnm);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(supp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+
+        private static void TestCongruentAdjacentAngles()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point m = new Point("M", 2, 0);
+            Point p = new Point("P", 2, -1);
+            Point q = new Point("Q", 2, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment pq = new Segment(p, q);
+
+            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
+
+            Angle amp = new Angle(a, m, p);
+            Angle bmp = new Angle(b, m, p);
+
+            CongruentAngles cas = new CongruentAngles(amp, bmp, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(m);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(inter);
+
+            intrinsic.Add(amp);
+            intrinsic.Add(bmp);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestPerpendicularImplyCongruentAdjacentAngles()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point m = new Point("M", 2, 0);
+            Point p = new Point("P", 2, -1);
+            Point q = new Point("Q", 2, 3);
+
+            Segment ab = new Segment(a, b);
+            Segment pq = new Segment(p, q);
+
+            Intersection inter = new Intersection(m, ab, pq, "Intrinsic");
+
+            Angle amp = new Angle(a, m, p);
+            Angle bmp = new Angle(b, m, p);
+
+            Perpendicular perp = new Perpendicular(inter, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(m);
+            intrinsic.Add(p);
+            intrinsic.Add(q);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(pq);
+
+            intrinsic.Add(inter);
+
+            intrinsic.Add(amp);
+            intrinsic.Add(bmp);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(perp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestPerpendicularImplyComplementary()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 6, 0);
+            Point c = new Point("C", 0, 4);
+            Point d = new Point("D", 2, 2);
+
+            Segment ab = new Segment(a, b);
+            Segment ac = new Segment(a, c);
+            Segment ad = new Segment(a, d);
+
+            Intersection inter1 = new Intersection(a, ab, ac, "Intrinsic");
+            Intersection inter2 = new Intersection(a, ab, ad, "Intrinsic");
+            Intersection inter3 = new Intersection(a, ac, ad, "Intrinsic");
+
+            Angle bad = new Angle(b, a, d);
+            Angle dac = new Angle(d, a, c);
+
+            Perpendicular perp = new Perpendicular(inter1, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+
+            intrinsic.Add(ab);
+            intrinsic.Add(ac);
+            intrinsic.Add(ad);
+
+            intrinsic.Add(inter1);
+            intrinsic.Add(inter2);
+            intrinsic.Add(inter3);
+
+            intrinsic.Add(bad);
+            intrinsic.Add(dac);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(perp);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSupplementCongruence()
+        {
+            Point a = new Point("A", 5, 5);
+            Point b = new Point("B", 1, 1);
+            Point c = new Point("C", 4, 1);
+
+            Point d = new Point("D", 14, 5);
+            Point e = new Point("E", 10, 1);
+            Point f = new Point("F", 13, 1);
+
+            Angle abc = new Angle(a, b, c);
+            Angle def = new Angle(d, e, f);
+
+            GeometricCongruentAngles cas = new GeometricCongruentAngles(abc, def, "Given");
+
+            Point m = new Point("M", 4, 4);
+            Point n = new Point("N", 0, 0);
+            Point p = new Point("P", -4, 0);
+
+            Point r = new Point("R", -5, 5);
+            Point s = new Point("S", -9, 1);
+            Point t = new Point("T", -13, 1);
+
+            Angle mnp = new Angle(m, n, p);
+            Angle rst = new Angle(r, s, t);
+
+            Supplementary supp1 = new Supplementary(abc, mnp, "Given");
+            Supplementary supp2 = new Supplementary(def, rst, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+
+            intrinsic.Add(d);
+            intrinsic.Add(e);
+            intrinsic.Add(f);
+
+            intrinsic.Add(m);
+            intrinsic.Add(n);
+            intrinsic.Add(p);
+
+            intrinsic.Add(r);
+            intrinsic.Add(s);
+            intrinsic.Add(t);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas);
+            givens.Add(supp1);
+            givens.Add(supp2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestAngleBisectorTheorem()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 0, 6);
+            Point c = new Point("C", 6, 0);
+
+            Point d = new Point("D", 5, 5);
+
+            Angle bac = new Angle(b, a, c);
+            Segment bisector = new Segment(a, d);
+
+            AngleBisector ab = new AngleBisector(bac, bisector, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(d);
+
+            intrinsic.Add(bac);
+            intrinsic.Add(bisector);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(ab);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestAngleBisectorIsPerpendicularBisector()
+        {
+            Point a = new Point("A", 0, 0);
+            Point b = new Point("B", 3, 4);
+            Point c = new Point("C", 6, 0);
+            Point m = new Point("M", 3, 0);
+
+            Segment bisector = new Segment(b, m);
+            Segment leg1 = new Segment(a, b);
+            Segment leg2 = new Segment(b, c);
+            Segment baseSeg = new Segment(a, c);
+
+            Intersection inter = new Intersection(m, bisector, baseSeg, "Intrinsic");
+
+            Angle abc = new Angle(a, b, c);
+            AngleBisector ab = new AngleBisector(abc, bisector, "Given");
+
+            IsoscelesTriangle iso = new IsoscelesTriangle(leg1, leg2, baseSeg, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(m);
+            intrinsic.Add(bisector);
+            intrinsic.Add(leg1);
+            intrinsic.Add(leg2);
+            intrinsic.Add(baseSeg);
+
+            intrinsic.Add(inter);
+            intrinsic.Add(abc);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(ab);
+            givens.Add(iso);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        private static void TestSimpleIntersection()
+        {
+            Point p = new Point("P", 3, 3);
+            Point s = new Point("S", 0, 0);
+            Point t = new Point("T", 4, -4);
+            Point r = new Point("R", -3, 3);
+            Point q = new Point("Q", -4, -4);
+
+            Segment pq = new Segment(p, q);
+            Segment rt = new Segment(r, t);
+
+            Segment rs = new Segment(r, s);
+            Segment st = new Segment(s, t);
+            Segment ps = new Segment(p, s);
+            Segment sq = new Segment(s, q);
+
+            Intersection inter = new Intersection(s, rt, pq, "Intrinsic");
+            InMiddle im1 = new InMiddle(s, rt, "Intrinsic");
+            InMiddle im2 = new InMiddle(s, pq, "Intrinsic");
+
+            GeometricCongruentSegments css1 = new GeometricCongruentSegments(rs, ps, "Given");
+            GeometricCongruentSegments css2 = new GeometricCongruentSegments(st, sq, "Given");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(p);
+            intrinsic.Add(s);
+            intrinsic.Add(t);
+            intrinsic.Add(r);
+            intrinsic.Add(q);
+            intrinsic.Add(pq);
+            intrinsic.Add(rt);
+            intrinsic.Add(rs);
+            intrinsic.Add(st);
+            intrinsic.Add(ps);
+            intrinsic.Add(sq);
+            intrinsic.Add(im1);
+            intrinsic.Add(im2);
+
+            intrinsic.Add(inter);
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(css1);
+            givens.Add(css2);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
+        }
+
+        // Orange book: Page 34: #33
+        private static void TestRaysMakeATriangle()
+        {
+            Point a = new Point("A", -3, 0);
+            Point b = new Point("B", 0, 4);
+            Point c = new Point("C", 3, 0);
+            Point x = new Point("X", -5, 0);
+            Point y = new Point("Y", -6, -4);
+            Point w = new Point("W", 6, 0);
+            Point z = new Point("Z", 6, -4);
+
+            Segment bz = new Segment(b, z);
+            Segment by = new Segment(b, y);
+
+            Segment xw = new Segment(x, w);
+
+            Segment ab = new Segment(a, b);
+            Segment ac = new Segment(a, c);
+            Segment bc = new Segment(b, c);
+
+            Angle bca = new Angle(b, c, a);
+            Angle cab = new Angle(c, a, b);
+
+            Triangle tri = new Triangle(ab, ac, bc, "Intrinsic");
+
+            Intersection inter1 = new Intersection(a, by, xw, "Intrinsic");
+            Intersection inter2 = new Intersection(c, bz, xw, "Intrinsic");
+
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+
+            intrinsic.Add(a);
+            intrinsic.Add(b);
+            intrinsic.Add(c);
+            intrinsic.Add(x);
+            intrinsic.Add(y);
+            intrinsic.Add(w);
+            intrinsic.Add(z);
+            intrinsic.Add(bz);
+            intrinsic.Add(by);
+            intrinsic.Add(xw);
+            intrinsic.Add(ab);
+            intrinsic.Add(ac);
+            intrinsic.Add(bc);
+
+            intrinsic.Add(bca);
+            intrinsic.Add(cab);
+
+            intrinsic.Add(inter1);
+            intrinsic.Add(inter2);
+
+            intrinsic.Add(tri);
+
+            GeometricCongruentAngles cas1 = new GeometricCongruentAngles(bca, cab, "Given");
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            givens.Add(cas1);
+
+            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
         }
     }
 }

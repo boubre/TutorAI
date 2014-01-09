@@ -12,10 +12,10 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is InMiddle)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            InMiddle im = c as InMiddle;
 
-            InMiddle im = (InMiddle)c;
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new  List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (im == null) return newGrounded;
 
             Segment s1 = new Segment(im.segment.Point1, im.point);
             Segment s2 = new Segment(im.point, im.segment.Point2);

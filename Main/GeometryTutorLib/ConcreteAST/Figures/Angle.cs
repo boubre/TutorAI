@@ -481,6 +481,29 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.RationalRatio(a.measure, this.measure);
         }
 
+        public bool HasPoint(Point p)
+        {
+            if (A.Equals(p)) return true;
+            if (B.Equals(p)) return true;
+            if (C.Equals(p)) return true;
+
+            return false;
+        }
+
+        public bool HasSegment(Segment seg)
+        {
+            return ray1.RayOverlays(seg) || ray2.RayOverlays(seg);
+        }
+
+        // Is the given clause an intrinsic component of this angle?
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Point) return this.HasPoint(gc as Point);
+            else if (gc is Segment) return this.HasSegment(gc as Segment);
+
+            return false;
+        }
+
         public override string ToString()
         {
             return "Angle( m" + A.name + B.name + C.name + " = " + measure + ")";

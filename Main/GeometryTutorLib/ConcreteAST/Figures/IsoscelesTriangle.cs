@@ -31,7 +31,7 @@ namespace GeometryTutorLib.ConcreteAST
             for (int i = 0; i < segments.Length; i++)
             {
                 int otherSegment = i + 1 < segments.Length ? i + 1 : 0;
-                if (segments[i].Length == segments[otherSegment].Length)
+                if (Utilities.CompareValues(segments[i].Length, segments[otherSegment].Length))
                 {
                     leg1 = segments[i];
                     leg2 = segments[otherSegment];
@@ -55,11 +55,13 @@ namespace GeometryTutorLib.ConcreteAST
         public IsoscelesTriangle(Segment a, Segment b, Segment c, string just) : base(a, b, c, just)
         {
             DetermineIsoscelesValues();
+            provenIsosceles = true;
         }
 
         public IsoscelesTriangle(Triangle tri, string just) : base(tri.SegmentA, tri.SegmentB, tri.SegmentC, just)
         {
             DetermineIsoscelesValues();
+            provenIsosceles = true;
         }
 
         public Angle GetVertexAngle()
@@ -96,6 +98,5 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "IsoscelesTriangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ")";
         }
-
     }
 }

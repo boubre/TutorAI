@@ -43,6 +43,13 @@ namespace GeometryTutorLib.ConcreteAST
             return shared;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Triangle) return st1.StructurallyEquals(gc) || st2.StructurallyEquals(gc);
+
+            return st1.Covers(gc) || st2.Covers(gc);
+        }
+
         public override bool StructurallyEquals(Object c)
         {
             SimilarTriangles sts = c as SimilarTriangles;

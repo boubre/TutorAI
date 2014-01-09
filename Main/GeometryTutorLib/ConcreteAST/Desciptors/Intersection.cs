@@ -13,7 +13,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Intersection() : base() { }
 
-        public Intersection(Point i, Segment l, Segment r, string just) : base()
+        public Intersection(Point i, Segment l, Segment r, string just)
+            : base()
         {
             intersect = i;
             lhs = l;
@@ -43,9 +44,14 @@ namespace GeometryTutorLib.ConcreteAST
             return false;
         }
 
+        public bool Crossing()
+        {
+            return !StandsOn() && !StandsOnEndpoint();
+        }
+
         public bool IsStraightAngleIntersection()
         {
-            return !StandsOnEndpoint(); 
+            return !StandsOnEndpoint();
         }
 
 
@@ -144,6 +150,27 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        public override bool CanBeStrengthenedTo(GroundedClause gc)
+        {
+            Perpendicular perp = gc as Perpendicular;
+            if (perp == null) return false;
+            return intersect.Equals(perp.intersect) && ((lhs.StructurallyEquals(perp.lhs) && rhs.StructurallyEquals(perp.rhs)) ||
+                                                        (lhs.StructurallyEquals(perp.rhs) && rhs.StructurallyEquals(perp.lhs)));
+        }
+
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Point) return intersect.Equals(gc as Point) || lhs.Covers(gc) || rhs.Covers(gc);
+            else if (gc is Segment) return lhs.Covers(gc) || rhs.Covers(gc);
+            // An intersection covers a triangle if a triangle covers the intersection (the intersection
+            // point is a vertex and a segment is a side of the triangle)
+            else if (gc is Triangle) return (gc as Triangle).Covers(this);
+
+            InMiddle im = gc as InMiddle;
+            if (im == null) return false;
+            return intersect.Covers(im.point) && (lhs.Covers(im.segment) || rhs.Covers(im.segment));
+        }
+
         //
         // Is the given segment collinear with this intersection
         //
@@ -159,12 +186,16 @@ namespace GeometryTutorLib.ConcreteAST
             return ImpliesRay(thatSeg1) && ImpliesRay(thatSeg2);
         }
 
+        //
+        // Returns the exact transversal between the intersections
+        //
         public Segment AcquireTransversal(Intersection thatInter)
         {
             // The two intersections should not be at the same vertex
             if (intersect.Equals(thatInter.intersect)) return null;
 
-            return CommonSegment(thatInter);
+            Segment common = CommonSegment(thatInter);
+            return common != null ? new Segment(this.intersect, thatInter.intersect) : common;
         }
 
         public override bool StructurallyEquals(Object obj)
@@ -250,6 +281,8 @@ namespace GeometryTutorLib.ConcreteAST
                 Angle newAngle2 = new Angle(right, newIntersection.intersect, up);
 
                 Supplementary supp = new Supplementary(newAngle1, newAngle2, "Definition of Supplementary");
+                supp.SetNotASourceNode();
+                supp.SetNotAGoalNode();
 
                 newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(Utilities.MakeList<GroundedClause>(newIntersection), supp));
             }
@@ -268,6 +301,14 @@ namespace GeometryTutorLib.ConcreteAST
                 Supplementary supp2 = new Supplementary(newAngle2, newAngle4, "Definition of Supplementary");
                 Supplementary supp3 = new Supplementary(newAngle3, newAngle4, "Definition of Supplementary");
                 Supplementary supp4 = new Supplementary(newAngle3, newAngle1, "Definition of Supplementary");
+                supp1.SetNotASourceNode();
+                supp1.SetNotAGoalNode();
+                supp2.SetNotASourceNode();
+                supp2.SetNotAGoalNode();
+                supp3.SetNotASourceNode();
+                supp3.SetNotAGoalNode();
+                supp4.SetNotASourceNode();
+                supp4.SetNotAGoalNode();
 
                 List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(newIntersection);
 

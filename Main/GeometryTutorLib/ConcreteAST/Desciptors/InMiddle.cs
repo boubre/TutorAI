@@ -38,6 +38,19 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        public override bool CanBeStrengthenedTo(GroundedClause gc)
+        {
+            Midpoint midpoint = gc as Midpoint;
+            if (midpoint == null) return false;
+
+            return this.point.StructurallyEquals(midpoint.midpoint) && this.segment.StructurallyEquals(midpoint.segment);
+        }
+
+        public override bool Covers(GroundedClause gc)
+        {
+            return point.Covers(gc) || segment.Covers(gc);
+        }
+
         internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);

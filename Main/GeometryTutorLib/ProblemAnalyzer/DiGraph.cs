@@ -91,6 +91,55 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         //
+        // Adds a basic edge to the graph
+        //
+        public void AddEdge(T from, T to)
+        {
+            AddEdge(edgeMap, from, to);
+            AddEdge(transposeEdgeMap, to, from);
+
+            numEdges++;
+        }
+
+        private void AddEdge(Dictionary<int, List<int>> edges, T from, T to)
+        {
+            // Create the new vertex nodes and add to the vertices
+            // This must come first to guarantee the 'start node' is at index 0
+            int toVertexIndex = GetVertexIndex(to);
+            int fromVertexIndex = GetVertexIndex(from);
+
+            //
+            // Acquire the list of target nodes (which imply an edge: from -> to)
+            //
+            List<int> targetVertexIndices;
+            if (edges.TryGetValue(fromVertexIndex, out targetVertexIndices))
+            {
+                if (!targetVertexIndices.Contains(toVertexIndex))
+                    //{
+                    //    throw new ArgumentException("Edge: " + from + " " + to + " already exists in problem graph.");
+                    //}
+
+                    targetVertexIndices.Add(toVertexIndex);
+            }
+            // No edge exists yet: from -> to
+            else
+            {
+                edges.Add(fromVertexIndex, Utilities.MakeList<int>(toVertexIndex));
+            }
+        }
+
+        //
+        // Adds a many-to-one hyperedge to the graph by adding all the individual edges
+        //
+        public void AddHyperEdge(List<T> fromList, T to)
+        {
+            foreach (T from in fromList)
+            {
+                this.AddEdge(from, to);
+            }
+        }
+
+        //
         // Simple heuristic for which we may use graph minors to acquire isomorphisms
         //
         public int NumEdges()
@@ -194,55 +243,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
             }
 
             return maxLevelWidth;
-        }
-
-        //
-        // Adds a basic edge to the graph
-        //
-        public void AddEdge(T from, T to)
-        {
-            AddEdge(edgeMap, from, to);
-            AddEdge(transposeEdgeMap, to, from);
-
-            numEdges++;
-        }
-
-        private void AddEdge(Dictionary<int, List<int>> edges, T from, T to)
-        {
-            // Create the new vertex nodes and add to the vertices
-            // This must come first to guarantee the 'start node' is at index 0
-            int toVertexIndex = GetVertexIndex(to);
-            int fromVertexIndex = GetVertexIndex(from);
-
-            //
-            // Acquire the list of target nodes (which imply an edge: from -> to)
-            //
-            List<int> targetVertexIndices;
-            if (edges.TryGetValue(fromVertexIndex, out targetVertexIndices))
-            {
-                if (!targetVertexIndices.Contains(toVertexIndex))
-                //{
-                //    throw new ArgumentException("Edge: " + from + " " + to + " already exists in problem graph.");
-                //}
-
-                targetVertexIndices.Add(toVertexIndex);
-            }
-            // No edge exists yet: from -> to
-            else
-            {
-                edges.Add(fromVertexIndex, Utilities.MakeList<int>(toVertexIndex));
-            }
-        }
-
-        //
-        // Adds a many-to-one hyperedge to the graph by adding all the individual edges
-        //
-        public void AddHyperEdge(List<T> fromList, T to)
-        {
-            foreach (T from in fromList)
-            {
-                this.AddEdge(from, to);
-            }
         }
 
         //
@@ -369,6 +369,79 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 } while (!vertex.Equals(w));
 
                 stronglyConnectedComponents.Add(scc);
+            }
+        }
+
+        //
+        // The algorithm loops through each node of the graph, in an arbitrary order, initiating a depth-first search that
+        // terminates when it hits any node that has already been visited since the beginning of the topological sort
+        //
+        // L ← Empty list that will contain the sorted nodes
+        // while there are unmarked nodes do
+        //    select an unmarked node n
+        //    visit(n) 
+        public List<T> TopologicalSort()
+        {
+            // L ← Empty list that will contain the sorted elements
+            List<T> L = new List<T>();
+
+            // Unmarked
+            List<T> unmarked = new List<T>();
+            vertices.ForEach(vertex => unmarked.Add(vertex.node));
+
+            // Temporarily marked
+            List<T> tempMarked = new List<T>();
+
+            // Permanently marked
+            List<T> marked = new List<T>();
+
+            while (unmarked.Any())
+            {
+                // remove a node n from unmarked
+                T n = unmarked[0];
+                unmarked.RemoveAt(0);
+
+                Visit(n, unmarked, tempMarked, marked, L);
+            }
+
+            return L;
+        }
+
+        // function visit(node n)
+        //    if n has a temporary mark then stop (not a DAG)
+        //    if n is not marked (i.e. has not been visited yet) then
+        //        mark n temporarily
+        //        for each node m with an edge from n to m do
+        //            visit(m)
+        //        mark n permanently
+        //        add n to head of L
+        private void Visit(T n, List<T> unmarked, List<T> tempMarked, List<T> marked, List<T> L)
+        {
+            // if n has a temporary mark then stop (not a DAG)
+            if (tempMarked.Contains(n)) return;
+
+            // if n is not marked (i.e. has not been visited yet) then
+            if (!marked.Contains(n))
+            {
+                // mark n temporarily
+                tempMarked.Add(n);
+
+                // for each node m with an edge from n to m do
+                List<int> dependencies;
+                if (edgeMap.TryGetValue(GetVertexIndex(n), out dependencies))
+                {
+                    foreach (int wIndex in dependencies)
+                    {
+                        Visit(vertices[wIndex].node, unmarked, tempMarked, marked, L);
+                    }
+                }
+
+                // mark n permanently
+                marked.Add(n);
+                unmarked.Remove(n);
+                
+                // add n to head of L
+                L.Add(n);
             }
         }
     }

@@ -57,14 +57,14 @@ namespace GeometryTutorLib.GenericInstantiator
                         Triangle ct1 = candidateTriangles[i];
                         Triangle ct2 = candidateTriangles[j];
 
-                        if (!ct1.WasDeducedCongruent(ct2))
-                        {
+                        //if (!ct1.WasDeducedCongruent(ct2))
+                        //{
                             // First, compare the new congruent segment; if it fails, ignore this pair of triangles
                             if (newCs.LinksTriangles(ct1, ct2))
                             {
                                 newGrounded.AddRange(CollectAndCheckASA(ct1, ct2, newCs));
                             }
-                        }
+                        //}
                     }
                 }
 
@@ -84,14 +84,14 @@ namespace GeometryTutorLib.GenericInstantiator
                         Triangle ct1 = candidateTriangles[i];
                         Triangle ct2 = candidateTriangles[j];
 
-                        if (!ct1.WasDeducedCongruent(ct2))
-                        {
+                        //if (!ct1.WasDeducedCongruent(ct2))
+                        //{
                             // First, compare the new congruent segment; if it fails, ignore this pair of triangles
                             if (newCs.LinksTriangles(ct1, ct2))
                             {
                                 newGrounded.AddRange(CollectAndCheckASA(ct1, ct2, newCs));
                             }
-                        }
+                        //}
                     }
                 }
 
@@ -128,7 +128,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // Has this congruence been established before? If so, do not deduce it again.
-            if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
+//            if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
 
             // Check all other segments
             foreach (CongruentSegments ccs in candidateSegments)

@@ -30,10 +30,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // Do we have a segment or triangle?
-            if (!(c is CongruentAngles) && !(c is Triangle))
-            {
-                return newGrounded;
-            }
+            if (!(c is CongruentAngles) && !(c is Triangle)) return newGrounded;
 
             //
             // The list of new grounded clauses if they are deduced

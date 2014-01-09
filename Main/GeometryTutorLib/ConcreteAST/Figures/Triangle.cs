@@ -24,9 +24,9 @@ namespace GeometryTutorLib.ConcreteAST
         public bool provenRight { get; protected set; }
         public Angle rightAngle { get; protected set; }
         protected bool isIsosceles;
-        public bool provenIsosceles { get; private set; }
+        public bool provenIsosceles { get; protected set; }
         protected bool isEquilateral;
-        public bool provenEquilateral { get; private set; }
+        public bool provenEquilateral { get; protected set; }
         private List<Triangle> congruencePairs;
         public bool WasDeducedCongruent(Triangle that) { return congruencePairs.Contains(that); }
         private List<Triangle> similarPairs;
@@ -114,6 +114,16 @@ namespace GeometryTutorLib.ConcreteAST
         public void SetProvenToBeRight()
         {
             provenRight = true;
+        }
+
+        public void SetProvenToBeIsosceles()
+        {
+            provenIsosceles = true;
+        }
+
+        public void SetProvenToBeEquilateral()
+        {
+            provenEquilateral = true;
         }
 
         public List<Angle> GetAngles()
@@ -794,6 +804,22 @@ namespace GeometryTutorLib.ConcreteAST
             return strengthened;
         }
 
+        public override bool CanBeStrengthenedTo(GroundedClause gc)
+        {
+            Triangle tri = gc as Triangle;
+            if (gc == null) return false;
+
+            // Handles isosceles, right, or equilateral
+            if (!this.StructurallyEquals(gc)) return false;
+
+            // Ensure we know the original has been 'proven' (given) to be a particular type of triangle
+            if (tri.provenIsosceles) this.provenIsosceles = true;
+            if (tri.provenEquilateral) this.provenEquilateral = true;
+            if (tri.provenRight) this.provenRight = true;
+
+            return true;
+        }
+
         public bool CoordinateMedian(Segment thatSegment)
         {
             //
@@ -855,9 +881,11 @@ namespace GeometryTutorLib.ConcreteAST
             //return false;
         }
 
+        //
+        // Is this segment an altitude based on the coordinates (precomputation)
+        //
         public bool CoordinateAltitude(Segment thatSegment)
         {
-
             //
             // Two sides must intersect the given segment at a single point
             //
@@ -919,6 +947,21 @@ namespace GeometryTutorLib.ConcreteAST
             if (triangle.provenRight != this.provenRight) return false;
 
             return StructurallyEquals(obj) && base.Equals(obj);
+        }
+
+        //
+        // Is the given clause an intrinsic component of this triangle?
+        //
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Angle) return this.HasAngle(gc as Angle);
+            else if (gc is Point) return this.HasPoint(gc as Point);
+            else if (gc is Segment) return this.HasSegment(gc as Segment);
+
+            // A triangle covers an intersection if one vertex covers the intersection and one segment is part of the triangle
+            Intersection inter = gc as Intersection;
+            if (inter == null) return false;
+            return this.HasPoint(inter.intersect) && (this.HasSegment(inter.lhs) || this.HasSegment(inter.rhs));
         }
 
         public override string ToString()

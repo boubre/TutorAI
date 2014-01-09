@@ -16,11 +16,12 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static Boolean MayUnifyWith(GroundedClause c)
         {
-            return (c is CongruentSegments) || (c is Triangle);
+            return (c is CongruentSegments) || (c is Triangle) || (c is Strengthened);
         }
 
         private static List<CongruentSegments> candSegs = new List<CongruentSegments>();
         private static List<Triangle> candTris = new List<Triangle>();
+        private static List<IsoscelesTriangle> candIsoTris = new List<IsoscelesTriangle>();
 
         //
         // In order for two triangles to be isosceles, we require the following:
@@ -31,10 +32,12 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
+            if (c is IsoscelesTriangle || c is Strengthened) return InstantiateDefinition(c);
+
             // The list of new grounded clauses if they are deduced
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!MayUnifyWith(c)) return newGrounded;
+            if (!(c is CongruentSegments) && !(c is Triangle)) return newGrounded;
 
             //
             // Unify
@@ -44,35 +47,27 @@ namespace GeometryTutorLib.GenericInstantiator
                 CongruentSegments css = c as CongruentSegments;
 
                 // Only generate or add to possible congruent pairs if this is a non-reflexive relation
-                if (!css.IsReflexive())
+                if (css.IsReflexive()) return newGrounded;
+
+                for (int t = 0; t < candTris.Count; t++)
                 {
-                    for (int t = 0; t < candTris.Count; t++)
+                    if (candTris[t].HasSegment(css.cs1) && candTris[t].HasSegment(css.cs2))
                     {
-                        if (candTris[t].HasSegment(css.cs1) && candTris[t].HasSegment(css.cs2))
-                        {
-//                            candTris[t].MakeIsosceles();
+                        newGrounded.Add(StrengthenToIsosceles(candTris[t], css));
 
-                            newGrounded.Add(StregnthenToIsosceles(candTris[t], css));
+                        // There should be only one possible Isosceles triangle from this congruent segments
+                        // So we can remove this relationship and triangle from consideration
+                        candTris.RemoveAt(t);
 
-                            // There should be only one possible Isosceles triangle from this congruent segments
-                            // So we can remove this relationship and triangle from consideration
-                            candTris.RemoveAt(t);
-
-                            return newGrounded;
-                        }
+                        return newGrounded;
                     }
-
-                    candSegs.Add(c as CongruentSegments);
                 }
 
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+                candSegs.Add(css);
             }
 
             else if (c is Triangle)
             {
-                // Don't strengthen an Isosceles to an Isosceles triangle
-                if (c is IsoscelesTriangle) return InstantiateGivenDefinition(c as IsoscelesTriangle);
-
                 Triangle newTriangle = c as Triangle;
 
                 //
@@ -80,21 +75,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 for (int cs = 0; cs < candSegs.Count; cs++)
                 {
-                    // No need to check for this, in theory, since we never add any reflexive expressions to the list
-                    if (!candSegs[cs].IsReflexive())
+                    if (newTriangle.HasSegment(candSegs[cs].cs1) && newTriangle.HasSegment(candSegs[cs].cs2))
                     {
-                        if (newTriangle.HasSegment(candSegs[cs].cs1) && newTriangle.HasSegment(candSegs[cs].cs2))
-                        {
-//                            newTriangle.MakeIsosceles();
+                        newGrounded.Add(StrengthenToIsosceles(newTriangle, candSegs[cs]));
 
-                            newGrounded.Add(StregnthenToIsosceles(newTriangle, candSegs[cs]));
-
-                            return newGrounded;
-                        }
+                        return newGrounded;
                     }
                 }
 
-                // Add the the list of candidates if it was not determined isosceles now.
+                // Add to the list of candidates if it was not determined isosceles now.
                 candTris.Add(newTriangle);
             }
 
@@ -105,7 +94,7 @@ namespace GeometryTutorLib.GenericInstantiator
         // DO NOT generate a new clause, instead, report the result and generate all applicable
         // clauses attributed to this strengthening of a triangle from scalene to isosceles
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> StregnthenToIsosceles(Triangle tri, CongruentSegments ccss)
+        private static KeyValuePair<List<GroundedClause>, GroundedClause> StrengthenToIsosceles(Triangle tri, CongruentSegments ccss)
         {
             Strengthened newStrengthened = new Strengthened(tri, new IsoscelesTriangle(tri, "Strengthened"), NAME);
 
@@ -119,14 +108,26 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // IsoscelesTriangle(A, B, C) -> Congruent(Segment(A, B), Segment(A, C))
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateGivenDefinition(IsoscelesTriangle iso)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateDefinition(GroundedClause clause)
+        {
+            if (clause is IsoscelesTriangle) return InstantiateDefinition(clause, clause as IsoscelesTriangle);
+
+            if ((clause as Strengthened).strengthened is IsoscelesTriangle)
+            {
+                return InstantiateDefinition(clause, (clause as Strengthened).strengthened as IsoscelesTriangle);
+            }
+
+            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        }
+
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateDefinition(GroundedClause original, IsoscelesTriangle isoTri)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            GeometricCongruentSegments gcs = new GeometricCongruentSegments(iso.leg1, iso.leg2, NAME);
+            GeometricCongruentSegments gcs = new GeometricCongruentSegments(isoTri.leg1, isoTri.leg2, NAME);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
-            antecedent.Add(iso);
+            antecedent.Add(original);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcs));
 

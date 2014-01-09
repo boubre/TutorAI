@@ -52,12 +52,41 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
+            // No corresponding angles if we have:
+            //
+            //    |          |         |
+            //    |__________|         |_________
+            //                                   |
+            //                                   |
+            //
+            if (inter1.StandsOnEndpoint() && inter2.StandsOnEndpoint()) return newGrounded;
+
+            // No corresponding angles if we have:
+            //
+            //    |          |
+            //    |__________|
+            //               |
+            //               |
+            //
+            if ((inter1.StandsOnEndpoint() && inter2.StandsOn()) || (inter2.StandsOnEndpoint() && inter1.StandsOn())) return newGrounded;
+
+            // No corresponding angles if we have:
+            //
+            //    |          |
+            //    |__________|
+            //    |          |
+            //    |          |
+            //
+            if ((inter1.StandsOn() && inter2.StandsOn()) || (inter2.StandsOn() && inter1.StandsOn())) return newGrounded;
+
+System.Diagnostics.Debug.WriteLine("Working on: \n\t" + inter1.ToString() + "\n\t" + inter2.ToString());
+
+            //
+            // Verify we have a parallel / intersection situation using the given information
+            //
             // We want two intersections that create a transversal
             Segment transversal = inter1.AcquireTransversal(inter2);
             if (transversal == null) return newGrounded;
-
-            // If both intersections 'stand on' the respective segment, there are no corresponding angles
-            if (inter1.StandsOn() && inter2.StandsOn()) return newGrounded;
 
             //
             // Ensure the non-traversal segments align with the parallel segments
@@ -74,98 +103,329 @@ namespace GeometryTutorLib.GenericInstantiator
             // The pair of non-transversals needs to align exactly with the parallel pair of segments
             if (coincidingParallel1 == null || coincidingParallel2 == null) return newGrounded;
 
+            // Corresponding angles if:
             //
-            // Define the 4 sets of corresponding angles; to do so we need 8 points for 4 angles
+            //      |          |           |         |
+            //    __|__________|           |_________|___
+            //      |                                |
+            //      |                                |
             //
-            // Group 1
-            Point off1 = transversal.Point1;
-            Point off2 = transversal.Point2;
-
-            // No corresponding angles if we have;                              4 sets if as follows
-            //
-            //    |          |                                                  |        |
-            //    |__________|                                           off1 __|________|___ off2
-            //    |          |                                                  |        |
-            //    |          |                                                  |        |
-            //
-            if (coincidingParallel1.PointIsOn(off1) && coincidingParallel1.PointIsOn(off2)) return newGrounded;
-
-            // Acquire the intersections
-            Point inter1Point = inter1.intersect;
-            Point inter2Point = inter2.intersect;
-
-            // These lines give the other 4 points
-            Segment parallel1 = inter1.OtherSegment(transversal);
-            Segment parallel2 = inter2.OtherSegment(transversal);
-
-            // Create a segment from these two points so we can compare distances
-            Segment crossing = new Segment(parallel1.Point1, parallel2.Point1);
-
-            //
-            // Will this crossing segment intersect the real transversal in the middle of the two segments? If it DOES NOT, it is same side
-            //
-            Point intersection = transversal.FindIntersection(crossing);
-
-            Point sameSideOfTransversal11 = null;
-            Point sameSideOfTransversal12 = null;
-
-            Point sameSideOfTransversal21 = null;
-            Point sameSideOfTransversal22 = null;
-
-            if (Segment.Between(intersection, inter1Point, inter2Point))
+            Intersection crossingInter = null;
+            Intersection standsOn = null;
+            if (inter1.StandsOnEndpoint() && inter2.Crossing())
             {
-                sameSideOfTransversal11 = parallel1.Point1;
-                sameSideOfTransversal12 = parallel2.Point2;
+                standsOn = inter1;
+                crossingInter = inter2;
+            }
+            else if (inter2.StandsOnEndpoint() && inter1.Crossing())
+            {
+                standsOn = inter2;
+                crossingInter = inter1;
+            }
+            if (standsOn != null && crossingInter != null) return InstantiateSingleIntersection(parallel, standsOn, crossingInter);
 
-                sameSideOfTransversal21 = parallel1.Point2;
-                sameSideOfTransversal22 = parallel2.Point1;
+            // Corresponding angles if:
+            //
+            //      |          |           |         |
+            //    __|__________|           |_________|___
+            //      |          |           |         |
+            //      |          |           |
+            //
+            crossingInter = null;
+            standsOn = null;
+            if (inter1.StandsOn() && inter2.Crossing())
+            {
+                standsOn = inter1;
+                crossingInter = inter2;
+            }
+            else if (inter2.StandsOn() && inter1.Crossing())
+            {
+                standsOn = inter2;
+                crossingInter = inter1;
+            }
+            if (standsOn != null && crossingInter != null) return InstantiateMixedIntersection(parallel, standsOn, crossingInter);
+
+            // Corresponding angles if:
+            //
+            //      |          |  
+            //   ___|__________|__
+            //      |          |  
+            //      |          | 
+            //
+            crossingInter = null;
+            Intersection crossingInter2 = null;
+            if (crossingInter.Crossing() && crossingInter2.Crossing())
+            {
+                crossingInter = inter1;
+                crossingInter2 = inter2;
+            }
+            if (crossingInter != null && crossingInter2 != null) return InstantiateCompleteIntersection(parallel, crossingInter, crossingInter2);
+
+            return newGrounded;
+        }
+
+        // Corresponding angles if:
+        //
+        //      |          |           |         |
+        //    __|__________|           |_________|___
+        //      |                                |
+        //      |                                |
+        //
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateSingleIntersection(Parallel parallel, Intersection standsOn, Intersection crossingInter)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            Segment transversal = standsOn.AcquireTransversal(crossingInter);
+
+            // Ensure the non-traversal segments align with the parallel segments
+            Segment nonTransversalStands = standsOn.OtherSegment(transversal);
+            Segment nonTransversalCrossing = crossingInter.OtherSegment(transversal);
+
+            Segment crossingTransversalSegment = crossingInter.OtherSegment(nonTransversalCrossing);
+            Segment standsOnTransversalSegment = standsOn.OtherSegment(nonTransversalStands);
+
+            // The intersections must have a physical intersection to be valid
+            // Otherwise we would need to know the transversal lines are geometrically (proven) to be collinear
+            if (!crossingTransversalSegment.HasSubSegment(transversal) || !standsOnTransversalSegment.HasSubSegment(transversal)) return newGrounded;
+
+            Point standsOnTop = nonTransversalStands.OtherPoint(standsOn.intersect);
+
+            //
+            // Determine which points are on the same side of the transversal.
+            //
+            Segment testingCrossSegment = new Segment(standsOnTop, nonTransversalCrossing.Point1);
+            Point testingIntersection = transversal.FindIntersection(testingCrossSegment);
+
+            Point crossingTop = null;
+            Point crossingBottom = null;
+
+            if (Segment.Between(testingIntersection, standsOn.intersect, crossingInter.intersect))
+            {
+                crossingTop = nonTransversalCrossing.Point2;
+                crossingBottom = nonTransversalCrossing.Point1;
             }
             else
             {
-                sameSideOfTransversal11 = parallel1.Point1;
-                sameSideOfTransversal12 = parallel2.Point1;
-
-                sameSideOfTransversal21 = parallel1.Point2;
-                sameSideOfTransversal22 = parallel2.Point2;
+                crossingTop = nonTransversalCrossing.Point1;
+                crossingBottom = nonTransversalCrossing.Point2;
             }
 
+            // Point that is outside of the parallel lines and transversal
+            Point offCrossing = Point.calcDistance(crossingTransversalSegment.Point1, crossingInter.intersect) < Point.calcDistance(crossingTransversalSegment.Point1, crossingInter.intersect) ?
+                                                   crossingTransversalSegment.Point1 : crossingTransversalSegment.Point2;
             //
-            // We need to check to see if the endpoints of the transversal are 'beyond' the parallel lines
+            // Generate the new congruences
             //
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
-            if (!coincidingParallel1.PointIsOn(off1))
-            {
-                // 'Left' Angles
-                GeometricCongruentAngles gca1 = new GeometricCongruentAngles(new Angle(off1, inter1Point, sameSideOfTransversal11),
-                                                          new Angle(inter1Point, inter2Point, sameSideOfTransversal12), NAME);
-                gca1.MakeAxiomatic();
-                GeometricCongruentAngles gca2 = new GeometricCongruentAngles(new Angle(off1, inter1Point, sameSideOfTransversal21),
-                                                          new Angle(inter1Point, inter2Point, sameSideOfTransversal22), NAME);
-                gca2.MakeAxiomatic();
 
-                newAngleRelations.Add(gca1);
-                newAngleRelations.Add(gca2);
-            }
+            GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(standsOnTop, standsOn.intersect, crossingInter.intersect),
+                                                                         new Angle(crossingTop, crossingInter.intersect, offCrossing), NAME);
+            gca.MakeAxiomatic();
+            newAngleRelations.Add(gca);
 
-            if (!coincidingParallel1.PointIsOn(off2))
-            {
-                // 'Right' Angles
-                GeometricCongruentAngles gca3 = new  GeometricCongruentAngles(new Angle(sameSideOfTransversal11, inter1Point, inter2Point),
-                                                          new Angle(sameSideOfTransversal12, inter2Point, off2), NAME);
-                gca3.MakeAxiomatic();
-                GeometricCongruentAngles gca4 = new  GeometricCongruentAngles(new Angle(sameSideOfTransversal21, inter1Point, inter2Point),
-                                                          new Angle(sameSideOfTransversal22, inter2Point, off2), NAME);
-                gca4.MakeAxiomatic();
-
-                newAngleRelations.Add(gca3);
-                newAngleRelations.Add(gca4);
-            }
+            // It is possible for the crossing intersection to extend the 'standOn' intersection to create a second angle set
+            //Point offCrossing2 = crossingTransversalSegment.OtherPoint(offCrossing);
+            //if (standsOn.intersect.Equals(offCrossing2))
+            //{
+            //    gca = new GeometricCongruentAngles(new Angle(standsOnTop, standsOn.intersect, crossingInter.intersect),
+            //                                       new Angle(crossingTop, crossingInter.intersect, offCrossing), NAME);
+            //    gca1.MakeAxiomatic();
+            //    newAngleRelations.Add(gca1);
+            //}
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(parallel);
-            antecedent.Add(inter1);
-            antecedent.Add(inter2);
+            antecedent.Add(standsOn);
+            antecedent.Add(crossingInter);
+
+            foreach (CongruentAngles newAngles in newAngleRelations)
+            {
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngles));
+            }
+
+            return newGrounded;
+        }
+
+        // Corresponding angles if (we have 7 points here)
+        //
+        //      |          |           |         |
+        //    __|__________|           |_________|___ off
+        //      |          |           |         |
+        //      |          |           |
+        //
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMixedIntersection(Parallel parallel, Intersection standsOn, Intersection crossingInter)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            Segment transversal = standsOn.AcquireTransversal(crossingInter);
+
+            // Ensure the non-traversal segments align with the parallel segments
+            Segment nonTransversalStands = standsOn.OtherSegment(transversal);
+            Segment nonTransversalCrossing = crossingInter.OtherSegment(transversal);
+
+            Segment crossingTransversalSegment = crossingInter.OtherSegment(nonTransversalCrossing);
+            Segment standsOnTransversalSegment = standsOn.OtherSegment(nonTransversalStands);
+            
+            // Avoid:
+            //      |          |
+            //    __|  ________|
+            //      |          |
+            //      |          |
+            // Both intersections (transversal segments) must contain the actual transversal
+            if (!crossingTransversalSegment.HasSubSegment(transversal) || !standsOnTransversalSegment.HasSubSegment(transversal)) return newGrounded;
+
+            //
+            // Determine which points are on the same side of the transversal.
+            //
+            Segment testingCrossSegment = new Segment(nonTransversalStands.Point1, nonTransversalCrossing.Point1);
+            Point testingIntersection = transversal.FindIntersection(testingCrossSegment);
+
+            Point standsOnTop = null;
+            Point standsOnBottom = null;
+
+            Point crossingTop = null;
+            Point crossingBottom = null;
+
+            if (Segment.Between(testingIntersection, standsOn.intersect, crossingInter.intersect))
+            {
+                standsOnTop = nonTransversalStands.Point1;
+                standsOnBottom = nonTransversalStands.Point2;
+
+                crossingTop = nonTransversalCrossing.Point2;
+                crossingBottom = nonTransversalCrossing.Point1;
+            }
+            else
+            {
+                standsOnTop = nonTransversalStands.Point1;
+                standsOnBottom = nonTransversalStands.Point2;
+
+                crossingTop = nonTransversalCrossing.Point1;
+                crossingBottom = nonTransversalCrossing.Point2;
+            }
+
+
+            // Point that is outside of the parallel lines and transversal
+            //Point offCrossing = crossingInter.OtherSegment(nonTransversalCrossing).OtherPoint(standsOn.intersect);
+            Point offCrossing = Point.calcDistance(crossingTransversalSegment.Point1, crossingInter.intersect) < Point.calcDistance(crossingTransversalSegment.Point1, crossingInter.intersect) ?
+                                                   crossingTransversalSegment.Point1 : crossingTransversalSegment.Point2;
+
+            //
+            // Generate the new congruences
+            //
+            List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
+
+            GeometricCongruentAngles gca1 = new GeometricCongruentAngles(new Angle(standsOnTop, standsOn.intersect, crossingInter.intersect),
+                                                                         new Angle(crossingTop, crossingInter.intersect, offCrossing), NAME);
+            gca1.MakeAxiomatic();
+            GeometricCongruentAngles gca2 = new GeometricCongruentAngles(new Angle(standsOnBottom, standsOn.intersect, crossingInter.intersect),
+                                                                         new Angle(crossingBottom, crossingInter.intersect, offCrossing), NAME);
+            gca2.MakeAxiomatic();
+
+            newAngleRelations.Add(gca1);
+            newAngleRelations.Add(gca2);
+
+            // For hypergraph
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(parallel);
+            antecedent.Add(standsOn);
+            antecedent.Add(crossingInter);
+
+            foreach (CongruentAngles newAngles in newAngleRelations)
+            {
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngles));
+            }
+
+            return newGrounded;
+        }
+
+        // Corresponding angles if (we have 8 points here)
+        //
+        //           |          |
+        //    off1 __|__________|__ off2
+        //           |          |
+        //           |          |
+        //
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCompleteIntersection(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            Segment transversal = crossingInterLeft.AcquireTransversal(crossingInterRight);
+
+            // Ensure the non-traversal segments align with the parallel segments
+            Segment nonTraversalLeft = crossingInterLeft.OtherSegment(transversal);
+            Segment nonTraversalRight = crossingInterRight.OtherSegment(transversal);
+
+            Segment crossingLeftParallel = parallel.CoincidesWith(nonTraversalLeft);
+            Segment crossingRightParallel = parallel.CoincidesWith(nonTraversalRight);
+
+            //
+            // Determine which points are on the same side of the transversal.
+            //
+            Segment testingCrossSegment = new Segment(crossingLeftParallel.Point1, crossingRightParallel.Point1);
+            Point testingIntersection = transversal.FindIntersection(testingCrossSegment);
+
+            Point crossingLeftTop = null;
+            Point crossingLeftBottom = null;
+
+            Point crossingRightTop = null;
+            Point crossingRightBottom = null;
+
+            if (Segment.Between(testingIntersection, crossingInterLeft.intersect, crossingInterRight.intersect))
+            {
+                crossingLeftTop = crossingLeftParallel.Point1;
+                crossingLeftBottom = crossingLeftParallel.Point2;
+
+                crossingRightTop = crossingRightParallel.Point2;
+                crossingRightBottom = crossingRightParallel.Point1;
+            }
+            else
+            {
+                crossingLeftTop = crossingLeftParallel.Point1;
+                crossingLeftBottom = crossingLeftParallel.Point2;
+
+                crossingRightTop = crossingRightParallel.Point1;
+                crossingRightBottom = crossingRightParallel.Point2;
+            }
+
+
+            // Point that is outside of the parallel lines and transversal
+            Segment leftNonParallel = crossingInterLeft.OtherSegment(crossingLeftParallel);
+            Segment rightNonParallel = crossingInterRight.OtherSegment(crossingRightParallel);
+
+            Point offCrossingLeft = Point.calcDistance(leftNonParallel.Point1, crossingInterLeft.intersect) < Point.calcDistance(leftNonParallel.Point1, crossingInterRight.intersect) ?
+                                    leftNonParallel.Point1 : leftNonParallel.Point2;
+            Point offCrossingRight = Point.calcDistance(rightNonParallel.Point1, crossingInterRight.intersect) < Point.calcDistance(rightNonParallel.Point1, crossingInterLeft.intersect) ?
+                                     rightNonParallel.Point1 : rightNonParallel.Point2;
+
+            //
+            // Generate the new congruences
+            //
+            List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
+
+            GeometricCongruentAngles gca1 = new GeometricCongruentAngles(new Angle(crossingLeftTop, crossingInterLeft.intersect, crossingInterRight.intersect),
+                                                                         new Angle(crossingRightTop, crossingInterRight.intersect, offCrossingRight), NAME);
+            gca1.MakeAxiomatic();
+            GeometricCongruentAngles gca2 = new GeometricCongruentAngles(new Angle(crossingLeftTop, crossingInterLeft.intersect, offCrossingLeft),
+                                                                         new Angle(crossingRightTop, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+            gca2.MakeAxiomatic();
+            GeometricCongruentAngles gca3 = new GeometricCongruentAngles(new Angle(crossingLeftBottom, crossingInterLeft.intersect, offCrossingLeft),
+                                                                         new Angle(crossingRightBottom, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+            gca3.MakeAxiomatic();
+            GeometricCongruentAngles gca4 = new GeometricCongruentAngles(new Angle(crossingLeftBottom, crossingInterLeft.intersect, crossingInterRight.intersect),
+                                                                         new Angle(crossingRightBottom, crossingInterRight.intersect, offCrossingRight), NAME);
+            gca4.MakeAxiomatic();
+
+            newAngleRelations.Add(gca1);
+            newAngleRelations.Add(gca2);
+            newAngleRelations.Add(gca3);
+            newAngleRelations.Add(gca4);
+
+            // For hypergraph
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(parallel);
+            antecedent.Add(crossingInterLeft);
+            antecedent.Add(crossingInterRight);
 
             foreach (CongruentAngles newAngles in newAngleRelations)
             {

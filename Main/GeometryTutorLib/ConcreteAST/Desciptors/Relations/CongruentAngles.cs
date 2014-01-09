@@ -34,6 +34,11 @@ namespace GeometryTutorLib.ConcreteAST
             justification = just;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return ca1.Covers(gc) || ca2.Covers(gc);
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             CongruentAngles cas = obj as CongruentAngles;

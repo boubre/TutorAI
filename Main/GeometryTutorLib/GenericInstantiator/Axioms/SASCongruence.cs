@@ -54,14 +54,14 @@ namespace GeometryTutorLib.GenericInstantiator
                         Triangle ct1 = unifyCandTris[i];
                         Triangle ct2 = unifyCandTris[j];
 
-                        if (!ct1.WasDeducedCongruent(ct2))
-                        {
+                        //if (!ct1.WasDeducedCongruent(ct2))
+                        //{
                             // First, compare the new congruent segment; if it fails, ignore this pair of triangles
                             if (newCs.LinksTriangles(ct1, ct2))
                             {
                                 newGrounded.AddRange(CollectAndCheckSAS(ct1, ct2, newCs));
                             }
-                        }
+                        //}
                     }
 
                     //// For Strengthened triangles
@@ -99,14 +99,14 @@ namespace GeometryTutorLib.GenericInstantiator
                         Triangle ct1 = unifyCandTris[i];
                         Triangle ct2 = unifyCandTris[j];
 
-                        if (!ct1.WasDeducedCongruent(ct2))
-                        {
+                        //if (!ct1.WasDeducedCongruent(ct2))
+                        //{
                             // First, compare the new congruent segment; if it fails, ignore this pair of triangles
                             if (newCas.LinksTriangles(ct1, ct2))
                             {
                                 newGrounded.AddRange(CollectAndCheckSAS(ct1, ct2, newCas));
                             }
-                        }
+                        //}
                     }
 
                     //// For Strengthened triangles
@@ -200,7 +200,7 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // Has this congruence been established before? If so, do not deduce it again.
-            if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
+            //if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
 
             // Check all other segments
             foreach (CongruentSegments ccs in unifyCandSegments)

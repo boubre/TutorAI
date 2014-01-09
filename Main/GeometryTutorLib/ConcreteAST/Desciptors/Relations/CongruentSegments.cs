@@ -34,6 +34,11 @@ namespace GeometryTutorLib.ConcreteAST
             return base.GetHashCode();
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return cs1.Covers(gc) || cs2.Covers(gc);
+        }
+
         public Boolean HasSegment(Segment cs)
         {
             return cs1.Equals(cs) || cs2.Equals(cs);

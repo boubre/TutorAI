@@ -176,7 +176,7 @@ namespace GeometryTutorLib.Precomputer
             {
                 for (int a2 = a1 + 1; a2 < angles.Count; a2++)
                 {
-                    if (angles[a1].CoordinateCongruent(angles[a2]))
+                    if (angles[a1].CoordinateCongruent(angles[a2]) && !Utilities.CompareValues(angles[a1].measure, 180))
                     {
                         descriptors.Add(new CongruentAngles(angles[a1], angles[a2], "Precomputation"));
                     }

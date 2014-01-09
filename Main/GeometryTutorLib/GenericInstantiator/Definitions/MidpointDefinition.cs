@@ -19,7 +19,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (c is Midpoint) return InstantiateMidpoint(c);
+            if (c is Midpoint || c is Strengthened) return InstantiateMidpoint(c);
 
             if (c is CongruentSegments || c is Segment) return InstantiateCongruent(c);
 
@@ -30,25 +30,30 @@ namespace GeometryTutorLib.GenericInstantiator
         // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
         // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B)); This implies: AM = MB
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMidpoint(GroundedClause c)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMidpoint(GroundedClause clause)
         {
-            if (!(c is Midpoint)) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (clause is Midpoint) return InstantiateMidpoint(clause, clause as Midpoint);
 
-            Midpoint cm = (Midpoint)c;
+            if ((clause as Strengthened).strengthened is Midpoint) return InstantiateMidpoint(clause, (clause as Strengthened).strengthened as Midpoint);
+
+            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        }
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMidpoint(GroundedClause original, Midpoint midpt)
+        {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // For hypergraph
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cm);
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
             // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
-            InMiddle im = new InMiddle(cm.midpoint, cm.segment, NAME);
+            InMiddle im = new InMiddle(midpt.midpoint, midpt.segment, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
 
             //
             // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
             //
-            Segment left = new Segment(cm.segment.Point1, cm.midpoint);
-            Segment right = new Segment(cm.midpoint, cm.segment.Point2);
+            Segment left = new Segment(midpt.segment.Point1, midpt.midpoint);
+            Segment right = new Segment(midpt.midpoint, midpt.segment.Point2);
             GeometricCongruentSegments ccss = new GeometricCongruentSegments(left, right, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
 
@@ -73,6 +78,9 @@ namespace GeometryTutorLib.GenericInstantiator
                 if (!cs.cs1.IsCollinearWith(cs.cs2)) return newGrounded;
 
                 Point midpt = cs.cs1.SharedVertex(cs.cs2);
+
+                // If the segments are collinear, but disconnected
+                if (midpt == null) return newGrounded;
 
                 for (int s = 0; s < candidateSegments.Count; s++)
                 {

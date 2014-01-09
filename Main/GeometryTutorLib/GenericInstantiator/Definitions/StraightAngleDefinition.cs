@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +18,11 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (!(c is Collinear)) return null;
-
-            Collinear cc = (Collinear)c;
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (!(c is Collinear)) return newGrounded;
+
+            Collinear cc = c as Collinear;
 
             for (int i = 0; i < cc.points.Count - 2; i++)
             {

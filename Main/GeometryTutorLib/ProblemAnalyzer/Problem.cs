@@ -284,24 +284,20 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
         public string ConstructProblemAndSolution(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
         {
+            // Sort the givens and path for ease in readability
+            TopologicalSortProblem();
+
             // Determine the suppressed nodes in the graph and break
             // the givens into those that must be explicitly stated to the user and those that are implicit.
             foreach (int g in givens)
             {
                 ConcreteAST.GroundedClause clause = graph.vertices[g].data;
-                if (clause.IsAxiomatic() || clause.IsIntrinsic())
+                if (clause.IsAxiomatic() || clause.IsIntrinsic() || !clause.IsAbleToBeASourceNode())
                 {
                     suppressedGivens.Add(g);
                 }
             }
             suppressedGivens.ForEach(s => givens.Remove(s));
-
-            //
-            // Sort the givens and path for ease in readability
-            //
-            givens.Sort();
-            suppressedGivens.Sort();
-            path.Sort();
 
             StringBuilder str = new StringBuilder();
 
@@ -329,6 +325,24 @@ namespace GeometryTutorLib.ProblemAnalyzer
             str.Append("  -> Goal: (" + goal + ")" + graph.GetNode(goal).ToString());
 
             return str.ToString();
+        }
+
+        private void TopologicalSortProblem()
+        {
+            List<int> sortedGiven = new List<int>();
+            List<int> sortedPath = new List<int>();
+
+            List<int> sortedNodes = this.graph.TopologicalSort();
+
+            foreach (int node in sortedNodes)
+            {
+                if (givens.Contains(node)) sortedGiven.Add(node);
+                else if (path.Contains(node)) sortedPath.Add(node);
+                else if (!goal.Equals(node)) throw new ArgumentException("Node " + node + " is not in either given nor path for " + this.ToString());
+            }
+
+            givens = new List<int>(sortedGiven);
+            path = new List<int>(sortedPath);
         }
 
         public string EdgeAndSCCDump()

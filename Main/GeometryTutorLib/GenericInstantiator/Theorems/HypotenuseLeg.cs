@@ -68,8 +68,8 @@ namespace GeometryTutorLib.GenericInstantiator
                         {
                             Triangle ct1 = unifyCandTris[i];
                             Triangle ct2 = unifyCandTris[j];
-                            if (!ct1.WasDeducedCongruent(ct2))
-                            {
+                            //if (!ct1.WasDeducedCongruent(ct2))
+                            //{
                                 // We must know both candidate triangles are right triangles
                                 if (ct1.provenRight && ct2.provenRight)
                                 {
@@ -79,7 +79,7 @@ namespace GeometryTutorLib.GenericInstantiator
                                         newGrounded.AddRange(CollectAndCheckHL(unifyCandTris[i], unifyCandTris[j], newCs));
                                     }
                                 }
-                            }
+                            //}
                         }
                     }
                 }
@@ -191,37 +191,36 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<Point, Point>> pairs = IsHLsituation(ct1, ct2, applicSegments, out congruences);
 
             // If pairs is populated, we have a HL situation
-            if (pairs.Any())
+            if (!pairs.Any()) return newGrounded;
+
+            // Create the congruence between the triangles
+            List<Point> triangleOne = new List<Point>();
+            List<Point> triangleTwo = new List<Point>();
+            foreach (KeyValuePair<Point, Point> pair in pairs)
             {
-                // Create the congruence between the triangles
-                List<Point> triangleOne = new List<Point>();
-                List<Point> triangleTwo = new List<Point>();
-                foreach (KeyValuePair<Point, Point> pair in pairs)
+                triangleOne.Add(pair.Key);
+                triangleTwo.Add(pair.Value);
+            }
+
+            GeometricCongruentTriangles ccts = new GeometricCongruentTriangles(new Triangle(triangleOne),
+                                                                               new Triangle(triangleTwo), NAME);
+
+            // Hypergraph
+            List<GroundedClause> antecedent = new List<GroundedClause>(congruences);
+            antecedent.Add(ct1);
+            antecedent.Add(ct2);
+
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
+
+            // Add all the corresponding parts as new congruent clauses
+            // newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
+
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> cpctc = CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo);
+            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> part in cpctc)
+            {
+                if (!congruences.Contains(part.Value))
                 {
-                    triangleOne.Add(pair.Key);
-                    triangleTwo.Add(pair.Value);
-                }
-
-                GeometricCongruentTriangles ccts = new GeometricCongruentTriangles(new Triangle(triangleOne),
-                                                                                   new Triangle(triangleTwo), NAME);
-
-                // Hypergraph
-                List<GroundedClause> antecedent = new List<GroundedClause>(congruences);
-                antecedent.Add(ct1);
-                antecedent.Add(ct2);
-
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
-
-                // Add all the corresponding parts as new congruent clauses
-                // newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
-
-                List<KeyValuePair<List<GroundedClause>, GroundedClause>> cpctc = CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo);
-                foreach (KeyValuePair<List<GroundedClause>, GroundedClause> part in cpctc)
-                {
-                    if (!congruences.Contains(part.Value))
-                    {
-                        newGrounded.Add(part);
-                    }
+                    newGrounded.Add(part);
                 }
             }
 

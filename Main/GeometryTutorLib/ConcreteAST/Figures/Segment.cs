@@ -110,6 +110,14 @@ namespace GeometryTutorLib.ConcreteAST
             return Segment.Between(thatPoint, Point1, Point2);
         }
 
+        // Does this segment contain a subsegment:
+        // A-------B-------C------D
+        // A subsegment is: AB, AC, AD, BC, BD, CD
+        public bool HasSubSegment(Segment possSubSegment)
+        {
+            return this.PointIsOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointIsOnAndBetweenEndpoints(possSubSegment.Point2);
+        }
+
         public bool IsVertical()
         {
             return Utilities.CompareValues(this.Point1.X, this.Point2.X);
@@ -367,6 +375,24 @@ namespace GeometryTutorLib.ConcreteAST
         public bool IsIncludedSegment(Angle ang1, Angle ang2)
         {
             return this.Equals(ang1.SharedRay(ang2));
+        }
+
+        // Is the given clause an intrinsic component of this Segment?
+        public override bool Covers(GroundedClause gc)
+        {
+            // immeidate hierarchy: a segment covers a point
+            if (gc is Point) return this.PointIsOnAndBetweenEndpoints(gc as Point);
+
+            // A triangle is covered if at least one of the sides is covered
+            if (gc is Triangle) return (gc as Triangle).HasSegment(this);
+
+            // If the segments are coinciding and have a point in between this segment, we say this segment is covered.
+            Segment thatSegment = gc as Segment;
+            if (thatSegment == null) return false;
+
+            if (!this.IsCollinearWith(thatSegment)) return false;
+
+            return this.PointIsOnAndBetweenEndpoints(thatSegment.Point1) || this.PointIsOnAndBetweenEndpoints(thatSegment.Point2);
         }
 
         //

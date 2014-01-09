@@ -28,6 +28,16 @@ namespace GeometryTutorLib.ConcreteAST
             return midpoint.StructurallyEquals(midptObj.midpoint) && segment.StructurallyEquals(midptObj.segment);
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Point) return midpoint.Equals(gc as Point) || segment.Covers(gc);
+            else if (gc is Segment) return segment.Covers(gc);
+
+            InMiddle im = gc as InMiddle;
+            if (im == null) return false;
+            return midpoint.Covers(im.point) && segment.Covers(im.segment);
+        }
+
         public override bool Equals(Object obj)
         {
             Midpoint midptObj = obj as Midpoint;

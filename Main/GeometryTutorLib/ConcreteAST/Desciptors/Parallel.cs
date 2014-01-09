@@ -18,6 +18,11 @@ namespace GeometryTutorLib.ConcreteAST
             this.segment1 = segment1;
             this.segment2 = segment2;
             justification = just;
+
+            if (!segment1.IsParallelWith(segment2))
+            {
+                throw new ArgumentException("Given lines are not parallel: " + segment1 + " ; " + segment2);
+            }
         }
 
         // This should never be true, otherwuse they are coinciding
@@ -59,6 +64,11 @@ namespace GeometryTutorLib.ConcreteAST
             shared += segment2.IsCollinearWith(thatParallel.segment1) && segment2.IsCollinearWith(thatParallel.segment2) ? 1 : 0;
 
             return shared;
+        }
+
+        public override bool Covers(GroundedClause gc)
+        {
+            return segment1.Covers(gc) || segment2.Covers(gc);
         }
 
         public override bool StructurallyEquals(Object obj)

@@ -26,13 +26,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private int StructuralIndex(GroundedClause g)
         {
             //
-            // Handle strengthening
-            //
-            Strengthened streng = g as Strengthened;
-
-            if (streng != null) return StructuralIndex(streng.strengthened);
-
-            //
             // Handle general case
             //
             List<HyperNode<GroundedClause, int>> vertices = graph.vertices;
@@ -45,6 +38,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 {
                     if ((vertices[v].data as Strengthened).strengthened.StructurallyEquals(g)) return v;
                 }
+            }
+
+            //
+            // Handle strengthening by seeing if the clause is found without a 'strengthening' component
+            //
+            Strengthened streng = g as Strengthened;
+            if (streng != null)
+            {
+                int index = StructuralIndex(streng.strengthened);
+                if (index != -1) return index;
             }
 
             return -1;
@@ -61,14 +64,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Generate the set of forward and backward problems for each template clause
             foreach (GroundedClause clause in descriptorsAndStrengthened)
             {
-                KeyValuePair<List<Problem>, List<Problem>> forwardBackwardProblemPair = GenerateProblems(clause);
-                forwardProblems.AddRange(forwardBackwardProblemPair.Key);
-                backwardProblems.AddRange(forwardBackwardProblemPair.Value);
+                // We need to restrict problems generated based on goal nodes; don't want an obvious notion as a goal
+                if (clause.IsAbleToBeAGoalNode())
+                {
+                    KeyValuePair<List<Problem>, List<Problem>> forwardBackwardProblemPair = GenerateProblems(clause);
+                    forwardProblems.AddRange(forwardBackwardProblemPair.Key);
+                    backwardProblems.AddRange(forwardBackwardProblemPair.Value);
+                }
             }
 
             return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
         }
-
 
         //
         // Generate all problems using the input template clause as a starting point.
@@ -104,7 +110,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             if (pebblerGraph.IsNodePebbledBackward(nodeIndex))
             {
                 System.Diagnostics.Debug.WriteLine("Backward");
-                //backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
+                backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
             }
 
             return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);

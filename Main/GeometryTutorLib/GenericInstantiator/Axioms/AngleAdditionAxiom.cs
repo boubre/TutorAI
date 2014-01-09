@@ -52,6 +52,12 @@ namespace GeometryTutorLib.GenericInstantiator
 
             if (shared == null) return newGrounded;
 
+            //
+            // If we combine these two angles, the result is a third angle, which, when measured,
+            // would be less than 180; this is contradictory since we measuare angles greedily and no circular angle is measured as > 180 
+            //
+            if (angle1.measure + angle2.measure > 180) return newGrounded;
+
             // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
             Point vertex = angle1.GetVertex();
             Point exteriorPt1 = angle2.OtherPoint(shared);

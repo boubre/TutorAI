@@ -22,13 +22,27 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>,GroundedClause>>();
 
-            if (!(c is IsoscelesTriangle)) return newGrounded;
+            if (c is IsoscelesTriangle) return InstantiateTheorem(c, c as IsoscelesTriangle);
 
-            IsoscelesTriangle iso = c as IsoscelesTriangle;
+            Strengthened streng = c as Strengthened;
+            if (streng != null)
+            {
+                if (streng.strengthened is IsoscelesTriangle)
+                {
+                    return InstantiateTheorem(c, streng.strengthened as IsoscelesTriangle);
+                }
+            }
 
-            GeometricCongruentAngles newCongSegs = new GeometricCongruentAngles(iso.baseAngleOppositeLeg1, iso.baseAngleOppositeLeg2, NAME); // ... thisDescriptor)
+            return newGrounded;
+        }
 
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(iso);
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateTheorem(GroundedClause original, IsoscelesTriangle isoTri)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            GeometricCongruentAngles newCongSegs = new GeometricCongruentAngles(isoTri.baseAngleOppositeLeg1, isoTri.baseAngleOppositeLeg2, NAME); // ... thisDescriptor)
+
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCongSegs));
 

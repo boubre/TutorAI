@@ -50,7 +50,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     // Also add to the worklist
                     worklist.Add(newEdge.Value);
 
-                    graph.AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
+                    AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
                 }
 
                 //
@@ -58,8 +58,20 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 else
                 {
-                    graph.AddForwardEdge(newEdge.Key, graphNode, 0); // 0: Annotation to be handled later
+                    AddForwardEdge(newEdge.Key, graphNode, 0); // 0: Annotation to be handled later
                 }
+            }
+        }
+
+        private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, int annotation)
+        {
+            // Add the hyperedge to the hypergraph
+            graph.AddForwardEdge(antecedent, consequent, annotation); // 0: Annotation to be handled later
+
+            // Create the linkage between the antecedent and consequent for coverage
+            foreach (GroundedClause ante in antecedent)
+            {
+                consequent.AddComponentList(ante.figureComponents);
             }
         }
 
@@ -79,7 +91,9 @@ namespace GeometryTutorLib.GenericInstantiator
             // Indicate all figure-based information is intrinsic; this needs to verified with the UI
             figure.ForEach(f => f.MakeIntrinsic());
 
-            HandleAllGivens(givens);
+            HandleAllFigureIntrinsicFacts(figure);
+
+            HandleAllGivens(figure, givens);
 
             //
             // Process all new clauses until the worklist is empty
@@ -90,7 +104,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 GroundedClause clause = worklist[0];
                 worklist.RemoveAt(0);
 
- Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
+Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
 
                 //
                 // Apply the clause to all applicable instantiators
@@ -292,6 +306,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is Strengthened)
                 {
                     HandleDeducedClauses(worklist, IsoscelesTriangleTheorem.Instantiate(clause));
+                    HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, AcuteAnglesInRightTriangleComplementary.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleBisectorIsPerpendicularBisectorInIsosceles.Instantiate(clause));
                     HandleDeducedClauses(worklist, EquilateralTriangleHasSixtyDegreeAngles.Instantiate(clause));
@@ -303,6 +318,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
+
+                    // InMiddle Strengthened to Midpoint
+                    HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MidpointTheorem.Instantiate(clause));
                 }
             }
 
@@ -310,11 +329,45 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
+        // Constructs the coverage relationship amongst all figure components
+        //
+        private static void HandleAllFigureIntrinsicFacts(List<GroundedClause> figure)
+        {
+            for (int f1 = 0; f1 < figure.Count; f1++)
+            {
+                for (int f2 = 0; f2 < figure.Count; f2++)
+                {
+                    if (f1 != f2)
+                    {
+                        if (figure[f1].Covers(figure[f2])) figure[f1].AddComponent(figure[f2].clauseId);
+                    }
+                }
+            }
+        }
+
+        //
         // Preprocess the given clauses
         //
-        private static void HandleAllGivens(List<GroundedClause> givens)
+        private static void HandleAllGivens(List<GroundedClause> figure, List<GroundedClause> givens)
         {
+            //
+            // Link the boolean facts to the intrinsic facts through coverage (implication)
+            //
+            foreach (GroundedClause given in givens)
+            {
+                foreach (GroundedClause component in figure)
+                {
+                    if (given.Covers(component))
+                    {
+                        given.AddComponent(component.clauseId);
+                        given.AddComponentList(component.figureComponents);
+                    }
+                }
+            }
+
+            //
             // Are any of the givens congruent relationships?
+            //
             foreach (GroundedClause clause in givens)
             {
                 if (clause is CongruentTriangles)

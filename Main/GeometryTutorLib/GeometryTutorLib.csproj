@@ -180,7 +180,7 @@
     <Compile Include="Precomputer\CoordinatePrecomputer.cs" />
     <Compile Include="ProblemAnalyzer\GradedProblemTree.cs" />
     <Compile Include="ProblemAnalyzer\ProblemGradedIsomorphism.cs" />
-    <Compile Include="ProblemAnalyzer\ProblemInterestCalculator.cs" />
+    <Compile Include="ProblemAnalyzer\InterestingProblemCalculator.cs" />
     <Compile Include="ProblemAnalyzer\TemplateProblemGenerator.cs" />
     <Compile Include="ProblemAnalyzer\GeneratorHashtable.cs" />
     <Compile Include="ProblemAnalyzer\QueryFeatureVector.cs" />

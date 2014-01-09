@@ -74,35 +74,41 @@ namespace GeometryTutorLib.ProblemAnalyzer
                     copyProblem.CombineWithEdge(edge.sourceNodes, edge.targetNode);
                     copyProblem.AddEdge(edge);
 
-                    newProblems.Add(copyProblem);
-
-                    if (copyProblem.ContainsCycle())
-                    {
-                        Debug.WriteLine(copyProblem.EdgeAndSCCDump());
-
-                        throw new Exception("Problem has a cycle: " + copyProblem);
-                    }
-
                     //
-                    // Check if we have all 'leaf' nodes from this hyperedge in the graph; this avoids cycling in any paths
-                    // Intrinsic nodes are leaf nodes here since we are considering only 'forward' problems
+                    // Avoid any simple cycles
                     //
-                    bool intrinsicSet = true;
-                    foreach (int src in edge.sourceNodes)
+                    if (!copyProblem.ContainsCycle())
                     {
-                        if (!graph.GetNode(src).IsIntrinsic())
-                        {
-                            intrinsicSet = false;
-                            break;
-                        }
-                    }
+                        newProblems.Add(copyProblem);
 
-                    // If we have not hit the leaves, recur
-                    if (!intrinsicSet)
-                    {
+                        //if (copyProblem.ContainsCycle())
+                        //{
+                        //    Debug.WriteLine(copyProblem.EdgeAndSCCDump());
+
+                        //    throw new Exception("Problem has a cycle: " + copyProblem);
+                        //}
+
+                        //
+                        // Check if we have all 'leaf' nodes from this hyperedge in the graph; this avoids cycling in any paths
+                        // Intrinsic nodes are leaf nodes here since we are considering only 'forward' problems
+                        //
+                        bool intrinsicSet = true;
                         foreach (int src in edge.sourceNodes)
                         {
-                            newProblems.AddRange(TraverseBackwardPathToLeaves(pebbler, src, copyProblem));
+                            if (!graph.GetNode(src).IsIntrinsic())
+                            {
+                                intrinsicSet = false;
+                                break;
+                            }
+                        }
+
+                        // If we have not hit the leaves, recur
+                        if (!intrinsicSet)
+                        {
+                            foreach (int src in edge.sourceNodes)
+                            {
+                                newProblems.AddRange(TraverseBackwardPathToLeaves(pebbler, src, copyProblem));
+                            }
                         }
                     }
                 }
@@ -152,55 +158,63 @@ namespace GeometryTutorLib.ProblemAnalyzer
                     copyProblem.CombineWithEdge(edge.sourceNodes, edge.targetNode);
                     copyProblem.AddEdge(edge);
 
-                    newProblems.Add(copyProblem);
-
-                    if (copyProblem.ContainsCycle())
-                    {
-                        Debug.WriteLine(copyProblem.EdgeAndSCCDump());
-
-                        throw new Exception("Problem has a cycle: " + copyProblem);
-                    }
-
                     //
-                    // Check if we have all red or purple nodes from this hyperedge 
-                    // These are considered 'leaf' nodes in this backward analysis
+                    // Avoid any problem with a cycle
                     //
-                    bool LeafSet = true;
-                    foreach (int src in edge.sourceNodes)
-                    {
-                        if (pebbler.vertices[src].pebble != PebblerColorType.RED_FORWARD)
-                        {
-                            LeafSet = false;
-                            break;
-                        }
-                    }
+                    if (!copyProblem.ContainsCycle())
+                    //{
+                    //    Debug.WriteLine(copyProblem.EdgeAndSCCDump());
 
-                    // If we have not hit the 'leaves', recur
-                    if (!LeafSet)
+                    //    throw new Exception("Problem has a cycle: " + copyProblem);
+                    //}
+                    //else
                     {
+                        //
+                        // We have a new problem; recur on it
+                        //
+                        newProblems.Add(copyProblem);
+
+                        //
+                        // Check if we have all red or purple nodes from this hyperedge 
+                        // These are considered 'leaf' nodes in this backward analysis
+                        //
+                        bool LeafSet = true;
                         foreach (int src in edge.sourceNodes)
                         {
-                            newProblems.AddRange(TraverseBackwardPathToNonLeaves(pebbler, src, copyProblem, numNodesVisited + 1));
+                            if (pebbler.vertices[src].pebble != PebblerColorType.RED_FORWARD)
+                            {
+                                LeafSet = false;
+                                break;
+                            }
                         }
-                    }
-                    //bool intrinsicSet = true;
-                    //foreach (int src in edge.sourceNodes)
-                    //{
-                    //    if (!graph.GetNode(src).IsIntrinsic())
-                    //    {
-                    //        intrinsicSet = false;
-                    //        break;
-                    //    }
-                    //}
 
-                    //// If we have not hit the leaves, recur
-                    //if (!intrinsicSet)
-                    //{
-                    //    foreach (int src in edge.sourceNodes)
-                    //    {
-                    //        newProblems.AddRange(TraverseBackwardPathToLeaves(pebbler, src, combined));
-                    //    }
-                    //}
+                        // If we have not hit the 'leaves', recur
+                        if (!LeafSet)
+                        {
+                            foreach (int src in edge.sourceNodes)
+                            {
+                                newProblems.AddRange(TraverseBackwardPathToNonLeaves(pebbler, src, copyProblem, numNodesVisited + 1));
+                            }
+                        }
+                        //bool intrinsicSet = true;
+                        //foreach (int src in edge.sourceNodes)
+                        //{
+                        //    if (!graph.GetNode(src).IsIntrinsic())
+                        //    {
+                        //        intrinsicSet = false;
+                        //        break;
+                        //    }
+                        //}
+
+                        //// If we have not hit the leaves, recur
+                        //if (!intrinsicSet)
+                        //{
+                        //    foreach (int src in edge.sourceNodes)
+                        //    {
+                        //        newProblems.AddRange(TraverseBackwardPathToLeaves(pebbler, src, combined));
+                        //    }
+                        //}
+                    }
                 }
             }
 

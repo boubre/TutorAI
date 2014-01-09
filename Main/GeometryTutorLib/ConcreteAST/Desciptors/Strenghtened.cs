@@ -19,6 +19,11 @@ namespace GeometryTutorLib.ConcreteAST
             strengthened = streng;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return original.Covers(gc) || strengthened.Covers(gc);
+        }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!

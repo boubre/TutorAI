@@ -259,6 +259,8 @@ namespace GeometryTutorLib.Hypergraph
 
             HyperEdge<A> edge = new HyperEdge<A>(local.Key, local.Value, annotation);
 
+//System.Diagnostics.Debug.WriteLine("Adding edge: " + edge.ToString());
+
             foreach (int src in local.Key)
             {
                 vertices[src].AddForwardEdge(edge);

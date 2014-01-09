@@ -19,7 +19,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Intrinsic as defined theoretically: characteristics of a figure that cannot be proven.
         private bool intrinsic;
         public bool IsIntrinsic() { return intrinsic; }
-        public void MakeIntrinsic() { intrinsic = true; }
+        public void MakeIntrinsic() { intrinsic = true; mayBeSourceNode = false; }
 
         // Contains all predecessors
         public List<int> generalPredecessors { get; private set; }
@@ -28,6 +28,24 @@ namespace GeometryTutorLib.ConcreteAST
 
         public bool HasRelationPredecessor(GroundedClause gc) { return relationPredecessors.Contains(gc.clauseId); }
         public bool HasGeneralPredecessor(GroundedClause gc) { return generalPredecessors.Contains(gc.clauseId) || relationPredecessors.Contains(gc.clauseId); }
+
+        // Contains all figure fact predecessor / components (e.g. a triangle has 3 segments, 3 angles, and 3 points, etc) 
+        public List<int> figureComponents { get; private set; }
+        public void AddComponent(int component) { Utilities.AddUnique<int>(figureComponents, component); }
+        public void AddComponentList(List<int> componentList) { Utilities.AddUniqueList<int>(figureComponents, componentList); }
+        // Is the given clause an intrinsic component of this clause
+        public virtual bool Covers(GroundedClause gc) { return false; }
+        // Can this node be strengthened to the given node?
+        public virtual bool CanBeStrengthenedTo(GroundedClause gc) { return false; }
+        // For problems: if a theorem or result is obvious and should never be a real source node for a problem
+
+        private bool mayBeSourceNode = true;
+        public void SetNotASourceNode() { mayBeSourceNode = false; }
+        public bool IsAbleToBeASourceNode() { return mayBeSourceNode; }
+
+        private bool mayBeGoalNode = true;
+        public void SetNotAGoalNode() { mayBeGoalNode = false; }
+        public bool IsAbleToBeAGoalNode() { return !intrinsic && mayBeGoalNode; }
 
         public void AddRelationPredecessor(GroundedClause gc)
         {
@@ -70,7 +88,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         private bool axiomatic;
         public bool IsAxiomatic() { return axiomatic; }
-        public void MakeAxiomatic() { axiomatic = true; }
+        public void MakeAxiomatic() { axiomatic = true; mayBeSourceNode = false; }
         public virtual bool IsAlgebraic() { return false; } // Bydefault we will say a node is geometric
         public virtual bool IsGeometric() { return true; }  //  and not algebraic
         public virtual bool IsReflexive() { return false; }
@@ -84,6 +102,7 @@ namespace GeometryTutorLib.ConcreteAST
             axiomatic = false;
             generalPredecessors = new List<int>();
             relationPredecessors = new List<int>();
+            figureComponents = new List<int>();
         }
 
         // The justification for when a node is deduced

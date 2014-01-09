@@ -20,6 +20,13 @@ namespace GeometryTutorLib.ConcreteAST
             justification = just;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Triangle) return ct1.StructurallyEquals(gc) || ct2.StructurallyEquals(gc);
+
+            return ct1.Covers(gc) || ct2.Covers(gc);
+        }
+
         public override bool StructurallyEquals(Object c)
         {
             if (!(c is CongruentTriangles)) return false;

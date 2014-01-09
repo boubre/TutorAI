@@ -10,6 +10,90 @@ namespace GeometryTutorLib
 {
     public class BridgeUItoBackEnd
     {
+        public static void AnalyzeFigure(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
+        {
+            // Precompute all coordinate-based interesting relations (problem goal nodes)
+            Precompute(figure, givens);
+
+            // Handle givens that strengthen the figure
+            givens = DoGivensStrengthenFigure(figure, givens);
+
+            ConstructHypergraph(figure, givens);
+
+            Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> forwardPebbler = ConstructForwardPebblingHypergraph(figure, givens);
+
+            forwardPebbler.DebugDumpClauses();
+
+
+            // Begin timing code
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> problems = GenerateTemplateProblems();
+
+            List<ProblemAnalyzer.Problem> candidateProbs = new List<ProblemAnalyzer.Problem>();
+            candidateProbs.AddRange(problems.Key);
+            candidateProbs.AddRange(problems.Value);
+
+            ProblemAnalyzer.InterestingProblemCalculator calculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
+            //List<ProblemAnalyzer.Problem> interestingProblems = calculator.DetermineInterestingProblems(candidateProbs);
+
+            //System.Diagnostics.Debug.WriteLine("Interesting Problems (" + interestingProblems.Count + "):");
+            //foreach(ProblemAnalyzer.Problem interesting in interestingProblems)
+            //{
+            //    System.Diagnostics.Debug.WriteLine(interesting);
+            //}
+
+            ProblemAnalyzer.QueryFeatureVector query = new ProblemAnalyzer.QueryFeatureVector();
+
+            ProblemAnalyzer.ProblemGroupingStructure problemSpacePartitions = new ProblemAnalyzer.ProblemGroupingStructure(graph);
+
+            // Do not keep forward and backward problems distinct
+            problemSpacePartitions.ConstructPartitions(problems.Key, query);
+            problemSpacePartitions.ConstructPartitions(problems.Value, query);
+
+            problemSpacePartitions.DumpPartitions(query);
+
+
+            // Stop timing
+            stopwatch.Stop();
+
+            TimeSpan ts = stopwatch.Elapsed;
+            // Format and display the TimeSpan value. 
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+
+            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
+
+            return;
+        }
+
+        //
+        // Modify the given information to account for redundancy in stated nodes
+        // That is, does given information strengthen a figure node?
+        //
+        private static List<ConcreteAST.GroundedClause> DoGivensStrengthenFigure(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
+        {
+            List<ConcreteAST.GroundedClause> modifiedGivens = new List<ConcreteAST.GroundedClause>();
+            ConcreteAST.GroundedClause currentGiven = null;
+
+            foreach (ConcreteAST.GroundedClause given in givens)
+            {
+                currentGiven = given;
+                foreach (ConcreteAST.GroundedClause component in figure)
+                {
+                    if (component.CanBeStrengthenedTo(given))
+                    {
+                        currentGiven = new ConcreteAST.Strengthened(component, given, "Given");
+                        break;
+                    }
+                }
+                modifiedGivens.Add(currentGiven);
+            }
+
+            return modifiedGivens;
+        }
+
         //
         // Use threads to precompute all forward relations and strengthening 
         //
@@ -55,8 +139,8 @@ namespace GeometryTutorLib
 
             graph.DumpNonEquationClauses();
             graph.DumpEquationClauses();
-            graph.DumpClauseForwardEdges();
-            graph.DumpClauseBackwardEdges();
+//            graph.DumpClauseForwardEdges();
+//            graph.DumpClauseBackwardEdges();
         }
 
         //
@@ -142,7 +226,7 @@ namespace GeometryTutorLib
             return forwardPebbler;
         }
 
-        private static KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> GenerateForwardTemplateProblems()
+        private static KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> GenerateTemplateProblems()
         {
             GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator =
                 new ProblemAnalyzer.TemplateProblemGenerator(graph, forwardPebbler, pathGenerator);
@@ -270,55 +354,6 @@ namespace GeometryTutorLib
 
                 return; // for testing purposes only
             }
-        }
-
-        public static void AnalyzeFigure(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
-        {
-            // Precompute all coordinate-based interesting relations (problem goal nodes)
-            Precompute(figure, givens);
-
-            ConstructHypergraph(figure, givens);
-
-            Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> forwardPebbler = ConstructForwardPebblingHypergraph(figure, givens);
-
-            forwardPebbler.DebugDumpClauses();
-
-
-            // Begin timing code
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-
-            KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> problems = GenerateForwardTemplateProblems();
-
-            ProblemAnalyzer.QueryFeatureVector query = new ProblemAnalyzer.QueryFeatureVector();
-
-            ProblemAnalyzer.ProblemGroupingStructure problemSpacePartitions = new ProblemAnalyzer.ProblemGroupingStructure(graph);
-
-            // Do not keep forward and backward problems distinct
-            problemSpacePartitions.ConstructPartitions(problems.Key, query);
-            problemSpacePartitions.ConstructPartitions(problems.Value, query);
-
-            problemSpacePartitions.DumpPartitions(query);
-
-
-            // Stop timing
-            stopwatch.Stop();
-
-            TimeSpan ts = stopwatch.Elapsed;
-            // Format and display the TimeSpan value. 
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-
-            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
-
-            //AnalyzePaths(pathGenerator, graph);
-
-            //GenerateBackwardTemplateProblems(figure);
-
-            return;
-
-            //ProblemAnalyzer.PathGenerator pathGenerator = GeneratePaths(graph);
         }
 
         //private static ProblemAnalyzer.PathGenerator GeneratePaths(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)

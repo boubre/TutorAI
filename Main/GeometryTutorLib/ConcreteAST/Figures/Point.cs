@@ -83,6 +83,13 @@ namespace GeometryTutorLib.ConcreteAST
             return StructurallyEquals(obj); // && name.Equals(pt.name);
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            if (gc is Point) return this.Equals(gc as Point);
+
+            return false;
+        }
+
         // Make a deep copy of this object; this is actually shallow, but is all that is required.
         public override GroundedClause DeepCopy()
         {

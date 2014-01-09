@@ -16,6 +16,11 @@ namespace GeometryTutorLib.ConcreteAST
             bisector = bisec;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return bisected.Covers(gc) || bisector.Covers(gc);
+        }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!
