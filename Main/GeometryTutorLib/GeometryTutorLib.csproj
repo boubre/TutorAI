@@ -57,6 +57,7 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assumption.cs" />
     <Compile Include="BridgeUItoBackEnd.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />
@@ -196,7 +197,9 @@
     <Compile Include="ProblemAnalyzer\Problem.cs" />
     <Compile Include="Pebbler\SharedPebbledNodeList.cs" />
     <Compile Include="ProblemAnalyzer\DiGraph.cs" />
+    <Compile Include="ProblemCharacteristics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relationship.cs" />
     <Compile Include="UIDebugPublisher.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

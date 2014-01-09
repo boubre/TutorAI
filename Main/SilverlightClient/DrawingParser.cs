@@ -11,29 +11,34 @@ namespace LiveGeometry
     public class DrawingParser
     {
         private Drawing drawing;
+        private ParseController parseController;
         private Dictionary<IFigure, GeometryTutorLib.ConcreteAST.GroundedClause> parsed;
 
-        public DrawingParser(Drawing drawing)
+        public DrawingParser(Drawing drawing, ParseController parseController)
         {
             this.drawing = drawing;
+            this.parseController = parseController;
         }
 
         /// <summary>
         /// Parse LiveGeometry concrete figures.
         /// </summary>
         /// <returns>A list of GroundedClases representing figures in the current LiveGeometry drawing.</returns>
-        public List<GeometryTutorLib.ConcreteAST.GroundedClause> ParseDrawing()
+        public void ParseDrawing()
         {
             parsed = new Dictionary<IFigure, GeometryTutorLib.ConcreteAST.GroundedClause>();
             foreach (IFigure figure in drawing.Figures)
                 parse(figure);
+        }
 
+        public List<GeometryTutorLib.ConcreteAST.GroundedClause> GetParsedFigures()
+        {
             List<GeometryTutorLib.ConcreteAST.GroundedClause> rv = new List<GeometryTutorLib.ConcreteAST.GroundedClause>();
             foreach (KeyValuePair<IFigure, GeometryTutorLib.ConcreteAST.GroundedClause> kvP in parsed)
                 rv.Add(kvP.Value);
 
             return rv;
-        }
+        } 
 
         /// <summary>
         /// Add points of where two lines intersect.  If a point does not exist, it is created and new segments are produced.
@@ -254,7 +259,6 @@ namespace LiveGeometry
         /// <param name="clauses">A list of GeometryTutorLib.ConcreteAST..GroundedClauses representing LiveGeometry figures.</param>
         public void calculateMidpoints(List<GeometryTutorLib.ConcreteAST.GroundedClause> clauses)
         {
-            List<GeometryTutorLib.ConcreteAST.GroundedClause> midpts = new List<GeometryTutorLib.ConcreteAST.GroundedClause>();
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in clauses) //If a point is in the middle of a line, see if it is a midpoint.
             {
                 GeometryTutorLib.ConcreteAST.InMiddle im = gc as GeometryTutorLib.ConcreteAST.InMiddle;
@@ -262,7 +266,13 @@ namespace LiveGeometry
                 {
                     GeometryTutorLib.ConcreteAST.Point mid = im.point, end1 = im.segment.Point1, end2 = im.segment.Point2;
                     if (GeometryTutorLib.ConcreteAST.Point.calcDistance(end1, mid) == GeometryTutorLib.ConcreteAST.Point.calcDistance(mid, end2))
-                        midpts.Add(new GeometryTutorLib.ConcreteAST.Midpoint(mid, im.segment, "Intrinsic"));
+                    {
+                        parseController.addDialog("Is point " + mid + " a midpoint?",
+                            "Disambiguate Midpoint",
+                            () => clauses.Add(new GeometryTutorLib.ConcreteAST.Midpoint(mid, im.segment, "Given")),
+                            () => { }
+                        );
+                    }
                 }
             }
         }
@@ -419,10 +429,33 @@ namespace LiveGeometry
                 for (int i = 0; i < 3; i++)
                     isosceles = isosceles || (csegs[i].Length == csegs[(i+1)%3].Length);
 
-                if (isosceles)
-                    parsed.Add(pgon, new GeometryTutorLib.ConcreteAST.IsoscelesTriangle(csegs[0], csegs[1], csegs[2], "Given"));
-                else
-                    parsed.Add(pgon, new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2], "Given"));
+                parseController.addDialog("Is triangle " + iPts[0] + ", " + iPts[1] + ", " + iPts[2] + " isosceles?",
+                    "Disambiguate Isosceles",
+                    () => 
+                    {
+                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.IsoscelesTriangle(csegs[0], csegs[1], csegs[2], "Given");
+                        parsed.Add(pgon, t);
+                        if (t.isRightTriangle())
+                        {
+                            parseController.addDialog("Is triangle " + iPts[0] + ", " + iPts[1] + ", " + iPts[2] + " a right triangle?",
+                                "Disambiguate Right",
+                                () => t.givenRight = true,
+                                () => t.givenRight = false);
+                        }
+                    },
+                    () => 
+                    {
+                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2], "Given");
+                        parsed.Add(pgon, t);
+                        if (t.isRightTriangle())
+                        {
+                            parseController.addDialog("Is triangle " + iPts[0] + ", " + iPts[1] + ", " + iPts[2] + " a right triangle?",
+                                "Disambiguate Right",
+                                () => t.givenRight = true,
+                                () => t.givenRight = false);
+                        }
+                    }
+                );
             }
         }
 

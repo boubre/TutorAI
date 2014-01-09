@@ -300,6 +300,7 @@
     <Compile Include="Styles\StyleManager.cs" />
     <Compile Include="Styles\StylePicker.cs" />
     <Compile Include="Styles\TextStyle.cs" />
+    <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />
@@ -313,6 +314,11 @@
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
     <Compile Include="UI\IconBuilder.cs" />
+    <Compile Include="UI\ParseDisambiguationWindow.cs" />
+    <Compile Include="UI\ParseGroup.cs" />
+    <Compile Include="UI\ParseGroupWindow.cs" />
+    <Compile Include="UI\ParseOptionsWindow.cs" />
+    <Compile Include="UI\ProblemCharacteristicsWindow.cs" />
     <Compile Include="UI\Ribbon\BehaviorToolButton.cs" />
     <Compile Include="UI\Ribbon\ButtonGrid.cs" />
     <Compile Include="UI\Ribbon\CommandToolButton.cs" />

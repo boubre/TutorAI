@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Media;
+using DynamicGeometry.UI;
 
 namespace DynamicGeometry
 {

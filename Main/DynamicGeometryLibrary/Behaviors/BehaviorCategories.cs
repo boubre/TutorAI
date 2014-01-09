@@ -15,5 +15,6 @@
         public const string Additional = "Additional";
         public const string Custom = "Custom";
         public const string Drawing = "Drawing";
+        public const string Parsing = "Parsing";
     }
 }
