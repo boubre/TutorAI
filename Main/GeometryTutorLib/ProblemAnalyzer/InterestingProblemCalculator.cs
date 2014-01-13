@@ -82,7 +82,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 finalCoverageFactor += COVERAGE_WEIGHTS[w] * problemCoverage[w];
             }
 
-            System.Diagnostics.Debug.WriteLine("Weighted Coverage Factor: " + finalCoverageFactor);
+            if (Utilities.DEBUG)
+            {
+                System.Diagnostics.Debug.WriteLine("Weighted Coverage Factor: " + finalCoverageFactor);
+            }
             return finalCoverageFactor > MINIMUM_WEIGHTED_COVERAGE_FACTOR ||
                    Utilities.CompareValues(finalCoverageFactor, MINIMUM_WEIGHTED_COVERAGE_FACTOR);
         }
@@ -138,7 +141,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Uncovered: " + gc.ToString());
+                    if (Utilities.DEBUG)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Uncovered: " + gc.ToString());
+                    }
                     if (gc is Point) numUncoveredNodes[POINTS]++;
                     else if (gc is Segment) numUncoveredNodes[SEGMENTS]++;
                     else if (gc is Angle) numUncoveredNodes[ANGLES]++;
@@ -149,23 +155,26 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine("Covered: ");
-            System.Diagnostics.Debug.WriteLine("\tPoints\t\t\t" + numCoveredNodes[POINTS]);
-            System.Diagnostics.Debug.WriteLine("\tSegments\t\t" + numCoveredNodes[SEGMENTS]);
-            System.Diagnostics.Debug.WriteLine("\tAngles\t\t\t" + numCoveredNodes[ANGLES]);
-            System.Diagnostics.Debug.WriteLine("\tIntersection\t" + numCoveredNodes[INTERSECTION]);
-            System.Diagnostics.Debug.WriteLine("\tTriangles\t\t" + numCoveredNodes[TRIANGLES]);
-            System.Diagnostics.Debug.WriteLine("\tInMiddles\t\t" + numCoveredNodes[IN_MIDDLES]);
-            System.Diagnostics.Debug.WriteLine("\t\t\t\t\t" + totalCovered);
+            if (Utilities.DEBUG)
+            {
+                System.Diagnostics.Debug.WriteLine("Covered: ");
+                System.Diagnostics.Debug.WriteLine("\tPoints\t\t\t" + numCoveredNodes[POINTS]);
+                System.Diagnostics.Debug.WriteLine("\tSegments\t\t" + numCoveredNodes[SEGMENTS]);
+                System.Diagnostics.Debug.WriteLine("\tAngles\t\t\t" + numCoveredNodes[ANGLES]);
+                System.Diagnostics.Debug.WriteLine("\tIntersection\t" + numCoveredNodes[INTERSECTION]);
+                System.Diagnostics.Debug.WriteLine("\tTriangles\t\t" + numCoveredNodes[TRIANGLES]);
+                System.Diagnostics.Debug.WriteLine("\tInMiddles\t\t" + numCoveredNodes[IN_MIDDLES]);
+                System.Diagnostics.Debug.WriteLine("\t\t\t\t\t" + totalCovered);
 
-            System.Diagnostics.Debug.WriteLine("Uncovered: ");
-            System.Diagnostics.Debug.WriteLine("\tPoints\t\t\t" + numUncoveredNodes[POINTS]);
-            System.Diagnostics.Debug.WriteLine("\tSegments\t\t" + numUncoveredNodes[SEGMENTS]);
-            System.Diagnostics.Debug.WriteLine("\tAngles\t\t\t" + numUncoveredNodes[ANGLES]);
-            System.Diagnostics.Debug.WriteLine("\tIntersection\t" + numUncoveredNodes[INTERSECTION]);
-            System.Diagnostics.Debug.WriteLine("\tTriangles\t\t" + numUncoveredNodes[TRIANGLES]);
-            System.Diagnostics.Debug.WriteLine("\tInMiddles\t\t" + numUncoveredNodes[IN_MIDDLES]);
-            System.Diagnostics.Debug.WriteLine("\t\t\t\t\t" + totalUncovered);
+                System.Diagnostics.Debug.WriteLine("Uncovered: ");
+                System.Diagnostics.Debug.WriteLine("\tPoints\t\t\t" + numUncoveredNodes[POINTS]);
+                System.Diagnostics.Debug.WriteLine("\tSegments\t\t" + numUncoveredNodes[SEGMENTS]);
+                System.Diagnostics.Debug.WriteLine("\tAngles\t\t\t" + numUncoveredNodes[ANGLES]);
+                System.Diagnostics.Debug.WriteLine("\tIntersection\t" + numUncoveredNodes[INTERSECTION]);
+                System.Diagnostics.Debug.WriteLine("\tTriangles\t\t" + numUncoveredNodes[TRIANGLES]);
+                System.Diagnostics.Debug.WriteLine("\tInMiddles\t\t" + numUncoveredNodes[IN_MIDDLES]);
+                System.Diagnostics.Debug.WriteLine("\t\t\t\t\t" + totalUncovered);
+            }
 
             //
             // Calculate the coverage percentages

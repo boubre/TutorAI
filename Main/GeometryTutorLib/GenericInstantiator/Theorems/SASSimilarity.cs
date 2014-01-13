@@ -14,6 +14,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<CongruentAngles> candidateCongruentAngles = new List<CongruentAngles>();
         private static List<ProportionalSegments> candidatePropSegments = new List<ProportionalSegments>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateCongruentAngles.Clear();
+            candidatePropSegments.Clear();
+            candidateTriangles.Clear();
+        }
+
         //
         // In order for two triangles to be Similar, we require the following:
         //    Triangle(A, B, C), Triangle(D, E, F),

@@ -100,18 +100,17 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Triangle(List<Point> pts) : this(pts[0], pts[1], pts[2]) { }
 
-        /// </summary>
-        private void addSuperFigureToDependencies()
+        protected void addSuperFigureToDependencies()
         {
-            SegmentA.getSuperFigures().Add(this);
-            SegmentB.getSuperFigures().Add(this);
-            SegmentC.getSuperFigures().Add(this);
-            Point1.getSuperFigures().Add(this);
-            Point2.getSuperFigures().Add(this);
-            Point3.getSuperFigures().Add(this);
-            AngleA.getSuperFigures().Add(this);
-            AngleB.getSuperFigures().Add(this);
-            AngleC.getSuperFigures().Add(this);
+            Utilities.AddUniqueStructurally(SegmentA.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(SegmentB.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(SegmentC.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(Point1.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(Point2.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(Point3.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(AngleA.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(AngleB.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(AngleC.getSuperFigures(), this);
         }
 
         public void SetProvenToBeRight()
@@ -960,6 +959,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (gc is Angle) return this.HasAngle(gc as Angle);
             else if (gc is Point) return this.HasPoint(gc as Point);
             else if (gc is Segment) return this.HasSegment(gc as Segment);
+            else if (gc is Triangle) return this.StructurallyEquals(gc);
 
             // A triangle covers an intersection if one vertex covers the intersection and one segment is part of the triangle
             Intersection inter = gc as Intersection;

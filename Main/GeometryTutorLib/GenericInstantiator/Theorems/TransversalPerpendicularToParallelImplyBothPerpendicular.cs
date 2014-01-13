@@ -7,18 +7,23 @@ using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
-
-
     public class TransversalPerpendicularToParallelImplyBothPerpendicular : Theorem
     {
         private readonly static string NAME = "If a transversal is perpendicular to one of two parallel lines, then it is perpendicular to the other one also.";
-
-        public TransversalPerpendicularToParallelImplyBothPerpendicular() { }
 
         private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
         private static List<Intersection> candidateIntersection = new List<Intersection>();
         private static List<Parallel> candidateParallel = new List<Parallel>();
+
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateIntersection.Clear();
+            candidateParallel.Clear();
+            candidatePerpendicular.Clear();
+            candidateStrengthened.Clear();
+        }
 
         //
         // Perpendicular(Segment(E, F), Segment(C, D)),

@@ -22,6 +22,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<CongruentSegments> candSegs = new List<CongruentSegments>();
         private static List<Triangle> candTris = new List<Triangle>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candSegs.Clear();
+            candTris.Clear();
+        }
+
+
         //
         //       A
         //      / \

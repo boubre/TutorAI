@@ -19,6 +19,15 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Perpendicular> candPerpendicular = new List<Perpendicular>();
         private static List<Triangle> candidateTriangles = new List<Triangle>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateIntersection.Clear();
+            candidateStrengthened.Clear();
+            candPerpendicular.Clear();
+            candidateTriangles.Clear();
+        }
+
         //   A
         //   |\
         //   | \
@@ -28,8 +37,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //   |_____\
         //   B      C
         //
-        // Triangle(A, B, C), Perpendicular(B, Segment(A, B), Segment(B, C)) -> RightTriangle(A, B, C),
-        //                                                                      ? Perpendicular() ?
+        // Triangle(A, B, C), Perpendicular(B, Segment(A, B), Segment(B, C)) -> RightTriangle(A, B, C)
+        //
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
@@ -103,8 +112,8 @@ namespace GeometryTutorLib.GenericInstantiator
             RightTriangle newRight = new RightTriangle(tri, "Strengthened");
             Strengthened newStrengthened = new Strengthened(tri, newRight, NAME);
 
-            // Create a new equation with the 90 degree angle: m\angle ABC = 90
-            AngleEquation newAngleEq = new GeometricAngleEquation(newRight.rightAngle, new NumericValue(90), NAME);
+            // Create a strengthening of the angle to a right angle
+            Strengthened newRightAngle = new Strengthened(newRight.rightAngle, new RightAngle(newRight.rightAngle, "Strengthened"), NAME);
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -112,7 +121,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(originalPerp);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newStrengthened));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngleEq));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newRightAngle));
 
             return newGrounded;
         }

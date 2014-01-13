@@ -19,6 +19,16 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<GeometricSimilarTriangles> geoSimilarTriangles = new List<GeometricSimilarTriangles>();
         private static List<AlgebraicSimilarTriangles> algSimilarTriangles = new List<AlgebraicSimilarTriangles>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            geoParallel.Clear();
+            algParallel.Clear();
+
+            geoSimilarTriangles.Clear();
+            algSimilarTriangles.Clear();
+        }
+
         //
         // Implements transitivity with Relations (Parallel, Similar)
         // Relation(A, B), Relation(B, C) -> Relation(A, C)

@@ -18,6 +18,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<CongruentAngles> candAngles = new List<CongruentAngles>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candIntersection.Clear();
+            candAngles.Clear();
+        }
+
         //
         // Intersection(M, Segment(A,B), Segment(C, D)),
         // Congruent(Angle(C, M, B), Angle(D, M, B)) -> Perpendicular(Segment(A, B), Segment(C, D))

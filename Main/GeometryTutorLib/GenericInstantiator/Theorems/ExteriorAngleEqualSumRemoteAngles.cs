@@ -13,6 +13,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> unifyCandTris = new List<Triangle>();
         private static List<Angle> unifyCandAngles = new List<Angle>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            unifyCandTris.Clear();
+            unifyCandAngles.Clear();
+        }
+
+
         //
         // Triangle(A, B, C), Angle(D, A, B) -> Equation(m\angle DAB = m\angle ABC + m\angle BCA)
         //

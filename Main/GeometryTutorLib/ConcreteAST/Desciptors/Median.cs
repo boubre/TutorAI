@@ -17,6 +17,18 @@ namespace GeometryTutorLib.ConcreteAST
             justification = just;
         }
 
+        // Does this median cover the given clause
+        public override bool Covers(GroundedClause gc)
+        {
+            // A median is with respec to a triangle, therefore, even though it falls inside the triangle, a median still covers it.
+            if (gc is Triangle)
+            {
+                if (theTriangle.StructurallyEquals(gc)) return true;
+            }
+
+            return medianSegment.Covers(gc) || theTriangle.Covers(gc);
+        }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!

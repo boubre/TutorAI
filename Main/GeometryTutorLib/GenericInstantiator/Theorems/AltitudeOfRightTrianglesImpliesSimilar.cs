@@ -15,6 +15,18 @@ namespace GeometryTutorLib.GenericInstantiator
 
         private static readonly AltitudeOfRightTrianglesImpliesSimilar thisDescriptor = new AltitudeOfRightTrianglesImpliesSimilar();
 
+        private static List<Altitude> candidateAltitudes = new List<Altitude>();
+        private static List<RightTriangle> candRightTriangles = new List<RightTriangle>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateAltitudes.Clear();
+            candRightTriangles.Clear();
+            candidateStrengthened.Clear();
+        }
+
         //
         //   T
         //   |\
@@ -28,9 +40,6 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                                        Similar(RightTriangle(S, N, U), RightTriangle(U, N, T))
         //                                                                        Similar(RightTriangle(U, N, T), RightTriangle(S, U, T))
         //
-        private static List<Altitude> candidateAltitudes = new List<Altitude>();
-        private static List<RightTriangle> candRightTriangles = new List<RightTriangle>();
-        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();

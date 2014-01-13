@@ -23,6 +23,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> candTris = new List<Triangle>();
         private static List<IsoscelesTriangle> candIsoTris = new List<IsoscelesTriangle>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candSegs.Clear();
+            candTris.Clear();
+            candIsoTris.Clear();
+        }
+
         //
         // In order for two triangles to be isosceles, we require the following:
         //

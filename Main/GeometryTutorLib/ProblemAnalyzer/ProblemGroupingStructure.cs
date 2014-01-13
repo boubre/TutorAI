@@ -58,7 +58,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             for (int p = 0; p < partitions.Count; p++)
             {
-                System.Diagnostics.Debug.WriteLine("Partition (" + (p + 1) + ") contains " + partitions[p].Size() + " problems.\n" + partitions[p].ToString());
+                //System.Diagnostics.Debug.WriteLine("Partition (" + (p + 1) + ") contains " + partitions[p].Size() + " problems.\n" + partitions[p].ToString());
             }
 
             System.Diagnostics.Debug.WriteLine("Using query " + query.ToString() + ", there are " + partitions.Count + " partitions with " + totalProblems + " problems.\n");

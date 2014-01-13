@@ -120,8 +120,10 @@ namespace GeometryTutorLib.Pebbler
             KeyValuePair<List<PebblerHyperEdge>, List<int>> backInformation = PebbleForward(figure, givens, axiomaticNodes);
 
             //Debug.WriteLine("Before backward Pebbling: ");
-            DebugDumpClauses();
-
+            if (Utilities.DEBUG)
+            {
+                DebugDumpClauses();
+            }
             // Backward pebble
             PebbleBackward(figure, axiomaticNodes, backInformation.Key, backInformation.Value);
 
@@ -141,7 +143,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int axiomatic in axiomaticNodes)
             {
-                Debug.WriteLine("Forward Pebbling Axiomatic: " + axiomatic);
+                if (Utilities.DEBUG) Debug.WriteLine("Forward Pebbling Axiomatic: " + axiomatic);
                 ForwardTraversal(axiomatic, backwardEdges, backwardReachableNodes);
             }
 
@@ -150,7 +152,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int fNode in figure)
             {
-                Debug.WriteLine("Pebbling Figure Node: " + fNode);
+                if (Utilities.DEBUG) Debug.WriteLine("Pebbling Figure Node: " + fNode);
                 ForwardTraversal(fNode, backwardEdges, backwardReachableNodes);
             }
 
@@ -159,7 +161,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int g in givens)
             {
-                Debug.WriteLine("Pebbling Given Node: " + g);
+                if (Utilities.DEBUG) Debug.WriteLine("Pebbling Given Node: " + g);
                 ForwardTraversal(g, backwardEdges, backwardReachableNodes);
             }
 
@@ -187,7 +189,7 @@ namespace GeometryTutorLib.Pebbler
             figure.Sort();
             for (int f = figure.Count - 1; f >= 0; f--)
             {
-                Debug.WriteLine("Backward Pebbling Figure: " + figure[f]);
+                if (Utilities.DEBUG) Debug.WriteLine("Backward Pebbling Figure: " + figure[f]);
                 BackwardTraversal(figure[f]);
             }
 
@@ -201,29 +203,7 @@ namespace GeometryTutorLib.Pebbler
                 BackwardTraversal(axAndBackwardNodes[n]);
             }
 
-            ////
-            //// Pebble all axiomatic nodes
-            ////
-            //axiomaticNodes.Sort();
-            //for (int a = axiomaticNodes.Count - 1; a >= 0; a--)
-            //{
-            //    Debug.WriteLine("Backward Pebbling Axiomatic: " + axiomaticNodes[a]);
-            //    BackwardTraversal(axiomaticNodes[a]);
-            //}
-
-
-
-            //// We do not pebble any given nodes since we are trying to deduce those nodes
-
-            ////
-            //// Pebble the backward direction starting at any purple node
-            ////
-            //// Sort the nodes and pebble in descending order; otherwise, we may acquire more forward-type (uninteresting) edges
-            //backwardNodes.Sort();
-            //for (int b = backwardNodes.Count - 1; b >= 0; b--)
-            //{
-            //    BackwardTraversal(backwardNodes[b]);
-            //}
+            // We do not pebble any given nodes since we are trying to deduce those nodes
         }
 
         //

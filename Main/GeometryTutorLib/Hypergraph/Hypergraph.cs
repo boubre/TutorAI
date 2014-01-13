@@ -27,6 +27,9 @@ namespace GeometryTutorLib.Hypergraph
 
         public int Size() { return vertices.Count; }
 
+        //
+        // Integer-based representation of the main hypergraph
+        //
         public PebblerHypergraph<T> GetForwardPebblerHypergraph()
         {
             //

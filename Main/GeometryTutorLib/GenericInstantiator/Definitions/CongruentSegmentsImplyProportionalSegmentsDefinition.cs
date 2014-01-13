@@ -13,6 +13,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentSegments> candidateCongruentSegments = new List<CongruentSegments>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateCongruentSegments.Clear();
+            candidateTriangles.Clear();
+        }
+
         //
         // Generate Proportional relationships only if those proportions may be used by a figure (in this case, only triangles)
         //

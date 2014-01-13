@@ -4,12 +4,15 @@ using System.Collections.Generic;
 namespace Geometry_Testbed
 {
     //
-    // Geometry; Page 32 Problems 11-14
+    // Geometry; Page 32 Classroom Problems 11-14
     //
-    public class Page32Problem11To14 : TransversalsProblem
+    public class Page32ClassroomProblem11To14 : TransversalsProblem
     {
-        public Page32Problem11To14() : base()
+        public Page32ClassroomProblem11To14() : base()
         {
+            problemName = "Page 32 Classroom Problems 11-14";
+            numberOfOriginalTextProblems = 4;
+
             Point o = new Point("O", 0, 0);   intrinsic.Add(o);
             Point m = new Point("M", -4, 3);  intrinsic.Add(m);
             Point j = new Point("J", 4, -3);   intrinsic.Add(j);

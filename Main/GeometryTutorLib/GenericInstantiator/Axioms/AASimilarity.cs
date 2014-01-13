@@ -13,6 +13,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> unifyCandTris = new List<Triangle>();
         private static List<CongruentAngles> unifyCandAngles = new List<CongruentAngles>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            unifyCandTris.Clear();
+            unifyCandAngles.Clear();
+        }
+
         //
         // In order for two triangles to be Similar, we require the following:
         //    Triangle(A, B, C), Triangle(D, E, F),

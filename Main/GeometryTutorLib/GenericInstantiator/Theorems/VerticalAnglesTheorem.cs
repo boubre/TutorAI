@@ -10,8 +10,6 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Vertical Angles Theorem";
 
-        public VerticalAnglesTheorem() { }
-
         //
         // Intersect(X, Segment(A, B), Segment(C, D)) -> Congruent(Angle(A, X, C), Angle(B, X, D)),
         //                                               Congruent(Angle(A, X, D), Angle(C, X, B))

@@ -10,9 +10,9 @@ using GeometryTutorLib.Pebbler;
 
 namespace Geometry_Testbed
 {
-    class Program
+    public class MainProgram
     {
-        private static List<ActualProblem> ConstructTestObjects()
+        private static List<ActualProblem> ConstructAllHardCodedProblems()
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
@@ -22,15 +22,32 @@ namespace Geometry_Testbed
             return problems;
         }
 
+        private static void DumpStatisticsHeader()
+        {
+            Debug.Write("Problem\t\t");
+            Debug.Write("Class Name\t\t\t\t");
+            Debug.Write("# Book Problems\t");
+            Debug.Write("# of Interesting Problems\t");
+            Debug.Write("Ratio (# Interesting / Book Problems)\t");
+            Debug.Write("Time To Generate");
+        }
+
         static void Main(string[] args)
         {
-            List<ActualProblem> problems = ConstructTestObjects();
+            List<ActualProblem> problems = ConstructAllHardCodedProblems();
 
+            DumpStatisticsHeader();
+
+            int problemCount = 0;
             foreach (ActualProblem problem in problems)
             {
                 problem.Run();
-                problem.Report();
+
+                Debug.Write(++problemCount + "\t\t");
+                Debug.Write(problem.ToString() + "\n");
             }
+
+            DumpAggregateTotals(problemCount);
 
             //TestRaysMakeATriangle();
             //TestSimpleIntersection();
@@ -41,7 +58,6 @@ namespace Geometry_Testbed
             //SSSTest5();
             //TestExteriorAngleSum();
             //HLTest1();
-         //TestMidpointTheoremFigure();
             //SASTest1();
             //TestSumAnglesInTriangle();
             //TestFigureSix();
@@ -56,10 +72,24 @@ namespace Geometry_Testbed
             //TestPerpendicularImplyCongruentAdjacentAngles();
             //TestPerpendicularImplyComplementary();
             //TestSupplementCongruence();
-            //TestMidpointTheorem();
             //TestAngleBisectorTheorem();
             //TestAcuteAnglesInRightTriangles();
             //TestThirdAnglesInTriangleCongruent();
+        }
+
+        private static void DumpAggregateTotals(int numFigures)
+        {
+            Debug.WriteLine("------------------------------------------------------------------ TOTALS ------------------------------------------------------------------");
+
+            Debug.Write(numFigures + "\t\t\t\t\t\t\t\t\t\t\t");
+            Debug.Write(ActualProblem.TotalOriginalBookProblems + "\t\t\t\t\t");
+            Debug.Write(ActualProblem.TotalInterestingProblems + "\t\t\t\t\t\t\t");
+            string ratio = string.Format("{0:F2}", ((double)(ActualProblem.TotalInterestingProblems) / ActualProblem.TotalOriginalBookProblems));
+            Debug.Write(ratio + "\t\t\t\t\t\t\t\t");
+            string elapsedTime = System.String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                                      ActualProblem.TotalTime.Hours, ActualProblem.TotalTime.Minutes,
+                                                      ActualProblem.TotalTime.Seconds, ActualProblem.TotalTime.Milliseconds / 10);
+            Debug.Write(elapsedTime + "\n");
         }
 
         private static void TestThirdAnglesInTriangleCongruent()
@@ -118,41 +148,6 @@ namespace Geometry_Testbed
 
             givens.Add(cas1);
             givens.Add(cas2);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestAcuteAnglesInRightTriangles()
-        {
-            Point a = new Point("A", 0, 3);
-            Point b = new Point("B", 4, 3);
-            Point c = new Point("C", 4, 0);
-            Point d = new Point("D", 0, 0);
-
-            Segment cd = new Segment(c, d);
-            Segment ad = new Segment(a, d);
-            Segment bc = new Segment(b, c);
-            Segment bd = new Segment(b, d);
-            Segment ac = new Segment(a, c);
-
-            RightTriangle rightOne = new RightTriangle(ad, cd, ac, "Given");
-            RightTriangle rightTwo = new RightTriangle(bc, cd, bd, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-            List<GroundedClause> givens = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(b);
-            intrinsic.Add(c);
-            intrinsic.Add(d);
-            intrinsic.Add(cd);
-            intrinsic.Add(ad);
-            intrinsic.Add(bc);
-            intrinsic.Add(bd);
-            intrinsic.Add(ac);
-
-            intrinsic.Add(rightOne);
-            intrinsic.Add(rightTwo);
 
             GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
         }
@@ -851,61 +846,6 @@ namespace Geometry_Testbed
             clauses.Add(t);
 
             //GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(clauses);
-        }
-
-        private static void TestMidpointTheoremFigure()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 0);
-
-            Segment ab = new Segment(a, b);
-            Segment am = new Segment(a, m);
-            Segment mb = new Segment(m, b);
-
-            InMiddle im = new InMiddle(m, ab, "Intrinsic");
-            Midpoint mid = new Midpoint(m, ab, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(ab);
-            intrinsic.Add(am);
-            intrinsic.Add(mb);
-            intrinsic.Add(im);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(mid);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
-        }
-
-        private static void TestMidpointTheorem()
-        {
-            Point a = new Point("A", 0, 3);
-            Point m = new Point("M", 2, 1.5);
-            Point b = new Point("B", 4, 0);
-
-            Segment am = new Segment(a, m);
-            Segment ab = new Segment(a, b);
-            Segment bm = new Segment(b, m);
-
-            Midpoint mid = new Midpoint(m, ab, "Given");
-
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-
-            intrinsic.Add(a);
-            intrinsic.Add(m);
-            intrinsic.Add(b);
-            intrinsic.Add(am);
-            intrinsic.Add(ab);
-            intrinsic.Add(bm);
-
-            List<GroundedClause> givens = new List<GroundedClause>();
-            givens.Add(mid);
-
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, givens);
         }
 
         private static void TestFigureSix()

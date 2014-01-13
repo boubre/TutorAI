@@ -13,7 +13,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> unifyCandTris = new List<Triangle>();
         private static List<CongruentAngles> unifyCandAngles = new List<CongruentAngles>();
         private static List<CongruentSegments> unifyCandSegments = new List<CongruentSegments>();
-        //private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+
+        // Resets all saved data.
+        public static void Clear()
+        {
+            unifyCandAngles.Clear();
+            unifyCandAngles.Clear();
+            unifyCandSegments.Clear();
+        }
 
         //
         // In order for two triangles to be congruent, we require the following:

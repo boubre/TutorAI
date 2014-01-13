@@ -14,6 +14,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<CongruentAngles> unifyCandAngles = new List<CongruentAngles>();
         private static List<CongruentSegments> unifyCandSegments = new List<CongruentSegments>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            unifyCandTris.Clear();
+            unifyCandAngles.Clear();
+            unifyCandSegments.Clear();
+        }
+
         //       A              D
         //      /\             /\
         //     /  \           /  \

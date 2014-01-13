@@ -14,6 +14,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();
         private static List<CongruentSegments> candidateSegments = new List<CongruentSegments>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateAngles.Clear();
+            candidateSegments.Clear();
+            candidateTriangles.Clear();
+        }
+
         //       A
         //      /\ 
         //     /  \

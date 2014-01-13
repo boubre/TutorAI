@@ -104,13 +104,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 GroundedClause clause = worklist[0];
                 worklist.RemoveAt(0);
 
-Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
+                if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
 
                 //
                 // Apply the clause to all applicable instantiators
                 //
                 if (clause is Angle)
                 {
+                    if (clause is RightAngle) HandleDeducedClauses(worklist, RightAngle.Instantiate(clause));
+
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
 
@@ -218,7 +220,7 @@ Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
                     HandleDeducedClauses(worklist, CorrespondingAnglesOfParallelLines.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, ParallelImplyAltIntCongruentAngles.Instantiate(clause));
-                   // FUCK THAT: HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
                 }
                 else if (clause is ProportionalSegments)
                 {
@@ -322,6 +324,9 @@ Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
                     // InMiddle Strengthened to Midpoint
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, MidpointTheorem.Instantiate(clause));
+
+                    // Right Angle
+                    HandleDeducedClauses(worklist, RightAngle.Instantiate(clause));
                 }
             }
 
@@ -399,6 +404,59 @@ Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
                 //    }
                 //}
             }
+        }
+
+        //
+        // Clear all Instantiation Theorems / Axioms / Definitions
+        //
+        public static void Clear()
+        {
+            //
+            // Algebra
+            //
+            RelationTransitiveSubstitution.Clear();
+            TransitiveSubstitution.Clear();
+
+            //
+            // Axioms
+            //
+            AASimilarity.Clear();
+            AngleAdditionAxiom.Clear();
+            ASA.Clear();
+            CongruentCorrespondingAnglesImplyParallel.Clear();
+            CorrespondingAnglesOfParallelLines.Clear();
+            SASCongruence.Clear();
+            SSS.Clear();
+
+            //
+            // Definitions
+            //
+            CongruentSegmentsImplyProportionalSegmentsDefinition.Clear();
+            IsoscelesTriangleDefinition.Clear();
+            RightTriangleDefinition.Clear();
+
+            //
+            // Theorems
+            //
+            AAS.Clear();
+            AltIntCongruentAnglesImplyParallel.Clear();
+            AltitudeOfRightTrianglesImpliesSimilar.Clear();
+            AngleBisectorIsPerpendicularBisectorInIsosceles.Clear();
+            CongruentAdjacentAnglesImplyPerpendicular.Clear();
+            CongruentAnglesInTriangleImplyCongruentSides.Clear();
+            CongruentSidesInTriangleImplyCongruentSegments.Clear();
+            ExteriorAngleEqualSumRemoteAngles.Clear();
+            HypotenuseLeg.Clear();
+            ParallelImplyAltIntCongruentAngles.Clear();
+            ParallelImplySameSideInteriorSupplementary.Clear();
+            PerpendicularImplyCongruentAdjacentAngles.Clear();
+            RelationsOfCongruentAnglesAreCongruent.Clear();
+            SameSideSuppleAnglesImplyParallel.Clear();
+            SASSimilarity.Clear();
+            SSSSimilarity.Clear();
+            TransversalPerpendicularToParallelImplyBothPerpendicular.Clear();
+            TriangleProportionality.Clear();
+            TwoPairsCongruentAnglesImplyThirdPairCongruent.Clear();
         }
     }
 }

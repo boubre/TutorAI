@@ -16,6 +16,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<AnglePairRelation> candRelation = new List<AnglePairRelation>();
         private static List<CongruentAngles> candCongruentAngles = new List<CongruentAngles>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candRelation.Clear();
+            candCongruentAngles.Clear();
+        }
+
         //
         // AnglePairRelation(Angle(1), Angle(2)),
         // AnglePairRelation(Angle(3), Angle(4)),

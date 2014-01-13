@@ -17,6 +17,19 @@ namespace GeometryTutorLib.ConcreteAST
             justification = just;
         }
 
+        // Does this altitude cover the given clause
+        // An altitude covers a segment, triangle, or point
+        public override bool Covers(GroundedClause gc)
+        {
+            // An altitude may fall outside of the triangle, but coverage still occurs
+            if (gc is Triangle)
+            {
+                if (triangle.StructurallyEquals(gc)) return true;
+            }
+
+            return segment.Covers(gc) || triangle.Covers(gc);
+        }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!

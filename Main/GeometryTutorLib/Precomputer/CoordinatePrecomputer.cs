@@ -7,29 +7,27 @@ namespace GeometryTutorLib.Precomputer
 {
     public class CoordinatePrecomputer
     {
-        List<Triangle> triangles = new List<Triangle>();
-        List<Segment> segments = new List<Segment>();
-        List<Angle> angles = new List<Angle>();
+        private List<Triangle> triangles;
+        private List<Segment> segments;
+        private List<Angle> angles;
 
-        List<InMiddle> inMiddles = new List<InMiddle>();
-        List<Intersection> intersections = new List<Intersection>();
-        List<Perpendicular> perpendiculars = new List<Perpendicular>();
-        List<Parallel> parallels = new List<Parallel>();
+        private List<InMiddle> inMiddles;
+        private List<Intersection> intersections;
+        private List<Perpendicular> perpendiculars;
+        private List<Parallel> parallels;
 
         public CoordinatePrecomputer(List<GroundedClause> figure)
         {
+            triangles = new List<Triangle>();
+            segments = new List<Segment>();
+            angles = new List<Angle>();
+
+            inMiddles = new List<InMiddle>();
+            intersections = new List<Intersection>();
+            perpendiculars = new List<Perpendicular>();
+            parallels = new List<Parallel>();
+
             FilterClauses(figure);
-        }
-
-        private void AddAngle(Angle angle)
-        {
-            bool equates = false;
-            foreach(Angle oldAngle in angles)
-            {
-               if (oldAngle.Equates(angle)) equates = true;
-            }
-
-            if (!equates) angles.Add(angle);
         }
 
         //
@@ -41,22 +39,11 @@ namespace GeometryTutorLib.Precomputer
             {
                 if (clause is Triangle)
                 {
-                    Triangle thisTriangle = clause as Triangle;
-
-                    triangles.Add(thisTriangle);
-
-                    // Acquire all the angles from the triangle
-                    List<Angle> newAngles = thisTriangle.GetAngles();
-
-                    if (!angles.Any()) angles.AddRange(newAngles);
-                    else
-                    {
-                        int currentCount = angles.Count;
-                        foreach (Angle newAngle in newAngles)
-                        {
-                            AddAngle(newAngle);
-                        }
-                    }
+                    triangles.Add(clause as Triangle);
+                }
+                else if (clause is Angle)
+                {
+                    angles.Add(clause as Angle);
                 }
                 else if (clause is Segment)
                 {
@@ -76,13 +63,7 @@ namespace GeometryTutorLib.Precomputer
                 }
                 else if (clause is Intersection)
                 {
-                    Intersection inter = clause as Intersection;
-                    intersections.Add(inter);
-
-                    AddAngle(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
-                    AddAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
-                    AddAngle(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
-                    AddAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
+                    intersections.Add(clause as Intersection);
                 }
                 else if (clause is Collinear)
                 {
@@ -162,7 +143,10 @@ namespace GeometryTutorLib.Precomputer
                     {
                         if (proportion.Value <= 2 || proportion.Key <= 2)
                         {
-                            System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + segments[s1] + " : " + segments[s2]);
+                            if (GeometryTutorLib.Utilities.DEBUG)
+                            {
+                                System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + segments[s1] + " : " + segments[s2]);
+                            }
                             descriptors.Add(new ProportionalSegments(segments[s1], segments[s2], "Precomputation"));
                         }
                     }
@@ -264,10 +248,13 @@ namespace GeometryTutorLib.Precomputer
             //
             // Dumping the Relations
             //
-            System.Diagnostics.Debug.WriteLine("Precomputed Relations");
-            foreach (ConcreteAST.Descriptor descriptor in descriptors)
+            if (Utilities.DEBUG)
             {
-                System.Diagnostics.Debug.WriteLine(descriptor.ToString());
+                System.Diagnostics.Debug.WriteLine("Precomputed Relations");
+                foreach (ConcreteAST.Descriptor descriptor in descriptors)
+                {
+                    System.Diagnostics.Debug.WriteLine(descriptor.ToString());
+                }
             }
         }
 
@@ -297,54 +284,27 @@ namespace GeometryTutorLib.Precomputer
             }
 
             //
-            // Dumping the Strengthening
+            // Right Angles
             //
-            System.Diagnostics.Debug.WriteLine("Precomputed Strengthening");
-            foreach (ConcreteAST.Strengthened s in strengthened)
+            foreach (Angle angle in angles)
             {
-                System.Diagnostics.Debug.WriteLine(s.ToString());
+                if (Utilities.CompareValues(angle.measure, 90))
+                {
+                    strengthened.Add(new Strengthened(angle, new RightAngle(angle, "Precomputation"), "Precomputation"));
+                }
             }
 
-            // End THREADED portion -------------------------------
-
             //
-            // Midpoint of two segments
+            // Dumping the Strengthening
             //
-            //for (int s1 = 0; s1 < segments.Count; s1++)
-            //{
-            //    for (int s2 = s1 + 1; s2 < segments.Count; s2++)
-            //    {
-            //        // Segments need to be congruent, collinear, and connect an endpoint to an endpoint
-            //        if (segments[s1].CoordinateCongruent(segments[s2]))
-            //        {
-            //            if (segments[s1].IsCollinearWith(segments[s2]))
-            //            {
-            //                Point shared = segments[s1].SharedVertex(segments[s2]);
-            //                if (shared != null)
-            //                {
-            //                    strengthened.Add(new Midpoint(shared, new Segment(segments[s1].OtherPoint(shared), segments[s2].OtherPoint(shared)), "Precomputation"));
-            //                }
-            //            }
-            //        {
-            //            if ()
-            //            descriptors.Add(new CongruentSegments(segments[s1], segments[s2], "Precomputation"));
-            //        }
-
-            //        //
-            //        // Parallel amd Perpendicular Lines
-            //        //
-            //        if (segments[s1].CoordinateParallel(segments[s2]))
-            //        {
-            //            descriptors.Add(new Parallel(segments[s1], segments[s2], "Precomputation"));
-            //        }
-            //        else if (segments[s1].CoordinatePerpendicular(segments[s2]))
-            //        {
-            //            descriptors.Add(new Perpendicular(segments[s1], segments[s2], "Precomputation"));
-            //        }
-
-
-            //    }
-            //}
+            if (Utilities.DEBUG)
+            {
+                System.Diagnostics.Debug.WriteLine("Precomputed Strengthening");
+                foreach (ConcreteAST.Strengthened s in strengthened)
+                {
+                    System.Diagnostics.Debug.WriteLine(s.ToString());
+                }
+            }
         }
     }
 }

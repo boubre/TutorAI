@@ -13,6 +13,12 @@ namespace GeometryTutorLib.GenericInstantiator
         // Candidate angles
         private static List<Angle> unifyCandAngles = new List<Angle>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            unifyCandAngles.Clear();
+        }
+
         //
         // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
         //

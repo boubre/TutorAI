@@ -89,18 +89,24 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             if (nodeIndex == -1)
             {
-                System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+                if (Utilities.DEBUG)
+                {
+                    System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+                }
                 return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
             }
 
-            System.Diagnostics.Debug.WriteLine("Found template node; will generate problems (" + nodeIndex + "): " + clause.ToString());
+            if (Utilities.DEBUG)
+            {
+                System.Diagnostics.Debug.WriteLine("Found template node; will generate problems (" + nodeIndex + "): " + clause.ToString());
+            }
 
             //
             // Is this is a forward pebbled node? If so, generate the forward set of problems to this node.
             //
             if (pebblerGraph.IsNodePebbledForward(nodeIndex))
             {
-                System.Diagnostics.Debug.WriteLine("Forward");
+                if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
                 forwardProblems = pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(pebblerGraph, nodeIndex);  
             }
 
@@ -109,7 +115,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             //
             if (pebblerGraph.IsNodePebbledBackward(nodeIndex))
             {
-                System.Diagnostics.Debug.WriteLine("Backward");
+                if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Backward");
                 backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
             }
 

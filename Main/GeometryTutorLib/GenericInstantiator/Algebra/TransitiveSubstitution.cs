@@ -35,6 +35,28 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<GeometricProportionalAngles> geoPropAngs = new List<GeometricProportionalAngles>();
         private static List<AlgebraicProportionalAngles> algPropAngs = new List<AlgebraicProportionalAngles>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            geoCongSegments.Clear();
+            geoCongAngles.Clear();
+
+            algCongSegments.Clear();
+            algCongAngles.Clear();
+
+            geoSegmentEqs.Clear();
+            algSegmentEqs.Clear();
+
+            algAngleEqs.Clear();
+            geoAngleEqs.Clear();
+
+            geoPropSegs.Clear();
+            algPropSegs.Clear();
+
+            geoPropAngs.Clear();
+            algPropAngs.Clear();
+        }
+
         //
         // Implements transitivity with equations
         // Equation(A, B), Equation(B, C) -> Equation(A, C)

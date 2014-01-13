@@ -9,6 +9,18 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
+        public static readonly bool DEBUG = true;
+
+        // Ensure uniqueness of additions
+        public static void AddUniqueStructurally(List<GeometryTutorLib.ConcreteAST.Figure> figures, GeometryTutorLib.ConcreteAST.Figure f)
+        {
+            foreach (GeometryTutorLib.ConcreteAST.Figure figure in figures)
+            {
+                if (figure.StructurallyEquals(f)) return;
+            }
+            figures.Add(f);
+        }
+
         // -1 is an error
         public static int IntegerRatio(double x, double y)
         {

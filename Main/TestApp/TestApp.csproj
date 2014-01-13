@@ -41,13 +41,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParallelImplySameSideInteriorSupplementary.cs" />
     <Compile Include="Problems\ActualProblem.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\McDougallProblems.cs" />
+    <Compile Include="Problems\Indian Text\Backup.cs" />
     <Compile Include="Problems\Indian Text\IndianTextProblems.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\RightAngleStrengthening.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem08.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page113Problem7.cs" />
     <Compile Include="PebblerHypergraph.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page135Problem21.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144ClassroomExercise01.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144ClassroomExercise02.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144ClassroomExercise03.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144ClassroomExercise04.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144Problem01.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page144Problem02.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem03.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem04.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem07.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem09.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem10.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem12.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem13.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem14.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem15.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem17.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page146Problem18.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page147Problem20.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page147Problem21.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page147Problem22.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise01to02.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise03to06.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise07to12.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175WrittenExercise1to4.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\JurgensenProblems.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page60Theorem22Extended.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page60Theorem22.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Transversals\Page23Theorem11.cs" />
     <Compile Include="Problems\McGraw Hill Geometry\McGrawHillProblems.cs" />
     <Compile Include="Problems\TransversalsProblem.cs" />
     <Compile Include="Problems\SimilarTrianglesProblem.cs" />
@@ -56,12 +87,12 @@
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page134Problem6.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page134Problem7.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page62Problems1To6.cs" />
-    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Transversals\Page32Problem11To14.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Transversals\Page32ClassroomProblem11To14.cs" />
     <Compile Include="Problems\Indian Text\InterleavingSimilarTriangles.cs" />
     <Compile Include="Problems\Indian Text\OverlappingRightTriangles.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page124Figure31.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page155Problem14.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="MainProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

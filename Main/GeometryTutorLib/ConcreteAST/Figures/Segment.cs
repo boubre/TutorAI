@@ -10,7 +10,6 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public class Segment : Figure
     {
-        private const double EPSILON = 0.00001;
         public Point Point1 { get; private set; }
         public Point Point2 { get; private set; }
         public double Length { get; private set; }
@@ -21,16 +20,15 @@ namespace GeometryTutorLib.ConcreteAST
         /// </summary>
         /// <param name="p1">A point defining the segment.</param>
         /// <param name="p2">Another point defining the segment.</param>
-        public Segment(Point p1, Point p2)
-            : base()
+        public Segment(Point p1, Point p2) : base()
         {
             Point1 = p1;
             Point2 = p2;
             Length = Point.calcDistance(p1, p2);
             Slope = (p2.Y - p1.Y) / (p2.X - p1.X);
 
-            Point1.getSuperFigures().Add(this);
-            Point2.getSuperFigures().Add(this);
+            Utilities.AddUniqueStructurally(Point1.getSuperFigures(), this);
+            Utilities.AddUniqueStructurally(Point2.getSuperFigures(), this);
         }
 
         internal void BuildUnparse(StringBuilder sb, int tabDepth)

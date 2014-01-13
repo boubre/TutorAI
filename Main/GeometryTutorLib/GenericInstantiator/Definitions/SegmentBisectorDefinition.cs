@@ -110,13 +110,21 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            // The intersection point must be between the endpoints, definitely not at the end.
             if (inter.StandsOnEndpoint()) return newGrounded;
+            if (!inter.StandsOn()) return newGrounded;
+
+            // A segment bisector creates a T-shape
+            Point off = inter.CreatesTShape();
+            if (off == null) return newGrounded;
 
             Segment overallSegment = new Segment(cs.cs1.OtherPoint(intersectionPoint), cs.cs2.OtherPoint(intersectionPoint));
 
+            // The segment must align completely with one of the intersection segments
+            Segment interCollinearSegment = inter.GetCollinearSegment(overallSegment);
+            if (interCollinearSegment == null) return newGrounded;
+
             // Using picture, does BA exist in the intersection with point V?
-            if (!inter.HasSegment(overallSegment) && !inter.intersect.Equals(intersectionPoint)) return newGrounded;
+            if (!inter.HasSegment(overallSegment) || !inter.intersect.Equals(intersectionPoint)) return newGrounded;
 
             Segment bisector = inter.OtherSegment(overallSegment);
             Segment thisSegment = inter.GetCollinearSegment(overallSegment);

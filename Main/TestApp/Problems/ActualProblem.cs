@@ -5,23 +5,83 @@ namespace Geometry_Testbed
 {
     public abstract class ActualProblem
     {
+        public static System.TimeSpan TotalTime = new System.TimeSpan();
+        public static int TotalInterestingProblems = 0;
+        public static int TotalOriginalBookProblems = 0;
+
+        // Hard-coded intrinsic problem characteristics
         protected List<GroundedClause> intrinsic;
+
+        // Boolean facts
         protected List<GroundedClause> given;
+
+        // The number of original problems for the figure in the textbook
+        protected int numberOfOriginalTextProblems;
+        private int numberOfInterestingGeneratedProblems;
+
+        // Formatted Labeling of the Problem
+        protected string problemName;
+
+        // For timing of generating all problems from a figure
+        private System.TimeSpan timeSpanToGenerate;
+        private System.Diagnostics.Stopwatch stopwatch;
 
         public ActualProblem()
         {
             intrinsic = new List<GroundedClause>();
             given = new List<GroundedClause>();
+            stopwatch = new System.Diagnostics.Stopwatch();
+
+            // Default to only 1 original problem from the text
+            numberOfOriginalTextProblems = 1;
+
+            numberOfInterestingGeneratedProblems = -1;
+            problemName = "TODO: NAME ME" + this.GetType();
         }
 
-        public virtual void Run()
+        public void Run()
         {
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, given);
+            stopwatch.Start();
+            numberOfInterestingGeneratedProblems = GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, given);
+            stopwatch.Stop();
+
+            // How long did problem generation take?
+            timeSpanToGenerate = stopwatch.Elapsed;
+
+            // Add to the cumulative statistics
+            ActualProblem.AddToTotalTime(stopwatch);
+            ActualProblem.TotalInterestingProblems += numberOfInterestingGeneratedProblems;
+            ActualProblem.TotalOriginalBookProblems += numberOfOriginalTextProblems;
         }
 
-        public virtual void Report()
+        private static void AddToTotalTime(System.Diagnostics.Stopwatch stopwatch)
         {
+            ActualProblem.TotalTime = ActualProblem.TotalTime.Add(stopwatch.Elapsed);
+        }
 
+        public override string ToString()
+        {
+            string statsString = "";
+
+            statsString += this.problemName;
+            int sizeSpace = this.problemName.Length;
+            while (sizeSpace <= 34)
+            {
+               statsString += "\t";
+               sizeSpace += 4;
+            }
+
+            statsString += this.numberOfOriginalTextProblems + "\t\t\t\t\t";
+            statsString += this.numberOfInterestingGeneratedProblems + "\t\t\t\t\t\t\t";
+            string ratio = string.Format("{0:F2}", ((double)(this.numberOfInterestingGeneratedProblems) / this.numberOfOriginalTextProblems));
+            statsString += ratio + "\t\t\t\t\t\t\t\t";
+
+            // Format and display the elapsed time for this problem
+            string elapsedTime = System.String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                                      timeSpanToGenerate.Hours, timeSpanToGenerate.Minutes, timeSpanToGenerate.Seconds, timeSpanToGenerate.Milliseconds / 10);
+            statsString += elapsedTime;
+
+            return statsString;
         }
 
         //
@@ -66,47 +126,159 @@ namespace Geometry_Testbed
                 if (clause is Point) points.Add(clause as Point);
             }
 
-            List<GroundedClause> newIntersections = new List<GroundedClause>();
-            //
-            // Generate all Intersection objects
-            //
-            for (int s1 = 0; s1 < segments.Count - 1; s1++)
-            {
-                for (int s2 = s1 + 1; s2 < segments.Count; s2++)
-                {
-                    // An intersection should not be between collinear segments
-                    if (!segments[s1].IsCollinearWith(segments[s2]))
-                    {
-                        // The point must be 'between' both segment endpoints
-                        Point numericInter = segments[s1].FindIntersection(segments[s2]);
-                        if (segments[s1].PointIsOnAndBetweenEndpoints(numericInter) && segments[s2].PointIsOnAndBetweenEndpoints(numericInter))
-                        {
-                            // Find the actual point for which there is an intersection between the segments
-                            Point actInter = null;
-                            foreach (Point pt in points)
-                            {
-                                if (numericInter.StructurallyEquals(pt))
-                                {
-                                    actInter = pt;
-                                    break;
-                                }
-                            }
+            List<Triangle> newTriangles = GenerateTriangleClauses(clauses, segments);
+            List<Intersection> newIntersections = GenerateIntersectionClauses(newTriangles, segments, points);
+            List<Angle> newAngles = GenerateAngleClauses(newIntersections);
 
-                            // Create the intersection
-                            if (actInter != null)
+            newClauses.AddRange(newIntersections);
+            newClauses.AddRange(newAngles);
+            newClauses.AddRange(newTriangles);
+
+            return newClauses;
+        }
+
+        //
+        // Generate all Triangle clauses based on segments
+        //
+        private List<Triangle> GenerateTriangleClauses(List<GroundedClause> clauses, List<Segment> segments)
+        {
+            List<Triangle> newTriangles = new List<Triangle>();
+            for (int s1 = 0; s1 < segments.Count - 2; s1++)
+            {
+                for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
+                {
+                    Point vertex1 = segments[s1].SharedVertex(segments[s2]);
+                    if (vertex1 != null)
+                    {
+                        for (int s3 = s2 + 1; s3 < segments.Count; s3++)
+                        {
+                            Point vertex2 = segments[s3].SharedVertex(segments[s1]);
+                            Point vertex3 = segments[s3].SharedVertex(segments[s2]);
+                            if (vertex2 != null && vertex3 != null)
                             {
-                                newIntersections.Add(new Intersection(actInter, segments[s1], segments[s2], "Intrinsic"));
+                                // Vertices must be distinct
+                                if (!vertex1.Equals(vertex2) && !vertex1.Equals(vertex3) && !vertex2.Equals(vertex3))
+                                {
+                                    // Vertices must be non-collinear
+                                    Segment side1 = new Segment(vertex1, vertex2);
+                                    Segment side2 = new Segment(vertex2, vertex3);
+                                    Segment side3 = new Segment(vertex1, vertex3);
+                                    if (!side1.IsCollinearWith(side2))
+                                    {
+                                        // Construct the triangle based on the sides to ensure reflexivity clauses are generated
+
+                                        newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
+                                        System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
+            return newTriangles;
+        }
+
+        //
+        // Generate all covering intersection clauses; that is, generate maximal intersections (a subset of all intersections)
+        //
+        private List<Intersection> GenerateIntersectionClauses(List<Triangle> triangles, List<Segment> segments, List<Point> points)
+        {
+            List<Intersection> newIntersections = new List<Intersection>();
+
             //
-            // Generate all Angle objects
+            // Each triangle has 3 valid intersections
             //
+            foreach (Triangle triangle in triangles)
+            {
+                Point vertex = triangle.SegmentA.SharedVertex(triangle.SegmentB);
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentB, "Intrinsic"));
+
+                vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentB, triangle.SegmentC, "Intrinsic"));
+                
+                vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentC, "Intrinsic"));
+            }
+
+            //
+            // Find the maximal segments (remove all sub-segments from the list)
+            //
+            List<Segment> maximalSegments = new List<Segment>();
+            for (int s1 = 0; s1 < segments.Count; s1++)
+            {
+                bool isSubsegment = false;
+                for (int s2 = 0; s2 < segments.Count; s2++)
+                {
+                    if (s1 != s2)
+                    {
+                        if (segments[s2].HasSubSegment(segments[s1]))
+                        {
+                            isSubsegment = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isSubsegment) maximalSegments.Add(segments[s1]);
+            }
+
+            //
+            // Acquire all intersections from the maximal segment list
+            //
+            for (int s1 = 0; s1 < maximalSegments.Count - 1; s1++)
+            {
+                for (int s2 = s1 + 1; s2 < maximalSegments.Count; s2++)
+                {
+                    // An intersection should not be between collinear segments
+                    if (!maximalSegments[s1].IsCollinearWith(maximalSegments[s2]))
+                    {
+                        // The point must be 'between' both segment endpoints
+                        Point numericInter = maximalSegments[s1].FindIntersection(maximalSegments[s2]);
+                        if (maximalSegments[s1].PointIsOnAndBetweenEndpoints(numericInter) &&
+                            maximalSegments[s2].PointIsOnAndBetweenEndpoints(numericInter))
+                        {
+                            // Find the actual point for which there is an intersection between the segments
+                            Point actualInter = null;
+                            foreach (Point pt in points)
+                            {
+                                if (numericInter.StructurallyEquals(pt))
+                                {
+                                    actualInter = pt;
+                                    break;
+                                }
+                            }
+
+                            // Create the intersection
+                            if (actualInter != null)
+                            {
+                                AddIntersection(newIntersections, new Intersection(actualInter, maximalSegments[s1], maximalSegments[s2], "Intrinsic"));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (GeometryTutorLib.Utilities.DEBUG)
+            {
+                foreach (Intersection inter in newIntersections)
+                {
+                    System.Diagnostics.Debug.WriteLine(inter.ToString());
+                }
+            }
+
+            return newIntersections;
+        }
+
+        //
+        // Generate all angles based on the intersections
+        //
+        private List<Angle> GenerateAngleClauses(List<Intersection> intersections)
+        {
             List<Angle> newAngles = new List<Angle>();
-            foreach (Intersection inter in newIntersections)
+
+            foreach (Intersection inter in intersections)
             {
                 // 1 angle
                 if (inter.StandsOnEndpoint())
@@ -145,50 +317,7 @@ namespace Geometry_Testbed
                 }
             }
 
-            //
-            // Generate Triangle Clauses
-            //
-            List<Triangle> newTriangles = new List<Triangle>();
-            for (int s1 = 0; s1 < segments.Count - 2; s1++)
-            {
-                for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
-                {
-                    Point vertex1 = segments[s1].SharedVertex(segments[s2]);
-                    if (vertex1 != null)
-                    {
-                        for (int s3 = s2 + 1; s3 < segments.Count; s3++)
-                        {
-                            Point vertex2 = segments[s3].SharedVertex(segments[s1]);
-                            Point vertex3 = segments[s3].SharedVertex(segments[s2]);
-                            if (vertex2 != null && vertex3 != null)
-                            {
-                                // Vertices must be distinct
-                                if (!vertex1.Equals(vertex2) && !vertex1.Equals(vertex3) && !vertex2.Equals(vertex3))
-                                {
-                                    // Vertices must be non-collinear
-                                    Segment side1 = new Segment(vertex1, vertex2);
-                                    Segment side2 = new Segment(vertex2, vertex3);
-                                    Segment side3 = new Segment(vertex1, vertex3);
-                                    if (!side1.IsCollinearWith(side2))
-                                    {
-                                        // Construct the triangle based on the sides to ensure reflexivity clauses are generated
-
-                                        newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
-                                        System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            newClauses.AddRange(newIntersections);
-            newClauses.AddRange(newAngles);
-            newClauses.AddRange(newTriangles);
-
-            return newClauses;
+            return newAngles;
         }
 
         // Add an angle to the list uniquely
@@ -207,6 +336,18 @@ namespace Geometry_Testbed
             angles.Add(thatAngle);
         }
 
+        // Add an intersection to the list uniquely
+        private void AddIntersection(List<Intersection> intersections, Intersection thatInter)
+        {
+            foreach (Intersection inter in intersections)
+            {
+                if (inter.StructurallyEquals(thatInter)) return;
+            }
+
+            intersections.Add(thatInter);
+        }
+
+
         // Add an angle to the list uniquely
         protected Segment GetProblemSegment(List<GroundedClause> clauses, Segment thatSegment)
         {
@@ -218,12 +359,23 @@ namespace Geometry_Testbed
             return null;
         }
 
-        // Add an angle to the list uniquely
+        // Acquire an established angle
         protected Angle GetProblemAngle(List<GroundedClause> clauses, Angle thatAngle)
         {
             foreach (GroundedClause clause in clauses)
             {
                 if (clause.StructurallyEquals(thatAngle)) return clause as Angle;
+            }
+
+            return null;
+        }
+
+        // Acquire an established triangle
+        protected Triangle GetProblemTriangle(List<GroundedClause> clauses, Triangle thatTriangle)
+        {
+            foreach (GroundedClause clause in clauses)
+            {
+                if (clause.StructurallyEquals(thatTriangle)) return clause as Triangle;
             }
 
             return null;

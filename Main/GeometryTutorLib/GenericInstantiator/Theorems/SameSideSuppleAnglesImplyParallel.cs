@@ -16,6 +16,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Supplementary> candSupps = new List<Supplementary>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candIntersection.Clear();
+            candSupps.Clear();
+        }
+
         //
         // Intersection(M, Segment(A,B), Segment(C, D)),
         // Intersection(N, Segment(A,B), Segment(E, F)),

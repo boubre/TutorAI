@@ -101,6 +101,7 @@
     <Compile Include="ConcreteAST\Desciptors\Relations\GeometricCongruentAngles.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\GeometricCongruentSegments.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\CongruentTriangles.cs" />
+    <Compile Include="ConcreteAST\Figures\RightAngle.cs" />
     <Compile Include="ConcreteAST\Figures\RightTriangle.cs" />
     <Compile Include="ConcreteAST\Figures\EquilateralTriangle.cs" />
     <Compile Include="ConcreteAST\Figures\Figure.cs" />

@@ -331,16 +331,17 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause pred, GroundedClause c)
         {
-            Angle angle = c as Angle;
-            if (angle == null) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (c is Angle) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            //Angle angle = c as Angle;
 
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            if (IsSpecialAngle(angle.measure))
-            {
-                GeometricAngleEquation angEq = new GeometricAngleEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
-                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
-                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
-            }
+            //if (IsSpecialAngle(angle.measure))
+            //{
+            //    GeometricAngleEquation angEq = new GeometricAngleEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
+            //    List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
+            //    newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+            //}
 
             return newClauses;
         }
@@ -436,22 +437,6 @@ namespace GeometryTutorLib.ConcreteAST
                    (angle.A.StructurallyEquals(C) && angle.B.StructurallyEquals(B) && angle.C.StructurallyEquals(A));
         }
 
-        // CTA: Be careful with equality; this is object-based equality
-        // If we check for angle measure equality that is distinct.
-        // If we check to see that a different set of remote vertices describes this angle, that is distinct.
-        public override bool Equals(Object obj)
-        {
-            Angle angle = obj as Angle;
-            if (angle == null) return false;
-
-            // Measures must be the same.
-            if (!Utilities.CompareValues(this.measure, angle.measure)) return false;
-
-            return base.Equals(obj) && StructurallyEquals(obj);
-                // (angle.A.Equals(A) && angle.B.Equals(B) && angle.C.Equals(C)) ||
-                //                       (angle.A.Equals(C) && angle.B.Equals(B) && angle.C.Equals(A));
-        }
-
         //
         // Is this angle congruent to the given angle in terms of the coordinatization from the UI?
         //
@@ -502,6 +487,29 @@ namespace GeometryTutorLib.ConcreteAST
             else if (gc is Segment) return this.HasSegment(gc as Segment);
 
             return false;
+        }
+
+        // CTA: Be careful with equality; this is object-based equality
+        // If we check for angle measure equality that is distinct.
+        // If we check to see that a different set of remote vertices describes this angle, that is distinct.
+        public override bool Equals(Object obj)
+        {
+            Angle angle = obj as Angle;
+            if (angle == null) return false;
+
+            // Measures must be the same.
+            if (!Utilities.CompareValues(this.measure, angle.measure)) return false;
+
+            return base.Equals(obj) && StructurallyEquals(obj);
+        }
+
+        public override bool CanBeStrengthenedTo(GroundedClause gc)
+        {
+            RightAngle ra = gc as RightAngle;
+
+            if (ra == null) return false;
+
+            return this.StructurallyEquals(ra);
         }
 
         public override string ToString()

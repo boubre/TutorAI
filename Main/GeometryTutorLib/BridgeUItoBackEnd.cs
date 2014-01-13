@@ -10,24 +10,29 @@ namespace GeometryTutorLib
 {
     public class BridgeUItoBackEnd
     {
-        public static void AnalyzeFigure(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
+        // Returns the number of interesting problems
+        public static int AnalyzeFigure(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
         {
+            //
             // Precompute all coordinate-based interesting relations (problem goal nodes)
+            // These become the basis for the template-based problem generation (these are the goals)
+            //
             Precompute(figure, givens);
 
-            // Handle givens that strengthen the figure
+            // Handle givens that strengthen the intrinsic parts of the figure
             givens = DoGivensStrengthenFigure(figure, givens);
 
+            //
+            // Instantiate to build the hypergraph for the particular figure
+            //
             ConstructHypergraph(figure, givens);
 
-            Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> forwardPebbler = ConstructForwardPebblingHypergraph(figure, givens);
+            Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebbler = ConstructForwardPebblingHypergraph(figure, givens);
 
-            forwardPebbler.DebugDumpClauses();
-
-
-            // Begin timing code
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            if (Utilities.DEBUG)
+            {
+                pebbler.DebugDumpClauses();
+            }
 
             KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> problems = GenerateTemplateProblems();
 
@@ -38,10 +43,13 @@ namespace GeometryTutorLib
             ProblemAnalyzer.InterestingProblemCalculator calculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
             //List<ProblemAnalyzer.Problem> interestingProblems = calculator.DetermineInterestingProblems(candidateProbs);
 
-            //System.Diagnostics.Debug.WriteLine("Interesting Problems (" + interestingProblems.Count + "):");
-            //foreach(ProblemAnalyzer.Problem interesting in interestingProblems)
+            //if (Utilities.DEBUG)
             //{
-            //    System.Diagnostics.Debug.WriteLine(interesting);
+            //    System.Diagnostics.Debug.WriteLine("Interesting Problems (" + interestingProblems.Count + "):");
+            //    foreach (ProblemAnalyzer.Problem interesting in interestingProblems)
+            //    {
+            //        System.Diagnostics.Debug.WriteLine(interesting);
+            //    }
             //}
 
             ProblemAnalyzer.QueryFeatureVector query = new ProblemAnalyzer.QueryFeatureVector();
@@ -52,20 +60,11 @@ namespace GeometryTutorLib
             problemSpacePartitions.ConstructPartitions(problems.Key, query);
             problemSpacePartitions.ConstructPartitions(problems.Value, query);
 
-            problemSpacePartitions.DumpPartitions(query);
-
-
-            // Stop timing
-            stopwatch.Stop();
-
-            TimeSpan ts = stopwatch.Elapsed;
-            // Format and display the TimeSpan value. 
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                                               ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-
-            Debug.WriteLine("Length of time to compute all paths: " + elapsedTime);
-
-            return;
+            if (Utilities.DEBUG)
+            {
+                problemSpacePartitions.DumpPartitions(query);
+            }
+            return 0; //  interestingProblems.Count;
         }
 
         //
@@ -130,36 +129,36 @@ namespace GeometryTutorLib
         private static Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
         private static void ConstructHypergraph(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
         {
+            GenericInstantiator.Instantiator.Clear(); // Resets all saved data to allow multiple problems
             GenericInstantiator.Instantiator instantiator = new GenericInstantiator.Instantiator();
 
             // Build the hypergraph through instantiation
             graph = instantiator.Instantiate(figure, givens);
 
-            //graph.PostProcessPruning();
-
-            graph.DumpNonEquationClauses();
-            graph.DumpEquationClauses();
-//            graph.DumpClauseForwardEdges();
-//            graph.DumpClauseBackwardEdges();
+            if (Utilities.DEBUG)
+            {
+                graph.DumpNonEquationClauses();
+                graph.DumpEquationClauses();
+            }
         }
 
         //
         // Create the Pebbler version of the hypergraph for analysis
         //
-        private static Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> forwardPebbler = null;
+        private static Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebbler = null;
         private static ProblemAnalyzer.PathGenerator pathGenerator = null;
         private static Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> ConstructForwardPebblingHypergraph(List<ConcreteAST.GroundedClause> intrinsic, List<ConcreteAST.GroundedClause> givens)
         {
             // Create the Pebbler version of the hypergraph (all integer representation) and provide the original hypergraph for reference
-            forwardPebbler = graph.GetForwardPebblerHypergraph();
-            forwardPebbler.SetOriginalHypergraph(graph);
+            pebbler = graph.GetForwardPebblerHypergraph();
+            pebbler.SetOriginalHypergraph(graph);
 
             // This is the shared worklist for generating paths for when new nodes are pebbled 
             //Pebbler.SharedPebbledNodeList sharedData = new Pebbler.SharedPebbledNodeList();
 
             // Create and / or indicate these two objects work on the shared list object
             pathGenerator = new ProblemAnalyzer.PathGenerator(graph /*, sharedData */);
-//            forwardPebbler.SetSharedList(sharedData);
+//            pebbler.SetSharedList(sharedData);
 
             // Pebble all of the intrinsic figure nodes
             List<int> intrinsicSet = CollectGraphIndices(intrinsic);
@@ -167,13 +166,13 @@ namespace GeometryTutorLib
             List<int> givenSet = CollectGraphIndices(givens);
 
             // Set the nodes to begin pebbling
-//            forwardPebbler.SetSourceNodes(srcsToPebble);
+//            pebbler.SetSourceNodes(srcsToPebble);
 
-            forwardPebbler.GenerateAllPaths(intrinsicSet, givenSet);
+            pebbler.GenerateAllPaths(intrinsicSet, givenSet);
 
 /*
             // Create producer and consumer threads for problem path / solution generation
-            Thread pebblerProducer = new Thread(new ThreadStart(forwardPebbler.GenerateAllPaths));
+            Thread pebblerProducer = new Thread(new ThreadStart(pebbler.GenerateAllPaths));
             Thread pathGeneratorConsumer = new Thread(new ThreadStart(pathGenerator.GenerateAllPaths));
 
             // Start the threads
@@ -207,29 +206,34 @@ namespace GeometryTutorLib
             //
             // End Analysis Code
             //
-            Debug.WriteLine("Forward Vertices after pebbling:");
-            for (int i = 0; i < forwardPebbler.vertices.Length; i++)
+            if (Utilities.DEBUG)
             {
-                StringBuilder strLocal = new StringBuilder();
-                strLocal.Append(forwardPebbler.vertices[i].id + ": pebbled(");
-                if (forwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
-                if (forwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
-                if (forwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
-                if (forwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
-                if (forwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
-                strLocal.Append(")");
-                Debug.WriteLine(strLocal.ToString());
+
+                Debug.WriteLine("Forward Vertices after pebbling:");
+                for (int i = 0; i < pebbler.vertices.Length; i++)
+                {
+                    StringBuilder strLocal = new StringBuilder();
+                    strLocal.Append(pebbler.vertices[i].id + ": pebbled(");
+                    if (pebbler.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
+                    if (pebbler.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
+                    if (pebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
+                    if (pebbler.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
+                    if (pebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
+                    strLocal.Append(")");
+                    Debug.WriteLine(strLocal.ToString());
+                }
             }
 
-            //Debug.WriteLine("Number of Unique Paths / Problems: " + pathGenerator.GetProblems().Count);
-
-            return forwardPebbler;
+            return pebbler;
         }
 
+        //
+        // Generate all of the problems based on the precomputed values (these precomputations are the problem goals)
+        //
         private static KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> GenerateTemplateProblems()
         {
             GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator =
-                new ProblemAnalyzer.TemplateProblemGenerator(graph, forwardPebbler, pathGenerator);
+                new ProblemAnalyzer.TemplateProblemGenerator(graph, pebbler, pathGenerator);
 
             List<ConcreteAST.GroundedClause> allClauses = new List<ConcreteAST.GroundedClause>();
             precomputer.GetPrecomputedRelations().ForEach(r => allClauses.Add(r));
@@ -271,90 +275,90 @@ namespace GeometryTutorLib
             return indices;
         }
 
-        private static Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> backwardPebbler = null;
-        private static ProblemAnalyzer.PathGenerator backwardPathGenerator = null;
-        private static void GenerateBackwardTemplateProblems(List<ConcreteAST.GroundedClause> intrinsic)
-        {
-            // Create the Pebbler version of the hypergraph (all integer representation) and provide the original hypergraph for reference
-            backwardPebbler = graph.GetBackwardPebblerHypergraph();
-            backwardPebbler.SetOriginalHypergraph(graph);
+        //private static Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> backwardPebbler = null;
+        //private static ProblemAnalyzer.PathGenerator backwardPathGenerator = null;
+        //private static void GenerateBackwardTemplateProblems(List<ConcreteAST.GroundedClause> intrinsic)
+        //{
+        //    // Create the Pebbler version of the hypergraph (all integer representation) and provide the original hypergraph for reference
+        //    backwardPebbler = graph.GetBackwardPebblerHypergraph();
+        //    backwardPebbler.SetOriginalHypergraph(graph);
 
-            // This is the shared worklist for generating paths for when new nodes are pebbled 
-            Pebbler.SharedPebbledNodeList sharedData = new Pebbler.SharedPebbledNodeList();
+        //    // This is the shared worklist for generating paths for when new nodes are pebbled 
+        //    Pebbler.SharedPebbledNodeList sharedData = new Pebbler.SharedPebbledNodeList();
 
-            // Create and / or indicate these two objects work on the shared list object
-            //backwardPathGenerator = new ProblemAnalyzer.PathGenerator(graph, sharedData);
-            //backwardPebbler.SetSharedList(sharedData);
+        //    // Create and / or indicate these two objects work on the shared list object
+        //    //backwardPathGenerator = new ProblemAnalyzer.PathGenerator(graph, sharedData);
+        //    //backwardPebbler.SetSharedList(sharedData);
 
-            // Find the deepest tempalte problem in the list (deepest means high hypergraph index value)
-            List<ConcreteAST.GroundedClause> allClauses = new List<ConcreteAST.GroundedClause>();
-            precomputer.GetPrecomputedRelations().ForEach(r => allClauses.Add(r));
-            precomputer.GetStrengthenedClauses().ForEach(r => allClauses.Add(r));
-            List<int> precomputedIndices = CollectGraphIndices(allClauses);
+        //    // Find the deepest tempalte problem in the list (deepest means high hypergraph index value)
+        //    List<ConcreteAST.GroundedClause> allClauses = new List<ConcreteAST.GroundedClause>();
+        //    precomputer.GetPrecomputedRelations().ForEach(r => allClauses.Add(r));
+        //    precomputer.GetStrengthenedClauses().ForEach(r => allClauses.Add(r));
+        //    List<int> precomputedIndices = CollectGraphIndices(allClauses);
 
-            // Construct the subset of the powerset of precomputed notions with a limit on result size
-            // The order is largest first
-            int MAX_PEBBLING_SIZE_SET = 4;
-            List<List<int>> powersetIndices = Utilities.ConstructPowerSetWithNoEmpty(precomputedIndices.Count, MAX_PEBBLING_SIZE_SET);
+        //    // Construct the subset of the powerset of precomputed notions with a limit on result size
+        //    // The order is largest first
+        //    int MAX_PEBBLING_SIZE_SET = 4;
+        //    List<List<int>> powersetIndices = Utilities.ConstructPowerSetWithNoEmpty(precomputedIndices.Count, MAX_PEBBLING_SIZE_SET);
 
-            StringBuilder str = new StringBuilder();
-            str.Append("Powerset: { ");
-            foreach (List<int> set in powersetIndices)
-            {
-                str.Append(" { ");
-                foreach (int val in set) { str.Append(val + " "); }
-                str.Append("} ");
-            }
-            str.Append(" } ");
+        //    StringBuilder str = new StringBuilder();
+        //    str.Append("Powerset: { ");
+        //    foreach (List<int> set in powersetIndices)
+        //    {
+        //        str.Append(" { ");
+        //        foreach (int val in set) { str.Append(val + " "); }
+        //        str.Append("} ");
+        //    }
+        //    str.Append(" } ");
 
-            Debug.WriteLine(str.ToString());
+        //    Debug.WriteLine(str.ToString());
 
-            //
-            // Create pebbler graph, pebble the graph, and generate the problems
-            //
-            // CTA: This needs to be threaded
-            //
-            foreach (List<int> precomputed in powersetIndices)
-            {
-                // Pebble all of the intrinsic figure nodes
-                List<int> srcsToPebble = CollectGraphIndices(intrinsic);
+        //    //
+        //    // Create pebbler graph, pebble the graph, and generate the problems
+        //    //
+        //    // CTA: This needs to be threaded
+        //    //
+        //    foreach (List<int> precomputed in powersetIndices)
+        //    {
+        //        // Pebble all of the intrinsic figure nodes
+        //        List<int> srcsToPebble = CollectGraphIndices(intrinsic);
 
-                // Reset the Pebbler graph so no nodes are pebbled
-                backwardPebbler.ClearPebbles();
+        //        // Reset the Pebbler graph so no nodes are pebbled
+        //        backwardPebbler.ClearPebbles();
 
-                // Pebble all nodes in the powerset of precomputed, forward template problems
-                foreach (int preIndex in precomputed)
-                {
-                    srcsToPebble.Add(precomputedIndices[preIndex]);
-                }
+        //        // Pebble all nodes in the powerset of precomputed, forward template problems
+        //        foreach (int preIndex in precomputed)
+        //        {
+        //            srcsToPebble.Add(precomputedIndices[preIndex]);
+        //        }
 
-                // Set the nodes to begin pebbling
-                //backwardPebbler.SetSourceNodes(srcsToPebble);
+        //        // Set the nodes to begin pebbling
+        //        //backwardPebbler.SetSourceNodes(srcsToPebble);
 
-                //backwardPebbler.GenerateAllPaths();
+        //        //backwardPebbler.GenerateAllPaths();
 
-                Debug.WriteLine("Backward Vertices after pebbling:");
-                for (int i = 0; i < backwardPebbler.vertices.Length; i++)
-                {
-                    StringBuilder strLocal = new StringBuilder();
-                    strLocal.Append(backwardPebbler.vertices[i].id + ": pebbled(");
-                    if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
-                    if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
-                    if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
-                    if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
-                    if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
-                    strLocal.Append(")  " + graph.vertices[i].data.ToString());
-                    Debug.WriteLine(strLocal.ToString());
-                }
+        //        Debug.WriteLine("Backward Vertices after pebbling:");
+        //        for (int i = 0; i < backwardPebbler.vertices.Length; i++)
+        //        {
+        //            StringBuilder strLocal = new StringBuilder();
+        //            strLocal.Append(backwardPebbler.vertices[i].id + ": pebbled(");
+        //            if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
+        //            if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
+        //            if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
+        //            if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
+        //            if (backwardPebbler.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
+        //            strLocal.Append(")  " + graph.vertices[i].data.ToString());
+        //            Debug.WriteLine(strLocal.ToString());
+        //        }
 
-                GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator =
-                         new ProblemAnalyzer.TemplateProblemGenerator(graph, backwardPebbler, backwardPathGenerator);
+        //        GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator =
+        //                 new ProblemAnalyzer.TemplateProblemGenerator(graph, backwardPebbler, backwardPathGenerator);
 
-                templateProblemGenerator.Generate(allClauses);
+        //        templateProblemGenerator.Generate(allClauses);
 
-                return; // for testing purposes only
-            }
-        }
+        //        return; // for testing purposes only
+        //    }
+        //}
 
         //private static ProblemAnalyzer.PathGenerator GeneratePaths(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
         //{
@@ -362,14 +366,14 @@ namespace GeometryTutorLib
 
         //    // Create the Pebbler version of the hypergraph (all integer representation) and provide the original hypergraph for reference
         //    Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> forwardPebbler = graph.GetPebblerHypergraph();
-        //    forwardPebbler.SetOriginalHypergraph(graph);
+        //    pebbler.SetOriginalHypergraph(graph);
 
         //    // This is the shared worklist for generating paths for when new nodes are pebbled 
         //    Pebbler.SharedPebbledNodeList sharedData = new Pebbler.SharedPebbledNodeList();
 
         //    // Create and / or indicate these two objects work on the shared list object
         //    pathGenerator = new ProblemAnalyzer.PathGenerator(graph, sharedData);
-        //    forwardPebbler.SetSharedList(sharedData);
+        //    pebbler.SetSharedList(sharedData);
 
         //    // For testing purposes, pebble from this start node only
         //    int start = 0;
@@ -382,12 +386,12 @@ namespace GeometryTutorLib
         //    }
 
         //    // Set the nodes to begin pebbling
-        //    forwardPebbler.SetSourceNodes(srcs);
+        //    pebbler.SetSourceNodes(srcs);
 
-        //    forwardPebbler.GenerateAllPaths();
+        //    pebbler.GenerateAllPaths();
 
         //    //// Create producer and consumer threads for problem path / solution generation
-        //    //Thread pebblerProducer = new Thread(new ThreadStart(forwardPebbler.GenerateAllPaths));
+        //    //Thread pebblerProducer = new Thread(new ThreadStart(pebbler.GenerateAllPaths));
         //    //Thread pathGeneratorConsumer = new Thread(new ThreadStart(pathGenerator.GenerateAllPaths));
 
         //    //// Start the threads
@@ -416,9 +420,9 @@ namespace GeometryTutorLib
         //    // End Analysis Code
         //    //
         //    Debug.WriteLine("Vertices after pebbling:");
-        //    for (int i = 0; i < forwardPebbler.vertices.Length; i++)
+        //    for (int i = 0; i < pebbler.vertices.Length; i++)
         //    {
-        //        Debug.WriteLine(forwardPebbler.vertices[i].id + ": pebbled(" + forwardPebbler.vertices[i].pebbled + ")");
+        //        Debug.WriteLine(pebbler.vertices[i].id + ": pebbled(" + pebbler.vertices[i].pebbled + ")");
         //    }
 
         //    Debug.WriteLine("Number of Unique Paths / Problems: " + pathGenerator.GetProblems().Count);

@@ -19,6 +19,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> candTriangle = new List<Triangle>();
         private static List<Parallel> candParallel = new List<Parallel>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candIntersection.Clear();
+            candTriangle.Clear();
+            candParallel.Clear();
+        }
+
         //
         // Triangle(A, B, C),
         // Intersection(D, Segment(A,B), Segment(D, E)),

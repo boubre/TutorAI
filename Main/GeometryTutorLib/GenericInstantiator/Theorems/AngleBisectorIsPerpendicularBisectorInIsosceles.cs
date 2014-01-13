@@ -17,6 +17,15 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<AngleBisector> candidateBisectors = new List<AngleBisector>();
         private static List<Intersection> candidateIntersections = new List<Intersection>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateBisectors.Clear();
+            candidateIntersections.Clear();
+            candidateIsosceles.Clear();
+            candidateStrengthened.Clear();
+        }
+
         //
         // IsoscelesTriangle(A, B, C),
         // AngleBisector(Segment(M, C), Angle(A, C, B)),

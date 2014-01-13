@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     public abstract class Figure : GroundedClause
     {
         protected List<Figure> superFigures;
-        
+
         protected Figure()
         {
             superFigures = new List<Figure>();

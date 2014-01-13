@@ -14,6 +14,13 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<ProportionalSegments> candidateSegments = new List<ProportionalSegments>();
 
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateTriangles.Clear();
+            candidateSegments.Clear();
+        }
+
         //
         // In order for two triangles to be congruent, we require the following:
         //    Triangle(A, B, C), Triangle(D, E, F),
