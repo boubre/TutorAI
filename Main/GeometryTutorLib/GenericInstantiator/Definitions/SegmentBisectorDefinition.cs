@@ -10,7 +10,12 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Definition of Segment Bisector";
 
-        public SegmentBisectorDefinition() { }
+        // Resets all saved data.
+        public static void Clear()
+        {
+            candidateCongruent.Clear();
+            candidateIntersection.Clear();
+        }
 
         //
         // This implements forward and Backward instantiation

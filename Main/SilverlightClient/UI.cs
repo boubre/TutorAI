@@ -447,7 +447,8 @@ namespace LiveGeometry
             
             //Execute Back-End
             UIDebugPublisher.publishString("Publish string example");
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+            analyzer.AnalyzeFigure();
         }
         void DisplayParseOptions()
         {

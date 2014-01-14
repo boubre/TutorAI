@@ -116,8 +116,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Do these intersections share a segment? That is, do they share the transversal?
             //
-            Segment transversal = inter1.CommonSegment(inter2);
-
+            Segment transversal = inter1.AcquireTransversal(inter2);
             if (transversal == null) return newGrounded;
 
             //
@@ -126,10 +125,9 @@ namespace GeometryTutorLib.GenericInstantiator
             if (tri.LiesOn(transversal)) return newGrounded;
 
             //
-            // Determine if one parallel segment is a side of the triangle
+            // Determine if one parallel segment is a side of the triangle (which must occur)
             //
             Segment coinciding = tri.DoesParallelCoincideWith(parallel);
-
             if (coinciding == null) return newGrounded;
 
             // The transversal and common segment must be distinct
@@ -143,45 +141,55 @@ namespace GeometryTutorLib.GenericInstantiator
 
             if (!parallelTransversal.IsCollinearWith(simpleParallelTransversal)) return newGrounded;
 
+            //            A
+            //           /\
+            //          /  \
+            //         /    \
+            //  off1  /------\ off2
+            //       /        \
+            //    B /__________\ C
+
             //
-            // Are the endpoints of the simplified transversal on opposite sides of the triangle (sides distinct from the coinciding line)
+            // Both intersections should create a T-shape.
             //
+            Point off1 = inter1.CreatesTShape();
+            Point off2 = inter2.CreatesTShape();
+            if (off1 == null || off2 == null) return newGrounded;
+
+            // Get the intersection segments which should coincide with the triangle sides
             KeyValuePair<Segment, Segment> otherSides = tri.OtherSides(coinciding);
-            Segment otherSide1 = otherSides.Key;
-            Segment otherSide2 = otherSides.Value;
 
-            // Acquire the exact points
-            Point pointOnSide1 = null;
-            Point pointOnSide2 = null;
-            if (otherSide1.PointIsOnAndBetweenEndpoints(simpleParallelTransversal.Point1))
+            // The intersections may be outside this triangle
+            if (otherSides.Key == null || otherSides.Value == null) return newGrounded;
+
+            Segment side1 = inter1.OtherSegment(transversal);
+            Segment side2 = inter2.OtherSegment(transversal);
+
+            // Get the actual sides of the triangle
+            Segment triangleSide1 = null;
+            Segment triangleSide2 = null;
+            if (side1.IsCollinearWith(otherSides.Key) && side2.IsCollinearWith(otherSides.Value))
             {
-                pointOnSide1 = simpleParallelTransversal.Point1;
-                if (otherSide2.PointIsOnAndBetweenEndpoints(simpleParallelTransversal.Point2))
-                {
-                    pointOnSide2 = simpleParallelTransversal.Point2;
-                }
+                triangleSide1 = otherSides.Key;
+                triangleSide2 = otherSides.Value;
             }
-            else if (otherSide2.PointIsOnAndBetweenEndpoints(simpleParallelTransversal.Point1))
+            else if (side1.IsCollinearWith(otherSides.Value) && side2.IsCollinearWith(otherSides.Key))
             {
-                pointOnSide2 = simpleParallelTransversal.Point1;
-                if (otherSide1.PointIsOnAndBetweenEndpoints(simpleParallelTransversal.Point2))
-                {
-                    pointOnSide1 = simpleParallelTransversal.Point2;
-                }
+                triangleSide1 = otherSides.Value;
+                triangleSide2 = otherSides.Key;
             }
+            else return newGrounded;
 
-            // Failed to find points on each side directly (between the endpoints)
-            if (pointOnSide1 == null || pointOnSide2 == null) return newGrounded;
-
-            // If the second point is not on the side of the triangle (this should never happen)
-            if (pointOnSide1.Equals(pointOnSide2)) return newGrounded;
+            // Verify the opposing parts of the T are on the opposite sides of the triangle
+            if (!triangleSide1.PointIsOnAndExactlyBetweenEndpoints(off2)) return newGrounded;
+            if (!triangleSide2.PointIsOnAndExactlyBetweenEndpoints(off1)) return newGrounded;
 
             //
             // Construct the new proprtional relationships
             //
-            Point sharedVertex = otherSide1.SharedVertex(otherSide2);
-            GeometricProportionalSegments newProp1 = new GeometricProportionalSegments(new Segment(sharedVertex, pointOnSide1), otherSide1, NAME);
-            GeometricProportionalSegments newProp2 = new GeometricProportionalSegments(new Segment(sharedVertex, pointOnSide2), otherSide2, NAME);
+            Point sharedVertex = triangleSide1.SharedVertex(triangleSide2);
+            GeometricProportionalSegments newProp1 = new GeometricProportionalSegments(new Segment(sharedVertex, off2), triangleSide1, NAME);
+            GeometricProportionalSegments newProp2 = new GeometricProportionalSegments(new Segment(sharedVertex, off1), triangleSide2, NAME);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();

@@ -139,6 +139,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!pss1.LinksTriangles(ct1, ct2)) return newGrounded;
             if (!pss2.LinksTriangles(ct1, ct2)) return newGrounded;
 
+            // The smaller segments must belong to one triangle, same for larger segments.
+            if (!(ct1.HasSegment(pss1.smallerSegment) && ct1.HasSegment(pss2.smallerSegment) &&
+                  ct2.HasSegment(pss1.largerSegment) && ct2.HasSegment(pss2.largerSegment)) && 
+                !(ct2.HasSegment(pss1.smallerSegment) && ct2.HasSegment(pss2.smallerSegment) &&
+                  ct1.HasSegment(pss1.largerSegment) && ct1.HasSegment(pss2.largerSegment)))
+                return newGrounded;
+
             Segment seg1Tri1 = ct1.GetSegment(pss1);
             Segment seg2Tri1 = ct1.GetSegment(pss2);
 

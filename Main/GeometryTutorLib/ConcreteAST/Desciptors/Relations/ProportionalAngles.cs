@@ -15,6 +15,11 @@ namespace GeometryTutorLib.ConcreteAST
         public KeyValuePair<int, int> proportion { get; protected set; }
         public double dictatedProportion { get; protected set; }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return largerAngle.Covers(gc) || smallerAngle.Covers(gc);
+        }
+
         public ProportionalAngles(Angle angle1, Angle angle2, string just) : base()
         {
             smallerAngle = angle1.measure < angle2.measure ? angle1 : angle2;

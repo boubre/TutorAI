@@ -12,9 +12,17 @@ namespace Geometry_Testbed
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            // Indian Text
+            //problems.Add(new IPage123Example5());
+            //problems.Add(new IPage123Example6());
+
+
+
+
             //problems.Add(new OverlappingRightTriangles());
             //problems.Add(new InterleavingSimilarTriangles());
+
+            // Proportionality problems.Add(new JPage152Problem01());
+            // Problems with proportionality problems.Add(new JPage153Problem09());
 
             return problems;
         }

@@ -157,6 +157,9 @@ namespace GeometryTutorLib.GenericInstantiator
             // The other two angles from the relation pairs are then congruent
             GeometricCongruentAngles gcas = new GeometricCongruentAngles(otherAngle1, otherAngle2, relation1 is Complementary ? COMPLEMENT_NAME : SUPPLEMENT_NAME);
 
+            // Avoid direct cyclic congruent angle generation
+            if (cas.StructurallyEquals(gcas)) return newGrounded;
+
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(cas);

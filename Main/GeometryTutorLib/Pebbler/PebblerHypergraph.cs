@@ -67,14 +67,6 @@ namespace GeometryTutorLib.Pebbler
         public int NumVertices() { return vertices.Length; }
 
         //
-        // Pebble the graph from all the sources
-        //
-        public void GenerateAllPaths(List<int> intrinsic, List<int> given)
-        {
-            Pebble(intrinsic, given);
-        }
-
-        //
         // Is the given node pebbled?
         //
         public bool IsNodePebbledForward(int index)
@@ -104,7 +96,7 @@ namespace GeometryTutorLib.Pebbler
         //           a. All applicable nodes marked BLUE or PURPLE.
         //           b. All applicable backward edges marked BLUE.
         //
-        private void Pebble(List<int> figure, List<int> givens)
+        public void Pebble(List<int> figure, List<int> givens)
         {
             // Find all axiomatic nodes.
             List<int> axiomaticNodes = new List<int>();
@@ -143,7 +135,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int axiomatic in axiomaticNodes)
             {
-                if (Utilities.DEBUG) Debug.WriteLine("Forward Pebbling Axiomatic: " + axiomatic);
+                //if (Utilities.DEBUG) Debug.WriteLine("Forward Pebbling Axiomatic: " + axiomatic);
                 ForwardTraversal(axiomatic, backwardEdges, backwardReachableNodes);
             }
 
@@ -152,7 +144,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int fNode in figure)
             {
-                if (Utilities.DEBUG) Debug.WriteLine("Pebbling Figure Node: " + fNode);
+                //if (Utilities.DEBUG) Debug.WriteLine("Pebbling Figure Node: " + fNode);
                 ForwardTraversal(fNode, backwardEdges, backwardReachableNodes);
             }
 
@@ -161,7 +153,7 @@ namespace GeometryTutorLib.Pebbler
             //
             foreach (int g in givens)
             {
-                if (Utilities.DEBUG) Debug.WriteLine("Pebbling Given Node: " + g);
+                //if (Utilities.DEBUG) Debug.WriteLine("Pebbling Given Node: " + g);
                 ForwardTraversal(g, backwardEdges, backwardReachableNodes);
             }
 

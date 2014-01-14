@@ -99,8 +99,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<GroundedClause> thatRHS = thatEquation.rhs.CollectTerms();
 
             // Check side length counts as a first step.
-            if (!((thisLHS.Count == thatLHS.Count && thisRHS.Count == thatRHS.Count) ||
-                (thisLHS.Count == thatRHS.Count && thisLHS.Count == thatLHS.Count))) return false;
+            if (!(thisLHS.Count == thatLHS.Count && thisRHS.Count == thatRHS.Count) && !(thisLHS.Count == thatRHS.Count && thisRHS.Count == thatLHS.Count)) return false;
 
             // Seek one side equal to one side and then the other equals the other.
             // Cannot do this easily with a union / set interection set theoretic approach since an equation may have multiple instances of a value

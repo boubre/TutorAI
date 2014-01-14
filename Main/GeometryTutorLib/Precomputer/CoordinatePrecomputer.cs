@@ -110,19 +110,15 @@ namespace GeometryTutorLib.Precomputer
                     //
                     // Perpendicular, bisector, perpendicular bisector
                     //
-                    else 
+                    else
                     {
-                        // These are the general intersection points between the endpoints of the segments
+                        // These are the general intersection points between the endpoints or on the endpoints of the segments (in some cases)
                         Point intersectionPerp = segments[s1].CoordinatePerpendicular(segments[s2]);
-                        Point intersectionBisec = segments[s1].CoordinateBisector(segments[s2]);
-                        if (intersectionBisec == null)
-                        {
-                            intersectionBisec = segments[s2].CoordinateBisector(segments[s1]);
-                        }
-
+                        //                         is segment[s2] a bisector of segment[s1]?
+                        Point intersectionBisec = segments[s1].CoordinateBisector(segments[s2]); // returns the actual intersection point
                         if (intersectionPerp != null && intersectionBisec != null)
                         {
-                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), "Precomputation"));
+                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), segments[s2], "Precomputation"));
                         }
                         else if (intersectionPerp != null)
                         {
@@ -131,6 +127,17 @@ namespace GeometryTutorLib.Precomputer
                         else if (intersectionBisec != null)
                         {
                             descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s1], segments[s2], "Precomputation"), segments[s2], "Precomputation"));
+                        }
+
+                        // We may have a bisector in the other direction
+                        intersectionBisec = segments[s2].CoordinateBisector(segments[s1]);
+                        if (intersectionPerp != null && intersectionBisec != null)
+                        {
+                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), segments[s1], "Precomputation"));
+                        }
+                        else if (intersectionBisec != null)
+                        {
+                            descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s2], segments[s1], "Precomputation"), segments[s1], "Precomputation"));
                         }
                     }
 
@@ -183,7 +190,10 @@ namespace GeometryTutorLib.Precomputer
                     {
                         if (proportion.Value <= 2 || proportion.Key <= 2)
                         {
-                            System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + angles[a1] + " : " + angles[a2]);
+                            if (Utilities.DEBUG)
+                            {
+                                System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + angles[a1] + " : " + angles[a2]);
+                            }
                             descriptors.Add(new ProportionalAngles(angles[a1], angles[a2], "Precomputation"));
                         }
                     }

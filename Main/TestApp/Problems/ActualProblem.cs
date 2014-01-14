@@ -41,8 +41,12 @@ namespace Geometry_Testbed
 
         public void Run()
         {
+            // Create the analyzer
+            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(intrinsic, given);
+
+            // Perform and time the analysis
             stopwatch.Start();
-            numberOfInterestingGeneratedProblems = GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(intrinsic, given);
+            numberOfInterestingGeneratedProblems = analyzer.AnalyzeFigure();
             stopwatch.Stop();
 
             // How long did problem generation take?

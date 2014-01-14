@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
-    <Compile Include="BridgeUItoBackEnd.cs" />
+    <Compile Include="FigureAnalyzerMain.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />
     <Compile Include="ConcreteAST\Desciptors\AngleBisector.cs" />

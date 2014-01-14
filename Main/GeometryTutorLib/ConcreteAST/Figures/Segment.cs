@@ -108,6 +108,13 @@ namespace GeometryTutorLib.ConcreteAST
             return Segment.Between(thatPoint, Point1, Point2);
         }
 
+        public bool PointIsOnAndExactlyBetweenEndpoints(Point thatPoint)
+        {
+            if (Point1.Equals(thatPoint) || Point2.Equals(thatPoint)) return false;
+
+            return Segment.Between(thatPoint, Point1, Point2);
+        }
+
         // Does this segment contain a subsegment:
         // A-------B-------C------D
         // A subsegment is: AB, AC, AD, BC, BD, CD
@@ -266,34 +273,35 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Is this segment perpendicular to the given segment in terms of the coordinatization from the UI?
         //
-        public Point CoordinatePerpendicular(Segment s)
+        public Point CoordinatePerpendicular(Segment thatSegment)
         {
             //
             // Do these segments intersect within both sets of stated endpoints?
             //
-            Point intersection = this.FindIntersection(s);
-            if (!(Segment.Between(intersection, s.Point1, s.Point2) &&
-                  Segment.Between(intersection, this.Point1, this.Point2))) return null;
+            Point intersection = this.FindIntersection(thatSegment);
+
+            if (!this.PointIsOnAndBetweenEndpoints(intersection)) return null;
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(intersection)) return null;
 
             //
             // Special Case
             //
-            if (IsVertical() && s.IsHorizontal() || s.IsVertical() && IsHorizontal()) return intersection;
+            if ((IsVertical() && thatSegment.IsHorizontal()) || (thatSegment.IsVertical() && IsHorizontal())) return intersection;
 
-            return Utilities.CompareValues(s.Slope * this.Slope, -1) ? intersection : null;
+            // Does m1 * m2 = -1 (opposite reciprocal slopes)
+            return Utilities.CompareValues(thatSegment.Slope * this.Slope, -1) ? intersection : null;
         }
 
         //
-        // Is this segment perpendicular to the given segment in terms of the coordinatization from the UI?
+        // Is thatSegment a bisector of this segment in terms of the coordinatization from the UI?
         //
-        public Point CoordinateBisector(Segment s)
+        public Point CoordinateBisector(Segment thatSegment)
         {
-            //
             // Do these segments intersect within both sets of stated endpoints?
-            //
-            Point intersection = this.FindIntersection(s);
-            if (!(Segment.Between(intersection, s.Point1, s.Point2) &&
-                  Segment.Between(intersection, this.Point1, this.Point2))) return null;
+            Point intersection = this.FindIntersection(thatSegment);
+
+            if (!this.PointIsOnAndExactlyBetweenEndpoints(intersection)) return null;
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(intersection)) return null;
 
             // Do they intersect in the middle of this segment
             return Utilities.CompareValues(Point.calcDistance(this.Point1, intersection), Point.calcDistance(this.Point2, intersection)) ? intersection : null;

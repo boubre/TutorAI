@@ -14,7 +14,7 @@ namespace GeometryTutorLib.ConcreteAST
         // But we verify just in case
         public Collinear(List<Point> pts, string just) : base()
         {
-            points = pts;
+            points = new List<Point>(pts);
             justification = just;
 
             Verify();

@@ -7,8 +7,16 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class PerpendicularBisector : Perpendicular
     {
-        public PerpendicularBisector(Point i, Segment l, Segment r, string just) : base(i, l, r, just) { }
-        public PerpendicularBisector(Intersection inter, String just) : base(inter.intersect, inter.lhs, inter.rhs, just) { }
+        protected Segment bisector;
+
+        public PerpendicularBisector(Point i, Segment l, Segment bisector, string just) : base(i, l, bisector, just)
+        {
+            this.bisector = bisector;
+        }
+        public PerpendicularBisector(Intersection inter, Segment bisector, String just) : base(inter.intersect, inter.lhs, inter.rhs, just)
+        {
+            this.bisector = bisector;
+        }
 
         public override int GetHashCode()
         {
@@ -32,7 +40,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "PerpendicularBisector(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + "): " + justification;
+            return "PerpendicularBisector(" + bisector.ToString() + " Bisects(" + this.OtherSegment(bisector) + ") at " + this.intersect + ")";
         }
     }
 }

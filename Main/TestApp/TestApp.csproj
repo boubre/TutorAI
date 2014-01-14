@@ -45,6 +45,10 @@
     <Compile Include="Problems\ActualProblem.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\McDougallProblems.cs" />
     <Compile Include="Problems\Indian Text\Backup.cs" />
+    <Compile Include="Problems\Indian Text\Congruent Triangles\IPage123Example6.cs" />
+    <Compile Include="Problems\Indian Text\Congruent Triangles\IPage123Example5.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\JPage152Problem01.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\JPage153Problem09.cs" />
     <Compile Include="Problems\Indian Text\IndianTextProblems.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\RightAngleStrengthening.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page145Problem08.cs" />
@@ -76,8 +80,16 @@
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise07to12.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175WrittenExercise1to4.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\JurgensenProblems.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\EquationTester.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\SegmentBisectorTester.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page60Theorem22Extended.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page60Theorem22.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem22.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem23.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem24.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem25.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem26.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\Page223Problem27.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Transversals\Page23Theorem11.cs" />
     <Compile Include="Problems\McGraw Hill Geometry\McGrawHillProblems.cs" />
     <Compile Include="Problems\TransversalsProblem.cs" />
@@ -104,9 +116,7 @@
       <Name>GeometryTutorLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Problems\Jurgensen Geometry %28Orange%29\Similar Triangles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -485,6 +485,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (gc is Point) return this.HasPoint(gc as Point);
             else if (gc is Segment) return this.HasSegment(gc as Segment);
+            else if (gc is Triangle) return (gc as Triangle).Covers(this);
 
             return false;
         }

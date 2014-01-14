@@ -854,6 +854,12 @@ namespace GeometryTutorLib.ConcreteAST
             // It is possible for the segment to be parallel to the opposite side; results in NaN.
             if (midptIntersection.X == double.NaN || midptIntersection.Y == double.NaN) return false;
 
+            // The intersection must be on the potential median
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(coincidingIntersection)) return false;
+
+            // The midpoint intersection must be on the potential median
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(midptIntersection)) return false;
+
             if (!Segment.Between(coincidingIntersection, thatSegment.Point1, thatSegment.Point2)) return false;
 
             if (!oppSide.PointIsOnAndBetweenEndpoints(midptIntersection)) return false;

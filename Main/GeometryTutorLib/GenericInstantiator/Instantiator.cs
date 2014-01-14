@@ -434,6 +434,7 @@ namespace GeometryTutorLib.GenericInstantiator
             CongruentSegmentsImplyProportionalSegmentsDefinition.Clear();
             IsoscelesTriangleDefinition.Clear();
             RightTriangleDefinition.Clear();
+            SegmentBisectorDefinition.Clear();
 
             //
             // Theorems

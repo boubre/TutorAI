@@ -48,6 +48,11 @@ namespace GeometryTutorLib.ConcreteAST
             largerSegment.multiplier = 1;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return largerSegment.Covers(gc) || smallerSegment.Covers(gc);
+        }
+
         // Return the number of shared segments in both congruences
         public int SharesNumClauses(CongruentSegments thatCS)
         {

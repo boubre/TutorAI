@@ -148,6 +148,32 @@ namespace GeometryTutorLib.GenericInstantiator
             //        /
             if (inter1.Crossing() && inter2.Crossing()) return GenerateDualCrossings(parallel, inter1, inter2);
 
+            // No alt int in this case:
+            // Creates an F-Shape
+            //   top
+            //    _____ offEnd     <--- Stands on Endpt
+            //   |
+            //   |_____ offStands  <--- Stands on 
+            //   |
+            //   | 
+            //  bottom
+            KeyValuePair<Point, Point> fShapePoints = inter1.CreatesFShape(inter2);
+            if (fShapePoints.Key != null && fShapePoints.Value != null) return newGrounded;
+
+            // Creates an S-Shape
+            //
+            //         |______
+            //         |
+            //   ______|
+            //         |
+            //
+            //   Order of non-collinear points is order of intersections: <this, that>
+            KeyValuePair<Point, Point> standardSShapePoints = inter1.CreatesStandardSShape(inter2);
+            if (standardSShapePoints.Key != null && standardSShapePoints.Value != null)
+            {
+                return GenerateSimpleS(parallel, inter1, standardSShapePoints.Key, inter2, standardSShapePoints.Value);
+            }
+
             // Alt. Int if an H-Shape
             //
             // |     |

@@ -225,13 +225,15 @@ namespace GeometryTutorLib.ConcreteAST
         //   Order of non-collinear points is order of intersections: <this, that>
         public KeyValuePair<Point, Point> CreatesPIShape(Intersection thatInter)
         {
+            KeyValuePair<Point, Point> nullPair = new KeyValuePair<Point, Point>(null, null);
+
             // A valid transversal is required for this shape
-            if (!this.CreatesAValidTransversalWith(thatInter)) return new KeyValuePair<Point, Point>(null, null);
+            if (!this.CreatesAValidTransversalWith(thatInter)) return nullPair;
 
             Point thisNonCollinear = this.CreatesTShape();
             Point thatNonCollinear = thatInter.CreatesTShape();
 
-            if (thisNonCollinear == null || thatNonCollinear == null) return new KeyValuePair<Point,Point>(null, null);
+            if (thisNonCollinear == null || thatNonCollinear == null) return nullPair;
 
             //
             // Verify that the shape is PI and not an S-shape; look for the intersection point NOT between the endpoints of the transversal 
@@ -241,7 +243,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point intersection = transversal.FindIntersection(new Segment(thisNonCollinear, thatNonCollinear));
 
             // S-shape
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return new KeyValuePair<Point, Point>(null, null);
+            if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // PI-Shape
             return new KeyValuePair<Point, Point>(thisNonCollinear, thatNonCollinear);            
@@ -1008,7 +1010,18 @@ namespace GeometryTutorLib.ConcreteAST
             if (intersect.Equals(thatInter.intersect)) return null;
 
             Segment common = CommonSegment(thatInter);
-            return common != null ? new Segment(this.intersect, thatInter.intersect) : common;
+            if (common == null) return null;
+
+            // A legitimate transversal must belong to both intersections (is a subsegment of one of the lines)
+            Segment transversal = new Segment(this.intersect, thatInter.intersect);
+
+            Segment thisTransversal = this.GetCollinearSegment(transversal);
+            Segment thatTransversal = thatInter.GetCollinearSegment(transversal);
+
+            if (!thisTransversal.HasSubSegment(transversal)) return null;
+            if (!thatTransversal.HasSubSegment(transversal)) return null;
+
+            return transversal;
         }
 
         public override bool StructurallyEquals(Object obj)

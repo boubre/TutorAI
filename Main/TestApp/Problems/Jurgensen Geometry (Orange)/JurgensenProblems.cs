@@ -13,12 +13,13 @@ namespace Geometry_Testbed
             List<ActualProblem> problems = new List<ActualProblem>();
 
             // Transversals
+            //problems.Add(new Page23Theorem11());
             //problems.Add(new Page32ClassroomProblem11To14());
 
             // Parallel
             //problems.Add(new Page60Theorem22());
             //problems.Add(new Page60Theorem22Extended());
-            //problems.Add(new Page62Problems1To6());
+            // PROBLEM WITH BACKWARD problems.Add(new Page62Problems1To6());
 
             // Congruent Triangles
             //problems.Add(new Page113Problem7());
@@ -27,16 +28,12 @@ namespace Geometry_Testbed
             //problems.Add(new Page134Problem7());
             //problems.Add(new Page135Problem21());
             //problems.Add(new Page144ClassroomExercise01());
+            //problems.Add(new Page144ClassroomExercise02());
             //problems.Add(new Page144ClassroomExercise03());
-
-            // Right angle hyperedge cycle issue problems.Add(new Page144ClassroomExercise04());
-
-            // Triangle Proportionality with Parallelism PROBLEM problems.Add(new Page144ClassroomExercise02());
-            // Triangle Proportionality with Parallelism PROBLEM problems.Add(new Page144Problem01());
-
-            // Right angle hyperedge cycle issue problems.Add(new Page144Problem02());
-            // Right angle hyperedge cycle issue problems.Add(new Page145Problem03());
-
+            //problems.Add(new Page144ClassroomExercise04());
+            //problems.Add(new Page144Problem01());
+            //problems.Add(new Page144Problem02());
+            //problems.Add(new Page145Problem03());
             //problems.Add(new Page145Problem04());
             //problems.Add(new Page145Problem07());
             //problems.Add(new Page145Problem08());
@@ -58,6 +55,13 @@ namespace Geometry_Testbed
             //problems.Add(new Page175ClassroomExercise03to06());
             //problems.Add(new Page175ClassroomExercise07to12());
             //problems.Add(new Page175WrittenExercise1to4());
+
+            //problems.Add(new Page223Problem22());
+            //problems.Add(new Page223Problem23());
+            //problems.Add(new Page223Problem24());
+            //problems.Add(new Page223Problem25());
+            //problems.Add(new Page223Problem26());
+            //problems.Add(new Page223Problem27());
 
             return problems;
         }

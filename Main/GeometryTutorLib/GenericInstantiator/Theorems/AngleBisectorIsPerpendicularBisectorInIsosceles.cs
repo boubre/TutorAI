@@ -138,7 +138,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // PerpendicularBisector(M, Segment(M, C), Segment(A, B))
             //
-            PerpendicularBisector perpB = new PerpendicularBisector(inter, NAME);
+            PerpendicularBisector perpB = new PerpendicularBisector(inter, ab.bisector, NAME);
             Strengthened s = new Strengthened(inter, perpB, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, s));
 
