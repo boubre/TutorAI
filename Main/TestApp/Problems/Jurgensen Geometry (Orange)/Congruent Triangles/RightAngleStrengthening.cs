@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class RightAngleStrengthening : CongruentTrianglesProblem
     {
-        public RightAngleStrengthening() : base()
+        public RightAngleStrengthening(bool onoff)
+            : base(onoff)
         {
             Point a = new Point("A", 0, 0); intrinsic.Add(a);
             Point b = new Point("B", 0, 4); intrinsic.Add(b);

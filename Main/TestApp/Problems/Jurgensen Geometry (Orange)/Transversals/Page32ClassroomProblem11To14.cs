@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class Page32ClassroomProblem11To14 : TransversalsProblem
     {
-        public Page32ClassroomProblem11To14() : base()
+        public Page32ClassroomProblem11To14(bool onoff)
+            : base(onoff)
         {
             problemName = "Page 32 Classroom Problems 11-14";
             numberOfOriginalTextProblems = 4;

@@ -46,6 +46,9 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 CongruentAngles conAngles = c as CongruentAngles;
 
+                // We are interested in adjacent angles, not reflexive
+                if (conAngles.IsReflexive()) return newGrounded;
+
                 // Any candidates congruent angles need to be adjacent to each other.
                 if (conAngles.AreAdjacent() == null) return newGrounded;
 

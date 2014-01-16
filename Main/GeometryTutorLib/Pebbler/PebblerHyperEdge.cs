@@ -19,14 +19,14 @@ namespace GeometryTutorLib.Pebbler
         public PebblerColorType pebbleColor;
 
         // Number of false atoms in a clause; in this case, init to number of source nodes
-        public int numNegArgs;
+        //public int numNegArgs;
 
         public PebblerHyperEdge(List<int> src, int target)
         {
             sourceNodes = src;
             sourcePebbles = new List<int>(); // If empty, we assume all false (not pebbled)
             targetNode = target;
-            numNegArgs = src.Count;
+            //numNegArgs = src.Count;
             pebbleColor = PebblerColorType.NO_PEBBLE;
         }
 

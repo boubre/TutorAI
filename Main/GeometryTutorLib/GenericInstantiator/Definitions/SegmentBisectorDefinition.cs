@@ -96,6 +96,12 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Intersection inter = c as Intersection;
 
+                //    /
+                //   /
+                //  /____
+                // If we have a corner situation, we are not interested
+                if (inter.StandsOnEndpoint()) return newGrounded;
+
                 foreach (CongruentSegments cs in candidateCongruent)
                 {
                     newGrounded.AddRange(InstantiateToDef(cs.cs1.SharedVertex(cs.cs2), inter, cs));
@@ -110,32 +116,38 @@ namespace GeometryTutorLib.GenericInstantiator
 
         //
         // Take the angle congruence and bisector and create the AngleBisector relation
+        //              \
+        //               \
+        //     B ---------V---------A
+        //                 \
+        //                  \
+        //                   C
         //
         private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(Point intersectionPoint, Intersection inter, CongruentSegments cs)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (inter.StandsOnEndpoint()) return newGrounded;
-            if (!inter.StandsOn()) return newGrounded;
+            // Does the given point of intersection apply to this actual intersection object
+            if (!intersectionPoint.Equals(inter.intersect)) return newGrounded;
 
-            // A segment bisector creates a T-shape
-            Point off = inter.CreatesTShape();
-            if (off == null) return newGrounded;
-
+            // The entire segment AB
             Segment overallSegment = new Segment(cs.cs1.OtherPoint(intersectionPoint), cs.cs2.OtherPoint(intersectionPoint));
 
             // The segment must align completely with one of the intersection segments
             Segment interCollinearSegment = inter.GetCollinearSegment(overallSegment);
             if (interCollinearSegment == null) return newGrounded;
 
-            // Using picture, does BA exist in the intersection with point V?
-            if (!inter.HasSegment(overallSegment) || !inter.intersect.Equals(intersectionPoint)) return newGrounded;
+            // Does this intersection have the entire segment AB
+            if (!inter.HasSegment(overallSegment)) return newGrounded;
 
             Segment bisector = inter.OtherSegment(overallSegment);
-            Segment thisSegment = inter.GetCollinearSegment(overallSegment);
-            if (!thisSegment.StructurallyEquals(overallSegment))
+            Segment bisectedSegment = inter.GetCollinearSegment(overallSegment);
+
+            // Check if the bisected segment extends is the exact same segment as the overall segment AB
+            if (!bisectedSegment.StructurallyEquals(overallSegment))
             {
-                if (overallSegment.PointIsOnAndBetweenEndpoints(thisSegment.Point1) && overallSegment.PointIsOnAndBetweenEndpoints(thisSegment.Point2)) return newGrounded;
+                if (overallSegment.PointIsOnAndBetweenEndpoints(bisectedSegment.Point1) &&
+                    overallSegment.PointIsOnAndBetweenEndpoints(bisectedSegment.Point2)) return newGrounded;
             }
 
             SegmentBisector newSB = new SegmentBisector(inter, bisector, NAME);

@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class Page23Theorem11 : TransversalsProblem
     {
-        public Page23Theorem11() : base()
+        public Page23Theorem11(bool onoff)
+            : base(onoff)
         {
             Point a = new Point("A", -3, 0);   intrinsic.Add(a);
             Point m = new Point("M", 0, 0);  intrinsic.Add(m);

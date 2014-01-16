@@ -19,8 +19,7 @@ namespace GeometryTutorLib.ConcreteAST
         public KeyValuePair<Angle, Angle> GetBisectedAngles()
         {
             Point vertex = angle.GetVertex();
-
-            Point interiorPt = bisector.GetInteriorAnglePoint(angle);
+            Point interiorPt = angle.IsOnInteriorExplicitly(bisector.Point1) ? bisector.Point1 : bisector.Point2;
             Point exterioirPt1 = angle.ray1.OtherPoint(vertex);
             Point exterioirPt2 = angle.ray2.OtherPoint(vertex);
 

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using GeometryTutorLib.ConcreteAST;
 using GeometryTutorLib.Hypergraph;
+using System.Diagnostics;
 
 namespace GeometryTutorLib.ProblemAnalyzer
 {
@@ -18,39 +20,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
             graph = g;
             pebblerGraph = pebblerG;
             pathGenerator = generator;
-        }
-
-        //
-        // Acquire the index of the clause in the hypergraph based only on structure
-        //
-        private int StructuralIndex(GroundedClause g)
-        {
-            //
-            // Handle general case
-            //
-            List<HyperNode<GroundedClause, int>> vertices = graph.vertices;
-
-            for (int v = 0; v < vertices.Count; v++)
-            {
-                if (vertices[v].data.StructurallyEquals(g)) return v;
-
-                if (vertices[v].data is Strengthened)
-                {
-                    if ((vertices[v].data as Strengthened).strengthened.StructurallyEquals(g)) return v;
-                }
-            }
-
-            //
-            // Handle strengthening by seeing if the clause is found without a 'strengthening' component
-            //
-            Strengthened streng = g as Strengthened;
-            if (streng != null)
-            {
-                int index = StructuralIndex(streng.strengthened);
-                if (index != -1) return index;
-            }
-
-            return -1;
         }
 
         //
@@ -73,7 +42,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
-            return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
+            return new KeyValuePair<List<Problem>, List<Problem>>(FilterForMinimalAndRedundantProblems(forwardProblems),
+                                                                  FilterForMinimalAndRedundantProblems(backwardProblems));
         }
 
         //
@@ -85,7 +55,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             List<Problem> backwardProblems = new List<Problem>();
 
             // Find the integer clause ID representation in the standard hypergraph
-            int nodeIndex = StructuralIndex(clause);
+            int nodeIndex = Utilities.StructuralIndex(graph, clause);
 
             if (nodeIndex == -1)
             {
@@ -107,7 +77,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             if (pebblerGraph.IsNodePebbledForward(nodeIndex))
             {
                 if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
-                forwardProblems = pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(pebblerGraph, nodeIndex);  
+                forwardProblems = pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(pebblerGraph, nodeIndex);
             }
 
             //
@@ -116,10 +86,82 @@ namespace GeometryTutorLib.ProblemAnalyzer
             if (pebblerGraph.IsNodePebbledBackward(nodeIndex))
             {
                 if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Backward");
-                backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
+                //backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
             }
 
             return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
+        }
+
+        public List<Problem> FilterForMinimalAndRedundantProblems(List<Problem> problems)
+        {
+            List<Problem> filtered = new List<Problem>();
+
+            // It is possible for no problems to be generated
+            if (!problems.Any()) return problems;
+
+            // For each problem, break the givens into actual vs. suppressed given information
+            problems.ForEach(problem => problem.DetermineSuppressedGivens(graph));
+
+            //
+            // Filter the problems based on same set of source nodes and goal node
+            //   All of these problems have exactly the same goal node.
+            //   Now, if we have multiple problems with the exact same (non-suppressed) source nodes, choose the one with shortest path.
+            //
+            bool[] marked = new bool[problems.Count];
+            for (int p1 = 0; p1 < problems.Count - 1; p1++)
+            {
+                // We may have marked this earlier
+                if (!marked[p1])
+                {
+                    // Save the minimal problem
+                    Problem minimalProblem = problems[p1];
+                    for (int p2 = p1 + 1; p2 < problems.Count; p2++)
+                    {
+                        // If we have not yet compared to a problem
+                        if (!marked[p2])
+                        {
+                            // Both problems need the same goal node
+                            if (minimalProblem.goal == problems[p2].goal)
+                            {
+                                // Check if the givens from the minimal problem and this candidate problem equate exactly
+                                if (Utilities.EqualSets<int>(minimalProblem.givens, problems[p2].givens))
+                                {
+                                    // We have now analyzed this problem
+                                    marked[p2] = true;
+
+                                    // Choose the shorter problem (fewer edges wins)
+                                    if (problems[p2].edges.Count < minimalProblem.edges.Count)
+                                    {
+                                        Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
+                                        minimalProblem = problems[p2];
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Add the minimal problem to the list to be returned
+                    filtered.Add(minimalProblem);
+                }
+            }
+
+            // Pick up last problem in the list
+            if (!marked[problems.Count - 1]) filtered.Add(problems[problems.Count - 1]);
+
+            if (problems.Count != filtered.Count)
+            {
+                Debug.WriteLine("Outer Filtered: " + (problems.Count - filtered.Count) + " = " + problems.Count + " - " + filtered.Count + " generated problems.");
+            }
+
+            if (problems.Count < filtered.Count)
+            {
+                Debug.WriteLine("Outer Filtered list is larger than original list!");
+            }
+
+            return filtered;
         }
     }
 }

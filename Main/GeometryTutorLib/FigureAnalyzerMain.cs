@@ -22,21 +22,23 @@ namespace GeometryTutorLib
         private GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator = null;
         private ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
         private ProblemAnalyzer.QueryFeatureVector queryVector;
-        private ProblemAnalyzer.ProblemGroupingStructure problemSpacePartitions;
+        private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
+        private List<ConcreteAST.GroundedClause> goals;
 
-        public FigureAnalyzerMain(List<ConcreteAST.GroundedClause> f, List<ConcreteAST.GroundedClause> g)
+        public FigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs, List<ConcreteAST.GroundedClause> gls)
         {
-            figure = f;
-            givens = g;
+            this.figure = fs;
+            this.givens = gs;
+            this.goals = gls;
 
             // Create the precomputer object for coordinate-based pre-comutation analysis
             precomputer = new Precomputer.CoordinatePrecomputer(figure);
             instantiator = new GenericInstantiator.Instantiator();
-            queryVector = new ProblemAnalyzer.QueryFeatureVector();
+            queryVector = new ProblemAnalyzer.QueryFeatureVector(givens.Count);
         }
 
-        // Returns the number of interesting problems
-        public int AnalyzeFigure()
+        // Returns: <number of interesting problems, number of original problems generated>
+        public KeyValuePair<int, int> AnalyzeFigure()
         {
             // Precompute all coordinate-based interesting relations (problem goal nodes)
             // These become the basis for the template-based problem generation (these are the goals)
@@ -54,8 +56,6 @@ namespace GeometryTutorLib
             // Pebble that hypergraph
             Pebble();
 
-            if (Utilities.DEBUG) pebblerGraph.DebugDumpClauses();
-
             // Analyze paths in the hypergraph to generate the pair of <forward problems, backward problems> (precomputed nodes are goals)
             KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> problems = GenerateTemplateProblems();
 
@@ -65,26 +65,28 @@ namespace GeometryTutorLib
             candidateProbs.AddRange(problems.Value);
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
-            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
-            //List<ProblemAnalyzer.Problem> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
-
-            //if (Utilities.DEBUG)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Interesting Problems (" + interestingProblems.Count + "):");
-            //    foreach (ProblemAnalyzer.Problem interesting in interestingProblems)
-            //    {
-            //        System.Diagnostics.Debug.WriteLine(interesting);
-            //    }
-            //}
+            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, queryVector);
+            List<ProblemAnalyzer.Problem> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
 
             // Partition the problem-space based on the query vector defined (by us or the user)
-            problemSpacePartitions = new ProblemAnalyzer.ProblemGroupingStructure(graph);
-            problemSpacePartitions.ConstructPartitions(problems.Key, queryVector);
-            problemSpacePartitions.ConstructPartitions(problems.Value, queryVector);
+            problemSpacePartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph);
+            problemSpacePartitions.ConstructPartitions(interestingProblems, queryVector);
+
+            // Validate that we have generated all of the original problems from the text.
+            List<ProblemAnalyzer.Problem> generatedBookProblems = problemSpacePartitions.ValidateOriginalProblems(givens, goals);
 
             if (Utilities.DEBUG) problemSpacePartitions.DumpPartitions(queryVector);
 
-            return 0; //  interestingProblems.Count;
+            if (Utilities.DEBUG)
+            {
+                Debug.WriteLine("All " + generatedBookProblems.Count + " Book-specified problems: ");
+                foreach (ProblemAnalyzer.Problem bookProb in generatedBookProblems)
+                {
+                    Debug.WriteLine(bookProb.ConstructProblemAndSolution(graph));
+                }
+            }
+
+            return new KeyValuePair<int,int>(interestingProblems.Count, generatedBookProblems.Count);
         }
 
         //
@@ -185,7 +187,7 @@ namespace GeometryTutorLib
             // Perform pebbling based on the <figure, given> pair.
             pebblerGraph.Pebble(intrinsicSet, givenSet);
 
-            if (Utilities.DEBUG)
+            if (Utilities.PEBBLING_DEBUG)
             {
                 Debug.WriteLine("Forward Vertices after pebbling:");
                 for (int i = 0; i < pebblerGraph.vertices.Length; i++)
@@ -200,6 +202,8 @@ namespace GeometryTutorLib
                     strLocal.Append(")");
                     Debug.WriteLine(strLocal.ToString());
                 }
+
+                pebblerGraph.DebugDumpClauses();
             }
         }
 

@@ -44,10 +44,13 @@ namespace Geometry_Testbed
             int problemCount = 0;
             foreach (ActualProblem problem in problems)
             {
-                problem.Run();
+                if (problem.problemIsOn) // We may turn problems on / off: check on
+                {
+                    problem.Run();
 
-                Debug.Write(++problemCount + "\t\t");
-                Debug.Write(problem.ToString() + "\n");
+                    Debug.Write(++problemCount + "\t\t");
+                    Debug.Write(problem.ToString() + "\n");
+                }
             }
 
             DumpAggregateTotals(problemCount);

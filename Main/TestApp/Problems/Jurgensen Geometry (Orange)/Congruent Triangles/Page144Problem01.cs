@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class Page144Problem01 : CongruentTrianglesProblem
     {
-        public Page144Problem01() : base()
+        public Page144Problem01(bool onoff)
+            : base(onoff)
         {
             Point n = new Point("N", 0, 0); intrinsic.Add(n);
             Point r = new Point("R", 1, 4); intrinsic.Add(r);

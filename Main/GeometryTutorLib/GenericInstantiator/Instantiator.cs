@@ -22,61 +22,7 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
-        // Add all new deduced clauses to the worklist if they have not been deduced before.
-        // If the given clause has been deduced before, update the hyperedges that were generated previously
-        //
-        // Forward Instantiation does not permit any cycles in the resultant graph. We may deduce 
-        //
-        private void HandleDeducedClauses(List<GroundedClause> worklist,
-                                          List<KeyValuePair<List<GroundedClause>, GroundedClause>> newVals)
-        {
-            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> newEdge in newVals)
-            {
-//Debug.WriteLine(newEdge.Value.clauseId + "(" + graph.Size() + ")" + ": " + newEdge.Value);
-
-                GroundedClause graphNode = graph.GetNode(newEdge.Value);
-
-                //
-                // If the node is not in the graph already?
-                //
-                if (graphNode == null)
-                {
-                    // This node is not in the graph so add it; this should succeed
-                    if (graph.AddNode(newEdge.Value))
-                    {
-                        newEdge.Value.SetID(graph.Size());
-                    }
-
-                    // Also add to the worklist
-                    worklist.Add(newEdge.Value);
-
-                    AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
-                }
-
-                //
-                // If the node is in the graph.
-                //
-                else
-                {
-                    AddForwardEdge(newEdge.Key, graphNode, 0); // 0: Annotation to be handled later
-                }
-            }
-        }
-
-        private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, int annotation)
-        {
-            // Add the hyperedge to the hypergraph
-            graph.AddForwardEdge(antecedent, consequent, annotation); // 0: Annotation to be handled later
-
-            // Create the linkage between the antecedent and consequent for coverage
-            foreach (GroundedClause ante in antecedent)
-            {
-                consequent.AddComponentList(ante.figureComponents);
-            }
-        }
-
-        //
-        // Main instantiation function for all figures stated in the given list
+        // Main instantiation function for all figures stated in the given list; worklist technique to construct the graph
         //
         public Hypergraph<GroundedClause, int> Instantiate(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
         {
@@ -91,6 +37,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Indicate all figure-based information is intrinsic; this needs to verified with the UI
             figure.ForEach(f => f.MakeIntrinsic());
 
+            // Calculates Coverage of the figure
             HandleAllFigureIntrinsicFacts(figure);
 
             HandleAllGivens(figure, givens);
@@ -104,13 +51,16 @@ namespace GeometryTutorLib.GenericInstantiator
                 GroundedClause clause = worklist[0];
                 worklist.RemoveAt(0);
 
-                if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
+                if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.ToString());
 
                 //
                 // Apply the clause to all applicable instantiators
                 //
                 if (clause is Angle)
                 {
+                    // A list of all problem angles
+                    Angle.Record(clause);
+
                     if (clause is RightAngle) HandleDeducedClauses(worklist, RightAngle.Instantiate(clause));
 
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
@@ -126,7 +76,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     HandleDeducedClauses(worklist, Segment.Instantiate(clause));
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
-                    // HandleDeducedClauses(worklist, AngleBisector.Instantiate(clause));
+                    HandleDeducedClauses(worklist, AngleBisectorDefinition.Instantiate(clause));
                 }
                 else if (clause is InMiddle)
                 {
@@ -140,14 +90,15 @@ namespace GeometryTutorLib.GenericInstantiator
                     }
                     else if (clause is Perpendicular)
                     {
+                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, PerpendicularImplyCongruentAdjacentAngles.Instantiate(clause));
                         HandleDeducedClauses(worklist, AdjacentAnglesPerpendicularImplyComplementary.Instantiate(clause));
-                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     }
                     else
                     {
+                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, VerticalAnglesTheorem.Instantiate(clause));
                         HandleDeducedClauses(worklist, AltIntCongruentAnglesImplyParallel.Instantiate(clause));
                         HandleDeducedClauses(worklist, SameSideSuppleAnglesImplyParallel.Instantiate(clause));
@@ -157,7 +108,6 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, CongruentCorrespondingAnglesImplyParallel.Instantiate(clause));
                         HandleDeducedClauses(worklist, CongruentAdjacentAnglesImplyPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, AngleBisectorIsPerpendicularBisectorInIsosceles.Instantiate(clause));
-                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, ParallelImplyAltIntCongruentAngles.Instantiate(clause));
                         HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
@@ -252,6 +202,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, CongruentCorrespondingAnglesImplyParallel.Instantiate(clause));
                     HandleDeducedClauses(worklist, CongruentAdjacentAnglesImplyPerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, RelationsOfCongruentAnglesAreCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, AngleBisectorDefinition.Instantiate(clause));
                 }
                 else if (clause is CongruentSegments)
                 {
@@ -331,6 +282,61 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             return graph;
+        }
+
+        //
+        // Add all new deduced clauses to the worklist if they have not been deduced before.
+        // If the given clause has been deduced before, update the hyperedges that were generated previously
+        //
+        // Forward Instantiation does not permit any cycles in the resultant graph. We may deduce 
+        //
+        private void HandleDeducedClauses(List<GroundedClause> worklist,
+                                          List<KeyValuePair<List<GroundedClause>, GroundedClause>> newVals)
+        {
+            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> newEdge in newVals)
+            {
+                //Debug.WriteLine(newEdge.Value.clauseId + "(" + graph.Size() + ")" + ": " + newEdge.Value);
+
+                GroundedClause graphNode = graph.GetNode(newEdge.Value);
+
+                //
+                // If the node is not in the graph already?
+                //
+                if (graphNode == null)
+                {
+                    // This node is not in the graph so add it; this should succeed
+                    if (graph.AddNode(newEdge.Value))
+                    {
+                        newEdge.Value.SetID(graph.Size());
+                    }
+
+                    // Also add to the worklist
+                    worklist.Add(newEdge.Value);
+
+                    AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
+                }
+
+                //
+                // If the node is in the graph.
+                //
+                else
+                {
+                    AddForwardEdge(newEdge.Key, graphNode, 0); // 0: Annotation to be handled later
+                }
+            }
+        }
+
+        private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, int annotation)
+        {
+            // Add the hyperedge to the hypergraph
+            graph.AddForwardEdge(antecedent, consequent, annotation); // 0: Annotation to be handled later
+
+            // Create the linkage between the antecedent and consequent for coverage
+            foreach (GroundedClause ante in antecedent)
+            {
+                consequent.AddComponent(ante.clauseId);
+                consequent.AddComponentList(ante.figureComponents);
+            }
         }
 
         //
@@ -435,6 +441,8 @@ namespace GeometryTutorLib.GenericInstantiator
             IsoscelesTriangleDefinition.Clear();
             RightTriangleDefinition.Clear();
             SegmentBisectorDefinition.Clear();
+            MedianDefinition.Clear();
+            AltitudeDefinition.Clear();
 
             //
             // Theorems

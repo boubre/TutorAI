@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class Page134Problem7 : CongruentTrianglesProblem
     {
-        public Page134Problem7() : base()
+        public Page134Problem7(bool onoff)
+            : base(onoff)
         {
             Point s = new Point("S", 1, 4); intrinsic.Add(s);
             Point t = new Point("T", 5, 4); intrinsic.Add(t);
@@ -44,6 +45,9 @@ namespace Geometry_Testbed
 
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, s)),
                                                      GetProblemSegment(intrinsic, new Segment(a, t)), "Given"));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(t, s, a)),
+                                                   GetProblemAngle(intrinsic, new Angle(s, t, r)), "GOAL"));
         }
     }
 }

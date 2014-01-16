@@ -4,14 +4,18 @@ using System.Collections.Generic;
 namespace Geometry_Testbed
 {
     //
-    // Geometry; Page 62 Problems 1-6
+    // Geometry; Page 62 Problem 2
     //
     // Parallel Transversals
     //
-    public class Page62Problems1To6 : ParallelLinesProblem
+    public class Page62Problem2 : ParallelLinesProblem
     {
-        public Page62Problems1To6() : base()
+        public Page62Problem2(bool onoff)
+            : base(onoff)
         {
+            problemName = "Page 62 Problem 2";
+            numberOfOriginalTextProblems = 1;
+
             Point a = new Point("A", -1, 3); intrinsic.Add(a);
             Point b = new Point("B", 4, 3);  intrinsic.Add(b);
             Point c = new Point("C", 0, 0);  intrinsic.Add(c);
@@ -61,7 +65,6 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
             given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(b, d)), "Given"));
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public abstract class TransversalsProblem : ActualProblem
     {
-        public TransversalsProblem() : base() {}
+        public TransversalsProblem(bool onoff) : base(onoff) { }
     }
 }

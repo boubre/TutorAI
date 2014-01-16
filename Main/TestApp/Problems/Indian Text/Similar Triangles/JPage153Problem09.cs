@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class JPage153Problem09 : SimilarTrianglesProblem
     {
-        public JPage153Problem09() : base()
+        public JPage153Problem09(bool onoff)
+            : base(onoff)
         {
             problemName = "Book J Page 153 Problem 9";
             numberOfOriginalTextProblems = 1;

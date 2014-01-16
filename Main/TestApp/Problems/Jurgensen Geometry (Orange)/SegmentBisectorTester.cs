@@ -8,8 +8,7 @@ namespace Geometry_Testbed
     //
     public class SegmentBisectorTester: TransversalsProblem
     {
-        public SegmentBisectorTester()
-            : base()
+        public SegmentBisectorTester(bool onoff) : base(onoff)
         {
             Point a = new Point("A", -3, 0);   intrinsic.Add(a);
             Point m = new Point("M", 0, 0);  intrinsic.Add(m);

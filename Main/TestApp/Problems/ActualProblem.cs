@@ -8,6 +8,7 @@ namespace Geometry_Testbed
         public static System.TimeSpan TotalTime = new System.TimeSpan();
         public static int TotalInterestingProblems = 0;
         public static int TotalOriginalBookProblems = 0;
+        public static int TotalOriginalBookProblemsGenerated = 0;
 
         // Hard-coded intrinsic problem characteristics
         protected List<GroundedClause> intrinsic;
@@ -15,9 +16,14 @@ namespace Geometry_Testbed
         // Boolean facts
         protected List<GroundedClause> given;
 
+        // Boolean the book problem is attempting to prove; use in validation of figures / generated problems
+        // One <figure, given> pair may contain multiple goals
+        protected List<GroundedClause> goals;
+
         // The number of original problems for the figure in the textbook
         protected int numberOfOriginalTextProblems;
-        private int numberOfInterestingGeneratedProblems;
+        protected int numberOfOriginalTextProblemsGenerated;
+        private int numberOfInterestingProblems;
 
         // Formatted Labeling of the Problem
         protected string problemName;
@@ -26,7 +32,9 @@ namespace Geometry_Testbed
         private System.TimeSpan timeSpanToGenerate;
         private System.Diagnostics.Stopwatch stopwatch;
 
-        public ActualProblem()
+        public bool problemIsOn { get; private set; }
+
+        public ActualProblem(bool runOrNot)
         {
             intrinsic = new List<GroundedClause>();
             given = new List<GroundedClause>();
@@ -34,28 +42,37 @@ namespace Geometry_Testbed
 
             // Default to only 1 original problem from the text
             numberOfOriginalTextProblems = 1;
+            numberOfOriginalTextProblemsGenerated = 0;
+            numberOfInterestingProblems = 0;
 
-            numberOfInterestingGeneratedProblems = -1;
             problemName = "TODO: NAME ME" + this.GetType();
+
+            problemIsOn = runOrNot;
+
+            goals = new List<GroundedClause>();
         }
 
         public void Run()
         {
             // Create the analyzer
-            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(intrinsic, given);
+            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(intrinsic, given, goals);
 
             // Perform and time the analysis
             stopwatch.Start();
-            numberOfInterestingGeneratedProblems = analyzer.AnalyzeFigure();
+            KeyValuePair<int, int> returnPair = analyzer.AnalyzeFigure();
             stopwatch.Stop();
+
+            numberOfInterestingProblems = returnPair.Key;
+            numberOfOriginalTextProblemsGenerated = returnPair.Value;
 
             // How long did problem generation take?
             timeSpanToGenerate = stopwatch.Elapsed;
 
             // Add to the cumulative statistics
             ActualProblem.AddToTotalTime(stopwatch);
-            ActualProblem.TotalInterestingProblems += numberOfInterestingGeneratedProblems;
+            ActualProblem.TotalInterestingProblems += numberOfInterestingProblems;
             ActualProblem.TotalOriginalBookProblems += numberOfOriginalTextProblems;
+            ActualProblem.TotalOriginalBookProblemsGenerated += numberOfOriginalTextProblemsGenerated;
         }
 
         private static void AddToTotalTime(System.Diagnostics.Stopwatch stopwatch)
@@ -69,15 +86,19 @@ namespace Geometry_Testbed
 
             statsString += this.problemName;
             int sizeSpace = this.problemName.Length;
-            while (sizeSpace <= 34)
+            if (sizeSpace > 34) statsString += "\t";
+            else
             {
-               statsString += "\t";
-               sizeSpace += 4;
+                while (sizeSpace <= 34)
+                {
+                    statsString += "\t";
+                    sizeSpace += 4;
+                }
             }
 
-            statsString += this.numberOfOriginalTextProblems + "\t\t\t\t\t";
-            statsString += this.numberOfInterestingGeneratedProblems + "\t\t\t\t\t\t\t";
-            string ratio = string.Format("{0:F2}", ((double)(this.numberOfInterestingGeneratedProblems) / this.numberOfOriginalTextProblems));
+            statsString += this.numberOfOriginalTextProblems + "(" + numberOfOriginalTextProblemsGenerated + ")\t\t\t\t";
+            statsString += this.numberOfInterestingProblems + "\t\t\t\t\t\t\t";
+            string ratio = string.Format("{0:F2}", ((double)(this.numberOfInterestingProblems) / this.numberOfOriginalTextProblems));
             statsString += ratio + "\t\t\t\t\t\t\t\t";
 
             // Format and display the elapsed time for this problem
@@ -134,8 +155,8 @@ namespace Geometry_Testbed
             List<Intersection> newIntersections = GenerateIntersectionClauses(newTriangles, segments, points);
             List<Angle> newAngles = GenerateAngleClauses(newIntersections);
 
-            newClauses.AddRange(newIntersections);
             newClauses.AddRange(newAngles);
+            newClauses.AddRange(newIntersections);
             newClauses.AddRange(newTriangles);
 
             return newClauses;
@@ -172,7 +193,10 @@ namespace Geometry_Testbed
                                         // Construct the triangle based on the sides to ensure reflexivity clauses are generated
 
                                         newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
-                                        System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
+                                        if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
+                                        {
+                                            System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
+                                        }
                                         break;
                                     }
                                 }
@@ -264,7 +288,7 @@ namespace Geometry_Testbed
                 }
             }
 
-            if (GeometryTutorLib.Utilities.DEBUG)
+            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
             {
                 foreach (Intersection inter in newIntersections)
                 {

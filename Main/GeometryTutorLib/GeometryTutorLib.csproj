@@ -186,8 +186,8 @@
     <Compile Include="ProblemAnalyzer\TemplateProblemGenerator.cs" />
     <Compile Include="ProblemAnalyzer\GeneratorHashtable.cs" />
     <Compile Include="ProblemAnalyzer\QueryFeatureVector.cs" />
-    <Compile Include="ProblemAnalyzer\ProblemGroupingStructure.cs" />
-    <Compile Include="ProblemAnalyzer\ProblemPartition.cs" />
+    <Compile Include="ProblemAnalyzer\PartitionedProblemSpace.cs" />
+    <Compile Include="ProblemAnalyzer\ProblemEquivalenceClass.cs" />
     <Compile Include="ProblemAnalyzer\PathHashMap.cs" />
     <Compile Include="ProblemAnalyzer\Path.cs" />
     <Compile Include="ProblemAnalyzer\PathGenerator.cs" />

@@ -10,15 +10,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
 {
     public class PathGenerator
     {
-        // Matrix to indicate if, from a node, we can reach another node.
-        //private bool[,] reachable;
-        //private SharedPebbledNodeList sharedEdgeList;
-        //private List<PebblerHyperEdge> edges;
-
-        //private GeneratorHashtable forwardProblems;
-        //private PathHashMap forwardPathHashMap;
-        //public List<Problem> GetProblems() { return problems.GetProblems(); }
-
         // The original graph in order to have information about node types; right now just axiomatic
         Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
         private readonly int GRAPH_DIAMETER;
@@ -26,13 +17,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             graph = g;
             GRAPH_DIAMETER = g.vertices.Count;
-            
-            //forwardProblems = new GeneratorHashtable(50);
-            //forwardPathHashMap = new PathHashMap(graph.Size());
-            
-            //reachable = new bool[n, n];
-            //edges = new List<PebblerHyperEdge>();
-            /* sharedEdgeList = sharedData; */
         }
 
         //
@@ -52,27 +36,26 @@ namespace GeometryTutorLib.ProblemAnalyzer
             List <Problem> newProblems = new List<Problem>();
 
             // Acquire all possible edges which lead to the start node
-            List<PebblerHyperEdge> backwardEdges = pebbler.forwardPebbledEdges.GetBasedOnGoal(startNode);
+            List<PebblerHyperEdge> forwardEdges = pebbler.forwardPebbledEdges.GetBasedOnGoal(startNode);
 
             //
             // Is this a direct leaf node?
             //
-            if (backwardEdges == null) return newProblems;
-            if (!backwardEdges.Any()) return newProblems;
+            if (forwardEdges == null) return newProblems;
+            if (!forwardEdges.Any()) return newProblems;
 
             // Spin (recursively) until a fixpoint where we find all leaf nodes
-            foreach (PebblerHyperEdge edge in backwardEdges)
+            foreach (PebblerHyperEdge edge in forwardEdges)
             {
                 // The outgoing edge needs to be a forward edge
                 if (edge.IsEdgePebbledForward())
                 {
-                    // Each distinct edge represents a new Problem (path in the graph); but, it is not an interesting problem
-                    // Problem newEdgeProblem = new Problem(edge.sourceNodes, edge.targetNode);
-                    // An interesting problem, by definition has path length > 0
-                    // newProblems.Add(newEdgeProblem);
-                    Problem copyProblem = new Problem(problem);
-                    copyProblem.CombineWithEdge(edge.sourceNodes, edge.targetNode);
-                    copyProblem.AddEdge(edge);
+                    //
+                    // Combine the new edge with the old problem we are constructing; also seek any other implied deductions
+                    //
+                    Debug.WriteLine("Before: " + problem + "\t" + edge);
+                    Problem copyProblem = problem.CombineProblemWithEdge(pebbler.forwardPebbledEdges, edge);
+                    Debug.WriteLine("After: " + copyProblem);
 
                     //
                     // Avoid any simple cycles

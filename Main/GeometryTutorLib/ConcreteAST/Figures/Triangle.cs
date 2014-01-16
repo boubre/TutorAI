@@ -607,20 +607,20 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         // Determine if the given segment is coinciding with one of the triangle sides; return that 
-        public bool CoincidesWithASide(Segment candidate)
+        public Segment CoincidesWithASide(Segment candidate)
         {
-            if (SegmentA.IsCollinearWith(candidate)) return true;
-            if (SegmentB.IsCollinearWith(candidate)) return true;
-            if (SegmentC.IsCollinearWith(candidate)) return true;
+            if (SegmentA.IsCollinearWith(candidate)) return SegmentA;
+            if (SegmentB.IsCollinearWith(candidate)) return SegmentB;
+            if (SegmentC.IsCollinearWith(candidate)) return SegmentC;
 
-            return false;
+            return null;
         }
 
         // Determine if the given segment is coinciding with one of the triangle sides; return that 
         public Segment DoesParallelCoincideWith(Parallel p)
         {
-            if (CoincidesWithASide(p.segment1)) return p.segment1;
-            if (CoincidesWithASide(p.segment2)) return p.segment2;
+            if (CoincidesWithASide(p.segment1) != null) return p.segment1;
+            if (CoincidesWithASide(p.segment2) != null) return p.segment2;
 
             return null;
         }
@@ -694,26 +694,29 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool CoordinateCongruent(Triangle thatTriangle)
         {
-            bool[] congruent = new bool[3];
+            bool[] marked = new bool[3];
             List<Segment> thisSegments = GetSegments();
             List<Segment> thatSegments = thatTriangle.GetSegments();
 
             for (int thisS = 0; thisS < thisSegments.Count; thisS++)
             {
-                int thatS = 0;
-                for ( ; thatS < thatSegments.Count; thatS++)
+                bool found = false;
+                for (int thatS = 0; thatS < thatSegments.Count; thatS++)
                 {
-                    if (thisSegments[thisS].CoordinateCongruent(thatSegments[thatS]))
+                    if (!marked[thatS])
                     {
-                        congruent[thisS] = true;
-                        break;
+                        if (thisSegments[thisS].CoordinateCongruent(thatSegments[thatS]))
+                        {
+                            marked[thatS] = true;
+                            found = true;
+                            break;
+                        }
                     }
                 }
-
-                if (thatS == thatSegments.Count) return false;
+                if (!found) return false;
             }
 
-            return !congruent.Contains(false);
+            return true;
         }
 
         //
@@ -866,27 +869,6 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Midpoint of the remaining side needs to align
             return midptIntersection.Equals(oppSide.Midpoint());
-
-            //
-            // This commented code finds the direct median if the endpoints are as would be expected.
-            //
-            //Point oppPoint = null;
-            //if (this.HasPoint(thatSegment.Point1))
-            //{
-            //    oppPoint = thatSegment.Point2;
-            //}
-            //else if (this.HasPoint(thatSegment.Point2))
-            //{
-            //    oppPoint = thatSegment.Point1;
-            //}
-
-            //if (oppPoint == null) return false;
-
-            //if (SegmentA.Midpoint().Equals(oppPoint)) return true;
-            //if (SegmentB.Midpoint().Equals(oppPoint)) return true;
-            //if (SegmentC.Midpoint().Equals(oppPoint)) return true;
-
-            //return false;
         }
 
         //
@@ -920,6 +902,16 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             if (otherIntersection == null || oppSide == null) return false;
+
+            // Avoid a dangling altitude:
+            //
+            // |\
+            // | \
+            // |  \
+            //     \
+            // Need to make sure 'this' and the the 'other' intersection is actually on the potential altitude segment
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(thisIntersection)) return false;
+            if (!thatSegment.PointIsOnAndBetweenEndpoints(otherIntersection)) return false;
 
             // We require a perpendicular intersection
             return Utilities.CompareValues((new Angle(thisIntersection, otherIntersection, oppSide.Point1)).measure, 90);

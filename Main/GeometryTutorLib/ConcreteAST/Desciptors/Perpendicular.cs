@@ -18,9 +18,10 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
-            Perpendicular p = obj as Perpendicular;
-            if (p == null) return false;
-            return base.StructurallyEquals(obj);
+            Perpendicular perp = obj as Perpendicular;
+            if (perp == null) return false;
+            return intersect.Equals(perp.intersect) && ((lhs.StructurallyEquals(perp.lhs) && rhs.StructurallyEquals(perp.rhs)) ||
+                                                        (lhs.StructurallyEquals(perp.rhs) && rhs.StructurallyEquals(perp.lhs)));
         }
 
         public override bool Equals(Object obj)

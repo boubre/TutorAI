@@ -42,19 +42,6 @@ namespace GeometryTutorLib.ConcreteAST
             Point2.BuildUnparse(sb, tabDepth + 1);
         }
 
-        //
-        // Which of the two points is on the interioir of the angle
-        //
-        public Point GetInteriorAnglePoint(Angle thatAngle)
-        {
-            // Create two angles for one point on the segment
-            Angle angle1 = new Angle(thatAngle.A, thatAngle.GetVertex(), this.Point1);
-            Angle angle2 = new Angle(thatAngle.A, thatAngle.GetVertex(), this.Point1);
-
-            // If the sum of the angles is greater than 180, the point is on the exterior of the angle
-            return angle1.measure + angle2.measure < 180 ? this.Point1 : this.Point2;
-        }
-
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!

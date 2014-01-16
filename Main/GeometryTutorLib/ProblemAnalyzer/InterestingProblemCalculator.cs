@@ -7,16 +7,23 @@ namespace GeometryTutorLib.ProblemAnalyzer
 {
     public class InterestingProblemCalculator
     {
-        Hypergraph<GroundedClause, int> graph;
-        List<GroundedClause> figure;
-        List<GroundedClause> givens;
+        private readonly bool INTERESTING_DEBUG = false;
 
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> gs)
+        private Hypergraph<GroundedClause, int> graph;
+        private List<GroundedClause> figure;
+        private List<GroundedClause> givens;
+        private QueryFeatureVector queryVector;
+
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> gs, QueryFeatureVector queryVector)
         {
             this.graph = g;
             this.figure = f;
             this.givens = gs;
+            this.queryVector = queryVector;
 
+            //
+            // For intrinsic property-based coverage
+            //
             COVERAGE_WEIGHTS = new double[NUM_INTRINSIC];
             // Sum the factors
             double sum = 0;
@@ -37,12 +44,33 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             foreach (Problem p in problems)
             {
-                if (IsInteresting(p)) interesting.Add(p);
+                //if (IsInteresting(p)) interesting.Add(p);
+                if (IsInterestingWithGivens(p)) interesting.Add(p);
             }
 
             return interesting;
         }
 
+        private bool IsInterestingWithGivens(Problem problem)
+        {
+            // Consider number of givens
+            if (problem.givens.Count > 4 /* queryVector.numberOfOriginalGivens */) return false;
+
+            foreach (GroundedClause gc in givens)
+            {
+                int givenIndex = Utilities.StructuralIndex(graph, gc);
+                if (!problem.givens.Contains(givenIndex))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //
+        // For intrinsic property-based coverage
+        //
         private readonly int POINTS = 0;
         private readonly int SEGMENTS = 1;
         private readonly int ANGLES = 2;
@@ -69,25 +97,50 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         private bool IsInteresting(Problem problem)
         {
-            // If there is no path, we define it as uninteresting
-            if (!problem.path.Any()) return false;
+            if (problem.givens.Count > 4) return false;
+
+            if (ProblemCoversAllFigureGivens(problem)) return true;
+
+            return false;
 
             // Acquire the percentage of the individual components in the figure that are covered
-            double[] problemCoverage = InterestingProblemCoverage(problem);
+            //double[] problemCoverage = InterestingProblemCoverage(problem);
 
-            // Calculate the actual coverage factor
-            double finalCoverageFactor = 0;
-            for (int w = 0; w < NUM_INTRINSIC; w++)
+            //// Calculate the actual coverage factor
+            //double finalCoverageFactor = 0;
+            //for (int w = 0; w < NUM_INTRINSIC; w++)
+            //{
+            //    finalCoverageFactor += COVERAGE_WEIGHTS[w] * problemCoverage[w];
+            //}
+
+            //if (INTERESTING_DEBUG)
+            //{
+            //    System.Diagnostics.Debug.WriteLine("Weighted Coverage Factor: " + finalCoverageFactor);
+            //}
+            //return finalCoverageFactor > MINIMUM_WEIGHTED_COVERAGE_FACTOR ||
+            //       Utilities.CompareValues(finalCoverageFactor, MINIMUM_WEIGHTED_COVERAGE_FACTOR);
+        }
+
+        //
+        // Does a problem cover 100% of the given information
+        //
+        private bool ProblemCoversAllFigureGivens(Problem problem)
+        {
+            // Look at the target node of the problem.
+            // Since the target is dependent on all preceding nodes, it will contain all of their covered nodes.
+            // We require that this node cover ALL the given information for the figure.
+            foreach (GroundedClause given in givens)
             {
-                finalCoverageFactor += COVERAGE_WEIGHTS[w] * problemCoverage[w];
+                if (!graph.vertices[problem.goal].data.figureComponents.Contains(given.clauseId))
+                {
+                    //System.Diagnostics.Debug.WriteLine("Uncovered: " + given.ToString());
+                    return false;
+                }
+
+                //System.Diagnostics.Debug.WriteLine("Covered: " + given.ToString());
             }
 
-            if (Utilities.DEBUG)
-            {
-                System.Diagnostics.Debug.WriteLine("Weighted Coverage Factor: " + finalCoverageFactor);
-            }
-            return finalCoverageFactor > MINIMUM_WEIGHTED_COVERAGE_FACTOR ||
-                   Utilities.CompareValues(finalCoverageFactor, MINIMUM_WEIGHTED_COVERAGE_FACTOR);
+            return true;
         }
 
         //
@@ -109,7 +162,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 Utilities.AddUniqueList<int>(intrinsicCollection, graph.vertices[src].data.figureComponents);
             }
 
-            // Sort is not required, but for debug is eaiser to digest
+            // Sort is not required, but for debug is easier to digest
             intrinsicCollection.Sort();
 
             // DEBUG
@@ -141,7 +194,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
                 else
                 {
-                    if (Utilities.DEBUG)
+                    if (INTERESTING_DEBUG)
                     {
                         System.Diagnostics.Debug.WriteLine("Uncovered: " + gc.ToString());
                     }
@@ -155,7 +208,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
-            if (Utilities.DEBUG)
+            if (INTERESTING_DEBUG)
             {
                 System.Diagnostics.Debug.WriteLine("Covered: ");
                 System.Diagnostics.Debug.WriteLine("\tPoints\t\t\t" + numCoveredNodes[POINTS]);

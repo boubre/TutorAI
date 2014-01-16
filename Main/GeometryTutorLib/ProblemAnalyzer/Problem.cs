@@ -45,17 +45,19 @@ namespace GeometryTutorLib.ProblemAnalyzer
             graph = new DiGraph<int>();
         }
 
-        public Problem(List<int> gs, int gl)
+        public Problem(PebblerHyperEdge edge)
         {
-            givens = gs;
-            goal = gl;
+            givens = new List<int>(edge.sourceNodes);
+            goal = edge.targetNode;
 
             path = new List<int>();
             edges = new List<PebblerHyperEdge>();
+            edges.Add(edge);
+
             suppressedGivens = new List<int>();
 
             graph = new DiGraph<int>();
-            graph.AddHyperEdge(gs, gl);
+            graph.AddHyperEdge(givens, goal);
         }
 
         public Problem(Problem thatProblem)
@@ -122,6 +124,84 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         //
+        // foreach given in the problem
+        //   find all edges with target given 
+        //   foreach edge with target with given
+        //     if (all of the source nodes in edge are in the given OR path) then
+        //       if this is a minimal edge (fewer sources better) then
+        //         save edge
+        //   if (found edge) then
+        //     AddEdge to problem
+        //     move target given to path
+        //       
+        public Problem CombineProblemWithEdge(HyperEdgeMultiMap forwardPebbledEdges, PebblerHyperEdge newEdge)
+        {
+            // The new problem (based on the old)
+            Problem copyProblem = new Problem(this);
+
+            if (newEdge.targetNode == 206)
+            {
+                System.Diagnostics.Debug.WriteLine("NO-OP");
+            }
+
+            // Strictly add this new edge to the problem
+            copyProblem.CombineWithEdge(newEdge.sourceNodes, newEdge.targetNode);
+            copyProblem.AddEdge(newEdge);
+
+            // If this is a new problem, no need to seek other edges implying givens
+            if (this.goal == -1) return copyProblem;
+
+            // All the givens and path nodes from the problem; this includes the new edgeSources
+            List<int> problemGivensAndPath = new List<int>(copyProblem.givens);
+            problemGivensAndPath.AddRange(copyProblem.path);
+
+            // foreach given in the problem
+            List<int> tempGivens = new List<int>(copyProblem.givens);
+            foreach (int given in tempGivens)
+            {
+                PebblerHyperEdge savedEdge = null;
+
+                // find all edges with target given 
+                List<PebblerHyperEdge> forwardEdges = forwardPebbledEdges.GetBasedOnGoal(given);
+                if (forwardEdges != null)
+                {
+                    // foreach edge with target with given
+                    foreach (PebblerHyperEdge edge in forwardEdges)
+                    {
+                        // It is a usable edge in this direction?
+                        if (edge.IsEdgePebbledForward())
+                        {
+                            // if (all of the source nodes in edge are in the given OR path) then
+                            if (Utilities.Subset<int>(problemGivensAndPath, edge.sourceNodes))
+                            {
+                                // if this is a minimal edge (fewer sources better) then
+                                if (savedEdge == null) savedEdge = edge;
+                                else if (edge.sourceNodes.Count < savedEdge.sourceNodes.Count)
+                                {
+                                    savedEdge = edge;
+                                }
+                            }
+                        }
+                    }
+
+                    if (savedEdge != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("CTA: Found another edge which can deduce givens." + newEdge);
+
+                        // Add the found edge to the problem
+                        copyProblem.AddEdge(savedEdge);
+
+                        // move target given to path: (1) remove from givens; (2) add to path 
+                        copyProblem.givens.Remove(savedEdge.targetNode);
+                        Utilities.AddUnique<int>(copyProblem.path, savedEdge.targetNode);
+                    }
+                }
+            }
+
+            return copyProblem;
+        }
+
+        //
         // Add to an existent problem by removing the target and appending the new sources
         //
         // This problem                       { This Givens } { This Path } -> This Goal
@@ -130,7 +210,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public void CombineWithEdge(List<int> newSources, int target)
         {
-            // If this is the first node in the sequence, return the other problem
+            // If this is the first node in the sequence, return the based problem on just the edge
             if (goal == -1)
             {
                 givens.AddRange(newSources);
@@ -144,16 +224,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Add all the new sources to the degenerated old sources; do so uniquely
             Utilities.AddUniqueList<int>(this.givens, newSources);
 
-            // Combine all the paths of the old and the new problems together; do so uniquely
-            // Utilities.AddUniqueList<int>(newProblem.path, problemToInsert.path);
-
             // Add the 'new problem' goal node to the path of the new Problem (uniquely)
             Utilities.AddUnique<int>(this.path, target);
 
-            // Now, if there exists a node in the path AND in the givens, remove it from the path. (Why not from givens?)
-            foreach (int src in this.givens)
+            // Now, if there exists a node in the path AND in the givens, remove it from the givens.
+            foreach (int p in this.path)
             {
-                this.path.Remove(src);
+                if (this.givens.Remove(p))
+                {
+                    System.Diagnostics.Debug.WriteLine("CTA: A node existed in the path AND givens; removing from givens");
+                }
+
             }
         }
 
@@ -165,70 +246,70 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // The new problem is of the form:    { New Givens } { Path: emptyset } -> Goal
         //                       Combined:    { New Givens  U  This Givens \minus This Goal} {This Path  U  This Goal } -> Goal
         //
-        public Problem CombineAndCreateNewBackwardProblem(Problem problemToInsert)
-        {
-            // If this is the first node in the sequence, return the other problem
-            if (goal == -1) return new Problem(problemToInsert);
+//        public Problem CombineAndCreateNewBackwardProblem(Problem problemToInsert)
+//        {
+//            // If this is the first node in the sequence, return the other problem
+//            if (goal == -1) return new Problem(problemToInsert);
 
-            // Make a copy of this (old) problem.
-            Problem newProblem = new Problem(this);
+//            // Make a copy of this (old) problem.
+//            Problem newProblem = new Problem(this);
 
-            // degenerate the target node by removing the new target from the old sources
-            newProblem.givens.Remove(problemToInsert.goal);
+//            // degenerate the target node by removing the new target from the old sources
+//            newProblem.givens.Remove(problemToInsert.goal);
 
-            // Add all the new sources to the degenerated old sources; do so uniquely
-            Utilities.AddUniqueList<int>(newProblem.givens, problemToInsert.givens);
+//            // Add all the new sources to the degenerated old sources; do so uniquely
+//            Utilities.AddUniqueList<int>(newProblem.givens, problemToInsert.givens);
 
-            // Combine all the paths of the old and the new problems together; do so uniquely
-            // Utilities.AddUniqueList<int>(newProblem.path, problemToInsert.path);
+//            // Combine all the paths of the old and the new problems together; do so uniquely
+//            // Utilities.AddUniqueList<int>(newProblem.path, problemToInsert.path);
 
-            // Add the 'new problem' goal node to the path of the new Problem (uniquely)
-            Utilities.AddUnique<int>(newProblem.path, problemToInsert.goal);
+//            // Add the 'new problem' goal node to the path of the new Problem (uniquely)
+//            Utilities.AddUnique<int>(newProblem.path, problemToInsert.goal);
 
-            // Now, if there exists a node in the path AND in the givens, remove it from the path
-            foreach (int src in newProblem.givens)
-            {
-                newProblem.path.Remove(src);
-            }
+//            // Now, if there exists a node in the path AND in the givens, remove it from the path
+//            foreach (int src in newProblem.givens)
+//            {
+//                newProblem.path.Remove(src);
+//            }
 
-//System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + "\t" + this + "\t" + problemToInsert + "\n = \t" + newProblem + "\n-----------------------");
+////System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + "\t" + this + "\t" + problemToInsert + "\n = \t" + newProblem + "\n-----------------------");
 
-            return newProblem;
-        }
+//            return newProblem;
+//        }
 
         //
         // Create a new problem by removing the target and appending the new sources
         //
-        public Problem CombineAndCreateNewProblem(Problem problemToInsert)
-        {
-            // Make a copy of this (old) problem.
-            Problem newProblem = new Problem(this);
+//        public Problem CombineAndCreateNewProblem(Problem problemToInsert)
+//        {
+//            // Make a copy of this (old) problem.
+//            Problem newProblem = new Problem(this);
 
-            // degenerate the target node by removing the new target from the old sources
-            newProblem.givens.Remove(problemToInsert.goal);
+//            // degenerate the target node by removing the new target from the old sources
+//            newProblem.givens.Remove(problemToInsert.goal);
 
-            // Add all the new sources to the degenerated old sources; do so uniquely
-            Utilities.AddUniqueList<int>(newProblem.givens, problemToInsert.givens);
+//            // Add all the new sources to the degenerated old sources; do so uniquely
+//            Utilities.AddUniqueList<int>(newProblem.givens, problemToInsert.givens);
 
-            // Combine all the paths of the old and the new problems together; do so uniquely
-            Utilities.AddUniqueList<int>(newProblem.path, problemToInsert.path);
+//            // Combine all the paths of the old and the new problems together; do so uniquely
+//            Utilities.AddUniqueList<int>(newProblem.path, problemToInsert.path);
 
-            // Add the 'new problem' goal node to the path of the new Problem (uniquely)
-            Utilities.AddUnique<int>(newProblem.path, problemToInsert.goal);
+//            // Add the 'new problem' goal node to the path of the new Problem (uniquely)
+//            Utilities.AddUnique<int>(newProblem.path, problemToInsert.goal);
 
-            // Now, if there exists a node in the path AND in the givens, remove it from the path
-            foreach (int src in newProblem.givens)
-            {
-                if (newProblem.path.Contains(src))
-                {
-                    newProblem.path.Remove(src);
-                }
-            }
+//            // Now, if there exists a node in the path AND in the givens, remove it from the path
+//            foreach (int src in newProblem.givens)
+//            {
+//                if (newProblem.path.Contains(src))
+//                {
+//                    newProblem.path.Remove(src);
+//                }
+//            }
 
-//System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + this +  problemToInsert + " = " + newProblem + "\n-----------------------");
+////System.Diagnostics.Debug.WriteLine("Combining --------------------------\n" + this +  problemToInsert + " = " + newProblem + "\n-----------------------");
 
-            return newProblem;
-        }
+//            return newProblem;
+//        }
 
         //
         // Problems are equal only if the givens, goal, and paths are the same
@@ -282,11 +363,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return str.ToString();
         }
 
-        public string ConstructProblemAndSolution(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
+        //
+        // Determine which of the given nodes will be suppressed
+        //
+        public void DetermineSuppressedGivens(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
         {
-            // Sort the givens and path for ease in readability
-            TopologicalSortProblem();
-
             // Determine the suppressed nodes in the graph and break
             // the givens into those that must be explicitly stated to the user and those that are implicit.
             foreach (int g in givens)
@@ -298,13 +379,19 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
             suppressedGivens.ForEach(s => givens.Remove(s));
+        }
+
+        public string ConstructProblemAndSolution(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
+        {
+            // Sort the givens and path for ease in readability; they are reverse-sorted
+            TopologicalSortProblem();
 
             StringBuilder str = new StringBuilder();
 
             str.AppendLine("Source: ");
-            foreach (int g in givens)
+            for (int g = givens.Count - 1; g >= 0; g--)
             {
-                str.AppendLine("\t (" + g + ")" + graph.GetNode(g).ToString());
+                str.AppendLine("\t (" + givens[g] + ")" + graph.GetNode(givens[g]).ToString());
             }
             str.AppendLine("Suppressed Source: ");
             foreach (int s in suppressedGivens)
@@ -317,9 +404,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 str.AppendLine("\t" + edge.ToString());
             }
             str.AppendLine("  Path:");
-            foreach (int p in path)
+            for (int p = path.Count - 1; p >= 0; p--)
             {
-                str.AppendLine("\t (" + p + ")" + graph.GetNode(p).ToString());
+                str.AppendLine("\t (" + path[p] + ")" + graph.GetNode(path[p]).ToString());
             }
 
             str.Append("  -> Goal: (" + goal + ")" + graph.GetNode(goal).ToString());
@@ -338,7 +425,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
             {
                 if (givens.Contains(node)) sortedGiven.Add(node);
                 else if (path.Contains(node)) sortedPath.Add(node);
-                else if (!goal.Equals(node)) throw new ArgumentException("Node " + node + " is not in either given nor path for " + this.ToString());
+                else if (!suppressedGivens.Contains(node) && !goal.Equals(node))
+                {
+                    throw new ArgumentException("Node " + node + " is not in either given, suppressed, path, nor goal for " + this.ToString());
+                }
             }
 
             givens = new List<int>(sortedGiven);

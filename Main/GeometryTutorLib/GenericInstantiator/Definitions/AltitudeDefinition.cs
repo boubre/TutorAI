@@ -10,7 +10,14 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Definition of Altitude";
 
-        public AltitudeDefinition() { }
+        // Reset saved data for another problem
+        public static void Clear()
+        {
+            candidateAltitude.Clear();
+            candidateIntersection.Clear();
+            candidatePerpendicular.Clear();
+            candidateTriangle.Clear();
+        }
 
         //
         // This implements forward and Backward instantiation
@@ -24,14 +31,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 newGrounded.AddRange(InstantiatePerpendicularBisector(c));
             }
 
-            if (c is Altitude || (c is Intersection && !(c is Perpendicular) && !(c is PerpendicularBisector)))
-            {
-                newGrounded.AddRange(InstantiateAltitude(c));
-            }
-
             if (c is Triangle || c is Perpendicular)
             {
                 newGrounded.AddRange(InstantiatePerpendicular(c));
+            }
+
+            else if (c is Altitude || c is Intersection)
+            {
+                newGrounded.AddRange(InstantiateAltitude(c));
             }
 
             return newGrounded;
@@ -57,6 +64,9 @@ namespace GeometryTutorLib.GenericInstantiator
             if (c is Intersection)
             {
                 Intersection inter = c as Intersection;
+
+                // We are only interested in straight-angle type intersections
+                if (inter.StandsOnEndpoint()) return newGrounded;
 
                 foreach (Altitude altitude in candidateAltitude)
                 {
@@ -84,15 +94,17 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!inter.IsStraightAngleIntersection()) return newGrounded;
-
             // The intersection should contain the altitude segment
             if (!inter.HasSegment(altitude.segment)) return newGrounded;
 
             // The triangle should contain the other segment in the intersection
-            if (!altitude.triangle.HasSegment(inter.OtherSegment(altitude.segment))) return newGrounded;
+            Segment triangleSide = altitude.triangle.CoincidesWithASide(inter.OtherSegment(altitude.segment));
+            if (triangleSide == null) return newGrounded;
+            if (!inter.OtherSegment(altitude.segment).HasSubSegment(triangleSide)) return newGrounded;
 
+            //
             // Create the Perpendicular relationship
+            //
             Perpendicular perp = new Perpendicular(inter, NAME);
 
             // For hypergraph

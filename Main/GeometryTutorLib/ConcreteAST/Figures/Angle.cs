@@ -186,13 +186,34 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool IsOnInterior(Point pt)
         {
-            if (ray1.PointIsOn(pt)) return true;
-            if (ray2.PointIsOn(pt)) return true;
+            //     |
+            //     |
+            //  x  |_____
+            // Is the point on either ray such that it is outside the angle? (x in the image above)
+            if (ray1.PointIsOn(pt) && Segment.Between(pt, GetVertex(), ray1.OtherPoint(GetVertex()))) return true;
+            if (ray2.PointIsOn(pt) && Segment.Between(pt, GetVertex(), ray2.OtherPoint(GetVertex()))) return true;
 
             Angle newAngle1 = new Angle(A, GetVertex(), pt);
             Angle newAngle2 = new Angle(C, GetVertex(), pt);
 
-            // This is an angle addition scenario, BUT not with these two angles; that is, one is cotnained in the other.
+            // This is an angle addition scenario, BUT not with these two angles; that is, one is contained in the other.
+            if (Utilities.CompareValues(newAngle1.measure + newAngle2.measure, this.measure)) return true;
+
+            return newAngle1.measure + newAngle2.measure <= this.measure;
+        }
+
+        //
+        // Is this point in the interior of the angle?
+        //
+        public bool IsOnInteriorExplicitly(Point pt)
+        {
+            if (ray1.PointIsOn(pt)) return false;
+            if (ray2.PointIsOn(pt)) return false;
+
+            Angle newAngle1 = new Angle(A, GetVertex(), pt);
+            Angle newAngle2 = new Angle(C, GetVertex(), pt);
+
+            // This is an angle addition scenario, BUT not with these two angles; that is, one is contained in the other.
             if (Utilities.CompareValues(newAngle1.measure + newAngle2.measure, this.measure)) return true;
 
             return newAngle1.measure + newAngle2.measure <= this.measure;
@@ -329,6 +350,25 @@ namespace GeometryTutorLib.ConcreteAST
                    Segment.Between(angleDoesNotBelong.intersect, angleBelongs.intersect, angleRayOnTraversal.OtherPoint(this.GetVertex())); 
         }
 
+        //
+        // Maintain a public repository of all angle objects in the figure
+        //
+        public static void Clear() { figureAngles.Clear(); }
+        public static List<Angle> figureAngles = new List<Angle>();
+        public static void Record(GroundedClause clause)
+        {
+            // Record uniquely? For right angles, etc?
+            if (clause is Angle) figureAngles.Add(clause as Angle);
+        }
+        public static Angle AcquireFigureAngle(Angle thatAngle)
+        {
+            foreach (Angle angle in figureAngles)
+            {
+                if (angle.Equates(thatAngle)) return angle;
+            }
+            return null;
+        }
+
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause pred, GroundedClause c)
         {
             if (c is Angle) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
@@ -407,7 +447,7 @@ namespace GeometryTutorLib.ConcreteAST
             // This is an 'obvious' notion so it should be intrinsic to any figure
             gcas.MakeIntrinsic();
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(Utilities.MakeList<GroundedClause>(tri), gcas);
+            return new KeyValuePair<List<GroundedClause>, GroundedClause>(Utilities.MakeList<GroundedClause>(Angle.AcquireFigureAngle(angle)), gcas);
         }
 
 
@@ -449,7 +489,9 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (!thatSegment.PointIsOnAndBetweenEndpoints(this.GetVertex())) return false;
 
-            Point interiorPoint = this.IsOnInterior(thatSegment.Point1) ? thatSegment.Point1 : thatSegment.Point2;
+            if (thatSegment.IsCollinearWith(this.ray1) || thatSegment.IsCollinearWith(this.ray2)) return false;
+
+            Point interiorPoint = this.IsOnInteriorExplicitly(thatSegment.Point1) ? thatSegment.Point1 : thatSegment.Point2;
 
             Angle angle1 = new Angle(A, GetVertex(), interiorPoint);
             Angle angle2 = new Angle(C, GetVertex(), interiorPoint);

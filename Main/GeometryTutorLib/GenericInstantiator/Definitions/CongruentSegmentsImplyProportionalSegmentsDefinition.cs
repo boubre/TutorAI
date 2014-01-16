@@ -26,10 +26,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //    Triangle(A, B, C), Triangle(D, E, F),
         //    
         //    Congruent(Segment(A, B), Segment(B, C)), Congruent(Segment(D, E), Segment(E, F)) -> Similar(Triangle(A, B, C), Triangle(D, E, F)),
-        //                                                  Proportional(Segment(A, B), Angle(D, E)),
-        //                                                  Proportional(Segment(A, B), Angle(E, F)),
-        //                                                  Proportional(Segment(B, C), Angle(D, E)),
-        //                                                  Proportional(Segment(B, C), Angle(E, F)),
+        //                                                  Proportional(Segment(A, B), Segment(D, E)),
+        //                                                  Proportional(Segment(A, B), Segment(E, F)),
+        //                                                  Proportional(Segment(B, C), Segment(D, E)),
+        //                                                  Proportional(Segment(B, C), Segment(E, F)),
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {

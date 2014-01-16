@@ -19,7 +19,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (c is AngleBisector) return InstantiateBisector(c);
+            if (c is AngleBisector) return InstantiateBisector(c as AngleBisector);
 
             if (c is CongruentAngles || c is Segment) return InstantiateCongruent(c);
 
@@ -34,23 +34,19 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // AngleBisector(Angle(A, V, B), Segment(V, C)) -> Congruent(Angle, A, V, C), Angle(C, V, B))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(AngleBisector ab)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!(c is AngleBisector)) return newGrounded;
-
-            AngleBisector ab = c as AngleBisector;
-
             // Create the two adjacent angles
             Point vertex = ab.angle.GetVertex();
-            Angle adj1 = new Angle(ab.angle.ray1.OtherPoint(vertex), vertex, ab.bisector.OtherPoint(vertex));
-            Angle adj2 = new Angle(ab.angle.ray2.OtherPoint(vertex), vertex, ab.bisector.OtherPoint(vertex));
+            Point interiorPt = ab.angle.IsOnInteriorExplicitly(ab.bisector.Point1) ? ab.bisector.Point1 : ab.bisector.Point2;
+            Angle adj1 = new Angle(ab.angle.ray1.OtherPoint(vertex), vertex, interiorPt);
+            Angle adj2 = new Angle(ab.angle.ray2.OtherPoint(vertex), vertex, interiorPt);
             GeometricCongruentAngles cas = new GeometricCongruentAngles(adj1, adj2, NAME);
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(ab);
-
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cas));
 
             return newGrounded;
@@ -74,12 +70,9 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 CongruentAngles cas = c as CongruentAngles;
 
+                // We are interested in adjacent angles, not reflexive
                 if (cas.IsReflexive()) return newGrounded;
-
-                // Find the shared segment between the two angles
-                Segment candidateBisector = cas.AreAdjacent();
-
-                if (candidateBisector == null) return newGrounded;
+                if (cas.AreAdjacent() == null) return newGrounded;
 
                 //
                 // The candidate must equates to a given segment; that is, find the proper segment
@@ -87,15 +80,11 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 foreach (Segment segment in candidateSegments)
                 {
-                    if (candidateBisector.IsCollinearWith(segment))
-                    {
-                        newGrounded.AddRange(InstantiateToDef(cas, segment));
-                        return newGrounded;
-                    }
+                    newGrounded.AddRange(InstantiateToDef(cas, segment));
                 }
 
                 // Did not unify so add to the candidate list
-                candidateCongruent.Add(cas);
+                if (!newGrounded.Any()) candidateCongruent.Add(cas);
             }
             else if (c is Segment)
             {
@@ -112,20 +101,48 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
-        // Take the angle congruence and bisector and create the AngleBisector relation
+        // Construct the AngleBisector if we have
+        //
+        //      V---------------A
+        //     / \
+        //    /   \
+        //   /     \
+        //  B       C
+        //
+        // Congruent(Angle, A, V, C), Angle(C, V, B)),  Segment(V, C)) -> AngleBisector(Angle(A, V, B)  
+        //
         //
         private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(CongruentAngles cas, Segment segment)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!Segment.Between(cas.ca1.GetVertex(), segment.Point1, segment.Point2)) return newGrounded;
+            // Find the shared segment between the two angles; we know it is valid if we reach this point
+            Segment shared = cas.AreAdjacent();
 
+            // The bisector must align with the given segment
+            if (!segment.IsCollinearWith(shared)) return newGrounded;
+
+            // We need a true bisector in which the shared vertex of the angles in between the endpoints of this segment
+            if (!segment.PointIsOnAndBetweenEndpoints(cas.ca1.GetVertex())) return newGrounded;
+
+            //
+            // Create the overall angle which is being bisected
+            //
             Point vertex = cas.ca1.GetVertex();
-            Segment shared = cas.SegmentShared();
             Segment newRay1 = cas.ca1.OtherRay(shared);
             Segment newRay2 = cas.ca2.OtherRay(shared);
             Angle combinedAngle = new Angle(newRay1.OtherPoint(vertex), vertex, newRay2.OtherPoint(vertex));
-            AngleBisector newAB = new AngleBisector(combinedAngle, shared, NAME);
+
+            // The bisector cannot be of the form:
+            //    \
+            //     \
+            //      V---------------A
+            //     /
+            //    /
+            //   B
+            if (!combinedAngle.IsOnInteriorExplicitly(segment.Point1) && !combinedAngle.IsOnInteriorExplicitly(segment.Point2)) return newGrounded;            
+            
+            AngleBisector newAB = new AngleBisector(combinedAngle, segment, NAME);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();

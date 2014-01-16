@@ -33,23 +33,28 @@ namespace GeometryTutorLib.GenericInstantiator
             if (inter.StandsOn()) return newGrounded;
 
             //
-            // Otherwise, they overlap creating vertical angles
-            //
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(inter);
-
             // Congruent(Angle(A, X, C), Angle(B, X, D))
-            Angle ang1Set1 = new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1);
-            Angle ang2Set1 = new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2);
+            //
+            List<GroundedClause> antecedent1 = Utilities.MakeList<GroundedClause>(inter); 
+            Angle ang1Set1 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
+            Angle ang2Set1 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
+            antecedent1.Add(ang1Set1);
+            antecedent1.Add(ang2Set1);
             GeometricCongruentAngles cca1 = new GeometricCongruentAngles(ang1Set1, ang2Set1, NAME);
             cca1.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca1));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent1, cca1));
 
+            //
             // Congruent(Angle(A, X, D), Angle(C, X, B))
-            Angle ang1Set2 = new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2);
-            Angle ang2Set2 = new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1);
+            //
+            List<GroundedClause> antecedent2 = Utilities.MakeList<GroundedClause>(inter);
+            Angle ang1Set2 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
+            Angle ang2Set2 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
+            antecedent1.Add(ang1Set2);
+            antecedent1.Add(ang2Set2);
             GeometricCongruentAngles cca2 = new GeometricCongruentAngles(ang1Set2, ang2Set2, NAME);
             cca2.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cca2));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent2, cca2));
 
             return newGrounded;
         }

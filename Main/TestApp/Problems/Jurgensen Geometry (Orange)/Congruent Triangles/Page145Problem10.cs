@@ -8,7 +8,8 @@ namespace Geometry_Testbed
 	//
 	public class Page145Problem10 : CongruentTrianglesProblem
 	{
-		public Page145Problem10() : base()
+        public Page145Problem10(bool onoff)
+            : base(onoff)
 		{
             problemName = "Page 145 Problem 10";
             numberOfOriginalTextProblems = 1;

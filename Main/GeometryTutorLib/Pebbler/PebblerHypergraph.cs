@@ -111,8 +111,8 @@ namespace GeometryTutorLib.Pebbler
             // Forward pebble; it returns the list of blue edges from the FORWARD analysis
             KeyValuePair<List<PebblerHyperEdge>, List<int>> backInformation = PebbleForward(figure, givens, axiomaticNodes);
 
-            //Debug.WriteLine("Before backward Pebbling: ");
-            if (Utilities.DEBUG)
+            Debug.WriteLine("Before backward Pebbling: ");
+            if (Utilities.PEBBLING_DEBUG)
             {
                 DebugDumpClauses();
             }
@@ -181,7 +181,7 @@ namespace GeometryTutorLib.Pebbler
             figure.Sort();
             for (int f = figure.Count - 1; f >= 0; f--)
             {
-                if (Utilities.DEBUG) Debug.WriteLine("Backward Pebbling Figure: " + figure[f]);
+                if (Utilities.PEBBLING_DEBUG) Debug.WriteLine("Backward Pebbling Figure: " + figure[f]);
                 BackwardTraversal(figure[f]);
             }
 

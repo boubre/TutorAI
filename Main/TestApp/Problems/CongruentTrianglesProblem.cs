@@ -2,6 +2,6 @@
 {
     public abstract class CongruentTrianglesProblem : ActualProblem
     {
-        public CongruentTrianglesProblem() : base() {}
+        public CongruentTrianglesProblem(bool onoff) : base(onoff) { }
     }
 }

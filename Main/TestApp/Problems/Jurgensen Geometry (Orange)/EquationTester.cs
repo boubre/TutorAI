@@ -5,7 +5,8 @@ namespace Geometry_Testbed
 {
     public class EquationTester : TransversalsProblem
     {
-        public EquationTester() : base()
+        public EquationTester(bool onoff)
+            : base(onoff)
         {
             Point a = new Point("A", -2, 0); intrinsic.Add(a);
             Point m = new Point("M", 0, 0);  intrinsic.Add(m);

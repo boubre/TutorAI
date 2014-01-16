@@ -4,12 +4,15 @@ using System.Collections.Generic;
 namespace Geometry_Testbed
 {
     //
-    // Geometry; Page 155 Problem 14
+    // Geometry; Book i Page 120 Problem 8
     //
-    public class OverlappingRightTriangles : ActualProblem
+    public class IPage120Problem8 : ActualProblem
     {
-        public OverlappingRightTriangles() : base()
+        public IPage120Problem8(bool onoff) : base(onoff)
         {
+            problemName = "Overlapping Right Triangles";
+            numberOfOriginalTextProblems = 4;
+
             Point a = new Point("A", 0, 3); intrinsic.Add(a);
             Point m = new Point("M", 2, 1.5); intrinsic.Add(m);
             Point b = new Point("B", 4, 3); intrinsic.Add(b);

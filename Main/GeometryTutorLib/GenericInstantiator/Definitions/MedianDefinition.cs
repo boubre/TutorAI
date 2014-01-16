@@ -65,6 +65,14 @@ namespace GeometryTutorLib.GenericInstantiator
         //        
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<SegmentBisector> candidateBisector = new List<SegmentBisector>();
+
+        // Reset saved data for next problem
+        public static void Clear()
+        {
+            candidateBisector.Clear();
+            candidateTriangle.Clear();
+        }
+
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(GroundedClause c)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
@@ -98,54 +106,29 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Take the angle congruence and bisector and create the AngleBisector relation
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(Triangle tri, SegmentBisector bisector)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(Triangle tri, SegmentBisector sb)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // The Bisector cannot be a side of the triangle.
-            if (tri.CoincidesWithASide(bisector.bisector)) return newGrounded;
+            if (tri.CoincidesWithASide(sb.bisector) != null) return newGrounded;
 
-            //
-            // Does this bisector belong to this triangle?
-            //
-            Point intersectionPt = null;
-            Segment baseSegment = null;
-            if (tri.HasPoint(bisector.bisector.Point1))
-            {
-                // The base of bisector
-                baseSegment = tri.GetOppositeSide(bisector.bisector.Point1);
-                if (baseSegment == null) return newGrounded;
+            // Acquire the intersection segment that coincides with the base of the triangle
+            Segment triangleBaseCandidate = sb.bisected.OtherSegment(sb.bisector);
+            Segment triangleBase = tri.CoincidesWithASide(triangleBaseCandidate);
+            if (triangleBase == null) return newGrounded;
 
-                // The intersection point of the bisector on the base segment
-                intersectionPt = baseSegment.FindIntersection(bisector.bisector);
-            }
-            else if (tri.HasPoint(bisector.bisector.Point2))
-            {
-                // The base of bisector
-                baseSegment = tri.GetOppositeSide(bisector.bisector.Point2);
-                if (baseSegment == null) return newGrounded;
-
-                // The intersection point of the bisector on the base segment
-                intersectionPt = baseSegment.FindIntersection(bisector.bisector);
-            }
-            else
-            {
-                return newGrounded;
-            }
-
-            if (!intersectionPt.Equals(bisector.bisected.intersect)) return newGrounded;
-
-            // Does the intersection of the bisector define the base segment?
-            Segment collinearToBaseSegment = bisector.bisected.GetCollinearSegment(baseSegment);
-            if (collinearToBaseSegment == null) return newGrounded;
+            // The point opposite the base of the triangle must be within the endpoints of the bisector
+            Point oppPoint = tri.OtherPoint(triangleBase);
+            if (!sb.bisector.PointIsOnAndBetweenEndpoints(oppPoint)) return newGrounded;
 
             // -> Median(Segment(V, C), Triangle(A, B, C))
-            Median newMedian = new Median(bisector.bisector, tri, NAME);
+            Median newMedian = new Median(sb.bisector, tri, NAME);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(tri);
-            antecedent.Add(bisector);
+            antecedent.Add(sb);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMedian));
             return newGrounded;

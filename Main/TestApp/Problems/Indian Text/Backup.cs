@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class Backup : ActualProblem
     {
-        public Backup() : base()
+        public Backup(bool onoff)
+            : base(onoff)
         {
             Point a = new Point("A", 0, 3);
             Point m = new Point("M", 2, 1.5);

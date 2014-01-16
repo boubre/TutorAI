@@ -10,7 +10,8 @@ namespace Geometry_Testbed
     //
     public class Page60Theorem22Extended : ParallelLinesProblem
     {
-        public Page60Theorem22Extended() : base()
+        public Page60Theorem22Extended(bool onoff)
+            : base(onoff)
         {
             problemName = "Page 60 Theorem 22 Extended";
             numberOfOriginalTextProblems = 1;

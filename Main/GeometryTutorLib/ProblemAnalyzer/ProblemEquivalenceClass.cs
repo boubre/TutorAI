@@ -7,22 +7,21 @@ namespace GeometryTutorLib.ProblemAnalyzer
 {
     // This aggregation class stores a single set of problems defined by the query vector
     // With strict isomorphism, this is one element of an equivalence relation (where the relation is defined by the query vector)
-    public class ProblemPartition
+    public class ProblemEquivalenceClass
     {
         // To access node value information; mapping problem values back to the Geometric Graph
         Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
+        public List<Problem> elements { get; private set; }
 
-        List<Problem> partition;
-
-        public ProblemPartition(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
+        public ProblemEquivalenceClass(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
         {
             graph = g;
-            partition = new List<Problem>();
+            elements = new List<Problem>();
         }
 
         public int Size()
         {
-            return partition.Count;
+            return elements.Count;
         }
 
         //
@@ -30,7 +29,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public void Add(Problem p)
         {
-            partition.Add(p);
+            elements.Add(p);
         }
 
         //
@@ -40,7 +39,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             if (query.goalIsomorphism)
             {
-                if (!AreNodesIsomorphic(partition[0].goal, newProblem.goal)) return false;
+                if (!AreNodesIsomorphic(elements[0].goal, newProblem.goal)) return false;
             }
 
             //
@@ -49,7 +48,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             if (query.sourceIsomorphism)
             {
-                if (!AreSourceNodesIsomorphic(partition[0].givens, newProblem.givens)) return false;
+                if (!AreSourceNodesIsomorphic(elements[0].givens, newProblem.givens)) return false;
             }
 
             return true;
@@ -312,7 +311,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             String retS = "";
 
-            foreach (Problem p in partition)
+            foreach (Problem p in elements)
             {
                 retS += p.ConstructProblemAndSolution(graph) + "\n\n";
             }

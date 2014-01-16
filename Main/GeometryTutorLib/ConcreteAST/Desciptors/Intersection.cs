@@ -13,8 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Intersection() : base() { }
 
-        public Intersection(Point i, Segment l, Segment r, string just)
-            : base()
+        public Intersection(Point i, Segment l, Segment r, string just) : base()
         {
             intersect = i;
             lhs = l;
@@ -895,10 +894,37 @@ namespace GeometryTutorLib.ConcreteAST
             // The given vertex must match the intersection point of the two lines intersecting
             if (!intersect.Equals(thatAngle.GetVertex())) return false;
 
-            if (thatAngle.Equates(new Angle(lhs.Point1, intersect, rhs.Point1))) return true;
-            if (thatAngle.Equates(new Angle(lhs.Point1, intersect, rhs.Point2))) return true;
-            if (thatAngle.Equates(new Angle(lhs.Point2, intersect, rhs.Point1))) return true;
-            if (thatAngle.Equates(new Angle(lhs.Point2, intersect, rhs.Point2))) return true;
+            //   /
+            //  /
+            // /_______
+            //
+            if (this.StandsOnEndpoint())
+            {
+                return thatAngle.Equates(new Angle(lhs.OtherPoint(intersect), intersect, rhs.OtherPoint(intersect)));
+            }
+            //          /
+            //         /
+            // _______/_______
+            //
+            else if (this.StandsOn())
+            {
+                Point off = this.CreatesTShape();
+                Segment baseSegment = lhs.PointIsOnAndExactlyBetweenEndpoints(off) ? lhs : rhs;
+
+                if (thatAngle.Equates(new Angle(baseSegment.Point1, intersect, off))) return true;
+                if (thatAngle.Equates(new Angle(baseSegment.Point2, intersect, off))) return true;
+            }
+            //         /
+            // _______/_______
+            //       /
+            //      /
+            else if (this.Crossing())
+            {
+                if (thatAngle.Equates(new Angle(lhs.Point1, intersect, rhs.Point1))) return true;
+                if (thatAngle.Equates(new Angle(lhs.Point1, intersect, rhs.Point2))) return true;
+                if (thatAngle.Equates(new Angle(lhs.Point2, intersect, rhs.Point1))) return true;
+                if (thatAngle.Equates(new Angle(lhs.Point2, intersect, rhs.Point2))) return true;
+            }
 
             return false;
         }
@@ -1026,6 +1052,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
+            if (obj is Perpendicular) return (obj as Perpendicular).StructurallyEquals(this);
+
             Intersection inter = obj as Intersection;
             if (inter == null) return false;
             return intersect.Equals(inter.intersect) && ((lhs.StructurallyEquals(inter.lhs) && rhs.StructurallyEquals(inter.rhs)) ||

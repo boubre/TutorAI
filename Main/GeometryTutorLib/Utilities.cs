@@ -10,6 +10,39 @@ namespace GeometryTutorLib
     public static class Utilities
     {
         public static readonly bool DEBUG = true;
+        public static readonly bool CONSTRUCTION_DEBUG = false; // Generating clauses when analyzing input figure
+        public static readonly bool PEBBLING_DEBUG = false; // Generating clauses when analyzing input figure
+
+        // Acquire the index of the clause in the hypergraph based only on structure
+        public static int StructuralIndex(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph, ConcreteAST.GroundedClause g)
+        {
+            //
+            // Handle general case
+            //
+            List<Hypergraph.HyperNode<ConcreteAST.GroundedClause, int>> vertices = graph.vertices;
+
+            for (int v = 0; v < vertices.Count; v++)
+            {
+                if (vertices[v].data.StructurallyEquals(g)) return v;
+
+                if (vertices[v].data is ConcreteAST.Strengthened)
+                {
+                    if ((vertices[v].data as ConcreteAST.Strengthened).strengthened.StructurallyEquals(g)) return v;
+                }
+            }
+
+            //
+            // Handle strengthening by seeing if the clause is found without a 'strengthening' component
+            //
+            ConcreteAST.Strengthened streng = g as ConcreteAST.Strengthened;
+            if (streng != null)
+            {
+                int index = StructuralIndex(graph, streng.strengthened);
+                if (index != -1) return index;
+            }
+
+            return -1;
+        }
 
         // Ensure uniqueness of additions
         public static void AddUniqueStructurally(List<GeometryTutorLib.ConcreteAST.Figure> figures, GeometryTutorLib.ConcreteAST.Figure f)
@@ -93,6 +126,25 @@ namespace GeometryTutorLib
             {
                 AddUnique<T>(list, o);
             }
+        }
+
+        // Is smaller \subseteq larger
+        public static bool Subset<T>(List<T> larger, List<T> smaller)
+        {
+            foreach (T o in smaller)
+            {
+                if (!larger.Contains(o)) return false;
+            }
+
+            return true;
+        }
+
+        // Is set1 \equals set2
+        public static bool EqualSets<T>(List<T> set1, List<T> set2)
+        {
+            if (set1.Count != set2.Count) return false;
+
+            return Subset<T>(set1, set2); // redundant since we checked same size && Subset<T>(set2, set1);
         }
 
         public static int GCD(int a, int b)

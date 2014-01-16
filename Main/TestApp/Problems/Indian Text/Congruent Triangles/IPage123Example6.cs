@@ -8,7 +8,8 @@ namespace Geometry_Testbed
     //
     public class IPage123Example6 : CongruentTrianglesProblem
     {
-        public IPage123Example6() : base()
+        public IPage123Example6(bool onoff)
+            : base(onoff)
         {
             problemName = "Book I Page 123 Example 6";
             numberOfOriginalTextProblems = 1;
