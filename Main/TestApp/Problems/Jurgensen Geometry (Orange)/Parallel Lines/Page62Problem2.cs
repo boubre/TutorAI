@@ -10,11 +10,10 @@ namespace Geometry_Testbed
     //
     public class Page62Problem2 : ParallelLinesProblem
     {
-        public Page62Problem2(bool onoff)
-            : base(onoff)
+        public Page62Problem2(bool onoff) : base(onoff)
         {
             problemName = "Page 62 Problem 2";
-            numberOfOriginalTextProblems = 1;
+            numberOfOriginalTextProblems = 3;
 
             Point a = new Point("A", -1, 3); intrinsic.Add(a);
             Point b = new Point("B", 4, 3);  intrinsic.Add(b);
@@ -65,6 +64,10 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
             given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, a, f)), GetProblemAngle(intrinsic, new Angle(c, a, b)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, a, f)), GetProblemAngle(intrinsic, new Angle(a, c, l)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, a, f)), GetProblemAngle(intrinsic, new Angle(k, c, d)), "GOAL"));
         }
     }
 }

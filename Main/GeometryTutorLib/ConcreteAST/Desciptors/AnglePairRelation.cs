@@ -20,6 +20,11 @@ namespace GeometryTutorLib.ConcreteAST
             justification = just;
         }
 
+        public override bool Covers(GroundedClause gc)
+        {
+            return angle1.Covers(gc) || angle2.Covers(gc);
+        }
+
         // Return the shared angle in both congruences
         public Angle AngleShared(AnglePairRelation relation)
         {

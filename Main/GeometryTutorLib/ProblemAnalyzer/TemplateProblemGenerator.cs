@@ -14,8 +14,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
         ProblemAnalyzer.PathGenerator pathGenerator;
 
         public TemplateProblemGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g,
-                                               Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebblerG,
-                                               ProblemAnalyzer.PathGenerator generator)
+                                        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebblerG,
+                                        ProblemAnalyzer.PathGenerator generator)
         {
             graph = g;
             pebblerGraph = pebblerG;
@@ -25,72 +25,155 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Generate all forward and backward problems based on the template nodes in the input list
         //
-        public KeyValuePair<List<Problem>, List<Problem>> Generate(List<GroundedClause> descriptorsAndStrengthened)
+        public KeyValuePair<List<Problem>, List<Problem>> Generate(List<Descriptor> descriptors, List<Strengthened> strengthened, List<GroundedClause> givens)
         {
-            List<Problem> forwardProblems = new List<Problem>();
-            List<Problem> backwardProblems = new List<Problem>();
+            // Combine the precomputed descriptors and strengthened clauses together into one list
+            List<GroundedClause> descriptorsAndStrengthened = new List<GroundedClause>();
+            descriptors.ForEach(r => descriptorsAndStrengthened.Add(r));
+            strengthened.ForEach(r => descriptorsAndStrengthened.Add(r));
 
-            // Generate the set of forward and backward problems for each template clause
-            foreach (GroundedClause clause in descriptorsAndStrengthened)
+            List<Problem> forwardList = GenerateProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, true);
+            List<Problem> backwardList = GenerateProblems(givens, pebblerGraph.backwardPebbledEdges, false);
+
+            return new KeyValuePair<List<Problem>, List<Problem>>(forwardList, backwardList);
+        }
+
+        private List<Problem> GenerateProblems(List<GroundedClause> goalClauses, Pebbler.HyperEdgeMultiMap edgeDatabase, bool forward)
+        {
+            // Find all the node indices and sort them in increasing order
+            List<int> clauseIndices = new List<int>();
+            foreach (GroundedClause clause in goalClauses)
             {
                 // We need to restrict problems generated based on goal nodes; don't want an obvious notion as a goal
                 if (clause.IsAbleToBeAGoalNode())
                 {
-                    KeyValuePair<List<Problem>, List<Problem>> forwardBackwardProblemPair = GenerateProblems(clause);
-                    forwardProblems.AddRange(forwardBackwardProblemPair.Key);
-                    backwardProblems.AddRange(forwardBackwardProblemPair.Value);
+                    // Find the integer clause ID representation in the standard hypergraph
+                    int nodeIndex = Utilities.StructuralIndex(graph, clause);
+
+                    if (nodeIndex == -1)
+                    {
+                        if (Utilities.PROBLEM_GEN_DEBUG)
+                        {
+                            System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+                        }
+                    }
+                    else
+                    {
+                        clauseIndices.Add(nodeIndex);
+                    }
                 }
             }
 
-            return new KeyValuePair<List<Problem>, List<Problem>>(FilterForMinimalAndRedundantProblems(forwardProblems),
-                                                                  FilterForMinimalAndRedundantProblems(backwardProblems));
-        }
+            // Sort in ascending order
+            clauseIndices.Sort();
 
-        //
-        // Generate all problems using the input template clause as a starting point.
-        //
-        public KeyValuePair<List<Problem>, List<Problem>> GenerateProblems(GroundedClause clause)
-        {
-            List<Problem> forwardProblems = new List<Problem>();
-            List<Problem> backwardProblems = new List<Problem>();
+            // The resultant structure of problems
+            ProblemHashMap problems = new ProblemHashMap(edgeDatabase, graph.vertices.Count);
 
-            // Find the integer clause ID representation in the standard hypergraph
-            int nodeIndex = Utilities.StructuralIndex(graph, clause);
-
-            if (nodeIndex == -1)
+            // Generate all the problems based on the node indices
+            foreach (int goalNode in clauseIndices)
             {
-                if (Utilities.DEBUG)
+                if (Utilities.PROBLEM_GEN_DEBUG)
                 {
-                    System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+                    System.Diagnostics.Debug.WriteLine("Template node; will generate problems (" + goalNode + "): " + graph.vertices[goalNode].data.ToString());
                 }
-                return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
+
+                if (forward && pebblerGraph.IsNodePebbledForward(goalNode))
+                {
+                    if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
+                    pathGenerator.GenerateProblemsUsingBackwardPathToLeaves(problems, edgeDatabase, goalNode);
+                }
+                // BACKWARD
+                else if (!forward && pebblerGraph.IsNodePebbledBackward(goalNode))
+                {
+                    if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("Backward");
+                    pathGenerator.GenerateProblemsUsingBackwardPathToLeaves(problems, edgeDatabase, goalNode);
+                }
             }
 
-            if (Utilities.DEBUG)
-            {
-                System.Diagnostics.Debug.WriteLine("Found template node; will generate problems (" + nodeIndex + "): " + clause.ToString());
-            }
-
-            //
-            // Is this is a forward pebbled node? If so, generate the forward set of problems to this node.
-            //
-            if (pebblerGraph.IsNodePebbledForward(nodeIndex))
-            {
-                if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
-                forwardProblems = pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(pebblerGraph, nodeIndex);
-            }
-
-            //
-            // Is this is a backward pebbled node? If so, generate the backward set of problems to this node.
-            //
-            if (pebblerGraph.IsNodePebbledBackward(nodeIndex))
-            {
-                if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine("Backward");
-                //backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
-            }
-
-            return new KeyValuePair<List<Problem>, List<Problem>>(forwardProblems, backwardProblems);
+            return FilterForMinimalAndRedundantProblems(problems.GetAll());
         }
+
+        //private List<Problem> GenerateBackwardProblems(List<GroundedClause> givens)
+        //{
+        //    ProblemHashMap backwardProblems = new ProblemHashMap(pebblerGraph.backwardPebbledEdges, graph.vertices.Count);
+
+        //    // Find all the node indices and sort them in increasing order
+        //    List<int> clauseIndices = new List<int>();
+        //    foreach (GroundedClause clause in goalClauses)
+        //    {
+        //        // We need to restrict problems generated based on goal nodes; don't want an obvious notion as a goal
+        //        if (clause.IsAbleToBeAGoalNode())
+        //        {
+        //            // Find the integer clause ID representation in the standard hypergraph
+        //            int nodeIndex = Utilities.StructuralIndex(graph, clause);
+
+        //            if (nodeIndex == -1)
+        //            {
+        //                if (Utilities.PROBLEM_GEN_DEBUG)
+        //                {
+        //                    System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+        //                }
+        //            }
+        //            else
+        //            {
+        //                clauseIndices.Add(nodeIndex);
+        //            }
+        //        }
+        //    }
+
+        //    // Sort in ascending order
+        //    clauseIndices.Sort();
+
+        //    // Generate all the problems based on the node indices
+        //    foreach (int goalNode in clauseIndices)
+        //    {
+        //        if (Utilities.PROBLEM_GEN_DEBUG)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine("Forward template node; will generate problems (" + goalNode + "): " + graph.vertices[goalNode].data.ToString());
+        //        }
+
+        //        //
+        //        // Is this is a forward pebbled node? If so, generate the forward set of problems to this node.
+        //        //
+        //        if (pebblerGraph.IsNodePebbledForward(goalNode))
+        //        {
+        //            if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
+        //            pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(forwardProblems, pebblerGraph, goalNode);
+        //        }
+        //    }
+
+        //    return FilterForMinimalAndRedundantProblems(forwardProblems.GetAll());
+        //}
+
+        ////
+        //// Generate all problems using the input template clause as a starting point.
+        ////
+        //public void GenerateProblems(ProblemHashMap forwardProblems, ProblemHashMap backwardProblems, int goalNode)
+        //{
+        //    if (Utilities.PROBLEM_GEN_DEBUG)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("Found template node; will generate problems (" + goalNode + "): " + graph.vertices[goalNode].data.ToString());
+        //    }
+
+        //    //
+        //    // Is this is a forward pebbled node? If so, generate the forward set of problems to this node.
+        //    //
+        //    if (pebblerGraph.IsNodePebbledForward(goalNode))
+        //    {
+        //        if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("Forward");
+        //        pathGenerator.GenerateForwardProblemsUsingBackwardPathToLeaves(forwardProblems, pebblerGraph, goalNode);
+        //    }
+
+        //    //
+        //    // Is this is a backward pebbled node? If so, generate the backward set of problems to this node.
+        //    //
+        //    if (pebblerGraph.IsNodePebbledBackward(goalNode))
+        //    {
+        //        //if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("Backward");
+        //        //backwardProblems = pathGenerator.GenerateBackwardProblemsUsingBackwardPathToNonLeaves(pebblerGraph, nodeIndex);
+        //    }
+        //}
 
         public List<Problem> FilterForMinimalAndRedundantProblems(List<Problem> problems)
         {
@@ -132,12 +215,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
                                     // Choose the shorter problem (fewer edges wins)
                                     if (problems[p2].edges.Count < minimalProblem.edges.Count)
                                     {
-                                        Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
+                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
                                         minimalProblem = problems[p2];
                                     }
                                     else
                                     {
-                                        Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
+                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
                                     }
                                 }
                             }
@@ -151,14 +234,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Pick up last problem in the list
             if (!marked[problems.Count - 1]) filtered.Add(problems[problems.Count - 1]);
 
-            if (problems.Count != filtered.Count)
+            if (Utilities.PROBLEM_GEN_DEBUG)
             {
-                Debug.WriteLine("Outer Filtered: " + (problems.Count - filtered.Count) + " = " + problems.Count + " - " + filtered.Count + " generated problems.");
+                Debug.WriteLine("Generated Problems: " + problems.Count);
+                Debug.WriteLine("Filtered Problems: " + (problems.Count - filtered.Count));
+                Debug.WriteLine("Problems Remaining: " + filtered.Count);
             }
 
             if (problems.Count < filtered.Count)
             {
-                Debug.WriteLine("Outer Filtered list is larger than original list!");
+                Debug.WriteLine("Filtered list is larger than original list!");
             }
 
             return filtered;

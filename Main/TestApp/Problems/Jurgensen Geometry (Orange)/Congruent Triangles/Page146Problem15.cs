@@ -8,9 +8,11 @@ namespace Geometry_Testbed
 	//
 	public class Page146Problem15 : CongruentTrianglesProblem
 	{
-        public Page146Problem15(bool onoff)
-            : base(onoff)
+        public Page146Problem15(bool onoff) : base(onoff)
 		{
+            problemName = "Page 146 Problem 15";
+            numberOfOriginalTextProblems = 1;
+
 			Point t = new Point("T", 0, 0); intrinsic.Add(t);
 			Point p = new Point("P", 0.5, 1.5); intrinsic.Add(p);
 			Point s = new Point("S", 1, 3); intrinsic.Add(s);
@@ -55,6 +57,11 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll4));
 			intrinsic.AddRange(GenerateSegmentClauses(coll5));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+
+            given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(s, x)), "Given"));
+            given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(t, y)), "Given"));
+
+            goals.Add(new Midpoint(o, GetProblemSegment(intrinsic, new Segment(p, q)), "GOAL"));
 		}
 	}
 }

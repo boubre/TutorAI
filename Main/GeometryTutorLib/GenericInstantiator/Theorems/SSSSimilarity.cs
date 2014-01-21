@@ -131,14 +131,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (seg1Tri1.StructurallyEquals(seg2Tri1) || seg1Tri1.StructurallyEquals(seg3Tri1) || seg2Tri1.StructurallyEquals(seg3Tri1)) return newGrounded;
             if (seg1Tri2.StructurallyEquals(seg2Tri2) || seg1Tri2.StructurallyEquals(seg3Tri2) || seg2Tri2.StructurallyEquals(seg3Tri2)) return newGrounded;
 
-            //
-            // For debug only
-            //
-            Debug.WriteLine("SSS Similarity In Triangles: " + ct1 + ", " + ct2);
-            Debug.WriteLine("\t\t" + pss1);
-            Debug.WriteLine("\t\t" + pss2);
-            Debug.WriteLine("\t\t" + pss3);
-            // End debug only
+            if (Utilities.DEBUG)
+            {
+                Debug.WriteLine("SSS Similarity In Triangles: " + ct1 + ", " + ct2);
+                Debug.WriteLine("\t\t" + pss1);
+                Debug.WriteLine("\t\t" + pss2);
+                Debug.WriteLine("\t\t" + pss3);
+            }
 
             // Indicate that these two triangles are similar to avoid deducing this again later.
             ct1.AddSimilarTriangle(ct2);

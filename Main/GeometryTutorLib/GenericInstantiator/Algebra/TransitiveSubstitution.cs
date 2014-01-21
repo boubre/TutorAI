@@ -795,7 +795,6 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Create a congruence relationship if it applies
             GroundedClause newCongruence = HandleCongruence(simplified);
-
             if (newCongruence != null) return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCongruence);
 
             // If a congruence was not established, create a complementary or supplementary relationship, if applicable
@@ -822,6 +821,8 @@ namespace GeometryTutorLib.GenericInstantiator
             Congruent newCongruent = null;
             if (simplified is AlgebraicAngleEquation)
             {
+                // Do not generate for lines; that is, 180^o angles
+                //if (((Angle)simplified.lhs).IsStraightAngle() && ((Angle)simplified.lhs).IsStraightAngle()) return null;
                 newCongruent = new AlgebraicCongruentAngles((Angle)simplified.lhs, (Angle)simplified.rhs, simplified.GetJustification());
             }
             else if (simplified is AlgebraicSegmentEquation)
@@ -922,11 +923,12 @@ namespace GeometryTutorLib.GenericInstantiator
             // Create the new relationships
             //
             Descriptor newDescriptor = null;
-            if (Utilities.CompareValues(numeral.value, 90))
-            {
-                newDescriptor = new Perpendicular(angle.GetVertex(), angle.ray1, angle.ray2, NAME);
-            }
-            else if (Utilities.CompareValues(numeral.value, 180))
+            //if (Utilities.CompareValues(numeral.value, 90))
+            //{
+            //    newDescriptor = new Perpendicular(angle.GetVertex(), angle.ray1, angle.ray2, NAME);
+            //}
+            //else
+            if (Utilities.CompareValues(numeral.value, 180))
             {
                 List<Point> pts = new List<Point>();
                 pts.Add(angle.A);

@@ -8,16 +8,16 @@ namespace Geometry_Testbed
     //
     public class Page134Problem6 : CongruentTrianglesProblem
     {
-        public Page134Problem6(bool onoff)
-            : base(onoff)
+        public Page134Problem6(bool onoff) : base(onoff)
         {
+            problemName = "Page 134 Problem 6";
+            numberOfOriginalTextProblems = 1;
+
             Point l = new Point("L", -3, 4); intrinsic.Add(l);
             Point o = new Point("O", 1.5, 1); intrinsic.Add(o);
             Point j = new Point("J", 6, 4); intrinsic.Add(j);
             Point m = new Point("M", 0, 0); intrinsic.Add(m);
             Point n = new Point("N", 3, 0); intrinsic.Add(n);
-
-     System.Diagnostics.Debug.WriteLine("Intersection: " + (new Segment(m, j).FindIntersection(new Segment(l, n)).ToString()));
 
             Segment lm = new Segment(l, m); intrinsic.Add(lm);
             Segment mn = new Segment(m, n); intrinsic.Add(mn);

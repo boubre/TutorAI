@@ -50,8 +50,8 @@ namespace GeometryTutorLib.GenericInstantiator
             List<GroundedClause> antecedent2 = Utilities.MakeList<GroundedClause>(inter);
             Angle ang1Set2 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
             Angle ang2Set2 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
-            antecedent1.Add(ang1Set2);
-            antecedent1.Add(ang2Set2);
+            antecedent2.Add(ang1Set2);
+            antecedent2.Add(ang2Set2);
             GeometricCongruentAngles cca2 = new GeometricCongruentAngles(ang1Set2, ang2Set2, NAME);
             cca2.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent2, cca2));

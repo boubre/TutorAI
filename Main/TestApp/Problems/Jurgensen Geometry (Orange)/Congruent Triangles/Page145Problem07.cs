@@ -8,9 +8,11 @@ namespace Geometry_Testbed
 	//
 	public class Page145Problem07 : CongruentTrianglesProblem
 	{
-        public Page145Problem07(bool onoff)
-            : base(onoff)
+        public Page145Problem07(bool onoff) : base(onoff)
 		{
+            problemName = "Page 145 Problem 7";
+            numberOfOriginalTextProblems = 1;
+
 			Point f = new Point("F", 0, 5); intrinsic.Add(f);
 			Point l = new Point("L", 4, 7); intrinsic.Add(l);
 			Point k = new Point("K", 4, 3); intrinsic.Add(k);
@@ -33,8 +35,10 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll1));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, al), GetProblemSegment(intrinsic, ak), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, fl), GetProblemSegment(intrinsic, fk), "Given"));
+			given.Add(new GeometricCongruentSegments(al, ak, "Given"));
+			given.Add(new GeometricCongruentSegments(fl, fk, "Given"));
+
+            goals.Add(new GeometricCongruentSegments(jl, jk, "GOAL"));
 		}
 	}
 }

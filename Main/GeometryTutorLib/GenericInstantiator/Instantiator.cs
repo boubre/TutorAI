@@ -37,6 +37,9 @@ namespace GeometryTutorLib.GenericInstantiator
             // Indicate all figure-based information is intrinsic; this needs to verified with the UI
             figure.ForEach(f => f.MakeIntrinsic());
 
+            // For problem generation, indicate that all given information is intrinsic
+            givens.ForEach(g => g.MakeGiven());
+
             // Calculates Coverage of the figure
             HandleAllFigureIntrinsicFacts(figure);
 
@@ -51,7 +54,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 GroundedClause clause = worklist[0];
                 worklist.RemoveAt(0);
 
-                if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.ToString());
+                if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
 
                 //
                 // Apply the clause to all applicable instantiators
@@ -61,8 +64,11 @@ namespace GeometryTutorLib.GenericInstantiator
                     // A list of all problem angles
                     Angle.Record(clause);
 
-                    if (clause is RightAngle) HandleDeducedClauses(worklist, RightAngle.Instantiate(clause));
-
+                    if (clause is RightAngle)
+                    {
+                        HandleDeducedClauses(worklist, RightAngle.Instantiate(clause));
+                        // ??? HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
+                    }
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
 
@@ -87,6 +93,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     if (clause is PerpendicularBisector)
                     {
                         HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, PerpendicularBisectorDefinition.Instantiate(clause));
                     }
                     else if (clause is Perpendicular)
                     {
@@ -95,6 +102,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, AdjacentAnglesPerpendicularImplyComplementary.Instantiate(clause));
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
                     }
                     else
                     {
@@ -112,6 +120,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, ParallelImplyAltIntCongruentAngles.Instantiate(clause));
                         HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
                         HandleDeducedClauses(worklist, Intersection.InstantiateSupplementary(clause));
+                        HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
                     }
                 }
                 else if (clause is Complementary)
@@ -137,7 +146,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
                     HandleDeducedClauses(worklist, ProportionalSegments.InstantiateEquation(clause));
-                    HandleDeducedClauses(worklist, Perpendicular.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
 
                     // If a geometric equation was constructed, it may not have been checked for proportionality
                     if ((clause as Equation).IsGeometric())
@@ -271,6 +280,9 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularBisectorDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, SegmentBisectorDefinition.Instantiate(clause));
 
                     // InMiddle Strengthened to Midpoint
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
@@ -296,6 +308,7 @@ namespace GeometryTutorLib.GenericInstantiator
             foreach (KeyValuePair<List<GroundedClause>, GroundedClause> newEdge in newVals)
             {
                 //Debug.WriteLine(newEdge.Value.clauseId + "(" + graph.Size() + ")" + ": " + newEdge.Value);
+
 
                 GroundedClause graphNode = graph.GetNode(newEdge.Value);
 
@@ -433,6 +446,7 @@ namespace GeometryTutorLib.GenericInstantiator
             CorrespondingAnglesOfParallelLines.Clear();
             SASCongruence.Clear();
             SSS.Clear();
+            AnglesOfEqualMeasureAreCongruent.Clear();
 
             //
             // Definitions
@@ -443,6 +457,7 @@ namespace GeometryTutorLib.GenericInstantiator
             SegmentBisectorDefinition.Clear();
             MedianDefinition.Clear();
             AltitudeDefinition.Clear();
+            PerpendicularDefinition.Clear();
 
             //
             // Theorems
@@ -455,7 +470,7 @@ namespace GeometryTutorLib.GenericInstantiator
             CongruentAnglesInTriangleImplyCongruentSides.Clear();
             CongruentSidesInTriangleImplyCongruentSegments.Clear();
             ExteriorAngleEqualSumRemoteAngles.Clear();
-            HypotenuseLeg.Clear();
+            //HypotenuseLeg.Clear();
             ParallelImplyAltIntCongruentAngles.Clear();
             ParallelImplySameSideInteriorSupplementary.Clear();
             PerpendicularImplyCongruentAdjacentAngles.Clear();

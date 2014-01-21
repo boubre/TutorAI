@@ -8,8 +8,7 @@ namespace Geometry_Testbed
 	//
 	public class Page147Problem21 : CongruentTrianglesProblem
 	{
-        public Page147Problem21(bool onoff)
-            : base(onoff)
+        public Page147Problem21(bool onoff) : base(onoff)
 		{
 			Point d = new Point("D", 6, 6); intrinsic.Add(d);
 			Point b = new Point("B", 9, 0); intrinsic.Add(b);
@@ -32,9 +31,6 @@ namespace Geometry_Testbed
 
 			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ae), GetProblemSegment(intrinsic, bc), "Given"));
 			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ad), GetProblemSegment(intrinsic, bd), "Given"));
-			/*
-			 * enter parallels here
-			 * */
 		}
 	}
 }

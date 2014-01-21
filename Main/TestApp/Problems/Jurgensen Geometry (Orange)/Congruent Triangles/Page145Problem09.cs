@@ -8,9 +8,11 @@ namespace Geometry_Testbed
 	//
 	public class Page145Problem09 : CongruentTrianglesProblem
 	{
-        public Page145Problem09(bool onoff)
-            : base(onoff)
+        public Page145Problem09(bool onoff) : base(onoff)
 		{
+            problemName = "Page 145 Problem 9";
+            numberOfOriginalTextProblems = 1;
+
 			Point s = new Point("S", 0, 0); intrinsic.Add(s);
 			Point r = new Point("R", 2, 4); intrinsic.Add(r);
 			Point t = new Point("T", 8, 4); intrinsic.Add(t);
@@ -44,10 +46,11 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll2));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, rs), GetProblemSegment(intrinsic, xy), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, st), GetProblemSegment(intrinsic, yz), "Given"));
-			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(r, s, k)), GetProblemAngle(intrinsic, new Angle(k, s, t)), "Given"));
-			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(x, y, l)), GetProblemAngle(intrinsic, new Angle(l, y, z)), "Given"));
+            given.Add(new GeometricCongruentTriangles(new Triangle(r, s, t), new Triangle(x, y, z), "Given"));
+			given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(r, s, t)), ks, "Given"));
+            given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(x, y, z)), ly, "Given"));
+
+            goals.Add(new GeometricCongruentSegments(ly, ks, "GOAL"));
 		}
 	}
 }

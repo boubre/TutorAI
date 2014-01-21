@@ -111,6 +111,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Strengthen the old triangle to a right triangle
             RightTriangle newRight = new RightTriangle(tri, "Strengthened");
             Strengthened newStrengthened = new Strengthened(tri, newRight, NAME);
+            tri.SetProvenToBeRight();
 
             // Create a strengthening of the angle to a right angle
             Strengthened newRightAngle = new Strengthened(newRight.rightAngle, new RightAngle(newRight.rightAngle, "Strengthened"), NAME);

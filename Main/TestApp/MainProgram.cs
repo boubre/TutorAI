@@ -18,6 +18,9 @@ namespace Geometry_Testbed
 
             problems.AddRange(JurgensenProblems.GetProblems());
             problems.AddRange(IndianTextProblems.GetProblems());
+            problems.AddRange(HoltWorkbookProblems.GetProblems());
+            problems.AddRange(McDougallProblems.GetProblems());
+            problems.AddRange(McDougallWorkbookProblems.GetProblems());
 
             return problems;
         }

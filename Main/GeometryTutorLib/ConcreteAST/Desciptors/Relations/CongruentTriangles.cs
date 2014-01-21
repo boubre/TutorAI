@@ -29,22 +29,85 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object c)
         {
-            if (!(c is CongruentTriangles)) return false;
+            CongruentTriangles cts = c as CongruentTriangles;
+            if (cts == null) return false;
 
-            CongruentTriangles cct = (CongruentTriangles)c;
+            // The point must equate in order
+            KeyValuePair<Triangle, Triangle> pair1;
+            KeyValuePair<Triangle, Triangle> pair2;
+            if (ct1.StructurallyEquals(cts.ct1) && ct2.StructurallyEquals(cts.ct2))
+            {
+                pair1 = new KeyValuePair<Triangle, Triangle>(ct1, cts.ct1);
+                pair2 = new KeyValuePair<Triangle, Triangle>(ct2, cts.ct2);
+            }
+            else if (ct1.StructurallyEquals(cts.ct2) && ct2.StructurallyEquals(cts.ct1))
+            {
+                pair1 = new KeyValuePair<Triangle, Triangle>(ct1, cts.ct2);
+                pair2 = new KeyValuePair<Triangle, Triangle>(ct2, cts.ct1);
+            }
+            else return false;
 
-            return ct1.StructurallyEquals(cct.ct1) && ct2.StructurallyEquals(cct.ct2) ||
-                   ct1.StructurallyEquals(cct.ct2) && ct2.StructurallyEquals(cct.ct1);
+            if (!VerifyMappingOrder(pair1, pair2)) return false;
+
+            return ct1.StructurallyEquals(cts.ct1) && ct2.StructurallyEquals(cts.ct2) ||
+                   ct1.StructurallyEquals(cts.ct2) && ct2.StructurallyEquals(cts.ct1);
         }
 
         public override bool Equals(Object c)
         {
-            if (!(c is CongruentTriangles)) return false;
+            CongruentTriangles cts = c as CongruentTriangles;
+            if (cts == null) return false;
 
-            CongruentTriangles cct = (CongruentTriangles)c;
+            // The point must equate in order
+            KeyValuePair<Triangle, Triangle> pair1;
+            KeyValuePair<Triangle, Triangle> pair2;
+            if (ct1.Equals(cts.ct1) && ct2.Equals(cts.ct2))
+            {
+                pair1 = new KeyValuePair<Triangle, Triangle>(ct1, cts.ct1);
+                pair2 = new KeyValuePair<Triangle, Triangle>(ct2, cts.ct2);
+            }
+            else if (ct1.Equals(cts.ct2) && ct2.Equals(cts.ct1))
+            {
+                pair1 = new KeyValuePair<Triangle, Triangle>(ct1, cts.ct2);
+                pair2 = new KeyValuePair<Triangle, Triangle>(ct2, cts.ct1);
+            }
+            else return false;
 
-            return (ct1.Equals(cct.ct1) && ct2.Equals(cct.ct2) || ct1.Equals(cct.ct2) && ct2.Equals(cct.ct1)) && base.Equals(c);
+            if (!VerifyMappingOrder(pair1, pair2)) return false;
+
+            return base.Equals(c);
         }
+
+        private bool VerifyMappingOrder(KeyValuePair<Triangle, Triangle> pair1, KeyValuePair<Triangle, Triangle> pair2)
+        {
+            // Determine how the points are mapped from thisTriangle to thatTriangle
+            List<Point> triangle11Pts = pair1.Key.GetPoints();
+            List<Point> triangle12Pts = pair1.Value.GetPoints();
+
+            int[] indexMap = new int[3];
+            for (int p11 = 0; p11 < triangle11Pts.Count; p11++)
+            {
+                for (int p12 = 0; p12 < triangle12Pts.Count; p12++)
+                {
+                    if (triangle11Pts[p11].StructurallyEquals(triangle12Pts[p12]))
+                    {
+                        indexMap[p11] = p12;
+                        break;
+                    }
+                }
+            }
+
+            // Verify that the second pairing maps the exact same way as the first pairing
+            List<Point> triangle21Pts = pair2.Key.GetPoints();
+            List<Point> triangle22Pts = pair2.Value.GetPoints();
+            for (int i = 0; i < indexMap.Length; i++)
+            {
+                if (!triangle21Pts[i].StructurallyEquals(triangle22Pts[indexMap[i]])) return false;
+            }
+
+            return true;
+        }
+
 
         public void BuildUnparse(StringBuilder sb, int tabDepth)
         {

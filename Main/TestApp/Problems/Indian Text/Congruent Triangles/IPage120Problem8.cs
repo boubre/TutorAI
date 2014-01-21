@@ -39,9 +39,17 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
+            //given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
+            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, m)), GetProblemSegment(intrinsic, new Segment(m, c)), "Given"));
             given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(b, d)), "Given"));
             given.Add(new RightAngle(GetProblemAngle(intrinsic, new Angle(b, c, d)), "Given"));
+
+            goals.Add(new GeometricCongruentTriangles(new Triangle(b, m, c), new Triangle(d, m, a), "GOAL"));
+            goals.Add(new Strengthened(GetProblemAngle(intrinsic, new Angle(a, d, c)), new RightAngle(GetProblemAngle(intrinsic, new Angle(a, d, c)), "GOAL"), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(a, d, c), new Triangle(b, c, d), "GOAL"));
+
+            Multiplication product = new Multiplication(new NumericValue(2), GetProblemSegment(intrinsic, new Segment(c, m)));
+            goals.Add(new GeometricSegmentEquation(product, GetProblemSegment(intrinsic, new Segment(b, d)), "GOAL"));
         }
     }
 }

@@ -136,6 +136,9 @@
     <Compile Include="GenericInstantiator\Axioms\SSS.cs" />
     <Compile Include="GenericInstantiator\Definitions\AngleBisectorDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\AltitudeDefinition.cs" />
+    <Compile Include="GenericInstantiator\Axioms\AnglesOfEqualMeasureAreCongruent.cs" />
+    <Compile Include="GenericInstantiator\Definitions\PerpendicularBisectorDefinition.cs" />
+    <Compile Include="GenericInstantiator\Definitions\PerpendicularDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\MedianDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\RightTriangleDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\SegmentBisectorDefinition.cs" />
@@ -188,7 +191,7 @@
     <Compile Include="ProblemAnalyzer\QueryFeatureVector.cs" />
     <Compile Include="ProblemAnalyzer\PartitionedProblemSpace.cs" />
     <Compile Include="ProblemAnalyzer\ProblemEquivalenceClass.cs" />
-    <Compile Include="ProblemAnalyzer\PathHashMap.cs" />
+    <Compile Include="ProblemAnalyzer\ProblemHashMap.cs" />
     <Compile Include="ProblemAnalyzer\Path.cs" />
     <Compile Include="ProblemAnalyzer\PathGenerator.cs" />
     <Compile Include="Pebbler\PebblerHyperEdge.cs" />

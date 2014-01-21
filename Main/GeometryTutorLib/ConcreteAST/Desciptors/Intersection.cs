@@ -1062,6 +1062,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
+            if (obj is PerpendicularBisector) return (obj as PerpendicularBisector).Equals(this);
             if (obj is Perpendicular) return (obj as Perpendicular).Equals(this);
 
             Intersection inter = obj as Intersection;

@@ -8,8 +8,7 @@ namespace Geometry_Testbed
     //
     public class IPage123Example5 : CongruentTrianglesProblem
     {
-        public IPage123Example5(bool onoff)
-            : base(onoff)
+        public IPage123Example5(bool onoff) : base(onoff)
         {
             problemName = "Book I Page 123 Example 5";
             numberOfOriginalTextProblems = 1;
@@ -57,6 +56,8 @@ namespace Geometry_Testbed
             given.Add(new Midpoint(e, GetProblemSegment(intrinsic, new Segment(a, b)), "Given"));
             given.Add(new Midpoint(f, GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a,b)), GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
+
+            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, f)), GetProblemSegment(intrinsic, new Segment(c, e)), "GOAL"));
         }
     }
 }

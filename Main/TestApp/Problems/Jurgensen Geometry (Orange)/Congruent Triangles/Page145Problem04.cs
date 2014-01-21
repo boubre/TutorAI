@@ -4,12 +4,11 @@ using System.Collections.Generic;
 namespace Geometry_Testbed
 {
     //
-    // Geometry; Page 145 Problem 2
+    // Geometry; Page 145 Problem 4
     //
     public class Page145Problem04 : CongruentTrianglesProblem
     {
-        public Page145Problem04(bool onoff)
-            : base(onoff)
+        public Page145Problem04(bool onoff) : base(onoff)
         {
             problemName = "Page 145 Problem 4";
             numberOfOriginalTextProblems = 1;
@@ -41,6 +40,8 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentSegments(ab, cd, "Given"));
 			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(c, d, l)), GetProblemAngle(intrinsic, new Angle(m, b, a)), "Given"));
 			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(d, a, l)), GetProblemAngle(intrinsic, new Angle(m, c, b)), "Given"));
+
+            goals.Add(new GeometricCongruentSegments(al, cm, "GOAL"));
         }
     }
 }

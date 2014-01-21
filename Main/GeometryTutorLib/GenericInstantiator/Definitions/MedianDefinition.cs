@@ -118,6 +118,9 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment triangleBase = tri.CoincidesWithASide(triangleBaseCandidate);
             if (triangleBase == null) return newGrounded;
 
+            // The candidate base and the actual triangle side must equate exactly
+            if (!triangleBase.HasSubSegment(triangleBaseCandidate) || !triangleBaseCandidate.HasSubSegment(triangleBase)) return newGrounded;
+
             // The point opposite the base of the triangle must be within the endpoints of the bisector
             Point oppPoint = tri.OtherPoint(triangleBase);
             if (!sb.bisector.PointIsOnAndBetweenEndpoints(oppPoint)) return newGrounded;

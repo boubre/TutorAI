@@ -8,11 +8,10 @@ namespace Geometry_Testbed
 	//
 	public class Page223Problem22 : CongruentTrianglesProblem
 	{
-        public Page223Problem22(bool onoff)
-            : base(onoff)
+        public Page223Problem22(bool onoff) : base(onoff)
 		{
             problemName = "Page 223 Problem 22";
-            numberOfOriginalTextProblems = 2;
+            numberOfOriginalTextProblems = 1;
 
             Point x = new Point("X", 1, 0); intrinsic.Add(x);
 			Point f = new Point("F", 3, 4); intrinsic.Add(f);
@@ -39,7 +38,9 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll2));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			given.Add(new GeometricParallel(rs, ef, "Given"));	
-		}
+			given.Add(new GeometricParallel(rs, ef, "Given"));
+
+            goals.Add(new GeometricSimilarTriangles(GetProblemTriangle(intrinsic, new Triangle(f, x, e)), GetProblemTriangle(intrinsic, new Triangle(s, x, r)), "GOAL"));
+        }
 	}
 }

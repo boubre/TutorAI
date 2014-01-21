@@ -8,9 +8,11 @@ namespace Geometry_Testbed
     //
     public class Page144Problem01 : CongruentTrianglesProblem
     {
-        public Page144Problem01(bool onoff)
-            : base(onoff)
+        public Page144Problem01(bool onoff) : base(onoff)
         {
+            problemName = "Page 144 Problem 1";
+            numberOfOriginalTextProblems = 1;
+
             Point n = new Point("N", 0, 0); intrinsic.Add(n);
             Point r = new Point("R", 1, 4); intrinsic.Add(r);
             Point x = new Point("X", 3, 0); intrinsic.Add(x);
@@ -49,9 +51,10 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, e)), GetProblemSegment(intrinsic, new Segment(e, x)), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, e)), GetProblemSegment(intrinsic, new Segment(s, y)), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, e)), GetProblemSegment(intrinsic, new Segment(l, s)), "Given"));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(s, y)), GetProblemSegment(intrinsic, new Segment(l, s)), "Given"));
             given.Add(new GeometricCongruentSegments(nr, lo, "Given"));
             given.Add(new GeometricCongruentSegments(nx, oy, "Given"));
+
+            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(n, e)), GetProblemSegment(intrinsic, new Segment(o, s)), "GOAL"));
         }
     }
 }

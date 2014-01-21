@@ -12,14 +12,16 @@ namespace Geometry_Testbed
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            problems.Add(new IPage123Example5(false));
-            problems.Add(new IPage123Example6(false));
-            problems.Add(new IPage128Problem01(false)); // Good to analyze
-            problems.Add(new IPage128Problem03(false));
+            problems.Add(new IPage123Example5(false));  // GTG
+            problems.Add(new IPage123Example6(false));  // GTG
+            problems.Add(new IPage128Problem01(false)); // GTG    // Good to analyze
+            problems.Add(new IPage128Problem03(false)); // GTG
+            problems.Add(new IPage120Problem8(false));  // GTG: Overlapping Right Triangles
+            problems.Add(new JPage140Problem6(false));  // GTG: Interleaving Triangles; Missing coverage of an intersection FOR ALL problems
 
-
-            problems.Add(new IPage120Problem8(false)); // Good to analyze: Overlapping Right Triangles
-            problems.Add(new JPage140Problem6(false)); // Good to analyze: Interleaving Triangles; Missing coverage of an intersection FOR ALL problems
+            
+            
+            
             //problems.Add(new JPage140Problem7(false)); // Encoding ISSUES
 
             //problems.Add(new IPage149TopExercise(true)); // Requires implementing a new theorem

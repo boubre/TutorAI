@@ -8,8 +8,7 @@ namespace Geometry_Testbed
     //
     public class Page144Problem02 : CongruentTrianglesProblem
     {
-        public Page144Problem02(bool onoff)
-            : base(onoff)
+        public Page144Problem02(bool onoff) : base(onoff)
         {
             problemName = "Page 144 Problem 2";
             numberOfOriginalTextProblems = 1;
@@ -43,6 +42,8 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ad), GetProblemSegment(intrinsic, bc), "Given"));
             given.Add(new RightAngle(a, e, b, "Given"));
             given.Add(new RightAngle(c, f, d, "Given"));
+
+            goals.Add(new GeometricCongruentSegments(be, df, "GOAL"));
         }
     }
 }

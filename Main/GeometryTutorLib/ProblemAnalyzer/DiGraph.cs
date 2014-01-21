@@ -87,7 +87,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 transposeEdgeMap.Add(pair.Key, new List<int>(pair.Value));
             }
 
-            sccs = GetStronglyConnectedComponents();
+            //sccs = GetStronglyConnectedComponents();
         }
 
         //

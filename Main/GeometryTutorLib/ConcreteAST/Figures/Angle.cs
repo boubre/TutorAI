@@ -461,6 +461,11 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.CompareValues(this.measure + thatAngle.measure, 180);
         }
 
+        public bool IsStraightAngle()
+        {
+            return ray1.IsCollinearWith(ray2);
+        }
+
         // Checking for structural equality (is it the same segment) excluding the multiplier
         // This is either a direct comparison of the angle based on vertices or 
         public override bool StructurallyEquals(object obj)

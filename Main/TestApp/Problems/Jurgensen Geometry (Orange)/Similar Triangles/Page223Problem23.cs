@@ -6,13 +6,12 @@ namespace Geometry_Testbed
 	//
 	// Geometry; Page 223 Problem 23
 	//
-	public class Page223Problem23 : CongruentTrianglesProblem
+	public class Page223Problem23 : SimilarTrianglesProblem
 	{
-        public Page223Problem23(bool onoff)
-            : base(onoff)
+        public Page223Problem23(bool onoff) : base(onoff)
 		{
             problemName = "Page 223 Problem 23";
-            numberOfOriginalTextProblems = 2;
+            numberOfOriginalTextProblems = 1;
 
             Point j = new Point("J", 0, 0); intrinsic.Add(j);
 			Point i = new Point("I", 3, 3); intrinsic.Add(i);
@@ -39,7 +38,9 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll2));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(j, g, i)), GetProblemAngle(intrinsic, new Angle(j, y, z)), "Given")); 
+			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(j, g, i)), GetProblemAngle(intrinsic, new Angle(j, y, z)), "Given"));
+
+            goals.Add(new GeometricSimilarTriangles(GetProblemTriangle(intrinsic, new Triangle(j, i, g)), GetProblemTriangle(intrinsic, new Triangle(j, z, y)), "GOAL"));
 		}
 	}
 }

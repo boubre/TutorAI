@@ -8,9 +8,11 @@ namespace Geometry_Testbed
 	//
 	public class Page146Problem14 : CongruentTrianglesProblem
 	{
-        public Page146Problem14(bool onoff)
-            : base(onoff)
+        public Page146Problem14(bool onoff) : base(onoff)
 		{
+            problemName = "Page 146 Problem 14";
+            numberOfOriginalTextProblems = 1;
+
 			Point g = new Point("G", 0, 0); intrinsic.Add(g);
 			Point d = new Point("D", 3, 2); intrinsic.Add(d);
 			Point e = new Point("E", 7, 0); intrinsic.Add(e);
@@ -35,9 +37,11 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll1));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			/* replace below code with parallel code */
-			/*given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, dg), GetProblemSegment(intrinsic, ef), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, fg), GetProblemSegment(intrinsic, de), "Given"));*/
+            given.Add(new GeometricParallel(dg, ef, "Given"));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(g, d, e)), GetProblemAngle(intrinsic, new Angle(g, f, e)), "Given"));
+			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(g, h)), GetProblemSegment(intrinsic, new Segment(e, k)), "Given"));
+
+            goals.Add(new GeometricParallel(dh, fk, "GOAL"));
 		}
 	}
 }

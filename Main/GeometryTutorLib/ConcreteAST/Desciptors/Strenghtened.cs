@@ -39,9 +39,9 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            Strengthened s = obj as Strengthened;
-            if (s == null) return false;
-            return this.original.Equals(s.original);
+            Strengthened thatS = obj as Strengthened;
+            if (thatS == null) return false;
+            return this.original.Equals(thatS.original) && this.strengthened.GetType() == thatS.strengthened.GetType();
         }
 
         public override string ToString()

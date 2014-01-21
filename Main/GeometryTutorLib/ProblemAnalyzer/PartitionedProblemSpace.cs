@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace GeometryTutorLib.ProblemAnalyzer
@@ -58,18 +59,25 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public List<Problem> ValidateOriginalProblems(List<ConcreteAST.GroundedClause> givens, List<ConcreteAST.GroundedClause> goals)
         {
+            if (!goals.Any())
+            {
+                throw new ArgumentException("Specified problem does not have any goals.");
+            }
+
             // Acquire the indices of the givens
             List<int> givenIndices = new List<int>();
             foreach (ConcreteAST.GroundedClause given in givens)
             {
-                givenIndices.Add(Utilities.StructuralIndex(graph, given));
+                int givenIndex = (given is ConcreteAST.Equation) ? graph.GetNodeIndex(given) : Utilities.StructuralIndex(graph, given);
+                if (givenIndex == -1) throw new Exception("FATAL ERROR: GIVEN Node not found!!!" + given);
+                givenIndices.Add(givenIndex);
             }
 
             //Acquire the indices of the goals
             List<int> goalIndices = new List<int>();
             foreach (ConcreteAST.GroundedClause goal in goals)
             {
-                int goalIndex = Utilities.StructuralIndex(graph, goal);
+                int goalIndex = (goal is ConcreteAST.Equation) ? graph.GetNodeIndex(goal) : Utilities.StructuralIndex(graph, goal);
                 if (goalIndex == -1) throw new Exception("FATAL ERROR: Goal Node not deduced!!!" + goal);
                 goalIndices.Add(goalIndex);
             }
@@ -83,11 +91,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
             {
                 foreach (Problem problem in partition.elements)
                 {
-                    // Does this problem have the same goals?
-                    if (Utilities.EqualSets<int>(problem.givens, givenIndices))
+                    // Does this problem have one of the goals?
+                    if (goalIndices.Contains(problem.goal))
                     {
-                        // Chcek the goal indices
-                        if (goalIndices.Contains(problem.goal))
+                        // Does this problem have a subset of the givens?
+                        if (Utilities.Subset<int>(givenIndices, problem.givens))  // if (Utilities.EqualSets<int>(problem.givens, givenIndices))
                         {
                             // Success, we generated a book problem directly
                             // We ensured previously that there does not exist more than one problem with the same given set and goal node;

@@ -11,242 +11,240 @@ namespace GeometryTutorLib.GenericInstantiator
 
         private readonly static string NAME = "Hypotenuse Leg";
 
-        private static List<Triangle> unifyCandTris = new List<Triangle>();
-        private static List<GeometricCongruentSegments> unifyCandSegments = new List<GeometricCongruentSegments>();
+        private static List<RightTriangle> candidateRightTriangles = new List<RightTriangle>();
+        private static List<CongruentSegments> candidateSegments = new List<CongruentSegments>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
 
         // Resets all saved data.
         public static void Clear()
         {
-            unifyCandSegments.Clear();
-            unifyCandTris.Clear();
+            candidateSegments.Clear();
+            candidateStrengthened.Clear();
+            candidateRightTriangles.Clear();
         }
 
-        //
+        //    A
+        //     |\
+        //     | \
+        //     |_ \
+        //     |_|_\
+        //    B     C
         // In order for two right triangles to be congruent, we require the following:
-        //    Triangle(A, B, C), Triangle(D, E, F),
+        //    RightTriangle(A, B, C), RightTriangle(D, E, F),
         //    Congruent(Segment(A, B), Segment(D, E)),
-        //    Congruent(Segment(B, C), Segment(E, F)) -> Congruent(Triangle(A, B, C), Triangle(D, E, F)),
+        //    Congruent(Segment(A, C), Segment(D, F)) -> Congruent(Triangle(A, B, C), Triangle(D, E, F)),
         //                                               Congruent(Segment(A, C), Angle(D, F)),
         //                                               Congruent(Angle(C, A, B), Angle(F, D, E)),
         //                                               Congruent(Angle(B, C, A), Angle(E, F, D)),
         //
         // Note: we need to figure out the proper order of the sides to guarantee congruence
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
-            //
             // The list of new grounded clauses if they are deduced
-            //
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            // Do we have a segment or triangle?
-            if (!(c is GeometricCongruentSegments) && !(c is Triangle))
+            if (clause is CongruentSegments)
             {
-                return newGrounded;
-            }
+                CongruentSegments newCs = clause as CongruentSegments;
 
-            //
-            // Do we have enough information for unification?
-            //
-            if (c is GeometricCongruentSegments && (!unifyCandSegments.Any() || unifyCandTris.Count <= 1))
-            {
-                unifyCandSegments.Add((GeometricCongruentSegments)c);
-                return newGrounded;
-            }
-            else if (c is Triangle && (!unifyCandTris.Any() || unifyCandSegments.Count < 2))
-            {
-                unifyCandTris.Add((Triangle)c);
-                return newGrounded;
-            }
-
-            // If this is a new segment, check for congruent triangles with this new piece of information
-            if (c is GeometricCongruentSegments)
-            {
-                GeometricCongruentSegments newCs = (GeometricCongruentSegments)c;
-
-                // Check all combinations of triangles to see if they are congruent
-                // This congruence must include the new segment congruence
-                for (int i = 0; i < unifyCandTris.Count; i++)
+                // Check all combinations of strict right triangle objects
+                for (int i = 0; i < candidateRightTriangles.Count - 1; i++)
                 {
-                    for (int j = i + 1; j < unifyCandTris.Count; j++)
+                    for (int j = i + 1; j < candidateRightTriangles.Count; j++)
                     {
-                        // Do not compare a triangle to itself
-                        if (i != j)
+                        foreach (CongruentSegments css in candidateSegments)
                         {
-                            Triangle ct1 = unifyCandTris[i];
-                            Triangle ct2 = unifyCandTris[j];
-                            //if (!ct1.WasDeducedCongruent(ct2))
-                            //{
-                                // We must know both candidate triangles are right triangles
-                                if (ct1.provenRight && ct2.provenRight)
-                                {
-                                    // First, compare the new congruent segment; if it fails, ignore this pair of triangles
-                                    if (newCs.LinksTriangles(ct1, ct2))
-                                    {
-                                        newGrounded.AddRange(CollectAndCheckHL(unifyCandTris[i], unifyCandTris[j], newCs));
-                                    }
-                                }
-                            //}
+                            newGrounded.AddRange(ReconfigureAndCheck(candidateRightTriangles[i], candidateRightTriangles[j], newCs, css));
+                        }
+                    }
+                }
+
+                // Check all combinations of (1) strict right triangle and (2) a strengthened triangle
+                foreach (RightTriangle rt in candidateRightTriangles)
+                {
+                    foreach (Strengthened streng in candidateStrengthened)
+                    {
+                        foreach (CongruentSegments css in candidateSegments)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(rt, streng, newCs, css));
+                        }
+                    }
+                }
+
+                // Check all combinations of strengthened triangles
+                for (int i = 0; i < candidateStrengthened.Count - 1; i++)
+                {
+                    for (int j = i + 1; j < candidateStrengthened.Count; j++)
+                    {
+                        foreach (CongruentSegments css in candidateSegments)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(candidateStrengthened[i], candidateStrengthened[j], newCs, css));
                         }
                     }
                 }
 
                 // Add this segment to the list of possible clauses to unify later
-                unifyCandSegments.Add(newCs);
+                candidateSegments.Add(newCs);
             }
-
-            // If this is a new triangle, check for triangles which may be congruent to this new triangle
-            else if (c is Triangle)
+            //
+            // A triangle is either strictly a right triangle object, or a triangle is strengthened to be a right triangle
+            //
+            else if (clause is RightTriangle)
             {
-                Triangle candidateTri = (Triangle)c;
-                foreach (Triangle ct in unifyCandTris)
-                {
-                    // Only consider pairs of right triangles
-                    if (((Triangle)c).provenRight && ct.provenRight)
-                    {
-                        List<GeometricCongruentSegments> applicSegments = new List<GeometricCongruentSegments>();
+                RightTriangle newRt = clause as RightTriangle;
 
-                        newGrounded.AddRange(CollectAndCheckHL(candidateTri, ct, applicSegments));
+                // Check all combinations of strict right triangle objects
+                foreach (RightTriangle oldRt in candidateRightTriangles)
+                {
+                    for (int i = 0; i < candidateSegments.Count - 1; i++)
+                    {
+                        for (int j = i + 1; j < candidateSegments.Count; j++)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(newRt, oldRt, candidateSegments[i], candidateSegments[j]));
+                        }
                     }
                 }
 
-                // Add this triangle to the list of possible clauses to unify later
-                unifyCandTris.Add(candidateTri);
+                // Check all combinations of (1) strict right triangle and (2) a strengthened triangle
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    for (int i = 0; i < candidateSegments.Count - 1; i++)
+                    {
+                        for (int j = i + 1; j < candidateSegments.Count; j++)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(newRt, streng, candidateSegments[i], candidateSegments[j]));
+                        }
+                    }
+                }
+
+                candidateRightTriangles.Add(newRt);
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened newStreng = clause as Strengthened;
+
+                // Only interested in strengthened Right Triangles
+                if (!(newStreng.strengthened is RightTriangle)) return newGrounded;
+
+                // Check all combinations of strict right triangle objects
+                foreach (RightTriangle oldRt in candidateRightTriangles)
+                {
+                    for (int i = 0; i < candidateSegments.Count - 1; i++)
+                    {
+                        for (int j = i + 1; j < candidateSegments.Count; j++)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(oldRt, newStreng, candidateSegments[i], candidateSegments[j]));
+                        }
+                    }
+                }
+
+                // Check all combinations of (1) strict right triangle and (2) a strengthened triangle
+                foreach (Strengthened oldStreng in candidateStrengthened)
+                {
+                    for (int i = 0; i < candidateSegments.Count - 1; i++)
+                    {
+                        for (int j = i + 1; j < candidateSegments.Count; j++)
+                        {
+                            newGrounded.AddRange(ReconfigureAndCheck(newStreng, oldStreng, candidateSegments[i], candidateSegments[j]));
+                        }
+                    }
+                }
+
+                candidateStrengthened.Add(newStreng);
             }
 
             return newGrounded;
         }
 
         //
-        // Is this a true HL situation? We know at this point both triangles are right triangles
+        // Acquires all of the applicable congruent segments; then checks HL
         //
-        private static List<KeyValuePair<Point, Point>> IsHLsituation(Triangle ct1, Triangle ct2,
-                                         List<GeometricCongruentSegments> segmentPairs,
-                                     out List<GroundedClause> congruences)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(RightTriangle rt1, RightTriangle rt2, CongruentSegments css1, CongruentSegments css2)
         {
-            // Construct a list of pairs to return; this is the correspondence from triangle 1 to triangle 2
-            List<KeyValuePair<Point, Point>> pairs = new List<KeyValuePair<Point, Point>>();
-
-            // Initialize congruences
-            congruences = new List<GroundedClause>();
-
-            // Miniumum information required
-            if (segmentPairs.Count < 2) return pairs;
-
-            //
-            // for each combination of congruent segments, do we have a hypotenuse leg scenario?
-            //
-            for (int i = 0; i < segmentPairs.Count; i++)
-            {
-                for (int j = i + 1; j < segmentPairs.Count; j++)
-                {
-                    // Do we have a hypotenuse set and a leg set?
-                    Segment seg1Tri1 = ct1.GetSegment(segmentPairs[i]);
-                    Segment seg2Tri1 = ct1.GetSegment(segmentPairs[j]);
-
-                    Segment seg1Tri2 = ct2.GetSegment(segmentPairs[i]);
-                    Segment seg2Tri2 = ct2.GetSegment(segmentPairs[j]);
-
-                    Angle angleTri1 = ct1.rightAngle;
-                    Angle angleTri2 = ct2.rightAngle;
-
-                    // Check both triangles for hypotenuse leg by checking to see if the right angle is NOT the included angle
-                    if (!angleTri1.IsIncludedAngle(seg1Tri1, seg2Tri1) && !angleTri2.IsIncludedAngle(seg1Tri2, seg2Tri2))
-                    {
-                        // The right angles correspond; the vertices correspond directly
-                        Point vertex1 = angleTri1.GetVertex();
-                        Point vertex2 = angleTri2.GetVertex();
-
-                        pairs.Add(new KeyValuePair<Point, Point>(vertex1, vertex2));
-
-                        // Find the other shared vertex from the segments; this is not the right angle found above
-                        Point nextVertex1 = seg1Tri1.SharedVertex(seg2Tri1);
-                        Point nextVertex2 = seg1Tri2.SharedVertex(seg2Tri2);
-                        pairs.Add(new KeyValuePair<Point, Point>(nextVertex1, nextVertex2));
-                        pairs.Add(new KeyValuePair<Point, Point>(ct1.OtherPoint(vertex1, nextVertex1), ct2.OtherPoint(vertex2, nextVertex2)));
-
-                        congruences.Add(segmentPairs[i]);
-                        congruences.Add(segmentPairs[j]);
-                        //congruences.Add(new ConcreteCongruentAngles(angleTri1, angleTri2, "HL: All right angles are congruent."));
-
-                        return pairs;
-                    }
-                }
-            }
-
-            return pairs;
+            return CollectAndCheckHL(rt1, rt2, css1, css2, rt1, rt2);
+        }
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(RightTriangle rt1,  Strengthened streng, CongruentSegments css1, CongruentSegments css2)
+        {
+            return CollectAndCheckHL(rt1, streng.strengthened as RightTriangle, css1, css2, rt1, streng);
+        }
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(Strengthened streng1,  Strengthened streng2, CongruentSegments css1, CongruentSegments css2)
+        {
+            return CollectAndCheckHL(streng1.strengthened as RightTriangle, streng2.strengthened as RightTriangle, css1, css2, streng1, streng2);
         }
 
         //
         // Acquires all of the applicable congruent segments; then checks HL
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckHL(Triangle ct1, Triangle ct2, List<GeometricCongruentSegments> applicSegments)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckHL(RightTriangle rt1, RightTriangle rt2, 
+                                                                                                  CongruentSegments css1, CongruentSegments css2,
+                                                                                                  GroundedClause original1, GroundedClause original2)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            // Check all other segments
-            foreach (GeometricCongruentSegments ccs in unifyCandSegments)
+            // The Congruence pairs must relate the two triangles
+            if (!css1.LinksTriangles(rt1, rt2) || !css2.LinksTriangles(rt1, rt2)) return newGrounded;
+
+            // One of the congruence pairs must relate the hypotenuses
+            Segment hypotenuse1 = rt1.OtherSide(rt1.rightAngle);
+            Segment hypotenuse2 = rt2.OtherSide(rt1.rightAngle);
+
+            // Determine the specific congruence pair that relates the hypotenuses
+            CongruentSegments hypotenuseCongruence = null;
+            CongruentSegments nonHypotenuseCongruence = null;
+            if (css1.HasSegment(hypotenuse1) && css1.HasSegment(hypotenuse2))
             {
-                // Does this segment link the two triangles?
-                if (ccs.LinksTriangles(ct1, ct2))
-                {
-                    applicSegments.Add(ccs);
-                }
+                hypotenuseCongruence = css1;
+                nonHypotenuseCongruence = css2;
             }
+            else if (css2.HasSegment(hypotenuse1) && css2.HasSegment(hypotenuse2))
+            {
+                hypotenuseCongruence = css2;
+                nonHypotenuseCongruence = css1;
+            }
+            else return newGrounded;
 
-            List<GroundedClause> congruences;
-            List<KeyValuePair<Point, Point>> pairs = IsHLsituation(ct1, ct2, applicSegments, out congruences);
+            // Sanity check that the non hypotenuse congruence pair does not contain hypotenuse
+            if (nonHypotenuseCongruence.HasSegment(hypotenuse1) || nonHypotenuseCongruence.HasSegment(hypotenuse2)) return newGrounded;
 
-            // If pairs is populated, we have a HL situation
-            if (!pairs.Any()) return newGrounded;
-
-            // Create the congruence between the triangles
+            //
+            // We now have a hypotenuse leg situation; acquire the point-to-point congruence mapping
+            //
             List<Point> triangleOne = new List<Point>();
             List<Point> triangleTwo = new List<Point>();
-            foreach (KeyValuePair<Point, Point> pair in pairs)
-            {
-                triangleOne.Add(pair.Key);
-                triangleTwo.Add(pair.Value);
-            }
 
+            // Right angle vertices correspond
+            triangleOne.Add(rt1.rightAngle.GetVertex());
+            triangleTwo.Add(rt2.rightAngle.GetVertex());
+
+            Point nonRightVertexRt1 = rt1.GetSegment(nonHypotenuseCongruence).SharedVertex(hypotenuse1);
+            Point nonRightVertexRt2 = rt1.GetSegment(nonHypotenuseCongruence).SharedVertex(hypotenuse2);
+
+            triangleOne.Add(nonRightVertexRt1);
+            triangleOne.Add(nonRightVertexRt2);
+
+            triangleOne.Add(hypotenuse1.OtherPoint(nonRightVertexRt1));
+            triangleOne.Add(hypotenuse2.OtherPoint(nonRightVertexRt2));
+
+            //
+            // Construct the new deduced relationships
+            //
             GeometricCongruentTriangles ccts = new GeometricCongruentTriangles(new Triangle(triangleOne),
                                                                                new Triangle(triangleTwo), NAME);
 
             // Hypergraph
-            List<GroundedClause> antecedent = new List<GroundedClause>(congruences);
-            antecedent.Add(ct1);
-            antecedent.Add(ct2);
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(original1);
+            antecedent.Add(original2);
+            antecedent.Add(css1);
+            antecedent.Add(css2);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
 
             // Add all the corresponding parts as new congruent clauses
-            // newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
-
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> cpctc = CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo);
-            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> part in cpctc)
-            {
-                if (!congruences.Contains(part.Value))
-                {
-                    newGrounded.Add(part);
-                }
-            }
+            newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));
 
             return newGrounded;
         }
-
-        //
-        // Acquires all of the applicable congruent segments; then checks HL
-        //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckHL(Triangle ct1, Triangle ct2, GeometricCongruentSegments cc)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            List<GeometricCongruentSegments> applicSegments = new List<GeometricCongruentSegments>();
-
-            // Add the congruence statement to the list
-            applicSegments.Add(cc);
-
-            return CollectAndCheckHL(ct1, ct2, applicSegments);
-        }
-
     }
 }

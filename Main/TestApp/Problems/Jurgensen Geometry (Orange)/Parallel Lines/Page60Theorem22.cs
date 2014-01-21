@@ -10,8 +10,7 @@ namespace Geometry_Testbed
     //
     public class Page60Theorem22 : ParallelLinesProblem
     {
-        public Page60Theorem22(bool onoff)
-            : base(onoff)
+        public Page60Theorem22(bool onoff) : base(onoff)
         {
             problemName = "Page 60 Theorem 22";
             numberOfOriginalTextProblems = 1;
@@ -43,6 +42,8 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
             given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, x, y)), GetProblemAngle(intrinsic, new Angle(x, y, d)), "GOAL"));
         }
     }
 }

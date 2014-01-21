@@ -8,9 +8,11 @@ namespace Geometry_Testbed
     //
     public class Page144ClassroomExercise03 : CongruentTrianglesProblem
     {
-        public Page144ClassroomExercise03(bool onoff)
-            : base(onoff)
+        public Page144ClassroomExercise03(bool onoff) : base(onoff)
         {
+            problemName = "Page 144 Classroom Ex 3";
+            numberOfOriginalTextProblems = 1;
+
             Point b = new Point("B", 0, 3); intrinsic.Add(b);
             Point l = new Point("L", 3, 5); intrinsic.Add(l);
             Point a = new Point("A", 5, 3); intrinsic.Add(a);
@@ -35,6 +37,8 @@ namespace Geometry_Testbed
 
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, bl), GetProblemSegment(intrinsic, bj), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, oj), GetProblemSegment(intrinsic, ol), "Given"));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(l, a, o)), GetProblemAngle(intrinsic, new Angle(o, a, j)), "GOAL"));
         }
     }
 }

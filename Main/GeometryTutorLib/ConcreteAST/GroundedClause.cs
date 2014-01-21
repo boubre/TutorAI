@@ -21,6 +21,11 @@ namespace GeometryTutorLib.ConcreteAST
         public bool IsIntrinsic() { return intrinsic; }
         public void MakeIntrinsic() { intrinsic = true; mayBeSourceNode = false; }
 
+        // For problem generation, indicate if this node is given 
+        private bool given;
+        public bool IsGiven() { return given; }
+        public void MakeGiven() { given = true; }
+
         // Contains all predecessors
         public List<int> generalPredecessors { get; private set; }
         // Contains only Relation-based predecessors

@@ -10,11 +10,10 @@ namespace Geometry_Testbed
     //
     public class Page62Problems3To4 : ParallelLinesProblem
     {
-        public Page62Problems3To4(bool onoff)
-            : base(onoff)
+        public Page62Problems3To4(bool onoff) : base(onoff)
         {
             problemName = "Page 62 Problems 3-4";
-            numberOfOriginalTextProblems = 2;
+            numberOfOriginalTextProblems = 15;
 
             Point a = new Point("A", -1, 3); intrinsic.Add(a);
             Point b = new Point("B", 4, 3);  intrinsic.Add(b);
@@ -66,6 +65,23 @@ namespace Geometry_Testbed
 
             given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
             given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(b, d)), "Given"));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, a, f)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, e)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, a)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(a, c, d)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, i)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, k)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, d, j)), "GOAL"));
+
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(f, a, e)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(g, b, a)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, b)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, h)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, a)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, c)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(k, c, d)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(j, d, i)), "GOAL"));
         }
     }
 }

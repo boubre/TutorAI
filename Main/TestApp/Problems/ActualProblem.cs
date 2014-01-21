@@ -159,6 +159,15 @@ namespace Geometry_Testbed
             newClauses.AddRange(newIntersections);
             newClauses.AddRange(newTriangles);
 
+            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
+            {
+                System.Diagnostics.Debug.WriteLine("----------------------------------------");
+                foreach (GroundedClause gc in newClauses)
+                {
+                    System.Diagnostics.Debug.WriteLine(gc.ToString());
+                }
+            }
+
             return newClauses;
         }
 
@@ -288,14 +297,6 @@ namespace Geometry_Testbed
                 }
             }
 
-            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
-            {
-                foreach (Intersection inter in newIntersections)
-                {
-                    System.Diagnostics.Debug.WriteLine(inter.ToString());
-                }
-            }
-
             return newIntersections;
         }
 
@@ -404,6 +405,21 @@ namespace Geometry_Testbed
             foreach (GroundedClause clause in clauses)
             {
                 if (clause.StructurallyEquals(thatTriangle)) return clause as Triangle;
+            }
+
+            return null;
+        }
+
+        // Acquire an established intersection
+        protected Intersection GetProblemIntersection(List<GroundedClause> clauses, Segment segment1, Segment segment2)
+        {
+            foreach (GroundedClause clause in clauses)
+            {
+                Intersection inter = clause as Intersection;
+                if (inter != null)
+                {
+                    if (inter.HasSegment(segment1) && inter.HasSegment(segment2)) return inter;
+                }
             }
 
             return null;

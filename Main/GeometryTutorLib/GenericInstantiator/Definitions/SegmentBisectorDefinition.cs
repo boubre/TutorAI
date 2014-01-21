@@ -22,9 +22,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            if (c is SegmentBisector) return InstantiateBisector(c);
+            if (c is SegmentBisector || c is Strengthened) return InstantiateFromSegmentBisector(c);
 
-            if (c is Intersection || c is CongruentSegments) return InstantiateIntersection(c);
+            if (c is Intersection || c is CongruentSegments) return InstantiateToSegmentBisector(c);
 
             return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
         }
@@ -37,19 +37,26 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // SegmentBisector(Segment(V, C), Segment(B, A)) -> Midpoint(V, Segment(B, A))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(GroundedClause clause)
+        {
+            if (clause is SegmentBisector) return InstantiateFromSegmentBisector(clause, clause as SegmentBisector);
+
+            if ((clause as Strengthened).strengthened is SegmentBisector)
+            {
+                return InstantiateFromSegmentBisector(clause, (clause as Strengthened).strengthened as SegmentBisector);
+            }
+
+            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        }
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(GroundedClause original, SegmentBisector sb)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            if (!(c is SegmentBisector)) return newGrounded;
-
-            SegmentBisector sb = c as SegmentBisector;
 
             // Create the midpoint
             Midpoint midpt = new Midpoint(sb.bisected.intersect, sb.bisected.OtherSegment(sb.bisector), NAME);
 
             // For hypergraph
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(sb);
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
 
             return newGrounded;
@@ -65,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //        
         private static List<Intersection> candidateIntersection = new List<Intersection>();
         private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateIntersection(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToSegmentBisector(GroundedClause c)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 

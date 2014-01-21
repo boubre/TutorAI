@@ -8,9 +8,11 @@ namespace Geometry_Testbed
     //
     public class Page135Problem21 : CongruentTrianglesProblem
     {
-        public Page135Problem21(bool onoff)
-            : base(onoff)
+        public Page135Problem21(bool onoff) : base(onoff)
         {
+            problemName = "Page 135 Problem 21";
+            numberOfOriginalTextProblems = 1;
+
             Point f = new Point("F", -3, 4);   intrinsic.Add(f);
             Point l = new Point("L", -1, 4);  intrinsic.Add(l);
             Point a = new Point("A", 1, 4);   intrinsic.Add(a);
@@ -67,6 +69,9 @@ namespace Geometry_Testbed
 
             given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(s, f)), "Given"));
             given.Add(new Midpoint(n, GetProblemSegment(intrinsic, new Segment(s, k)), "Given"));
+
+            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, m)),
+                                                     GetProblemSegment(intrinsic, new Segment(l, n)), "GOAL"));
         }
     }
 }

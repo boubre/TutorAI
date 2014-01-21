@@ -8,8 +8,7 @@ namespace Geometry_Testbed
     //
     public class IPage123Example6 : CongruentTrianglesProblem
     {
-        public IPage123Example6(bool onoff)
-            : base(onoff)
+        public IPage123Example6(bool onoff) : base(onoff)
         {
             problemName = "Book I Page 123 Example 6";
             numberOfOriginalTextProblems = 1;
@@ -37,6 +36,8 @@ namespace Geometry_Testbed
 
             given.Add(new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, e)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
+
+            goals.Add(new GeometricCongruentSegments(ad, ae, "GOAL"));
         }
     }
 }

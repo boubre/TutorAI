@@ -52,6 +52,10 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentSegments(ab, pq, "Given"));
             given.Add(new GeometricCongruentSegments(am, pn, "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(q, n)), "Given"));
+
+            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, m)), GetProblemTriangle(intrinsic, new Triangle(p, q, n)), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemTriangle(intrinsic, new Triangle(p, q, r)), "GOAL"));
+
         }
     }
 }

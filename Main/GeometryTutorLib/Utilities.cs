@@ -10,8 +10,34 @@ namespace GeometryTutorLib
     public static class Utilities
     {
         public static readonly bool DEBUG = true;
-        public static readonly bool CONSTRUCTION_DEBUG = false; // Generating clauses when analyzing input figure
-        public static readonly bool PEBBLING_DEBUG = false; // Generating clauses when analyzing input figure
+        public static readonly bool CONSTRUCTION_DEBUG = false;  // Generating clauses when analyzing input figure
+        public static readonly bool PEBBLING_DEBUG = true; // Hypergraph edges and pebbled nodes
+        public static readonly bool PROBLEM_GEN_DEBUG = false; // Generating the actual problems
+
+        // Given a sorted list, insert the element from the back to the front.
+        public static void InsertOrdered(List<int> list, int value)
+        {
+            // Special Cases
+            if (!list.Any() || value > list[list.Count - 1])
+            {
+                list.Add(value);
+                return;
+            }
+            if (value < list[0])
+            {
+                list.Insert(0, value);
+                return;
+            }
+
+            // General Case
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (value > list[i])
+                {
+                    list.Insert(i + 1, value);
+                }
+            }
+        }
 
         // Acquire the index of the clause in the hypergraph based only on structure
         public static int StructuralIndex(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph, ConcreteAST.GroundedClause g)
@@ -160,11 +186,11 @@ namespace GeometryTutorLib
 
         //
         // Constructs an integer representation of the powerset based on input value integer n
-        // e.g. 2 -> { {}, {0}, {1}, {0, 1} }
+        // e.g. 4 -> { {}, {0}, {1}, {2}, {3}, {0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}, {0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}, {0, 1, 2, 3} }
         //
-        private static readonly int GREATER = -1;
+        private static readonly int GREATER = 1;
         private static readonly int EQUAL = 0;
-        private static readonly int LESS = 1;
+        private static readonly int LESS = -1;
         private static int CompareTwoSets(List<int> set1, List<int> set2)
         {
             // Discriminate based on set size foremost
@@ -203,8 +229,15 @@ namespace GeometryTutorLib
             return powerset;
         }
 
-        public static List<List<int>> ConstructPowerSetWithNoEmpty(int n, int maxCardinality)
+        // A memoized copy of all the powersets. 10 is large for this, we expect max of 5.
+        // Note, we use a matrix since maxCardinality may change
+        // We maintain ONLY an array because we are using this for a specific purpse in this project
+        public static List<List<int>>[] memoized = new List<List<int>>[10];
+        public static List<string>[] memoizedCompressed = new List<string>[10];
+        private static void ConstructPowerSetWithNoEmptyHelper(int n, int maxCardinality)
         {
+            if (memoized[n] != null) return;
+
             // Construct the powerset and remove the emptyset
             List<List<int>> powerset = ConstructRestrictedPowerSet(n, maxCardinality);
             powerset.RemoveAt(0);
@@ -212,7 +245,51 @@ namespace GeometryTutorLib
             // Sort so the smallest sets are first and sets of the same size are compared based on elements.
             powerset.Sort(CompareTwoSets);
 
-            return powerset;
+            // Now remove the singleton sets
+            powerset.RemoveRange(0, n);
+
+            // Save this construction
+            memoized[n] = powerset;
+
+            // Save the compressed versions
+            List<string> compressed = new List<string>();
+            powerset.ForEach(subset => compressed.Add(CompressUniqueIntegerList(subset)));
+            memoizedCompressed[n] = compressed;
+        }
+        public static List<List<int>> ConstructPowerSetWithNoEmpty(int n, int maxCardinality)
+        {
+            ConstructPowerSetWithNoEmptyHelper(n, maxCardinality);
+
+            return memoized[n];
+        }
+
+        public static List<string> ConstructPowerSetStringsWithNoEmpty(int n, int maxCardinality)
+        {
+            ConstructPowerSetWithNoEmptyHelper(n, maxCardinality);
+
+            return memoizedCompressed[n];
+        }
+        // Unchecked, we assume a unique list of integers
+        // Takes an integer list and compresses it into a string: { 0 1 2 } -> 012
+        // Note, this is only a useful encoding for unit digits (like with powersets above)
+        public static string CompressUniqueIntegerList(List<int> list)
+        {
+            string compressed = "";
+            list.ForEach(item => compressed += item);
+            return compressed;
+        }
+        // Splits a compressed string (from above) into two parts: the substring we have already processed and the tail we have yet to process
+        // 012 -> < 01, 2>
+        public static KeyValuePair<string, int> SplitStringIntoKnownToProcess(string s)
+        {
+            return new KeyValuePair<string, int>(s.Substring(0, s.Length - 1), Convert.ToInt32(s[s.Length - 1]) - 48);
+        }
+        // Decompresses a string of integers directly into an integer list: 012 -> { 0, 1, 2 }
+        public static List<int> DecompressStringToList(string s)
+        {
+            List<int> intList = new List<int>();
+            foreach (char c in s) intList.Add(Convert.ToInt32(c) - 48);
+            return intList;
         }
     }
 

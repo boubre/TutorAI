@@ -6,12 +6,14 @@ namespace Geometry_Testbed
 	//
 	// Geometry; Page 175 Problems 7-12
 	//
-	public class Page175ClassroomExercise07to12 : CongruentTrianglesProblem
+	public class Page175ClassroomExercise12 : CongruentTrianglesProblem
 	{
-        public Page175ClassroomExercise07to12(bool onoff)
-            : base(onoff)
+        public Page175ClassroomExercise12(bool onoff) : base(onoff)
 		{
-			Point z = new Point("Z", 0, 6); intrinsic.Add(z);
+            problemName = "Page 175 CLassroom Ex 12";
+            numberOfOriginalTextProblems = 6;
+
+            Point z = new Point("Z", 0, 6); intrinsic.Add(z);
 			Point y = new Point("Y", 8, 0); intrinsic.Add(y);
 			Point x = new Point("X", 4, 0); intrinsic.Add(x);
 			Point m = new Point("M", 6, 0); intrinsic.Add(m);
@@ -45,9 +47,18 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateSegmentClauses(coll3));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(z, t)), GetProblemSegment(intrinsic, new Segment(t, x)), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(x, m)), GetProblemSegment(intrinsic, new Segment(m, y)), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(y, n)), GetProblemSegment(intrinsic, new Segment(n, z)), "Given"));
+			given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(x, y)), "Given"));
+  			given.Add(new Midpoint(n, GetProblemSegment(intrinsic, new Segment(z, y)), "Given"));
+ 			given.Add(new Midpoint(t, GetProblemSegment(intrinsic, new Segment(z, x)), "Given"));
+
+            goals.Add(new GeometricCongruentTriangles(new Triangle(z, t, n), new Triangle(t, x, m), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(z, t, n), new Triangle(n, m, y), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(z, t, n), new Triangle(m, n, t), "GOAL"));
+
+            goals.Add(new GeometricCongruentTriangles(new Triangle(m, n, t), new Triangle(n, m, y), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(m, n, t), new Triangle(t, x, m), "GOAL"));
+
+            goals.Add(new GeometricCongruentTriangles(new Triangle(t, x, m), new Triangle(n, m, y), "GOAL"));
 		}
 	}
 }

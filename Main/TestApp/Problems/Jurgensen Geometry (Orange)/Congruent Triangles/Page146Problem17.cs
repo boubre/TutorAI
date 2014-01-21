@@ -8,10 +8,12 @@ namespace Geometry_Testbed
 	//
 	public class Page146Problem17 : CongruentTrianglesProblem
 	{
-        public Page146Problem17(bool onoff)
-            : base(onoff)
+        public Page146Problem17(bool onoff) : base(onoff)
 		{
-			Point d = new Point("D", 2, 3); intrinsic.Add(d);
+            problemName = "Page 146 Problem 17";
+            numberOfOriginalTextProblems = 1;
+
+            Point d = new Point("D", 2, 3); intrinsic.Add(d);
 			Point b = new Point("B", 10, 0); intrinsic.Add(b);
 			Point a = new Point("A", 0, 0); intrinsic.Add(a);
 			Point c = new Point("C", 8, 3); intrinsic.Add(c);
@@ -36,7 +38,7 @@ namespace Geometry_Testbed
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
 			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, m)), GetProblemSegment(intrinsic, new Segment(b, m)), "Given"));
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ad), GetProblemSegment(intrinsic, bc), "Given"));
+			given.Add(new GeometricCongruentSegments(ad, bc, "Given"));
 			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(m, d, c)), GetProblemAngle(intrinsic, new Angle(m, c, d)), "Given"));
 		}
 	}

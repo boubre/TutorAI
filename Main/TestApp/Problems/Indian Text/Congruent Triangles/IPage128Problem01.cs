@@ -8,11 +8,10 @@ namespace Geometry_Testbed
     //
     public class IPage128Problem01 : CongruentTrianglesProblem
     {
-        public IPage128Problem01(bool onoff)
-            : base(onoff)
+        public IPage128Problem01(bool onoff) : base(onoff)
         {
             problemName = "Book I Page 128 Problem 1";
-            numberOfOriginalTextProblems = 4;
+            numberOfOriginalTextProblems = 5;
 
             Point a = new Point("A", 2, 7); intrinsic.Add(a);
             Point b = new Point("B", 0, 0); intrinsic.Add(b);
@@ -43,6 +42,13 @@ namespace Geometry_Testbed
 
             given.Add(new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), "Given"));
             given.Add(new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(d, b, c)), "Given"));
+
+            goals.Add(new GeometricCongruentTriangles(new Triangle(a, b, d), new Triangle(a, c, d), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(a, b, p), new Triangle(a, c, p), "GOAL"));
+            goals.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(b, a, c)), GetProblemSegment(intrinsic, new Segment(a, p)), "GOAL"));
+            goals.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(b, d, c)), GetProblemSegment(intrinsic, new Segment(a, p)), "GOAL"));
+            goals.Add(new PerpendicularBisector(GetProblemIntersection(intrinsic, new Segment(a, p), new Segment(b, c)),
+                                                GetProblemSegment(intrinsic, new Segment(a, p)), "GOAL"));
         }
     }
 }

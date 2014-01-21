@@ -8,8 +8,7 @@ namespace Geometry_Testbed
     //
     public class Page32ClassroomProblem11To14 : TransversalsProblem
     {
-        public Page32ClassroomProblem11To14(bool onoff)
-            : base(onoff)
+        public Page32ClassroomProblem11To14(bool onoff) : base(onoff)
         {
             problemName = "Page 32 Classroom Problems 11-14";
             numberOfOriginalTextProblems = 4;
@@ -44,6 +43,11 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateSegmentClauses(coll3));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(g, o, h)), GetProblemAngle(intrinsic, new Angle(l, o, k)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(g, o, m)), GetProblemAngle(intrinsic, new Angle(k, o, j)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(m, o, k)), GetProblemAngle(intrinsic, new Angle(g, o, j)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(l, o, g)), GetProblemAngle(intrinsic, new Angle(h, o, k)), "GOAL"));
         }
     }
 }

@@ -129,9 +129,12 @@ namespace GeometryTutorLib.GenericInstantiator
             // Create the overall angle which is being bisected
             //
             Point vertex = cas.ca1.GetVertex();
-            Segment newRay1 = cas.ca1.OtherRay(shared);
-            Segment newRay2 = cas.ca2.OtherRay(shared);
+            Segment newRay1 = cas.ca1.OtherRayEquates(shared);
+            Segment newRay2 = cas.ca2.OtherRayEquates(shared);
             Angle combinedAngle = new Angle(newRay1.OtherPoint(vertex), vertex, newRay2.OtherPoint(vertex));
+
+            // Determine if the segment is a straight angle (we don't want an angle bisector here, we would want a segment bisector)
+            if (newRay1.IsCollinearWith(newRay2)) return newGrounded;
 
             // The bisector cannot be of the form:
             //    \

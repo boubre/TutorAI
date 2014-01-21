@@ -214,13 +214,8 @@ namespace GeometryTutorLib
         {
             templateProblemGenerator = new ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
 
-            // Combine the precomputed descriptors and strengthened clauses together into one list
-            List<ConcreteAST.GroundedClause> allClauses = new List<ConcreteAST.GroundedClause>();
-            precomputer.GetPrecomputedRelations().ForEach(r => allClauses.Add(r));
-            precomputer.GetStrengthenedClauses().ForEach(r => allClauses.Add(r));
-
             // Generate the problem pairs
-            return templateProblemGenerator.Generate(allClauses);
+            return templateProblemGenerator.Generate(precomputer.GetPrecomputedRelations(), precomputer.GetStrengthenedClauses(), givens);
         }
 
         //

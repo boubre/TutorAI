@@ -10,6 +10,9 @@ namespace Geometry_Testbed
     {
         public Page144ClassroomExercise02(bool onoff) : base(onoff)
         {
+            problemName = "Page 144 Classroom Ex 2";
+            numberOfOriginalTextProblems = 1;
+
             Point p = new Point("P", 0, 6); intrinsic.Add(p);
             Point x = new Point("X", 1, 4); intrinsic.Add(x);
             Point l = new Point("L", 2, 2); intrinsic.Add(l);
@@ -59,6 +62,8 @@ namespace Geometry_Testbed
 
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(l, a)), GetProblemSegment(intrinsic, new Segment(a, n)), "Given"));
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(p, a)), GetProblemSegment(intrinsic, new Segment(a, k)), "Given"));
+
+            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, x)), GetProblemSegment(intrinsic, new Segment(a, y)), "GOAL"));
         }
     }
 }

@@ -40,8 +40,6 @@ namespace GeometryTutorLib.GenericInstantiator
             // The list of new grounded clauses if they are deduced
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!(c is CongruentAngles) && !(c is Intersection)) return newGrounded;
-
             if (c is CongruentAngles)
             {
                 CongruentAngles conAngles = c as CongruentAngles;
@@ -87,15 +85,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have perpendicular scenario
             //
-       
-            Perpendicular newPerpendicular = new Perpendicular(intersection, NAME);
+            Strengthened streng = new Strengthened(intersection, new Perpendicular(intersection, NAME), NAME);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(intersection);
             antecedent.Add(conAngles);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPerpendicular));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
 
             return newGrounded;
         }

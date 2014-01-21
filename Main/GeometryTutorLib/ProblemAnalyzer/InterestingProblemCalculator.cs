@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeometryTutorLib.Hypergraph;
 using GeometryTutorLib.ConcreteAST;
@@ -12,6 +13,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private Hypergraph<GroundedClause, int> graph;
         private List<GroundedClause> figure;
         private List<GroundedClause> givens;
+        private List<int> givenIndices;
         private QueryFeatureVector queryVector;
 
         public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> gs, QueryFeatureVector queryVector)
@@ -20,6 +22,15 @@ namespace GeometryTutorLib.ProblemAnalyzer
             this.figure = f;
             this.givens = gs;
             this.queryVector = queryVector;
+
+            // Calculate the givens indices in the hypergraph for this problem
+            this.givenIndices = new List<int>();
+            foreach (GroundedClause given in givens)
+            {
+                int givenIndex = Utilities.StructuralIndex(graph, given);
+                if (givenIndex == -1) throw new Exception("GIVEN not found in the graph: " + given);
+                givenIndices.Add(givenIndex);
+            }
 
             //
             // For intrinsic property-based coverage
@@ -54,18 +65,21 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private bool IsInterestingWithGivens(Problem problem)
         {
             // Consider number of givens
-            if (problem.givens.Count > 4 /* queryVector.numberOfOriginalGivens */) return false;
+            if (problem.givens.Count > 6 /* queryVector.numberOfOriginalGivens */) return false;
 
-            foreach (GroundedClause gc in givens)
+            int numGivensInProblem = 0;
+            foreach (int givenIndex in givenIndices)
             {
-                int givenIndex = Utilities.StructuralIndex(graph, gc);
-                if (!problem.givens.Contains(givenIndex))
+                if (problem.givens.Contains(givenIndex))
                 {
-                    return false;
+                    numGivensInProblem++;
                 }
             }
 
-            return true;
+            bool problemContainsOtherGivens = problem.givens.Count - numGivensInProblem > 0;
+
+            return !problemContainsOtherGivens && numGivensInProblem >= 1;  // givens.Count || numGivensInProblem > 1;
+//            return numGivensInProblem <= givens.Count;
         }
 
         //

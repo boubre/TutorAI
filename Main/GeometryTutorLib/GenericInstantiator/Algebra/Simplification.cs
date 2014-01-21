@@ -26,7 +26,6 @@ namespace GeometryTutorLib.GenericInstantiator
             if (original.lhs.Equals(new NumericValue(0)) && original.rhs.Equals(new NumericValue(0)))
             {
                 throw new ArgumentException("Should not have an equation that is 0 = 0: " + original.ToString());
-                // return original;
             }
 
             //

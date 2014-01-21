@@ -114,6 +114,14 @@ namespace GeometryTutorLib.Hypergraph
         }
 
         //
+        // Return the index of the given node
+        //
+        public int GetNodeIndex(T inputData)
+        {
+            return ConvertToLocalIntegerIndex(inputData);
+        }
+
+        //
         // Return the stored node in the graph
         //
         public T GetNode(int id)
