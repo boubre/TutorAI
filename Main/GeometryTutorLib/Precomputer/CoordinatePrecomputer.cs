@@ -207,10 +207,10 @@ namespace GeometryTutorLib.Precomputer
             {
                 for (int t2 = t1 + 1; t2 < triangles.Count; t2++)
                 {
-                    KeyValuePair<Triangle, Triangle> correpsonging = triangles[t1].CoordinateCongruent(triangles[t2]);
-                    if (correpsonging.Key != null && correpsonging.Value != null)
+                    KeyValuePair<Triangle, Triangle> corresponding = triangles[t1].CoordinateCongruent(triangles[t2]);
+                    if (corresponding.Key != null && corresponding.Value != null)
                     {
-                        descriptors.Add(new CongruentTriangles(correpsonging.Key, correpsonging.Value, "Precomputation"));
+                        descriptors.Add(new CongruentTriangles(corresponding.Key, corresponding.Value, "Precomputation"));
                     }
                     else if (triangles[t1].CoordinateSimilar(triangles[t2]))
                     {

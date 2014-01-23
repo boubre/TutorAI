@@ -14,6 +14,9 @@ namespace GeometryTutorLib.ConcreteAST
             //Console.WriteLine("To Be Implemented");
         }
 
+        public override bool IsAlgebraic() { return true; }
+        public override bool IsGeometric() { return false; }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!

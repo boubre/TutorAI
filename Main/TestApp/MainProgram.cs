@@ -42,8 +42,7 @@ namespace Geometry_Testbed
 
             //problems.Add(new EquationTester());
             //problems.Add(new SegmentBisectorTester());
-
-            new TranstiveTriangleCongruenceTester(true).Run();
+            //new TranstiveTriangleCongruenceTester(true).Run();
 
             DumpStatisticsHeader();
 

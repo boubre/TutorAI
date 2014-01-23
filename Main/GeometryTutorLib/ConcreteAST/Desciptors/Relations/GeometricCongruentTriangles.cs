@@ -9,6 +9,9 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public GeometricCongruentTriangles(Triangle t1, Triangle t2, string just) : base(t1, t2, just) { }
 
+        public override bool IsAlgebraic() { return false; }
+        public override bool IsGeometric() { return true; }
+
         public new void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             //Console.WriteLine("To Be Implemented");
