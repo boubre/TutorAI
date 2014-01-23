@@ -43,7 +43,7 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(s, e, r)), GetProblemAngle(intrinsic, new Angle(s, r, e)), "Given"));
             given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(r, s, f)), se, "Given"));
 
-//            goals.Add(new GeometricAngleEquation(GetProblemAngle(intrinsic, new Angle(f, s, t)), new NumericValue(60), "GOAL")); 
+            //goals.Add(new GeometricAngleEquation(GetProblemAngle(intrinsic, new Angle(f, s, t)), new NumericValue(60), "GOAL")); 
         }
     }
 }

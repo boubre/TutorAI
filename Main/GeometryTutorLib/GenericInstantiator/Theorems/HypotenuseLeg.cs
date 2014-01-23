@@ -187,7 +187,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // One of the congruence pairs must relate the hypotenuses
             Segment hypotenuse1 = rt1.OtherSide(rt1.rightAngle);
-            Segment hypotenuse2 = rt2.OtherSide(rt1.rightAngle);
+            Segment hypotenuse2 = rt2.OtherSide(rt2.rightAngle);
 
             // Determine the specific congruence pair that relates the hypotenuses
             CongruentSegments hypotenuseCongruence = null;
@@ -218,13 +218,13 @@ namespace GeometryTutorLib.GenericInstantiator
             triangleTwo.Add(rt2.rightAngle.GetVertex());
 
             Point nonRightVertexRt1 = rt1.GetSegment(nonHypotenuseCongruence).SharedVertex(hypotenuse1);
-            Point nonRightVertexRt2 = rt1.GetSegment(nonHypotenuseCongruence).SharedVertex(hypotenuse2);
+            Point nonRightVertexRt2 = rt2.GetSegment(nonHypotenuseCongruence).SharedVertex(hypotenuse2);
 
             triangleOne.Add(nonRightVertexRt1);
-            triangleOne.Add(nonRightVertexRt2);
+            triangleTwo.Add(nonRightVertexRt2);
 
             triangleOne.Add(hypotenuse1.OtherPoint(nonRightVertexRt1));
-            triangleOne.Add(hypotenuse2.OtherPoint(nonRightVertexRt2));
+            triangleTwo.Add(hypotenuse2.OtherPoint(nonRightVertexRt2));
 
             //
             // Construct the new deduced relationships

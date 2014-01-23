@@ -13,31 +13,6 @@ namespace GeometryTutorLib.ConcreteAST
         public RightAngle(Point a, Point b, Point c, string just) : base(a, b, c) { justification = just; }
         public RightAngle(Angle angle, string just) : base(angle.A, angle.B, angle.C) { justification = just; }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            RightAngle ra = null;
-            if (clause is Strengthened)
-            {
-                ra = ((clause as Strengthened).strengthened) as RightAngle;
-            }
-            else if (clause is RightAngle)
-            {
-                ra = clause as RightAngle;
-            }
-            else return newGrounded;
-
-            // Strengthening may be something else
-            if (ra == null) return newGrounded;
-
-            GeometricAngleEquation angEq = new GeometricAngleEquation(ra, new NumericValue(90), "Definition of Right Angle");
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(clause);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
-
-            return newGrounded;
-        }
-
         // CTA: Be careful with equality; this is object-based equality
         // If we check for angle measure equality that is distinct.
         // If we check to see that a different set of remote vertices describes this angle, that is distinct.

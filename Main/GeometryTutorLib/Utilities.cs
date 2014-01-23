@@ -9,32 +9,36 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool DEBUG = true;
-        public static readonly bool CONSTRUCTION_DEBUG = false;  // Generating clauses when analyzing input figure
-        public static readonly bool PEBBLING_DEBUG = true; // Hypergraph edges and pebbled nodes
-        public static readonly bool PROBLEM_GEN_DEBUG = false; // Generating the actual problems
+        public static readonly bool OVERRIDE_DEBUG = true;
 
-        // Given a sorted list, insert the element from the back to the front.
-        public static void InsertOrdered(List<int> list, int value)
+        public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
+        public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
+        public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && true;   // Hypergraph edges and pebbled nodes
+        public static readonly bool PROBLEM_GEN_DEBUG  = OVERRIDE_DEBUG && true;   // Generating the actual problems
+
+        // Given a sorted list, insert the element from the front to the back.
+        public static void InsertAscendingOrdered(List<int> list, int value)
         {
             // Special Cases
-            if (!list.Any() || value > list[list.Count - 1])
+            if (!list.Any())
             {
                 list.Add(value);
                 return;
             }
-            if (value < list[0])
+
+            if (value > list[list.Count-1])
             {
-                list.Insert(0, value);
+                list.Add(value);
                 return;
             }
 
             // General Case
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (int i = 0; i < list.Count; i++)
             {
-                if (value > list[i])
+                if (value < list[i])
                 {
-                    list.Insert(i + 1, value);
+                    list.Insert(i, value);
+                    return;
                 }
             }
         }

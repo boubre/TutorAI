@@ -20,27 +20,41 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
-            if ((clause is Perpendicular && !(clause is PerpendicularBisector)) || clause is Strengthened)
-            {
-                return InstantiateFromPerpendicular(clause);
-            }
-
-            if (clause is AngleEquation || clause is Intersection) return InstantiateToPerpendicular(clause);
-
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-        }
-
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause clause)
-        {
+            // FROM Perpendicular
             if (clause is Perpendicular) return InstantiateFromPerpendicular(clause, clause as Perpendicular);
 
-            if ((clause as Strengthened).strengthened is Perpendicular && !((clause as Strengthened).strengthened is PerpendicularBisector))
+            // TO Perpendicular
+            if (clause is RightAngle || clause is Intersection) return InstantiateToPerpendicular(clause);
+
+            // Handle Strengthening; may be a Perpendicular (FROM) or Right Angle (TO)
+
+            Strengthened streng = clause as Strengthened;
+            if (streng != null)
             {
-                return InstantiateFromPerpendicular(clause, (clause as Strengthened).strengthened as Perpendicular);
+                if (streng.strengthened is Perpendicular && !(streng.strengthened is PerpendicularBisector))
+                {
+                    return InstantiateFromPerpendicular(clause, streng.strengthened as Perpendicular);
+                }
+                else if (streng.strengthened is RightAngle)
+                {
+                    return InstantiateToPerpendicular(clause);
+                }
             }
 
             return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
         }
+
+        //public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause clause)
+        //{
+        //    if (clause is Perpendicular) return InstantiateFromPerpendicular(clause, clause as Perpendicular);
+
+        //    if ((clause as Strengthened).strengthened is Perpendicular && !((clause as Strengthened).strengthened is PerpendicularBisector))
+        //    {
+        //        return InstantiateFromPerpendicular(clause, (clause as Strengthened).strengthened as Perpendicular);
+        //    }
+
+        //    return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        //}
 
         // 
         // Perpendicular(B, Segment(A, B), Segment(B, C)) -> RightAngle(), RightAngle()
@@ -127,7 +141,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
 
         // 
-        // Equation(m\angle ABC = 90) -> Perpendicular(B, Segment(A, B), Segment(B, C))
+        // RightAngle(A, B, C), Intersection(B, Segment(A, B), SubSegment(B, C)) -> Perpendicular(B, Segment(A, B), Segment(B, C))
         //
         private static List<Intersection> candidateIntersections = new List<Intersection>();
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToPerpendicular(GroundedClause clause)
@@ -139,41 +153,44 @@ namespace GeometryTutorLib.GenericInstantiator
                 // Since we receive intersections right away in the instantiation process, just store the intersections
                 candidateIntersections.Add(clause as Intersection);
             }
-            else if (clause is AngleEquation)
+            else if (clause is RightAngle)
             {
-                AngleEquation eq = clause as AngleEquation;
-
-                // We need a basic angle equation containing the constant 90
-                if (eq.GetAtomicity() != Equation.BOTH_ATOMIC) return newGrounded;
-                if (!eq.Contains(new NumericValue(90))) return newGrounded;
+                RightAngle ra = clause as RightAngle;
 
                 foreach (Intersection inter in candidateIntersections)
                 {
-                    newGrounded.AddRange(InstantiateToPerpendicular(inter, eq));
+                    newGrounded.AddRange(InstantiateToPerpendicular(inter, ra, clause));
+                }
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                // Only intrerested in right angles
+                if (!(streng.strengthened is RightAngle)) return newGrounded;
+
+                foreach (Intersection inter in candidateIntersections)
+                {
+                    newGrounded.AddRange(InstantiateToPerpendicular(inter, streng.strengthened as RightAngle, clause));
                 }
             }
 
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToPerpendicular(Intersection inter, AngleEquation angEq)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToPerpendicular(Intersection inter, RightAngle ra, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            Angle theAngle = (Angle)(angEq.lhs is NumericValue ? angEq.rhs : angEq.lhs);
-
-            // The multiplier must be one for a perpendicular situation
-            if (theAngle.multiplier != 1) return newGrounded;
-
             // This angle must apply to this intersection (same vertex as well as the segments inducing this angle)
-            if (!inter.InducesNonStraightAngle(theAngle)) return newGrounded;
+            if (!inter.InducesNonStraightAngle(ra)) return newGrounded;
 
             // We are strengthening an intersection to a perpendicular 'labeling'
             Strengthened streng = new Strengthened(inter, new Perpendicular(inter, NAME), NAME);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(original);
             antecedent.Add(inter);
-            antecedent.Add(angEq);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
 

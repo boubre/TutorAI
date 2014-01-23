@@ -14,13 +14,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private List<GroundedClause> figure;
         private List<GroundedClause> givens;
         private List<int> givenIndices;
+        private List<GroundedClause> goals;
+        private List<int> goalIndices;
+
         private QueryFeatureVector queryVector;
 
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> gs, QueryFeatureVector queryVector)
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, List<GroundedClause> goals, QueryFeatureVector queryVector)
         {
             this.graph = g;
             this.figure = f;
-            this.givens = gs;
+            this.givens = givens;
+            this.goals = goals;
             this.queryVector = queryVector;
 
             // Calculate the givens indices in the hypergraph for this problem
@@ -30,6 +34,15 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 int givenIndex = Utilities.StructuralIndex(graph, given);
                 if (givenIndex == -1) throw new Exception("GIVEN not found in the graph: " + given);
                 givenIndices.Add(givenIndex);
+            }
+
+            // Calculate the goal indices in the hypergraph for this problem
+            this.goalIndices = new List<int>();
+            foreach (GroundedClause goal in goals)
+            {
+                int goalIndex = Utilities.StructuralIndex(graph, goal);
+                if (goalIndex == -1) throw new Exception("GOAL not found in the graph: " + goal);
+                goalIndices.Add(goalIndex);
             }
 
             //
@@ -64,6 +77,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
         private bool IsInterestingWithGivens(Problem problem)
         {
+            // If there are no givens, but there are goals deduced we say it is interesting
+            if (!givenIndices.Any()) return true;
+
+            // If the givens are empty for this problem, but it still deduces the goal, it is interesting
+            if (!problem.givens.Any() && goalIndices.Contains(problem.goal)) return true;
+
             // Consider number of givens
             if (problem.givens.Count > 6 /* queryVector.numberOfOriginalGivens */) return false;
 

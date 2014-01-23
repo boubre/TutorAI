@@ -49,17 +49,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             if (node == 131)
             {
-                Debug.WriteLine("NO-OP");
+                //Debug.WriteLine("NO-OP");
             }
 
             // If we have already generated problems, no need to regenerate
             if (memoizedProblems.HasNodeBeenGenerated(node)) return memoizedProblems.Get(node);
 
             // For all edges, create base problems and add them all to the database
-            List<PebblerHyperEdge> forwardEdges = edgeDatabase.GetBasedOnGoal(node);
+            List<PebblerHyperEdge> edges = edgeDatabase.GetBasedOnGoal(node);
 
             // If there are no edges, this is a 'root' node (has no predecessors)
-            if (forwardEdges == null || !forwardEdges.Any())
+            if (edges == null || !edges.Any())
             {
                 // We've successfully generated all the problems for this node: zero problems
                 memoizedProblems.SetGenerated(node);
@@ -69,7 +69,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             //
             // Create all the base problems consisting of only one edge and add to the database
             List<Problem> baseProblems = new List<Problem>();
-            foreach (PebblerHyperEdge edge in forwardEdges)
+            foreach (PebblerHyperEdge edge in edges)
             {
                 baseProblems.Add(new Problem(edge));
             }
@@ -129,10 +129,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
+            if (baseProblem.goal == 98)
+            {
+                Debug.WriteLine("98NO-OP");
+            }
+
             // If we did not perform any appending, we have reached a maximal situation
             // Add the maximal problem to the database
             if (!generatedNewProblems)
             {
+                // Determine suppression now to mitigate number of problems added
+                baseProblem.DetermineSuppressedGivens(graph);
                 memoizedProblems.Put(baseProblem);
                 return;
             }
@@ -163,11 +170,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
             populatedIndices.RemoveAt(0);
             foreach (int index in populatedIndices)
             {
+                int count = 0;
                 List<Problem> tmpMaximalProbs = new List<Problem>();
                 foreach (Problem singleton in singletonMapToOriginalProblems[index])
                 {
                     foreach (Problem problem in maximalProblems)
                     {
+                        //if (baseProblem.goal == 98)
+                        //{
+                        //    Debug.WriteLine(count++);
+                        //}
+
                         Problem problemCopy = new Problem(problem);
                         // It is possible for a problem to have been created which deduced further information with an additional edge;
                         // that is, a given node was pushed into the path of the problem. Hence, no need to append in this situation
@@ -184,6 +197,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Add all the maximal problems to the database
             foreach (Problem problem in maximalProblems)
             {
+                // Determine suppression now to mitigate number of problems added
+                problem.DetermineSuppressedGivens(graph);
                 memoizedProblems.Put(problem);
             }
 

@@ -35,7 +35,8 @@ namespace Geometry_Testbed
 
             given.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(c, a, d)), GetProblemAngle(intrinsic, new Angle(e, a, c)), "Given"));
 
-            goals.Add(new Perpendicular(GetProblemIntersection(intrinsic, new Segment(e, f), new Segment(a, d)), "GOAL"));
+            goals.Add(new Strengthened(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)),
+                                       new Perpendicular(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)), "GOAL"), "GOAL"));
         }
     }
 }

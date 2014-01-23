@@ -159,7 +159,7 @@ namespace Geometry_Testbed
             newClauses.AddRange(newIntersections);
             newClauses.AddRange(newTriangles);
 
-            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
+            if (this.problemIsOn && GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
             {
                 System.Diagnostics.Debug.WriteLine("----------------------------------------");
                 foreach (GroundedClause gc in newClauses)
@@ -202,7 +202,7 @@ namespace Geometry_Testbed
                                         // Construct the triangle based on the sides to ensure reflexivity clauses are generated
 
                                         newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
-                                        if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
+                                        if (this.problemIsOn && GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
                                         {
                                             System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
                                         }
@@ -393,7 +393,10 @@ namespace Geometry_Testbed
         {
             foreach (GroundedClause clause in clauses)
             {
-                if (clause.StructurallyEquals(thatAngle)) return clause as Angle;
+                if (clause is Angle)
+                {
+                    if (clause.StructurallyEquals(thatAngle)) return clause as Angle;
+                }
             }
 
             return null;

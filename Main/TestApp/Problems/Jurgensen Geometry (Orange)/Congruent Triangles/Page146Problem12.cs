@@ -8,8 +8,7 @@ namespace Geometry_Testbed
 	//
 	public class Page146Problem12 : CongruentTrianglesProblem
 	{
-        public Page146Problem12(bool onoff)
-            : base(onoff)
+        public Page146Problem12(bool onoff) : base(onoff)
 		{
             problemName = "Page 146 Problem 12";
             numberOfOriginalTextProblems = 1;
@@ -53,6 +52,8 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, tOne), GetProblemTriangle(intrinsic, tTwo), "Given"));
             given.Add(new Altitude(GetProblemTriangle(intrinsic, tOne), lx, "Given"));
             given.Add(new Altitude(GetProblemTriangle(intrinsic, tTwo), ry, "Given"));
+
+            goals.Add(new GeometricCongruentSegments(lx, ry, "GOAL"));
 		}
 	}
 }

@@ -39,10 +39,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
         {
-            // The list of new grounded clauses if they are deduced
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            if (!(c is Parallel) && !(c is Perpendicular) && !(c is Intersection)) return newGrounded;
 
             if (c is Parallel)
             {
@@ -109,7 +106,7 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGeneratePerpendicular(Perpendicular perp, Parallel parallel, Intersection inter, GroundedClause originalPerp)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGeneratePerpendicular(Perpendicular perp, Parallel parallel, Intersection inter, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -133,7 +130,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
-            antecedent.Add(originalPerp);
+            antecedent.Add(original);
             antecedent.Add(parallel);
             antecedent.Add(inter);
 

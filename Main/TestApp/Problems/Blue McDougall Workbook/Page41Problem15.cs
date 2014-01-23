@@ -47,7 +47,7 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateSegmentClauses(coll3));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(b, x, y)), GetProblemAngle(intrinsic, new Angle(w, x, c)), "GOAL"));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(b, x, y)), GetProblemAngle(intrinsic, new Angle(c, y, x)), "GOAL"));
 
             goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, x, w)), GetProblemAngle(intrinsic, new Angle(d, y, z)), "GOAL"));
         }

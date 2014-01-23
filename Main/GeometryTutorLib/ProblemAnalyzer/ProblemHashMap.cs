@@ -103,6 +103,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                     {
                         if (Utilities.Subset<int>(givensAndPath, edge.sourceNodes)) return edge;
                     }
+
                 }
             }
 
@@ -114,6 +115,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public void Put(Problem newProblem)
         {
+            int MAX_NUM_GIVENS = 4;
+            if (newProblem.givens.Count > MAX_NUM_GIVENS) return;
+
+            //  Check that no edges may be used to deduce any given in the problem
             Pebbler.PebblerHyperEdge edge = BasicMinimality(newProblem);
             if (edge != null)
             {

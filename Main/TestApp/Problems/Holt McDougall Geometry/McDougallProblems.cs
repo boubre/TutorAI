@@ -12,20 +12,25 @@ namespace Geometry_Testbed
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            problems.Add(new Page159Problem37(false));  // Encoding
-            problems.Add(new Page159Problem41(false));  // Encoding
-            problems.Add(new Page160Problem42(false));  // Encoding
-            problems.Add(new Page160Problem43(false));  // Encoding
+            problems.Add(new Page168Problem34(false));   // GTG
+            problems.Add(new Page159Problem37(false));   // GTG
+            problems.Add(new Page159Problem41(false));   // GTG
+            problems.Add(new Page160Problem42(false));   // GTG
+            problems.Add(new Page284Problem17(false));   // GTG 
+            problems.Add(new Page284Problem18(false));   // GTG 
+            problems.Add(new Page284Example44(false));   // GTG
+            problems.Add(new Page284Exameple45(false));  // GTG
+            problems.Add(new Page284Example46(false));   // GTG
+            problems.Add(new Page285Problem21(false));   // GTG
+            problems.Add(new Page285Problem22(false));   // GTG
+            problems.Add(new Page285Problem23(false));   // GTG
+            problems.Add(new Page166Problem25(false));   // Out of Memory; GTG on limited givens
 
-            problems.Add(new Page166Problem25(false));  // GTG
-            problems.Add(new Page168Problem34(false));  // GTG
-            problems.Add(new Page168Problem35(false));  // Infinite? Parallel?
+            problems.Add(new Page168Problem35(false));  // Out of Memory
             problems.Add(new Page168Problem36(false));  // Endocing  
             problems.Add(new Page168Problem37(false));  // Endocing  
-
-            problems.Add(new Page197Problem35(false));  // FATAL GOAL NOT DEDUCED
-            problems.Add(new Page197Problem36(false));  // FATAL GOAL NOT DEDUCED
-            problems.Add(new Page197Problem37(false));   // GTG? Check with previous 2; related.
+            problems.Add(new Page197Problem37(false));  // Quite algebraic
+            problems.Add(new Page160Problem43(false));  // Encoding; not for this implementation round
 
             return problems;
         }

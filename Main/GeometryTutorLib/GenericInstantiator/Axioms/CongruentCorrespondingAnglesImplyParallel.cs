@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAST;
 
-
 namespace GeometryTutorLib.GenericInstantiator
 {
-
-
     public class CongruentCorrespondingAnglesImplyParallel : Axiom
     {
         private readonly static string NAME = "Corresponding Congruent Angles Imply Parallel Lines";

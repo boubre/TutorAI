@@ -12,8 +12,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Triangle ct1 { get; protected set; }
         public Triangle ct2 { get; protected set; }
 
-        public CongruentTriangles(Triangle t1, Triangle t2, string just)
-            : base()
+        public CongruentTriangles(Triangle t1, Triangle t2, string just) : base()
         {
             ct1 = t1;
             ct2 = t2;
@@ -78,6 +77,9 @@ namespace GeometryTutorLib.ConcreteAST
             return base.Equals(c);
         }
 
+        //
+        // Are these two congruence pairs equivalent when we check the corresponding points exactly
+        //
         private bool VerifyMappingOrder(KeyValuePair<Triangle, Triangle> pair1, KeyValuePair<Triangle, Triangle> pair2)
         {
             // Determine how the points are mapped from thisTriangle to thatTriangle
@@ -108,6 +110,55 @@ namespace GeometryTutorLib.ConcreteAST
             return true;
         }
 
+        // Acquire a direct correspondence between thatTriangle and the other triangle in the congruence pair
+        // Returns: <that, other>
+        public Dictionary<Point, Point> OtherTriangle(Triangle thatTriangle)
+        {
+            Dictionary<Point, Point> correspondence = this.ct1.PointsCorrespond(thatTriangle);
+            Dictionary<Point, Point> otherCorrespondence = new Dictionary<Point, Point>();
+
+            List<Point> ct1Pts = this.ct1.GetPoints();
+            List<Point> ct2Pts = this.ct2.GetPoints();
+
+            // Acquire correspondence between thatTriangle and the other triangle (ct2)
+            if (correspondence != null)
+            {
+                for (int p = 0; p < 3; p++ )
+                {
+                    Point thatPt;
+                    if (!correspondence.TryGetValue(ct1Pts[p], out thatPt)) throw new ArgumentException("Something strange happened in Triangle correspondence.");
+                    otherCorrespondence.Add(thatPt, ct2Pts[p]);
+                }
+
+                return otherCorrespondence;
+            }
+
+            correspondence = this.ct2.PointsCorrespond(thatTriangle);
+            if (correspondence != null)
+            {
+                for (int p = 0; p < 3; p++)
+                {
+                    Point thatPt;
+                    if (!correspondence.TryGetValue(ct2Pts[p], out thatPt)) throw new ArgumentException("Something strange happened in Triangle correspondence.");
+                    otherCorrespondence.Add(thatPt, ct1Pts[p]);
+                }
+
+                return otherCorrespondence;
+            }
+
+            return null;
+        }
+
+        public Dictionary<Point, Point> HasTriangle(Triangle thatTriangle)
+        {
+            Dictionary<Point, Point> correspondence = this.ct1.PointsCorrespond(thatTriangle);
+            if (correspondence != null) return correspondence;
+
+            correspondence = this.ct2.PointsCorrespond(thatTriangle);
+            if (correspondence != null) return correspondence;
+
+            return null;
+        }
 
         public void BuildUnparse(StringBuilder sb, int tabDepth)
         {

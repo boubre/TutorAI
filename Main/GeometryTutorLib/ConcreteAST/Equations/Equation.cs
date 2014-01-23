@@ -74,10 +74,26 @@ namespace GeometryTutorLib.ConcreteAST
             return NONE_ATOMIC;
         }
 
+        // Collect all the terms and return a count for both sides <left, right>
+        public KeyValuePair<int, int> GetCardinalities()
+        {
+            List<GroundedClause> left = lhs.CollectTerms();
+            List<GroundedClause> right = rhs.CollectTerms();
+            return new KeyValuePair<int, int>(left.Count, right.Count);
+        }
+
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!
             return base.GetHashCode();
+        }
+
+        public override bool StructurallyEquals(object obj)
+        {
+            Equation thatEquation = obj as Equation;
+            if (thatEquation == null) return false;
+
+            return Equals(obj);
         }
 
         //
@@ -86,7 +102,6 @@ namespace GeometryTutorLib.ConcreteAST
         public override bool Equals(object target)
         {
             Equation thatEquation = target as Equation;
-
             if (thatEquation == null) return false;
 
             //

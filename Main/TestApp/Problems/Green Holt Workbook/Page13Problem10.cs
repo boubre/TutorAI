@@ -31,7 +31,7 @@ namespace Geometry_Testbed
 
             given.Add(new AngleBisector(new Angle(h, k, j), ik, "Given"));
 
-            goals.Add(new RightAngle(GetProblemAngle(intrinsic, new Angle(i, k, j)), "GOAL"));
+            goals.Add(new Strengthened(GetProblemAngle(intrinsic, new Angle(i, k, j)), new RightAngle(GetProblemAngle(intrinsic, new Angle(i, k, j)), "GOAL"), "GOAL"));
         }
     }
 }

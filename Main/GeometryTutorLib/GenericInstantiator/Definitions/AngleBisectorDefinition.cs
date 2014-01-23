@@ -12,6 +12,12 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public AngleBisectorDefinition() { }
 
+        public static void Clear()
+        {
+            candidateCongruent.Clear();
+            candidateSegments.Clear();
+        }
+
         //
         // This implements forward and Backward instantiation
         // Forward is Midpoint -> Congruent Clause

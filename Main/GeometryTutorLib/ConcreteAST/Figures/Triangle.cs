@@ -692,11 +692,14 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Is this triangle congruent to the given triangle in terms of the coordinatization from the UI?
         //
-        public bool CoordinateCongruent(Triangle thatTriangle)
+        public KeyValuePair<Triangle, Triangle> CoordinateCongruent(Triangle thatTriangle)
         {
             bool[] marked = new bool[3];
             List<Segment> thisSegments = GetSegments();
             List<Segment> thatSegments = thatTriangle.GetSegments();
+
+            List<Segment> corrSegmentsThis = new List<Segment>();
+            List<Segment> corrSegmentsThat = new List<Segment>();
 
             for (int thisS = 0; thisS < thisSegments.Count; thisS++)
             {
@@ -707,16 +710,30 @@ namespace GeometryTutorLib.ConcreteAST
                     {
                         if (thisSegments[thisS].CoordinateCongruent(thatSegments[thatS]))
                         {
+                            corrSegmentsThat.Add(thatSegments[thatS]);
+                            corrSegmentsThis.Add(thisSegments[thisS]);
                             marked[thatS] = true;
                             found = true;
                             break;
                         }
                     }
                 }
-                if (!found) return false;
+                if (!found) return new KeyValuePair<Triangle,Triangle>(null, null);
             }
 
-            return true;
+            //
+            // Find the exact corresponding points
+            //
+            List<Point> triThis = new List<Point>();
+            List<Point> triThat = new List<Point>();
+
+            for (int i = 0; i < 3; i++)
+            {
+                triThis.Add(corrSegmentsThis[i].SharedVertex(corrSegmentsThis[i + 1 < 3 ? i + 1 : 0]));
+                triThat.Add(corrSegmentsThat[i].SharedVertex(corrSegmentsThat[i + 1 < 3 ? i + 1 : 0]));
+            }
+
+            return new KeyValuePair<Triangle, Triangle>(new Triangle(triThis), new Triangle(triThat));
         }
 
         //
@@ -743,7 +760,8 @@ namespace GeometryTutorLib.ConcreteAST
                 if (thatS == thatAngles.Count) return false;
             }
 
-            return !congruentAngle.Contains(false) && !CoordinateCongruent(thatTriangle); // CTA: Congruence is stronger than Similarity
+            KeyValuePair<Triangle, Triangle> corresponding = CoordinateCongruent(thatTriangle);
+            return !congruentAngle.Contains(false) && (corresponding.Key == null && corresponding.Value == null); // CTA: Congruence is stronger than Similarity
         }
 
         //
@@ -915,6 +933,34 @@ namespace GeometryTutorLib.ConcreteAST
 
             // We require a perpendicular intersection
             return Utilities.CompareValues((new Angle(thisIntersection, otherIntersection, oppSide.Point1)).measure, 90);
+        }
+
+        // Returns the exact correspondence between the triangles; <this, that>
+        public Dictionary<Point, Point> PointsCorrespond(Triangle thatTriangle)
+        {
+            if (!this.StructurallyEquals(thatTriangle)) return null;
+
+            List<Point> thatTrianglePts = thatTriangle.GetPoints();
+            List<Point> thisTrianglePts = this.GetPoints();
+
+            // Find the index of the first point (in this Triangle) 
+            int i = 0;
+            for (; i < 3; i++)
+            {
+                if (thisTrianglePts[0].StructurallyEquals(thatTrianglePts[i])) break;
+            }
+
+            // Sanity check; something bad happened
+            if (i == 3) return null;
+
+            Dictionary<Point, Point> correspondence = new Dictionary<Point, Point>();
+            for (int j = 0; j < 3; j++)
+            {
+                if (!thisTrianglePts[j].StructurallyEquals(thatTrianglePts[(j + i) % 3])) return null;
+                correspondence.Add(thisTrianglePts[j], thatTrianglePts[(j + i) % 3]);
+            }
+
+            return correspondence;
         }
 
         public override bool StructurallyEquals(Object obj)

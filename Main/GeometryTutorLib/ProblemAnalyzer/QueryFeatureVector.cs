@@ -32,6 +32,21 @@ namespace GeometryTutorLib.ProblemAnalyzer
             goalIsomorphism = true;
         }
 
+        //public QueryFeatureVector(int maxLeng)
+        //{
+        //    maxLength = maxLeng;
+
+        //    minWidth = 1;
+        //    maxWidth = 4;
+
+        //    // Default to 100% of the givens
+        //    numberOfOriginalGivens = numGivens;
+
+        //    sourceIsomorphism = false;
+        //    pathIsomorphism = false;
+        //    goalIsomorphism = false;
+        //}
+
         public override string ToString()
         {
             string retS = "[ ";

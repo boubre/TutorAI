@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
+    <Compile Include="FigureStatisticsAggregator.cs" />
     <Compile Include="FigureAnalyzerMain.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="ConcreteAST\Desciptors\Parallel.cs" />
     <Compile Include="ConcreteAST\Desciptors\Perpendicular.cs" />
     <Compile Include="ConcreteAST\Desciptors\Descriptor.cs" />
+    <Compile Include="GenericInstantiator\Algebra\TransitiveCongruentTriangles.cs" />
     <Compile Include="GenericInstantiator\Algebra\RelationTransitiveSubstitution.cs" />
     <Compile Include="GenericInstantiator\Algebra\FlatEquation.cs" />
     <Compile Include="ConcreteAST\GroundedClause.cs" />
@@ -137,6 +139,8 @@
     <Compile Include="GenericInstantiator\Definitions\AngleBisectorDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\AltitudeDefinition.cs" />
     <Compile Include="GenericInstantiator\Axioms\AnglesOfEqualMeasureAreCongruent.cs" />
+    <Compile Include="GenericInstantiator\Definitions\ComplementaryDefinition.cs" />
+    <Compile Include="GenericInstantiator\Definitions\RightAngleDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\PerpendicularBisectorDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\PerpendicularDefinition.cs" />
     <Compile Include="GenericInstantiator\Definitions\MedianDefinition.cs" />

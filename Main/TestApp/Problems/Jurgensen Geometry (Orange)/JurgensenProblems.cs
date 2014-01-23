@@ -14,9 +14,13 @@ namespace Geometry_Testbed
 
             // Transversals
             problems.Add(new Page23Theorem11(false));                  // GTG
+            problems.Add(new Page32ClassroomProblem11To14(false));     // GTG
 
             // Parallel
             problems.Add(new Page60Theorem22(false));                  // GTG
+            problems.Add(new Page62Problem1(false));                   // GTG
+            problems.Add(new Page62Problem2(false));                   // GTG
+            problems.Add(new Page62Problems3To4(false));               // GTG
 
             // Congruent Triangles
             problems.Add(new Page113Problem7(false));                  // GTG
@@ -26,6 +30,7 @@ namespace Geometry_Testbed
             problems.Add(new Page144ClassroomExercise01(false));       // GTG
             problems.Add(new Page144ClassroomExercise02(false));       // GTG
             problems.Add(new Page144ClassroomExercise03(false));       // GTG
+            problems.Add(new Page144ClassroomExercise04(false));       // GTG 1:38 execute
             problems.Add(new Page144Problem01(false));                 // GTG
             problems.Add(new Page144Problem02(false));                 // GTG
             problems.Add(new Page145Problem03(false));                 // GTG
@@ -38,31 +43,30 @@ namespace Geometry_Testbed
             problems.Add(new Page146Problem15(false));                 // GTG
             problems.Add(new Page146Problem18(false));                 // GTG 1:20 execute
             problems.Add(new Page155Problem14(false));                 // GTG
+            problems.Add(new Page175ClassroomExercise12(false));       // GTG
             problems.Add(new Page223Problem22(false));                 // GTG
             problems.Add(new Page223Problem23(false));                 // GTG
             problems.Add(new Page242Problem17(false));                 // GTG
 
-            problems.Add(new Page144ClassroomExercise04(false)); // GOAL NOT DEDUCED; HYpotenuse Leg Issues
-            //problems.Add(new Page32ClassroomProblem11To14(false));     // 4(0)
-            //problems.Add(new Page62Problems3To4(false));               // Infinite?
-            //problems.Add(new Page62Problem1(false));                   // 3(2)
-            //problems.Add(new Page62Problem2(false));                   // 3(2)
+
+
+
+
+            //problems.Add(new Page146Problem12(false));                 // How to solve this on paper? A theorem missing perhaps?
             //problems.Add(new Page146Problem17(false));                 // MAJOR Encoding issues  
             //problems.Add(new Page147Problem21(false));                 // Encoding
             //problems.Add(new Page147Problem22(false));                 // Encoding Issues
-            //problems.Add(new Page175ClassroomExercise12(false));       // OUt of MEMORY
             //problems.Add(new Page146Problem13(false));                 // Endocing
 
-            // BIG Hypergraph construction problems     problems.Add(new Page146Problem12(false));
+
+            
             //problems.Add(new Page124Figure31(false)); // Classic Isosceles Test
 
-
-
-            // problems.Add(new Page60Theorem22Extended(true)); Not a real problem
+            // problems.Add(new Page60Theorem22Extended(false)); Not a real problem
             //problems.Add(new Page147Problem20(false);     // LATER ; omit potentially
-            //problems.Add(new Page175ClassroomExercise01to02(true));  OMIT
+            //problems.Add(new Page175ClassroomExercise01to02(false));  OMIT
             // problems.Add(new Page175ClassroomExercise03to06(false)); OMIT
-            //problems.Add(new Page175WrittenExercise1to4(true)); // OMIT
+            //problems.Add(new Page175WrittenExercise1to4(false)); // OMIT
             //problems.Add(new Page223Problem24(false)); // OMIT can't encode goal
             //problems.Add(new Page223Problem25(false)); // OMIT can't encode goal
             // problems.Add(new Page223Problem26(false)); OMIT goal encoding
@@ -73,7 +77,7 @@ namespace Geometry_Testbed
             //problems.Add(new Page229Problem07(false));
             //problems.Add(new Page229Problem08(false));  
             //problems.Add(new Page229Problem09(false)); 
-            // problems.Add(new Page242Problem16(true)); Given Encoding
+            // problems.Add(new Page242Problem16(false)); Given Encoding
             //problems.Add(new Page242Problem21(false)); OMIT goal encoding
             //problems.Add(new Page243Problem15(false)); OMIT goal encoding
             //problems.Add(new Page243Problem16(false)); OMIT given encoding

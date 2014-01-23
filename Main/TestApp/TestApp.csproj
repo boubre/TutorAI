@@ -41,8 +41,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiGraph.cs" />
     <Compile Include="ParallelImplySameSideInteriorSupplementary.cs" />
     <Compile Include="Problems\ActualProblem.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\BackwardPage80Problem9.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page66Problem16.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page68Problem13.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page69Problem14.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page73Problem9.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page73Problem8.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page76Problem4.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page76Problem8.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page79Problem8.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page79Problem7.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page72Problem17.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page74Problem14To16.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page75Problem17.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page75Problem18.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page76Problem7.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page77Problem11.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page78Problem13.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page78Problem12.cs" />
+    <Compile Include="Problems\Blue McDougall Workbook\Page80Problem10.cs" />
     <Compile Include="Problems\Blue McDougall Workbook\Page80Problem9.cs" />
     <Compile Include="Problems\Blue McDougall Workbook\Page90Problem22.cs" />
     <Compile Include="Problems\Blue McDougall Workbook\Page90Problem23.cs" />
@@ -58,6 +78,14 @@
     <Compile Include="Problems\Green Holt Workbook\Page17Problem9.cs" />
     <Compile Include="Problems\Green Holt Workbook\HoltWorkbookProblems.cs" />
     <Compile Include="Problems\Green Holt Workbook\Page13Problem10.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page284Example45.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page284Example46.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page284Problem17.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page284Problem18.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page284Example44.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem21.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem22.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem23.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\McDougallProblems.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Parallel Lines\Page160Problem43.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Parallel Lines\Page166Problem25.cs" />
@@ -77,6 +105,11 @@
     <Compile Include="Problems\Indian Text\Congruent Triangles\IPage128Problem01.cs" />
     <Compile Include="Problems\Indian Text\Congruent Triangles\IPage123Example6.cs" />
     <Compile Include="Problems\Indian Text\Congruent Triangles\IPage123Example5.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\IPage120Problem7.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\IPage120Problem6.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\JPage135Example4.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\JPage141Problem11.cs" />
+    <Compile Include="Problems\Indian Text\Similar Triangles\JPage140Problem9.cs" />
     <Compile Include="Problems\Indian Text\Similar Triangles\JPage140Problem7.cs" />
     <Compile Include="Problems\Indian Text\Similar Triangles\JPage152Problem01.cs" />
     <Compile Include="Problems\Indian Text\Similar Triangles\JPage153Problem09.cs" />
@@ -110,6 +143,7 @@
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise03to06.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175ClassroomExercise12.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page175WrittenExercise1to4.cs" />
+    <Compile Include="Problems\Jurgensen Geometry %28Orange%29\TransitiveTriangleCongruenceTester.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\JurgensenProblems.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\EquationTester.cs" />
     <Compile Include="Problems\Jurgensen Geometry %28Orange%29\Parallel Lines\Page62Problem2.cs" />

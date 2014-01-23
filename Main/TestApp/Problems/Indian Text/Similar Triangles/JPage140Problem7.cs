@@ -11,13 +11,11 @@ namespace Geometry_Testbed
             numberOfOriginalTextProblems = 4;
 
             Point a = new Point("A", 0, 0);    intrinsic.Add(a);
-            Point b = new Point("B", 20, 0);   intrinsic.Add(b);
-            Point c = new Point("C", 6, 10);   intrinsic.Add(c);
-            Point d = new Point("D", 1.5, 9);  intrinsic.Add(d);
-            Point p = new Point("E", 6, 0);    intrinsic.Add(p);
-            Point e = new Point("X", 2, 18 / 2.5); intrinsic.Add(e);
-
-            //System.Diagnostics.Debug.WriteLine("Intersection: " new Segment(e, c));
+            Point b = new Point("B", 18, 0);   intrinsic.Add(b);
+            Point c = new Point("C", 2, 8);   intrinsic.Add(c);
+            Point d = new Point("D", 3.6, 7.2);  intrinsic.Add(d);
+            Point e = new Point("E", 2, 0);    intrinsic.Add(e);
+            Point p = new Point("P", 2, 4); intrinsic.Add(p);
 
             Segment ac = new Segment(a, c); intrinsic.Add(ac);
 
@@ -53,6 +51,11 @@ namespace Geometry_Testbed
 
             given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(a, d)), "Given"));
             given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(c, e)), "Given"));
+
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(c, d, p), "Given"));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, b, d), new Triangle(c, b, e), "Given"));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(a, d, b), "Given"));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(p, d, c), new Triangle(b, e, c), "Given"));
         }
     }
 }

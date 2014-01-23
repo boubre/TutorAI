@@ -38,7 +38,8 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(d, a, b)),
                                                    GetProblemAngle(intrinsic, new Angle(e, a, c)), "Given"));
 
-            goals.Add(new Perpendicular(GetProblemIntersection(intrinsic, new Segment(e, f), new Segment(a, d)), "GOAL"));
+            goals.Add(new Strengthened(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)),
+                                       new Perpendicular(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)), "GOAL"), "GOAL"));
         }
     }
 }

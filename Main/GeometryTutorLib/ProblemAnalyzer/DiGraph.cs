@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
     //
     // Implements a basic directional graph (with no node information)
     //
-    public class DiGraph<T>
+    public class DiGraph
     {
         //
         // To implement Tajan's Strongly Connected Components (and cycles in the graph)
@@ -22,11 +22,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         protected class Vertex
         {
-            public T node;
+            public int node;
             public int lowLink;
             public int index;
 
-            public Vertex(T n)
+            public Vertex(int n)
             {
                 node = n;
                 lowLink = -1;
@@ -45,35 +45,32 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         //
-        // The dictionary is a map from: a node index to node indices
+        // The dictionary is a map: a node to all of its successors
         //
         protected Dictionary<int, List<int>> edgeMap;
         protected Dictionary<int, List<int>> transposeEdgeMap;
         protected int numEdges;
-        protected List<Vertex> vertices;
-        protected List<List<Vertex>> sccs; // Strongly Connected Components
+        protected List<int> vertices;
+        protected List<List<int>> sccs; // Strongly Connected Components
 
         public DiGraph()
         {
             edgeMap = new Dictionary<int, List<int>>();
             transposeEdgeMap = new Dictionary<int, List<int>>();
             numEdges = 0;
-            vertices = new List<Vertex>();
-            sccs = new List<List<Vertex>>();
+            vertices = new List<int>();
+            sccs = new List<List<int>>();
         }
 
         //
         // Make a shallow copy of this graph (all vertices and edges)
         //
-        public DiGraph(DiGraph<T> thatGraph)
+        public DiGraph(DiGraph thatGraph)
         {
             edgeMap = new Dictionary<int, List<int>>();
             transposeEdgeMap = new Dictionary<int, List<int>>();
             numEdges = thatGraph.numEdges;
-            vertices = new List<Vertex>();
-
-            // This copy preserves the index values for the vertices
-            thatGraph.vertices.ForEach(thatVertex => vertices.Add(new Vertex(thatVertex)));
+            vertices = new List<int>(thatGraph.vertices);
 
             // Copy the integer indices
             foreach (KeyValuePair<int, List<int>> pair in thatGraph.edgeMap)
@@ -87,13 +84,13 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 transposeEdgeMap.Add(pair.Key, new List<int>(pair.Value));
             }
 
-            //sccs = GetStronglyConnectedComponents();
+            sccs = GetStronglyConnectedComponents();
         }
 
         //
         // Adds a basic edge to the graph
         //
-        public void AddEdge(T from, T to)
+        public void AddEdge(int from, int to)
         {
             AddEdge(edgeMap, from, to);
             AddEdge(transposeEdgeMap, to, from);
@@ -101,39 +98,29 @@ namespace GeometryTutorLib.ProblemAnalyzer
             numEdges++;
         }
 
-        private void AddEdge(Dictionary<int, List<int>> edges, T from, T to)
+        // Adds an edge to a map of edges
+        private void AddEdge(Dictionary<int, List<int>> givenEdges, int from, int to)
         {
-            // Create the new vertex nodes and add to the vertices
-            // This must come first to guarantee the 'start node' is at index 0
-            int toVertexIndex = GetVertexIndex(to);
-            int fromVertexIndex = GetVertexIndex(from);
+            if (!vertices.Contains(from)) vertices.Add(from);
+            if (!vertices.Contains(to)) vertices.Add(to);
 
-            //
-            // Acquire the list of target nodes (which imply an edge: from -> to)
-            //
-            List<int> targetVertexIndices;
-            if (edges.TryGetValue(fromVertexIndex, out targetVertexIndices))
+            List<int> fromDependencies;
+            if (givenEdges.TryGetValue(from, out fromDependencies))
             {
-                if (!targetVertexIndices.Contains(toVertexIndex))
-                    //{
-                    //    throw new ArgumentException("Edge: " + from + " " + to + " already exists in problem graph.");
-                    //}
-
-                    targetVertexIndices.Add(toVertexIndex);
+                Utilities.AddUnique<int>(fromDependencies, to);
             }
-            // No edge exists yet: from -> to
             else
             {
-                edges.Add(fromVertexIndex, Utilities.MakeList<int>(toVertexIndex));
+                givenEdges.Add(from, Utilities.MakeList<int>(to));
             }
         }
 
         //
         // Adds a many-to-one hyperedge to the graph by adding all the individual edges
         //
-        public void AddHyperEdge(List<T> fromList, T to)
+        public void AddHyperEdge(List<int> fromList, int to)
         {
-            foreach (T from in fromList)
+            foreach (int from in fromList)
             {
                 this.AddEdge(from, to);
             }
@@ -245,24 +232,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return maxLevelWidth;
         }
 
-        //
-        // Acquire the given nodes from the vertices list OR create a new node (and add to the list)
-        //
-        private int GetVertexIndex(T val)
-        {
-            Vertex newVertexNode = new Vertex(val);
-            int vertexIndex = vertices.IndexOf(newVertexNode);
-
-            // Add as a new vertex
-            if (vertexIndex == -1)
-            {
-                vertices.Add(newVertexNode);
-                return vertices.Count;
-            }
-
-            return vertexIndex;
-        }
-
         public bool ContainsCycle()
         {
             // Update the SCCs
@@ -274,20 +243,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
         public string GetStronglyConnectedComponentDump()
         {
-            if (!sccs.Any())
-            {
-                sccs = GetStronglyConnectedComponents();
-            }
+            sccs = GetStronglyConnectedComponents();
 
             StringBuilder str = new StringBuilder();
             str.AppendLine("SCCs: ");
             int counter = 0;
-            foreach (List<Vertex> scc in sccs)
+            foreach (List<int> scc in sccs)
             {
                 str.Append("\t" + (counter++) + ": ");
-                foreach (Vertex v in scc)
+                foreach (int v in scc)
                 {
-                    str.Append(v.node + " ");
+                    str.Append(v + " ");
                 }
                 str.AppendLine("");
             }
@@ -298,37 +264,39 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Use Tarjan's Algorithm to acquire the Strongly Connected Components of a given directed graph
         //
-        private List<List<Vertex>> GetStronglyConnectedComponents()
+        private List<List<int>> GetStronglyConnectedComponents()
         {
-            List<List<Vertex>> stronglyConnectedComponents = new List<List<Vertex>>();
-            Stack<Vertex> workStack = new Stack<Vertex>();
+            List<List<int>> stronglyConnectedComponents = new List<List<int>>();
+            Stack<int> workStack = new Stack<int>();
             int overallIndex = 0;
 
-            foreach (Vertex vertex in this.vertices)
+            int[] sccIndex = new int[vertices.Count];
+            int[] lowLink = new int[vertices.Count];
+
+            // Init to -1 for the tracking data for Tarjan's
+            for (int i = 0; i < vertices.Count; i++)
             {
-                if (vertex.index < 0)
-                {
-                    StronglyConnectedSub(vertex, overallIndex, workStack, stronglyConnectedComponents);
-                }
+                sccIndex[i] = -1;
+                lowLink[i] = -1;
             }
 
-            //
-            // Reset the indices if we update the graph and call this procedure again
-            foreach (Vertex vertex in this.vertices)
+            for (int i = 0; i < vertices.Count; i++)
             {
-                vertex.index = -1;
-                vertex.lowLink = -1;
+                if (sccIndex[i] < 0)
+                {
+                    StronglyConnectedSub(vertices[i], i, overallIndex, workStack, stronglyConnectedComponents, sccIndex, lowLink);
+                }
             }
 
             return stronglyConnectedComponents;
         }
-        private void StronglyConnectedSub(Vertex vertex, int overallIndex, Stack<Vertex> workStack, List<List<Vertex>> stronglyConnectedComponents)
+        private void StronglyConnectedSub(int vertex, int vertexIndex, int overallIndex, Stack<int> workStack, List<List<int>> stronglyConnectedComponents, int[] sccIndex, int[] lowLink)
         {
             //
             // Define the current vertex reachability
             //
-            vertex.index = overallIndex;
-            vertex.lowLink = overallIndex;
+            sccIndex[vertexIndex] = overallIndex;
+            lowLink[vertexIndex] = overallIndex;
             overallIndex++;
 
             workStack.Push(vertex);
@@ -337,31 +305,31 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Pursue all dependencies
             //
             List<int> dependencies;
-            if (edgeMap.TryGetValue(GetVertexIndex(vertex.node), out dependencies))
+            if (edgeMap.TryGetValue(vertex, out dependencies))
             {
                 //
                 // Follow each edge in depth-first manner
                 //
-                foreach (int wIndex in dependencies)
+                foreach (int dependent in dependencies)
                 {
-                    Vertex w = vertices[wIndex];
+                    int dependentIndex = vertices.IndexOf(dependent);
 
-                    if (vertices[wIndex].index < 0)
+                    if (sccIndex[dependentIndex] < 0)
                     {
-                        StronglyConnectedSub(w, overallIndex, workStack, stronglyConnectedComponents);
-                        vertex.lowLink = Math.Min(vertex.lowLink, w.lowLink);
+                        StronglyConnectedSub(dependent, dependentIndex, overallIndex, workStack, stronglyConnectedComponents, sccIndex, lowLink);
+                        lowLink[vertexIndex] = Math.Min(lowLink[vertexIndex], lowLink[dependentIndex]);
                     }
-                    else if (workStack.Contains(w))
+                    else if (workStack.Contains(dependent))
                     {
-                        vertex.lowLink = Math.Min(vertex.lowLink, w.index);
+                        lowLink[vertexIndex] = Math.Min(lowLink[vertexIndex], lowLink[dependentIndex]);
                     }
                 }
             }
 
-            if (vertex.lowLink == vertex.index)
+            if (lowLink[vertexIndex] == sccIndex[vertexIndex])
             {
-                List<Vertex> scc = new List<Vertex>();
-                Vertex w;
+                List<int> scc = new List<int>();
+                int w;
                 do
                 {
                     w = workStack.Pop();
@@ -380,25 +348,25 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // while there are unmarked nodes do
         //    select an unmarked node n
         //    visit(n) 
-        public List<T> TopologicalSort()
+        public List<int> TopologicalSort()
         {
             // L ← Empty list that will contain the sorted elements
-            List<T> L = new List<T>();
+            List<int> L = new List<int>();
 
             // Unmarked
-            List<T> unmarked = new List<T>();
-            vertices.ForEach(vertex => unmarked.Add(vertex.node));
+            List<int> unmarked = new List<int>();
+            vertices.ForEach(vertex => unmarked.Add(vertex));
 
             // Temporarily marked
-            List<T> tempMarked = new List<T>();
+            List<int> tempMarked = new List<int>();
 
             // Permanently marked
-            List<T> marked = new List<T>();
+            List<int> marked = new List<int>();
 
             while (unmarked.Any())
             {
                 // remove a node n from unmarked
-                T n = unmarked[0];
+                int n = unmarked[0];
                 unmarked.RemoveAt(0);
 
                 Visit(n, unmarked, tempMarked, marked, L);
@@ -415,7 +383,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //            visit(m)
         //        mark n permanently
         //        add n to head of L
-        private void Visit(T n, List<T> unmarked, List<T> tempMarked, List<T> marked, List<T> L)
+        private void Visit(int n, List<int> unmarked, List<int> tempMarked, List<int> marked, List<int> L)
         {
             // if n has a temporary mark then stop (not a DAG)
             if (tempMarked.Contains(n)) return;
@@ -428,11 +396,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
                 // for each node m with an edge from n to m do
                 List<int> dependencies;
-                if (edgeMap.TryGetValue(GetVertexIndex(n), out dependencies))
+                if (edgeMap.TryGetValue(n, out dependencies))
                 {
-                    foreach (int wIndex in dependencies)
+                    foreach (int dependent in dependencies)
                     {
-                        Visit(vertices[wIndex].node, unmarked, tempMarked, marked, L);
+                        Visit(dependent, unmarked, tempMarked, marked, L);
                     }
                 }
 

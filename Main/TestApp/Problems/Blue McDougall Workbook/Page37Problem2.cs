@@ -31,7 +31,6 @@ namespace Geometry_Testbed
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
             given.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(x, y, p)), "Given"));
-
             Addition sum = new Addition(GetProblemAngle(intrinsic, new Angle(p, y, z)), GetProblemAngle(intrinsic, new Angle(x, y, p)));
             given.Add(new GeometricAngleEquation(sum, new NumericValue(90), "Given"));
 

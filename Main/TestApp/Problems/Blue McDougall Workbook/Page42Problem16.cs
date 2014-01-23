@@ -17,13 +17,13 @@ namespace Geometry_Testbed
             Point b = new Point("B", 0, 0); intrinsic.Add(b);
             Point c = new Point("C", 6, 0); intrinsic.Add(c);
 
-            Point x = new Point("X", -2, -3); intrinsic.Add(x);
+            Point x = new Point("X", -3, -2); intrinsic.Add(x);
             Point y = new Point("Y", 0, -5); intrinsic.Add(y);
-            Point z = new Point("Z", 3, -5); intrinsic.Add(z);
+            Point z = new Point("Z", 2, -3); intrinsic.Add(z);
 
-            Segment ax = new Segment(a, x); intrinsic.Add(ax);
-            Segment ay = new Segment(a, y); intrinsic.Add(ay);
-            Segment az = new Segment(a, z); intrinsic.Add(az);
+            Segment bx = new Segment(b, x); intrinsic.Add(bx);
+            Segment by = new Segment(b, y); intrinsic.Add(by);
+            Segment bz = new Segment(b, z); intrinsic.Add(bz);
 
             List<Point> pts = new List<Point>();
             pts.Add(a);
@@ -38,7 +38,7 @@ namespace Geometry_Testbed
             given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, b, x)), GetProblemAngle(intrinsic, new Angle(y, b, z)), "Given"));
             given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(x, b, y)), GetProblemAngle(intrinsic, new Angle(c, b, z)), "Given"));
 
-            goals.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(c, b, y)), GetProblemAngle(intrinsic, new Angle(c, b, z)), "GOAL"));
+            goals.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(y, b, z)), GetProblemAngle(intrinsic, new Angle(z, b, c)), "GOAL"));
         }
     }
 }

@@ -113,6 +113,14 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        // Given one of the angles in the pair, return the other
+        public bool HasAngle(Angle cs)
+        {
+            if (cs.Equates(ca1)) return true;
+            if (cs.Equates(ca2)) return true;
+            return false;
+        }
+
         public void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             //Console.WriteLine("To Be Implemented");

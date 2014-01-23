@@ -42,6 +42,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 if (!AreNodesIsomorphic(elements[0].goal, newProblem.goal)) return false;
             }
 
+//            if (newProblem.Get)
+
             //
             // Add other query checks here....
             //

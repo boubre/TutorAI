@@ -35,6 +35,15 @@ namespace GeometryTutorLib.ProblemAnalyzer
             List<Problem> forwardList = GenerateProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, true);
             List<Problem> backwardList = GenerateProblems(givens, pebblerGraph.backwardPebbledEdges, false);
 
+            if (Utilities.PROBLEM_GEN_DEBUG)
+            {
+                Debug.WriteLine("Backward problems");
+                foreach (Problem problem in backwardList)
+                {
+                    Debug.WriteLine(problem.ConstructProblemAndSolution(graph));
+                }
+            }
+
             return new KeyValuePair<List<Problem>, List<Problem>>(forwardList, backwardList);
         }
 
@@ -215,12 +224,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
                                     // Choose the shorter problem (fewer edges wins)
                                     if (problems[p2].edges.Count < minimalProblem.edges.Count)
                                     {
-                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
+                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
                                         minimalProblem = problems[p2];
                                     }
                                     else
                                     {
-                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
+                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
                                     }
                                 }
                             }

@@ -9,15 +9,6 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public AlgebraicCongruentTriangles(Triangle t1, Triangle t2, string just) : base(t1, t2, just) { }
 
-        public override bool Equals(Object c)
-        {
-            AlgebraicCongruentTriangles gcts = c as AlgebraicCongruentTriangles;
-
-            if (gcts == null) return false;
-
-            return base.Equals(c);
-        }
-
         public new void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             //Console.WriteLine("To Be Implemented");

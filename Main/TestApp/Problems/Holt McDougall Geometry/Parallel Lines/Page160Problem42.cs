@@ -13,19 +13,43 @@ namespace Geometry_Testbed
             problemName = "Page 160 Problem 42";
             numberOfOriginalTextProblems = 1;
 
-            Point a = new Point("A", 2, 4); intrinsic.Add(a);
-            Point b = new Point("B", 4, 8); intrinsic.Add(b);
-            Point c = new Point("C", 10, 0); intrinsic.Add(c);
-            Point d = new Point("D", 20, 0); intrinsic.Add(d);
+            Point a = new Point("A", -3, -1); intrinsic.Add(a);
+            Point b = new Point("B", 0, 0); intrinsic.Add(b);
+            Point c = new Point("C", 6, 2); intrinsic.Add(c);
+            Point d = new Point("D", 1, -3); intrinsic.Add(d);
+            Point x = new Point("X", -5, 5); intrinsic.Add(x);
+            Point y = new Point("Y", -2, 6); intrinsic.Add(y);
+            Point z = new Point("Z", 1, 7); intrinsic.Add(z);
+            Point q = new Point("Q", -3, 9); intrinsic.Add(q);
 
-            Segment ab = new Segment(a, b); intrinsic.Add(ab);
-            Segment ac = new Segment(a, c); intrinsic.Add(ac);
-            Segment bd = new Segment(b, d); intrinsic.Add(bd);
+            List<Point> pts = new List<Point>();
+            pts.Add(q);
+            pts.Add(y);
+            pts.Add(b);
+            pts.Add(d);
+            Collinear coll1 = new Collinear(pts, "Intrinsic");
 
+            List<Point> pts2 = new List<Point>();
+            pts2.Add(x);
+            pts2.Add(y);
+            pts2.Add(z);
+            Collinear coll2 = new Collinear(pts2, "Intrinsic");
+
+            pts2 = new List<Point>();
+            pts2.Add(a);
+            pts2.Add(b);
+            pts2.Add(c);
+            Collinear coll3 = new Collinear(pts2, "Intrinsic");
+
+            intrinsic.AddRange(GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(GenerateSegmentClauses(coll3));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
-            given.Add(new RightAngle(c, a, b, "Given"));
-            given.Add(new RightAngle(a, b, d, "Given"));
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, bd), "Given"));
+
+            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(x, z)), "Given"));
+            given.Add(new Perpendicular(GetProblemIntersection(intrinsic, GetProblemSegment(intrinsic, new Segment(q, d)), GetProblemSegment(intrinsic, new Segment(x, z))), "Given"));
+
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(c, b, y)), GetProblemAngle(intrinsic, new Angle(z, y, b)), "GOAL"));
         }
     }
 }

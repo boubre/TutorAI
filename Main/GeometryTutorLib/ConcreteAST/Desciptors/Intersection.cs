@@ -214,6 +214,68 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Creates a Topped F-Shape
+        //            top
+        // offLeft __________ offEnd    <--- Stands on
+        //             |
+        //             |_____ off       <--- Stands on 
+        //             |
+        //             | 
+        //           bottom
+        //
+        //   Returns: <bottom, off>
+        public KeyValuePair<Intersection, Point> CreatesToppedFShape(Intersection thatInter)
+        {
+            KeyValuePair<Intersection, Point> nullPair = new KeyValuePair<Intersection, Point>(null, null);
+
+            // A valid transversal is required for this shape
+            if (!this.CreatesAValidTransversalWith(thatInter)) return nullPair;
+
+            // Avoid both standing on an endpoint OR crossing
+            if (this.StandsOnEndpoint() || thatInter.StandsOnEndpoint()) return nullPair;
+            if (this.Crossing() || thatInter.Crossing()) return nullPair;
+
+            Segment transversal = this.AcquireTransversal(thatInter);
+
+            Intersection standsOnTop = null;
+            Intersection standsOnBottom = null;
+
+            // Top has 2 points on the transversal; bottom has 3
+            Segment nonTransversalThis = this.OtherSegment(transversal);
+            Segment nonTransversalThat = thatInter.OtherSegment(transversal);
+
+            if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThis.Point1) ||
+                transversal.PointIsOnAndBetweenEndpoints(nonTransversalThis.Point2))
+            {
+                //             |
+                //         ____|                <--- Stands on
+                //             |
+                //             |_____ off       <--- Stands on 
+                //             |
+                //             | 
+                if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
+                    transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point2)) return nullPair;
+
+                standsOnBottom = this;
+                standsOnTop = thatInter;
+            }
+            else if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
+                     transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point2))
+            {
+                standsOnBottom = this;
+                standsOnTop = thatInter;
+            }
+            else return nullPair;
+
+            // Check that the bottom extends the transversal
+            if (!standsOnBottom.GetCollinearSegment(transversal).HasStrictSubSegment(transversal)) return nullPair;
+
+            Point off = standsOnBottom.OtherSegment(transversal).OtherPoint(standsOnBottom.intersect);
+
+            return new KeyValuePair<Intersection, Point>(standsOnBottom, off);
+        }
+
+        //
         // Creates a PI
         //
         //   |______

@@ -110,6 +110,12 @@ namespace GeometryTutorLib.ConcreteAST
             return this.PointIsOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointIsOnAndBetweenEndpoints(possSubSegment.Point2);
         }
 
+        public bool HasStrictSubSegment(Segment possSubSegment)
+        {
+            return (this.PointIsOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointIsOnAndExactlyBetweenEndpoints(possSubSegment.Point2)) ||
+                   (this.PointIsOnAndBetweenEndpoints(possSubSegment.Point2) && this.PointIsOnAndExactlyBetweenEndpoints(possSubSegment.Point1));
+        }
+
         public bool IsVertical()
         {
             return Utilities.CompareValues(this.Point1.X, this.Point2.X);

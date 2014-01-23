@@ -105,14 +105,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Create the Perpendicular relationship
             //
-            Perpendicular perp = new Perpendicular(inter, NAME);
+            Strengthened streng = new Strengthened(inter, new Perpendicular(inter, NAME), NAME);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(inter);
             antecedent.Add(altitude);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, perp));
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
 
             return newGrounded;
         }

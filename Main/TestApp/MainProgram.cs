@@ -39,8 +39,11 @@ namespace Geometry_Testbed
         {
             List<ActualProblem> problems = ConstructAllHardCodedProblems();
 
+
             //problems.Add(new EquationTester());
             //problems.Add(new SegmentBisectorTester());
+
+            new TranstiveTriangleCongruenceTester(true).Run();
 
             DumpStatisticsHeader();
 

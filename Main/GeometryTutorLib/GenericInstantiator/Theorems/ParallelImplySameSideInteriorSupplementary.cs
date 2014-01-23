@@ -187,6 +187,23 @@ namespace GeometryTutorLib.GenericInstantiator
                 return GenerateCrossedT(parallel, inter1, inter2, tShapePoints.Key, tShapePoints.Value);
             }
 
+            //
+            // Creates a Topped F-Shape
+            //            top
+            // offLeft __________ offEnd    <--- Stands on
+            //             |
+            //             |_____ off       <--- Stands on 
+            //             |
+            //             | 
+            //           bottom
+            //
+            //   Returns: <bottom, off>
+            KeyValuePair<Intersection, Point> toppedFShapePoints = inter1.CreatesToppedFShape(inter2);
+            if (toppedFShapePoints.Key != null && toppedFShapePoints.Value != null)
+            {
+                return GenerateToppedFShape(parallel, inter1, inter2, toppedFShapePoints.Key, toppedFShapePoints.Value);
+            }
+
             // Corresponding angles if:
             //    ____________
             //       |    |
@@ -213,6 +230,48 @@ namespace GeometryTutorLib.GenericInstantiator
 
             return newGrounded;
         }
+
+        //
+        // Creates a Topped F-Shape
+        //            top
+        // oppSide __________       <--- Stands on
+        //             |
+        //             |_____ off   <--- Stands on 
+        //             |
+        //             | 
+        //           bottom
+        //
+        //   Returns: <bottom, off>
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateToppedFShape(Parallel parallel, Intersection inter1, Intersection inter2, Intersection bottom, Point off)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            Intersection top = inter1.Equals(bottom) ? inter2 : inter1;
+
+            // Determine the side of the top intersection needed for the angle
+            Segment transversal = inter1.AcquireTransversal(inter2);
+
+            Segment parallelTop = top.OtherSegment(transversal);
+            Segment parallelBottom = bottom.OtherSegment(transversal);
+
+            Segment crossingTester = new Segment(off, parallelTop.Point1);
+            Point intersection = transversal.FindIntersection(crossingTester);
+
+            Point oppSide = transversal.PointIsOnAndBetweenEndpoints(intersection) ? parallelTop.Point1 : parallelTop.Point2;
+            Point sameSide = parallelTop.OtherPoint(oppSide);
+
+            //
+            // Generate the new congruence
+            //
+            List<Supplementary> newSupps = new List<Supplementary>();
+
+            Supplementary supp = new Supplementary(new Angle(off, bottom.intersect, top.intersect),
+                                                   new Angle(sameSide, top.intersect, bottom.intersect), NAME);
+            newSupps.Add(supp);
+
+            return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
+        }
+
 
         // Corresponding angles if:
         //

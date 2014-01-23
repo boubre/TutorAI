@@ -65,7 +65,7 @@ namespace GeometryTutorLib
             candidateProbs.AddRange(problems.Value);
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
-            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, queryVector);
+            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, goals, queryVector);
             List<ProblemAnalyzer.Problem> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
 
             // Partition the problem-space based on the query vector defined (by us or the user)
@@ -79,7 +79,7 @@ namespace GeometryTutorLib
 
             if (Utilities.DEBUG)
             {
-                Debug.WriteLine("All " + generatedBookProblems.Count + " Book-specified problems: ");
+                Debug.WriteLine("\nAll " + generatedBookProblems.Count + " Book-specified problems: \n");
                 foreach (ProblemAnalyzer.Problem bookProb in generatedBookProblems)
                 {
                     Debug.WriteLine(bookProb.ConstructProblemAndSolution(graph));
