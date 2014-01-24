@@ -13,10 +13,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // The original graph in order to have information about node types; right now just axiomatic
         Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
         private readonly int GRAPH_DIAMETER;
-        public PathGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g /*, SharedPebbledNodeList sharedData */)
+        public PathGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> hypergraph)
         {
-            graph = g;
-            GRAPH_DIAMETER = g.vertices.Count;
+            this.graph = hypergraph;
+            GRAPH_DIAMETER = hypergraph.vertices.Count;
         }
 
         //

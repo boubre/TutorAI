@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace GeometryTutorLib
 {
-    public class FigureAnalyzerMain
+    public class HardCodedFigureAnalyzerMain
     {
         // The problem parameters to analyze
         private List<ConcreteAST.GroundedClause> figure;
@@ -25,7 +25,7 @@ namespace GeometryTutorLib
         private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
         private List<ConcreteAST.GroundedClause> goals;
 
-        public FigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs, List<ConcreteAST.GroundedClause> gls)
+        public HardCodedFigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs, List<ConcreteAST.GroundedClause> gls)
         {
             this.figure = fs;
             this.givens = gs;
@@ -94,6 +94,9 @@ namespace GeometryTutorLib
         //
         private void Precompute()
         {
+            //precomputer.CalculateRelations();
+            //precomputer.CalculateStrengthening();
+
             Thread precomputeRelations = new Thread(new ThreadStart(precomputer.CalculateRelations));
             Thread precomputeStrengthening = new Thread(new ThreadStart(precomputer.CalculateStrengthening));
 

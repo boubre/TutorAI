@@ -18,9 +18,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private bool[] generated;
         public int size { get; private set; }
         private Pebbler.HyperEdgeMultiMap edgeDatabase;
+        private readonly int MAX_GIVENS;
 
         // If the user specifies the size, we will never have to rehash
-        public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz)
+        public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz, int maxGivens)
         {
             size = 0;
             TABLE_SIZE = sz;
@@ -29,6 +30,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             generated = new bool[TABLE_SIZE];
 
             edgeDatabase = edges;
+            MAX_GIVENS = maxGivens;
         }
 
         public bool HasNodeBeenGenerated(int node) { return generated[node]; }
@@ -115,8 +117,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public void Put(Problem newProblem)
         {
-            int MAX_NUM_GIVENS = 4;
-            if (newProblem.givens.Count > MAX_NUM_GIVENS) return;
+            if (newProblem.givens.Count > MAX_GIVENS) return;
 
             //  Check that no edges may be used to deduce any given in the problem
             Pebbler.PebblerHyperEdge edge = BasicMinimality(newProblem);

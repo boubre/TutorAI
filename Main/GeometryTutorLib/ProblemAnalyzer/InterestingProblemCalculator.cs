@@ -59,6 +59,39 @@ namespace GeometryTutorLib.ProblemAnalyzer
             }
         }
 
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, QueryFeatureVector queryVector)
+        {
+            this.graph = g;
+            this.figure = f;
+            this.givens = givens;
+            this.goals = new List<GroundedClause>();
+            this.queryVector = queryVector;
+
+            // Calculate the givens indices in the hypergraph for this problem
+            this.givenIndices = new List<int>();
+            foreach (GroundedClause given in givens)
+            {
+                int givenIndex = Utilities.StructuralIndex(graph, given);
+                if (givenIndex == -1) throw new Exception("GIVEN not found in the graph: " + given);
+                givenIndices.Add(givenIndex);
+            }
+
+            // There are no goals specified
+            this.goalIndices = new List<int>();
+            //
+            // For intrinsic property-based coverage
+            //
+            COVERAGE_WEIGHTS = new double[NUM_INTRINSIC];
+            // Sum the factors
+            double sum = 0;
+            foreach (int i in COVERAGE_FACTOR) sum += i;
+            // Divide for weights
+            for (int w = 0; w < NUM_INTRINSIC; w++)
+            {
+                COVERAGE_WEIGHTS[w] = COVERAGE_FACTOR[w] / sum;
+            }
+        }
+
         //
         // Given a set of problems, determine which partition of problems meets the 'interesting' criteria
         //

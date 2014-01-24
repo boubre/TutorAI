@@ -55,7 +55,7 @@ namespace Geometry_Testbed
         public void Run()
         {
             // Create the analyzer
-            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(intrinsic, given, goals);
+            GeometryTutorLib.HardCodedFigureAnalyzerMain analyzer = new GeometryTutorLib.HardCodedFigureAnalyzerMain(intrinsic, given, goals);
 
             // Perform and time the analysis
             stopwatch.Start();

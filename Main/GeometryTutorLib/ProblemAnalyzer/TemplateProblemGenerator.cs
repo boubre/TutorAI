@@ -32,22 +32,22 @@ namespace GeometryTutorLib.ProblemAnalyzer
             descriptors.ForEach(r => descriptorsAndStrengthened.Add(r));
             strengthened.ForEach(r => descriptorsAndStrengthened.Add(r));
 
-            List<Problem> forwardList = GenerateProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, true);
-            List<Problem> backwardList = GenerateProblems(givens, pebblerGraph.backwardPebbledEdges, false);
+            List<Problem> forwardList = GenerateProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, true, givens.Count);
+            List<Problem> backwardList = GenerateProblems(givens, pebblerGraph.backwardPebbledEdges, false, givens.Count);
 
             if (Utilities.PROBLEM_GEN_DEBUG)
             {
-                Debug.WriteLine("Backward problems");
-                foreach (Problem problem in backwardList)
-                {
-                    Debug.WriteLine(problem.ConstructProblemAndSolution(graph));
-                }
+                //Debug.WriteLine("Backward problems");
+                //foreach (Problem problem in backwardList)
+                //{
+                //    Debug.WriteLine(problem.ConstructProblemAndSolution(graph));
+                //}
             }
 
             return new KeyValuePair<List<Problem>, List<Problem>>(forwardList, backwardList);
         }
 
-        private List<Problem> GenerateProblems(List<GroundedClause> goalClauses, Pebbler.HyperEdgeMultiMap edgeDatabase, bool forward)
+        private List<Problem> GenerateProblems(List<GroundedClause> goalClauses, Pebbler.HyperEdgeMultiMap edgeDatabase, bool forward, int numGivens)
         {
             // Find all the node indices and sort them in increasing order
             List<int> clauseIndices = new List<int>();
@@ -76,8 +76,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Sort in ascending order
             clauseIndices.Sort();
 
-            // The resultant structure of problems
-            ProblemHashMap problems = new ProblemHashMap(edgeDatabase, graph.vertices.Count);
+            // The resultant structure of problems; graph size dictates associated array size in hashMap; number of givens is a limiting factor the size of problems
+            ProblemHashMap problems = new ProblemHashMap(edgeDatabase, graph.vertices.Count, numGivens);
 
             // Generate all the problems based on the node indices
             foreach (int goalNode in clauseIndices)

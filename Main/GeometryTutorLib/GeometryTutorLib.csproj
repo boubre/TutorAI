@@ -58,8 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
+    <Compile Include="HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="FigureStatisticsAggregator.cs" />
-    <Compile Include="FigureAnalyzerMain.cs" />
+    <Compile Include="UIFigureAnalyzerMain.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />
     <Compile Include="ConcreteAST\Desciptors\AngleBisector.cs" />

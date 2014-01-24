@@ -54,7 +54,10 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="c">The segment opposite point c</param>
         public IsoscelesTriangle(Segment a, Segment b, Segment c, string just) : base(a, b, c, just)
         {
-            DetermineIsoscelesValues();
+            if (!this.isEquilateral)
+            {
+                DetermineIsoscelesValues();
+            }
             provenIsosceles = true;
         }
 

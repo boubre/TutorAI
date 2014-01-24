@@ -16,29 +16,30 @@ namespace GeometryTutorLib.GenericInstantiator
             candidateAltitude.Clear();
             candidateIntersection.Clear();
             candidatePerpendicular.Clear();
+            candidateStrengthened.Clear();
             candidateTriangle.Clear();
         }
 
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is PerpendicularBisector || c is Strengthened)
+            //if (c is PerpendicularBisector || c is Strengthened)
+            //{
+            //    newGrounded.AddRange(InstantiatePerpendicularBisector(c));
+            //}
+
+            if (clause is Triangle || clause is Perpendicular || clause is Strengthened)
             {
-                newGrounded.AddRange(InstantiatePerpendicularBisector(c));
+                newGrounded.AddRange(InstantiateToAltitude(clause));
             }
 
-            if (c is Triangle || c is Perpendicular)
+            else if (clause is Altitude || clause is Intersection)
             {
-                newGrounded.AddRange(InstantiatePerpendicular(c));
-            }
-
-            else if (c is Altitude || c is Intersection)
-            {
-                newGrounded.AddRange(InstantiateAltitude(c));
+                newGrounded.AddRange(InstantiateFromAltitude(clause));
             }
 
             return newGrounded;
@@ -57,31 +58,31 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         private static List<Intersection> candidateIntersection = new List<Intersection>();
         private static List<Altitude> candidateAltitude = new List<Altitude>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAltitude(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromAltitude(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is Intersection)
+            if (clause is Intersection)
             {
-                Intersection inter = c as Intersection;
+                Intersection inter = clause as Intersection;
 
                 // We are only interested in straight-angle type intersections
                 if (inter.StandsOnEndpoint()) return newGrounded;
 
                 foreach (Altitude altitude in candidateAltitude)
                 {
-                    newGrounded.AddRange(InstantiateAltitude(inter, altitude));
+                    newGrounded.AddRange(InstantiateFromAltitude(inter, altitude));
                 }
 
                 candidateIntersection.Add(inter);
             }
-            else if (c is Altitude)
+            else if (clause is Altitude)
             {
-                Altitude altitude  = c as Altitude;
+                Altitude altitude  = clause as Altitude;
 
                 foreach (Intersection inter in candidateIntersection)
                 {
-                    newGrounded.AddRange(InstantiateAltitude(inter, altitude));
+                    newGrounded.AddRange(InstantiateFromAltitude(inter, altitude));
                 }
 
                 candidateAltitude.Add(altitude);
@@ -90,7 +91,7 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAltitude(Intersection inter, Altitude altitude)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromAltitude(Intersection inter, Altitude altitude)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -130,37 +131,57 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicular(GroundedClause c)
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToAltitude(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is Triangle)
+            if (clause is Triangle)
             {
-                Triangle tri = c as Triangle;
+                Triangle tri = clause as Triangle;
 
                 foreach (Perpendicular perp in candidatePerpendicular)
                 {
-                    newGrounded.AddRange(InstantiatePerpendicular(tri, perp));
+                    newGrounded.AddRange(InstantiateToAltitude(tri, perp, perp));
+                }
+
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    newGrounded.AddRange(InstantiateToAltitude(tri, streng.strengthened as Perpendicular, streng));
                 }
 
                 candidateTriangle.Add(tri);
             }
-            else if (c is Perpendicular)
+            else if (clause is Perpendicular)
             {
-                Perpendicular perp = c as Perpendicular;
+                Perpendicular perp = clause as Perpendicular;
 
                 foreach (Triangle tri in candidateTriangle)
                 {
-                    newGrounded.AddRange(InstantiatePerpendicular(tri, perp));
+                    newGrounded.AddRange(InstantiateToAltitude(tri, perp, perp));
                 }
 
                 candidatePerpendicular.Add(perp);
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                // Only interested in strenghthened intersection -> perpendicular or -> perpendicular bisector
+                if (!(streng.strengthened is Perpendicular)) return newGrounded;
+
+                foreach (Triangle tri in candidateTriangle)
+                {
+                    newGrounded.AddRange(InstantiateToAltitude(tri, streng.strengthened as Perpendicular, streng));
+                }
+
+                candidateStrengthened.Add(streng);
             }
 
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicular(Triangle triangle, Perpendicular perp)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToAltitude(Triangle triangle, Perpendicular perp, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -180,67 +201,10 @@ namespace GeometryTutorLib.GenericInstantiator
             // The opposing side must align with the intersection
             if (!perp.OtherSegment(altitude).IsCollinearWith(baseSegment)) return newGrounded;
 
-            Altitude newAltitude = new Altitude(triangle, altitude, NAME);
 
-            // For hypergraph
-            List<GroundedClause> antecedent = new List<GroundedClause>();
-            antecedent.Add(triangle);
-            antecedent.Add(perp);
-
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAltitude));
-            return newGrounded;
-        }
-
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicularBisector(GroundedClause c)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            if (c is PerpendicularBisector)
-            {
-                PerpendicularBisector perpBis = c as PerpendicularBisector;
-
-                foreach (Triangle tri in candidateTriangle)
-                {
-                    newGrounded.AddRange(InstantiatePerpendicularBisector(tri, perpBis, perpBis));
-                }
-            }
-            else if (c is Strengthened)
-            {
-                Strengthened streng = c as Strengthened;
-
-                if (!(streng.strengthened is PerpendicularBisector)) return newGrounded;
-
-                PerpendicularBisector perpBis = streng.strengthened as PerpendicularBisector;
-
-                foreach (Triangle tri in candidateTriangle)
-                {
-                    newGrounded.AddRange(InstantiatePerpendicularBisector(tri, perpBis, streng));
-                }
-            }
-
-            return newGrounded;
-        }
-
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicularBisector(Triangle triangle, PerpendicularBisector perpBis, GroundedClause original)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            // Acquire the side of the triangle containing the intersection point
-            // This point may or may not be directly on the triangle side
-            Segment baseSegment = triangle.GetSegmentWithPointOnOrExtends(perpBis.intersect);
-            if (baseSegment == null) return newGrounded;
-
-            // The altitude must pass through the intersection point as well as the opposing vertex
-            Point oppositeVertex = triangle.OtherPoint(baseSegment);
-
-            Segment altitude = new Segment(perpBis.intersect, oppositeVertex);
-
-            // The alitude must alig with the intersection
-            if (!perpBis.ImpliesRay(altitude)) return newGrounded;
-
-            // The opposing side must align with the intersection
-            if (!perpBis.OtherSegment(altitude).IsCollinearWith(baseSegment)) return newGrounded;
-
+            //
+            // Create the new Altitude object
+            //
             Altitude newAltitude = new Altitude(triangle, altitude, NAME);
 
             // For hypergraph
@@ -249,7 +213,79 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(original);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAltitude));
+
+            //
+            // Check if this induces a second altitude for a right triangle (although we don't know this is a strengthened triangle)
+            //
+            Angle possRightAngle = new Angle(baseSegment.OtherPoint(perp.intersect), perp.intersect, oppositeVertex);
+            if (triangle.HasAngle(possRightAngle))
+            {
+                Altitude secondAltitude = new Altitude(triangle, new Segment(perp.intersect, oppositeVertex), NAME);
+                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, secondAltitude));
+            }
+
             return newGrounded;
         }
+
+        //public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicularBisector(GroundedClause c)
+        //{
+        //    List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+        //    if (c is PerpendicularBisector)
+        //    {
+        //        PerpendicularBisector perpBis = c as PerpendicularBisector;
+
+        //        foreach (Triangle tri in candidateTriangle)
+        //        {
+        //            newGrounded.AddRange(InstantiatePerpendicularBisector(tri, perpBis, perpBis));
+        //        }
+        //    }
+        //    else if (c is Strengthened)
+        //    {
+        //        Strengthened streng = c as Strengthened;
+
+        //        if (!(streng.strengthened is PerpendicularBisector)) return newGrounded;
+
+        //        PerpendicularBisector perpBis = streng.strengthened as PerpendicularBisector;
+
+        //        foreach (Triangle tri in candidateTriangle)
+        //        {
+        //            newGrounded.AddRange(InstantiatePerpendicularBisector(tri, perpBis, streng));
+        //        }
+        //    }
+
+        //    return newGrounded;
+        //}
+
+        //public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePerpendicularBisector(Triangle triangle, PerpendicularBisector perpBis, GroundedClause original)
+        //{
+        //    List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+        //    // Acquire the side of the triangle containing the intersection point
+        //    // This point may or may not be directly on the triangle side
+        //    Segment baseSegment = triangle.GetSegmentWithPointOnOrExtends(perpBis.intersect);
+        //    if (baseSegment == null) return newGrounded;
+
+        //    // The altitude must pass through the intersection point as well as the opposing vertex
+        //    Point oppositeVertex = triangle.OtherPoint(baseSegment);
+
+        //    Segment altitude = new Segment(perpBis.intersect, oppositeVertex);
+
+        //    // The alitude must alig with the intersection
+        //    if (!perpBis.ImpliesRay(altitude)) return newGrounded;
+
+        //    // The opposing side must align with the intersection
+        //    if (!perpBis.OtherSegment(altitude).IsCollinearWith(baseSegment)) return newGrounded;
+
+        //    Altitude newAltitude = new Altitude(triangle, altitude, NAME);
+
+        //    // For hypergraph
+        //    List<GroundedClause> antecedent = new List<GroundedClause>();
+        //    antecedent.Add(triangle);
+        //    antecedent.Add(original);
+
+        //    newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAltitude));
+        //    return newGrounded;
+        //}
     }
 }

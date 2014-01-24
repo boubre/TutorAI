@@ -72,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     }
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
+                    HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
 
                     //HandleDeducedClauses(worklist, ConcreteAngle.Instantiate(null, clause));
                     //HandleDeducedClauses(worklist, AngleBisector.Instantiate(clause));
@@ -92,14 +92,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is Intersection)
                 {
+                    HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
+
                     if (clause is PerpendicularBisector)
                     {
-                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, PerpendicularBisectorDefinition.Instantiate(clause));
                     }
                     else if (clause is Perpendicular)
                     {
-                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, PerpendicularImplyCongruentAdjacentAngles.Instantiate(clause));
                         HandleDeducedClauses(worklist, AdjacentAnglesPerpendicularImplyComplementary.Instantiate(clause));
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
@@ -107,7 +107,6 @@ namespace GeometryTutorLib.GenericInstantiator
                     }
                     else
                     {
-                        HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, VerticalAnglesTheorem.Instantiate(clause));
                         HandleDeducedClauses(worklist, AltIntCongruentAnglesImplyParallel.Instantiate(clause));
                         HandleDeducedClauses(worklist, SameSideSuppleAnglesImplyParallel.Instantiate(clause));
@@ -122,6 +121,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
                         HandleDeducedClauses(worklist, Intersection.InstantiateSupplementary(clause));
                         HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
                     }
                 }
                 else if (clause is Complementary)
@@ -296,6 +296,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     // InMiddle Strengthened to Midpoint
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, MidpointTheorem.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
 
                     // Right Angle
                     HandleDeducedClauses(worklist, RightAngleDefinition.Instantiate(clause));

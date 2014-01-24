@@ -86,6 +86,9 @@
     <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem21.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem22.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page285Problem23.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page286Problem8.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page286Problem9.cs" />
+    <Compile Include="Problems\Holt McDougall Geometry\Congruent Triangles\Page301Problem42.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\McDougallProblems.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Parallel Lines\Page160Problem43.cs" />
     <Compile Include="Problems\Holt McDougall Geometry\Parallel Lines\Page166Problem25.cs" />

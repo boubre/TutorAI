@@ -15,13 +15,15 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
-            if (c is Median) return InstantiateMedian(c as Median);
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is SegmentBisector || c is Triangle) return InstantiateBisector(c);
+            if (clause is Median || clause is Strengthened) newGrounded.AddRange(InstantiateFromMedian(clause));
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (clause is SegmentBisector || clause is Triangle || clause is Strengthened) newGrounded.AddRange(InstantiateToMedian(clause));
+
+            return newGrounded;
         }
 
         //     B ---------V---------A
@@ -32,7 +34,27 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Median(Segment(V, C), Triangle(C, A, B)) -> Midpoint(V, Segment(B, A))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMedian(Median median)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(GroundedClause clause)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (clause is Median)
+            {
+                newGrounded.AddRange(InstantiateFromMedian(clause as Median, clause));
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                if (!(streng.strengthened is Median)) return newGrounded;
+
+                newGrounded.AddRange(InstantiateFromMedian(streng.strengthened as Median, clause));
+            }
+
+            return newGrounded;
+        }
+
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(Median median, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -49,7 +71,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Midpoint newMidpoint = new Midpoint(midpt, segmentCutByMedian, NAME);
 
             // For hypergraph
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(median);
+            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
 
             return newGrounded;
@@ -65,39 +87,59 @@ namespace GeometryTutorLib.GenericInstantiator
         //        
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<SegmentBisector> candidateBisector = new List<SegmentBisector>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
 
         // Reset saved data for next problem
         public static void Clear()
         {
             candidateBisector.Clear();
             candidateTriangle.Clear();
+            candidateStrengthened.Clear();
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is Triangle)
+            if (clause is Triangle)
             {
-                Triangle tri = c as Triangle;
+                Triangle tri = clause as Triangle;
 
-                foreach (SegmentBisector bisector in candidateBisector)
+                foreach (SegmentBisector sb in candidateBisector)
                 {
-                    newGrounded.AddRange(InstantiateToDef(tri, bisector));
+                    newGrounded.AddRange(InstantiateToMedian(tri, sb, sb));
+                }
+
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    newGrounded.AddRange(InstantiateToMedian(tri, streng.strengthened as SegmentBisector, streng));
                 }
 
                 candidateTriangle.Add(tri);
             }
-            else if (c is SegmentBisector)
+            else if (clause is SegmentBisector)
             {
-                SegmentBisector bisector = c as SegmentBisector;
+                SegmentBisector sb = clause as SegmentBisector;
 
                 foreach (Triangle tri in candidateTriangle)
                 {
-                    newGrounded.AddRange(InstantiateToDef(tri, bisector));
+                    newGrounded.AddRange(InstantiateToMedian(tri, sb, sb));
                 }
 
-                candidateBisector.Add(bisector);
+                candidateBisector.Add(sb);
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                if (!(streng.strengthened is SegmentBisector)) return newGrounded;
+
+                foreach (Triangle tri in candidateTriangle)
+                {
+                    newGrounded.AddRange(InstantiateToMedian(tri, streng.strengthened as SegmentBisector, streng));
+                }
+
+                candidateStrengthened.Add(streng);
             }
 
             return newGrounded;
@@ -106,7 +148,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Take the angle congruence and bisector and create the AngleBisector relation
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(Triangle tri, SegmentBisector sb)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(Triangle tri, SegmentBisector sb, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -131,9 +173,10 @@ namespace GeometryTutorLib.GenericInstantiator
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(tri);
-            antecedent.Add(sb);
+            antecedent.Add(original);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMedian));
+
             return newGrounded;
         }
     }

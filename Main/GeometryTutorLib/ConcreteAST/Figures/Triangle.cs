@@ -895,6 +895,17 @@ namespace GeometryTutorLib.ConcreteAST
         public bool CoordinateAltitude(Segment thatSegment)
         {
             //
+            // Check to see if the altitude is actually one of the sides of the triangle
+            //
+            if (this.HasSegment(thatSegment) && this.isRight)
+            {
+                // Find the right angle; the altitude must be one of those segments
+                if (Utilities.CompareValues(this.AngleA.measure, 90)) return AngleA.HasSegment(thatSegment);
+                if (Utilities.CompareValues(this.AngleB.measure, 90)) return AngleB.HasSegment(thatSegment);
+                if (Utilities.CompareValues(this.AngleC.measure, 90)) return AngleC.HasSegment(thatSegment);
+            }
+
+            //
             // Two sides must intersect the given segment at a single point
             //
             Point otherIntersection = null;

@@ -447,8 +447,17 @@ namespace LiveGeometry
             
             //Execute Back-End
             UIDebugPublisher.publishString("Publish string example");
-            GeometryTutorLib.FigureAnalyzerMain analyzer = new GeometryTutorLib.FigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>(), new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
-            analyzer.AnalyzeFigure();
+
+            // Must pass to the back end:
+            //   1) A list of all intrinsic properties:
+            //          + Points
+            //          + All collinear points (that are in the drawing); points may be collinear but disconnected (these points are NOT collinear)
+            //          + Any segments which cannot be generated from collinear relationships (dangling segments)
+            //   2) All givens in the problem; these equate to any disambiguation asked of the user.
+            //       All such clauses which are given need to be instances of Geometric objects (if it applies). That is, congruent segments require GeometricCongruentSegments, angles GeometricCongruentSegments, etc. 
+            //
+            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+            List<GeometryTutorLib.ProblemAnalyzer.Problem> problems = analyzer.AnalyzeFigure();
         }
         void DisplayParseOptions()
         {
