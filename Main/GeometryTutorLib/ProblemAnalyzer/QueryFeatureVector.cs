@@ -121,6 +121,15 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // --------------------------- Factories for various query vectors -----------------------------------
         //
+        public static List<int> ConstructDifficultyPartitionBounds()
+        {
+            List<int> partitionBounds = new List<int>();
+            partitionBounds.Add(2);
+            partitionBounds.Add(5);
+            partitionBounds.Add(10);
+            return partitionBounds;
+        }
+
         public static QueryFeatureVector ConstructGoalIsomorphismQueryVector()
         {
             QueryFeatureVector query = new QueryFeatureVector();

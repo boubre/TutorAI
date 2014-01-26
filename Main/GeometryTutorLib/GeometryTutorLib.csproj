@@ -60,7 +60,7 @@
     <Compile Include="Assumption.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
-    <Compile Include="StatisticsGenerator\Problems\ActualProblem.cs" />
+    <Compile Include="StatisticsGenerator\ActualProblem.cs" />
     <Compile Include="StatisticsGenerator\Problems\Blue McDougall Workbook\BackwardPage80Problem9.cs" />
     <Compile Include="StatisticsGenerator\Problems\Blue McDougall Workbook\McDougallWorkbookProblems.cs" />
     <Compile Include="StatisticsGenerator\Problems\Blue McDougall Workbook\Page37Problem2.cs" />
@@ -89,6 +89,14 @@
     <Compile Include="StatisticsGenerator\Problems\Blue McDougall Workbook\Page90Problem22.cs" />
     <Compile Include="StatisticsGenerator\Problems\Blue McDougall Workbook\Page90Problem23.cs" />
     <Compile Include="StatisticsGenerator\Problems\CongruentTrianglesProblem.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Parallel Lines\Page226Problem41.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Parallel Lines\Page226Problem42.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page226Problem43.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page226Problem44.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page231Picture.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page231Problem14.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page273Problem39.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Glencoe Geometry\Congruent Triangles\Page273Problem40.cs" />
     <Compile Include="StatisticsGenerator\Problems\Green Holt Workbook\HoltWorkbookProblems.cs" />
     <Compile Include="StatisticsGenerator\Problems\Green Holt Workbook\Page13Problem10.cs" />
     <Compile Include="StatisticsGenerator\Problems\Green Holt Workbook\Page17Problem9.cs" />

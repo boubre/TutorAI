@@ -146,9 +146,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public int GetLength()
         {
             // passing index 0, depth 1
-            return GetLengthHelper(0, 1);
+            return GetLengthHelper(vertices[0], 1);
         }
-        private int GetLengthHelper(int currentNodeIndex, int currentDepth)
+        private int GetLengthHelper(int currentNode, int currentDepth)
         {
             int maxDepth = -1;
 
@@ -157,7 +157,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             // Get the transpose edges from this node (as we are traversing backward from the goal)
             // This node is a leaf if no edges: return the known depth
-            if (!transposeEdgeMap.TryGetValue(currentNodeIndex, out backwardEdges)) return currentDepth;
+            if (!transposeEdgeMap.TryGetValue(currentNode, out backwardEdges)) return currentDepth;
 
             // Traverse the edges tracking the max depth
             foreach (int edge in backwardEdges)

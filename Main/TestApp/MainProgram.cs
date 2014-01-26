@@ -24,15 +24,28 @@ namespace GeometryTestbed
 
         private static void DumpStatisticsHeader()
         {
-            Debug.Write("Problem #\t");
-            Debug.Write("Name\t\t\t");
-            Debug.Write("# Book Probs\t");
-            Debug.Write("# Probs\t");
-            Debug.Write("# of Int Probs\t");
-            Debug.Write("Ave Width\t");
-            Debug.Write("Ave Length\t");
-            Debug.Write("Ave Deductive\t");
-            Debug.Write("Time To Generate");
+            string header = "";
+            header += "Problem #\t";
+            header += "Name\t\t\t";
+            header += "# Book Probs\t";
+            header += "# Probs\t";
+            header += "# of Int Probs\t";
+            header += "Ave Width\t";
+            header += "Ave Length\t";
+            header += "Ave Deductive\t";
+            header += "Time To Generate\t";
+            header += "# Goal Partitions\t";
+            header += "# Src Partitions\t\t";
+            header += "Difficulty Partitions: ";
+            List<int> difficultyPartitions = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
+            header += "0-" + difficultyPartitions[0] + "\t";
+            for (int i = 0; i < difficultyPartitions.Count - 1; i++)
+            {
+                header += (difficultyPartitions[i] + 1) + "-" + difficultyPartitions[i + 1] + "\t";
+            }
+            header += ">=" + (difficultyPartitions[difficultyPartitions.Count - 1] + 1) + "\t";
+
+            Debug.WriteLine(header);
         }
 
         static void Main(string[] args)
@@ -76,6 +89,16 @@ namespace GeometryTestbed
                                            GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Minutes,
                                            GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Seconds,
                                            GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Milliseconds / 10);
+
+            // Queries
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoalPartitions + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t";
+
+            // Query: Difficulty Partitioning
+            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalDifficulty)
+            {
+                output += numProbs + "\t";
+            }
 
             Debug.WriteLine(output);
         

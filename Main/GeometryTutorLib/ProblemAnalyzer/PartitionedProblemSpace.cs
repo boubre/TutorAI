@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace GeometryTutorLib.ProblemAnalyzer
 {
     //
-    // The intent of this class is to facilitate storing groups of problems.
+    // This class facilitates storing groups of problems.
     // So, if a set of problems are alike in some manner, they are easily accessible
     // using feature vector access
     //
@@ -158,9 +158,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Construct a list of all partitions summarizing the number of problems with same goal type: <type, number of type>
         //
-        public List<KeyValuePair<int, int>> GetDeductivePartitionSummary()
+        public Dictionary<int, int> GetDeductivePartitionSummary()
         {
-            List<KeyValuePair<int, int>> partitionPairs = new List<KeyValuePair<int, int>>();
+            Dictionary<int, int> partitionPairs = new Dictionary<int, int>();
 
             // It is possible that there will be NO problems in an anticipated partition
             for (int p = 0; p < partitions.Count; p++)
@@ -168,7 +168,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 int upperBoundIndex = query.stepsPartitions.GetPartitionIndex(partitions[p].elements[0].GetNumDeductiveSteps());
                 int upperBoundValue = upperBoundIndex == query.stepsPartitions.Size() ? int.MaxValue : query.stepsPartitions.GetUpperBound(upperBoundIndex);
 
-                partitionPairs.Add(new KeyValuePair<int, int>(upperBoundValue, partitions[p].Size()));
+                partitionPairs.Add(upperBoundValue, partitions[p].Size());
             }
 
             return partitionPairs;

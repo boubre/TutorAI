@@ -18,6 +18,10 @@ namespace GeometryTutorLib.StatisticsGenerator
         public static double TotalProblemLength = 0;
         public static double TotalDeducedSteps = 0;
 
+        public static int TotalGoalPartitions = 0;
+        public static int TotalSourcePartitions = 0;
+        public static int[] totalDifficulty = new int[ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds().Count + 1];
+
         // Hard-coded intrinsic problem characteristics
         protected List<GroundedClause> intrinsic;
 
@@ -61,15 +65,32 @@ namespace GeometryTutorLib.StatisticsGenerator
             ActualProblem.TotalInterestingProblems += figureStats.totalInterestingProblems;
             ActualProblem.TotalOriginalBookProblems += goals.Count;
 
+            // Averages
             ActualProblem.TotalDeducedSteps += figureStats.averageProblemDeductiveSteps * figureStats.totalInterestingProblems;
             ActualProblem.TotalProblemLength += figureStats.averageProblemLength * figureStats.totalInterestingProblems;
             ActualProblem.TotalProblemWidth += figureStats.averageProblemWidth * figureStats.totalInterestingProblems;
+
+            // Queries
+            ActualProblem.TotalGoalPartitions += figureStats.goalPartitionSummary.Count;
+            ActualProblem.TotalSourcePartitions += figureStats.sourcePartitionSummary.Count;
+
+            // Query: Difficulty Partitioning
+            int numProblemsInPartition;
+            List<int> upperBounds = ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
+            for (int i = 0; i < upperBounds.Count; i++)
+            {
+                ActualProblem.totalDifficulty[i] += figureStats.difficultyPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
+            }
+            ActualProblem.totalDifficulty[upperBounds.Count] += figureStats.difficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
         }
 
         public override string ToString()
         {
             string statsString = "";
 
+            //
+            // Totals and Averages
+            //
             statsString += this.problemName + ":\t";
             statsString += this.goals.Count + "\t";
             statsString += figureStats.totalBookProblemsGenerated + "\t";
@@ -84,6 +105,26 @@ namespace GeometryTutorLib.StatisticsGenerator
             statsString += System.String.Format("{0:00}:{1:00}.{2:00}",
                                                 figureStats.stopwatch.Elapsed.Minutes,
                                                 figureStats.stopwatch.Elapsed.Seconds, figureStats.stopwatch.Elapsed.Milliseconds / 10);
+
+            //
+            // Sample Query Output
+            //
+            // Goal Isomorphism
+            //
+            statsString += "\t\t" + figureStats.goalPartitionSummary.Count + "\t";
+
+            // Source Isomorphism
+            statsString += figureStats.sourcePartitionSummary.Count + "\t";
+
+            // Difficulty Partitioning
+            int numProblemsInPartition;
+            foreach (int upperBound in ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds())
+            {
+                statsString +=  figureStats.difficultyPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
+                statsString += "\t";
+            }
+            statsString += figureStats.difficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
+            statsString += "\t";
 
             return statsString;
         }

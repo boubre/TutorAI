@@ -298,11 +298,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             // 6-10 Difficult
             // 10+ Extreme
             //
-            List<int> partitionBounds = new List<int>();
-            partitionBounds.Add(2);
-            partitionBounds.Add(5);
-            partitionBounds.Add(10);
-            ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(partitionBounds);
+            ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
 
             ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
 
