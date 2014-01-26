@@ -44,22 +44,10 @@ namespace GeometryTutorLib.GenericInstantiator
             return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
         }
 
-        //public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause clause)
-        //{
-        //    if (clause is Perpendicular) return InstantiateFromPerpendicular(clause, clause as Perpendicular);
-
-        //    if ((clause as Strengthened).strengthened is Perpendicular && !((clause as Strengthened).strengthened is PerpendicularBisector))
-        //    {
-        //        return InstantiateFromPerpendicular(clause, (clause as Strengthened).strengthened as Perpendicular);
-        //    }
-
-        //    return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-        //}
-
         // 
         // Perpendicular(B, Segment(A, B), Segment(B, C)) -> RightAngle(), RightAngle()
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause original, Perpendicular perp)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause original, Perpendicular perp)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -137,8 +125,6 @@ namespace GeometryTutorLib.GenericInstantiator
 
             return newGrounded;
         }
-
-
 
         // 
         // RightAngle(A, B, C), Intersection(B, Segment(A, B), SubSegment(B, C)) -> Perpendicular(B, Segment(A, B), Segment(B, C))

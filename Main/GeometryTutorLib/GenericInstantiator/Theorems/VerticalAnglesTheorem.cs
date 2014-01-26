@@ -18,9 +18,8 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!(c is Intersection)) return newGrounded;
-
             Intersection inter = c as Intersection;
+            if (inter == null) return newGrounded;
 
             //
             // Verify that this intersection is composed of two overlapping segments

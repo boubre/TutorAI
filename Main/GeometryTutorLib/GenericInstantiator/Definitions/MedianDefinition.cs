@@ -9,8 +9,15 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MedianDefinition : Definition
     {
         private readonly static string NAME = "Definition of Median";
-
         public MedianDefinition() { }
+
+        // Reset saved data for next problem
+        public static void Clear()
+        {
+            candidateBisector.Clear();
+            candidateTriangle.Clear();
+            candidateStrengthened.Clear();
+        }
 
         //
         // This implements forward and Backward instantiation
@@ -34,7 +41,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Median(Segment(V, C), Triangle(C, A, B)) -> Midpoint(V, Segment(B, A))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(GroundedClause clause)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -54,7 +61,7 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(Median median, GroundedClause original)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(Median median, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -88,16 +95,7 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<SegmentBisector> candidateBisector = new List<SegmentBisector>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
-
-        // Reset saved data for next problem
-        public static void Clear()
-        {
-            candidateBisector.Clear();
-            candidateTriangle.Clear();
-            candidateStrengthened.Clear();
-        }
-
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(GroundedClause clause)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 

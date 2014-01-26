@@ -20,29 +20,29 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // component if v.lowlink == v.index. The value v.lowlink is computed during the depth-first search from v,
         // as this finds the nodes that are reachable from v.
         //
-        protected class Vertex
-        {
-            public int node;
-            public int lowLink;
-            public int index;
+        //protected class Vertex
+        //{
+        //    public int node;
+        //    public int lowLink;
+        //    public int index;
 
-            public Vertex(int n)
-            {
-                node = n;
-                lowLink = -1;
-                index = -1;
-            }
+        //    public Vertex(int n)
+        //    {
+        //        node = n;
+        //        lowLink = -1;
+        //        index = -1;
+        //    }
 
-            public Vertex(Vertex v)
-            {
-                node = v.node;
-                lowLink = -1;
-                index = -1;
-            }
+        //    public Vertex(Vertex v)
+        //    {
+        //        node = v.node;
+        //        lowLink = -1;
+        //        index = -1;
+        //    }
 
-            public override bool Equals(object obj) { return this.node.Equals((obj as Vertex).node); }
-            public override int GetHashCode() { return base.GetHashCode(); }
-        }
+        //    public override bool Equals(object obj) { return this.node.Equals((obj as Vertex).node); }
+        //    public override int GetHashCode() { return base.GetHashCode(); }
+        //}
 
         //
         // The dictionary is a map: a node to all of its successors
@@ -101,8 +101,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // Adds an edge to a map of edges
         private void AddEdge(Dictionary<int, List<int>> givenEdges, int from, int to)
         {
-            if (!vertices.Contains(from)) vertices.Add(from);
+            // This order needed because we want the goal node of the problem first
             if (!vertices.Contains(to)) vertices.Add(to);
+            if (!vertices.Contains(from)) vertices.Add(from);
 
             List<int> fromDependencies;
             if (givenEdges.TryGetValue(from, out fromDependencies))
@@ -180,8 +181,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             Queue<int> worklist = new Queue<int>();
 
-            // Add the 'goal' node index as a catalyst
-            worklist.Enqueue(0);
+            // Add the 'goal' node as a catalyst
+            worklist.Enqueue(vertices[0]);
 
             // width for this level
             int currentLevelWidth = 1;
@@ -202,17 +203,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 for (int ell = 0; ell < currentLevelWidth; ell++)
                 {
                     // Get the next node
-                    int currentNodeIndex = worklist.Dequeue();
+                    int currentNode = worklist.Dequeue();
 
                     // Get the edges from this node to traverse
                     List<int> backwardEdges;
-                    if (transposeEdgeMap.TryGetValue(currentNodeIndex, out backwardEdges))
+                    if (transposeEdgeMap.TryGetValue(currentNode, out backwardEdges))
                     {
                         // Add all targets to the worklist
                         backwardEdges.ForEach(edgeIndex => worklist.Enqueue(edgeIndex));
                     }
-
-                    currentLevelAccumulator += backwardEdges.Count;
+                    currentLevelAccumulator += backwardEdges == null ? 0 : backwardEdges.Count;
                 }
 
                 // Completed a level; check width values, including if we have a new maxWidth
@@ -224,7 +224,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 currentLevelWidth = currentLevelAccumulator;
             }
 
-            if (sumOfAllWidths != vertices.Count)
+            if (sumOfAllWidths < vertices.Count)
             {
                 throw new Exception("Error in width determination: Did not traverse all nodes!");
             }

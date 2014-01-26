@@ -17,7 +17,7 @@ namespace GeometryTutorLib.GenericInstantiator
         // Resets all saved data.
         public static void Clear()
         {
-            unifyCandAngles.Clear();
+            unifyCandTris.Clear();
             unifyCandAngles.Clear();
             unifyCandSegments.Clear();
         }

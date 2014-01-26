@@ -37,13 +37,13 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                   |       |
         //                                   F       A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is Parallel)
+            if (clause is Parallel)
             {
-                Parallel newParallel = c as Parallel;
+                Parallel newParallel = clause as Parallel;
 
                 foreach (Perpendicular perp in candidatePerpendicular)
                 {
@@ -53,11 +53,19 @@ namespace GeometryTutorLib.GenericInstantiator
                     }
                 }
 
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    foreach (Intersection inter in candidateIntersection)
+                    {
+                        newGrounded.AddRange(CheckAndGeneratePerpendicular(streng.strengthened as Perpendicular, newParallel, inter, streng));
+                    }
+                }
+
                 candidateParallel.Add(newParallel);
             }
-            else if (c is Perpendicular)
+            else if (clause is Perpendicular)
             {
-                Perpendicular newPerp = c as Perpendicular;
+                Perpendicular newPerp = clause as Perpendicular;
 
                 foreach (Parallel parallel in candidateParallel)
                 {
@@ -69,9 +77,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 candidatePerpendicular.Add(newPerp);
             }
-            else if (c is Intersection)
+            else if (clause is Intersection)
             {
-                Intersection newIntersection = c as Intersection;
+                Intersection newIntersection = clause as Intersection;
 
                 foreach (Parallel parallel in candidateParallel)
                 {
@@ -81,11 +89,19 @@ namespace GeometryTutorLib.GenericInstantiator
                     }
                 }
 
+                foreach (Parallel parallel in candidateParallel)
+                {
+                    foreach (Strengthened streng in candidateStrengthened)
+                    {
+                        newGrounded.AddRange(CheckAndGeneratePerpendicular(streng.strengthened as Perpendicular, parallel, newIntersection, streng));
+                    }
+                }
+
                 candidateIntersection.Add(newIntersection);
             }
-            else if (c is Strengthened)
+            else if (clause is Strengthened)
             {
-                Strengthened streng = c as Strengthened;
+                Strengthened streng = clause as Strengthened;
 
                 if (!(streng.strengthened is Perpendicular)) return newGrounded;
 

@@ -40,7 +40,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // AngleBisector(Angle(A, V, B), Segment(V, C)) -> Congruent(Angle, A, V, C), Angle(C, V, B))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(AngleBisector ab)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(AngleBisector ab)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -68,7 +68,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         private static List<Segment> candidateSegments = new List<Segment>();
         private static List<CongruentAngles> candidateCongruent = new List<CongruentAngles>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCongruent(GroundedClause c)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCongruent(GroundedClause c)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 

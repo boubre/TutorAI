@@ -520,6 +520,9 @@ namespace GeometryTutorLib.ConcreteAST
             Segment crossingTester = new Segment(offThis, offThat);
             Point intersection = transversal.FindIntersection(crossingTester);
 
+            // We may have parallel crossingTester and transversal; that's ok
+            if (crossingTester.IsParallelWith(transversal)) return new KeyValuePair<Point, Point>(offThis, offThat);
+
             // S-shape
             if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
 

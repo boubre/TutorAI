@@ -51,7 +51,7 @@ namespace GeometryTutorLib
             // Create the precomputer object for coordinate-based pre-comutation analysis
             precomputer = new Precomputer.CoordinatePrecomputer(figure);
             instantiator = new GenericInstantiator.Instantiator();
-            queryVector = new ProblemAnalyzer.QueryFeatureVector(givens.Count);
+            queryVector = new ProblemAnalyzer.QueryFeatureVector();
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
@@ -82,17 +82,17 @@ namespace GeometryTutorLib
             candidateProbs.AddRange(problems.Value);
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
-            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, queryVector);
+            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
             List<ProblemAnalyzer.Problem> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
 
             // Partition the problem-space based on the query vector defined (by us or the user)
-            problemSpacePartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph);
-            problemSpacePartitions.ConstructPartitions(interestingProblems, queryVector);
+            problemSpacePartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, queryVector);
+            problemSpacePartitions.ConstructPartitions(interestingProblems);
 
             // Validate that we have generated all of the original problems from the text.     NO GOALS; no validation
             // List<ProblemAnalyzer.Problem> generatedBookProblems = problemSpacePartitions.ValidateOriginalProblems(givens, goals);
 
-            if (Utilities.DEBUG) problemSpacePartitions.DumpPartitions(queryVector);
+            if (Utilities.DEBUG) problemSpacePartitions.DumpPartitions();
 
             //if (Utilities.DEBUG)
             //{

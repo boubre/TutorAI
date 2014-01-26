@@ -17,15 +17,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private List<GroundedClause> goals;
         private List<int> goalIndices;
 
-        private QueryFeatureVector queryVector;
-
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, List<GroundedClause> goals, QueryFeatureVector queryVector)
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, List<GroundedClause> goals)
         {
             this.graph = g;
             this.figure = f;
             this.givens = givens;
             this.goals = goals;
-            this.queryVector = queryVector;
 
             // Calculate the givens indices in the hypergraph for this problem
             this.givenIndices = new List<int>();
@@ -59,13 +56,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
             }
         }
 
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, QueryFeatureVector queryVector)
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens)
         {
             this.graph = g;
             this.figure = f;
             this.givens = givens;
             this.goals = new List<GroundedClause>();
-            this.queryVector = queryVector;
 
             // Calculate the givens indices in the hypergraph for this problem
             this.givenIndices = new List<int>();

@@ -24,8 +24,6 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (!(clause is Parallel) && !(clause is Intersection)) return newGrounded;
-
             if (clause is Parallel)
             {
                 Parallel parallel = clause as Parallel;
@@ -55,7 +53,7 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateIntersection(Parallel parallel, Intersection inter1, Intersection inter2)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateIntersection(Parallel parallel, Intersection inter1, Intersection inter2)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -753,7 +751,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //                |          |
         //                |          |
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCompleteIntersection(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCompleteIntersection(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 

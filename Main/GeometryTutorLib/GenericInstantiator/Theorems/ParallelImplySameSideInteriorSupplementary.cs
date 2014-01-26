@@ -135,9 +135,9 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 // Return <offThis, offThat>
                 KeyValuePair<Point, Point> cShapePoints = inter1.CreatesBasicCShape(inter2);
-                if (sShapePoints.Key != null && sShapePoints.Value != null)
+                if (cShapePoints.Key != null && cShapePoints.Value != null)
                 {
-                    return GenerateSimpleC(parallel, inter1, sShapePoints.Key, inter2, sShapePoints.Value);
+                    return GenerateSimpleC(parallel, inter1, cShapePoints.Key, inter2, cShapePoints.Value);
                 }
 
                 return newGrounded;

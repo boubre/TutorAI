@@ -72,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     }
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
-                    HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
 
                     //HandleDeducedClauses(worklist, ConcreteAngle.Instantiate(null, clause));
                     //HandleDeducedClauses(worklist, AngleBisector.Instantiate(clause));
@@ -232,7 +232,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
-                    HandleDeducedClauses(worklist, CongruentSidesInTriangleImplyCongruentSegments.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CongruentSidesInTriangleImplyCongruentAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, CongruentSegmentsImplyProportionalSegmentsDefinition.Instantiate(clause));
                 }
                 else if (clause is Triangle)
@@ -248,7 +248,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, IsoscelesTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, CongruentAnglesInTriangleImplyCongruentSides.Instantiate(clause));
-                    HandleDeducedClauses(worklist, CongruentSidesInTriangleImplyCongruentSegments.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CongruentSidesInTriangleImplyCongruentAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, SASSimilarity.Instantiate(clause));
                     HandleDeducedClauses(worklist, SSSSimilarity.Instantiate(clause));
                     HandleDeducedClauses(worklist, AASimilarity.Instantiate(clause));
@@ -465,16 +465,17 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Definitions
             //
+            AltitudeDefinition.Clear();
+            AngleBisectorDefinition.Clear();
+            ComplementaryDefinition.Clear();
             CongruentSegmentsImplyProportionalSegmentsDefinition.Clear();
             IsoscelesTriangleDefinition.Clear();
+            MedianDefinition.Clear();
+            MidpointDefinition.Clear();
+            PerpendicularDefinition.Clear();
+            RightAngleDefinition.Clear();
             RightTriangleDefinition.Clear();
             SegmentBisectorDefinition.Clear();
-            MedianDefinition.Clear();
-            AltitudeDefinition.Clear();
-            PerpendicularDefinition.Clear();
-            ComplementaryDefinition.Clear();
-            AngleBisectorDefinition.Clear();
-            RightAngleDefinition.Clear();
 
             //
             // Theorems
@@ -485,7 +486,7 @@ namespace GeometryTutorLib.GenericInstantiator
             AngleBisectorIsPerpendicularBisectorInIsosceles.Clear();
             CongruentAdjacentAnglesImplyPerpendicular.Clear();
             CongruentAnglesInTriangleImplyCongruentSides.Clear();
-            CongruentSidesInTriangleImplyCongruentSegments.Clear();
+            CongruentSidesInTriangleImplyCongruentAngles.Clear();
             ExteriorAngleEqualSumRemoteAngles.Clear();
             HypotenuseLeg.Clear();
             ParallelImplyAltIntCongruentAngles.Clear();
@@ -496,6 +497,7 @@ namespace GeometryTutorLib.GenericInstantiator
             SASSimilarity.Clear();
             SSSSimilarity.Clear();
             TransversalPerpendicularToParallelImplyBothPerpendicular.Clear();
+            TransitiveCongruentTriangles.Clear();
             TriangleProportionality.Clear();
             TwoPairsCongruentAnglesImplyThirdPairCongruent.Clear();
         }

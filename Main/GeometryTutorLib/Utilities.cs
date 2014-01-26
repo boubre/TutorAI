@@ -74,6 +74,29 @@ namespace GeometryTutorLib
             return -1;
         }
 
+        //
+        // Acquires the hypergraph index value of the given nodes using structural equality
+        //
+        public static List<int> CollectGraphIndices(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph, List<ConcreteAST.GroundedClause> clauses)
+        {
+            List<int> indices = new List<int>();
+
+            foreach (ConcreteAST.GroundedClause gc in clauses)
+            {
+                int index = Utilities.StructuralIndex(graph, gc);
+                if (index != -1)
+                {
+                    indices.Add(index);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("We expect to find the given node (we did not): " + gc.ToString());
+                }
+            }
+
+            return indices;
+        }
+
         // Ensure uniqueness of additions
         public static void AddUniqueStructurally(List<GeometryTutorLib.ConcreteAST.Figure> figures, GeometryTutorLib.ConcreteAST.Figure f)
         {

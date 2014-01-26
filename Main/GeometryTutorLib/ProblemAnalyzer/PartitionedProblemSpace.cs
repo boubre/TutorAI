@@ -16,17 +16,19 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
         // The list of equivalent problem sets as defined by the query vector
         List<ProblemEquivalenceClass> partitions;
+        QueryFeatureVector query;
 
         private int totalProblems;
 
-        public PartitionedProblemSpace(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
+        public PartitionedProblemSpace(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g, QueryFeatureVector query)
         {
             graph = g;
             partitions = new List<ProblemEquivalenceClass>();
+            this.query = query;
             totalProblems = 0;
         }
 
-        public void ConstructPartitions(List<Problem> problems, QueryFeatureVector query)
+        public void ConstructPartitions(List<Problem> problems)
         {
             totalProblems += problems.Count;
             //
@@ -87,6 +89,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // We specifically seek problems with the same givens so we can then check the goals
             //
             List<Problem> validatedProblems = new List<Problem>();
+            bool[] marked = new bool[goals.Count];
             foreach (ProblemEquivalenceClass partition in partitions)
             {
                 foreach (Problem problem in partition.elements)
@@ -101,22 +104,84 @@ namespace GeometryTutorLib.ProblemAnalyzer
                             // We ensured previously that there does not exist more than one problem with the same given set and goal node;
                             // therefore, we need not track that this problem is matched with a different problem.
                             validatedProblems.Add(problem);
+                            marked[goalIndices.IndexOf(problem.goal)] = true;
                         }
                     }
                 }
             }
+
+            if (marked.Contains(false))
+            {
+                string report = "";
+
+                for (int g = 0; g < goals.Count; g++)
+                {
+                    if (!marked[g]) report += goals[g] + "\n";
+                }
+ 
+                throw new Exception("Not all problems from the book were validated: " + report);
+            }
+
             return validatedProblems;
         }
 
+        //
+        // Construct a list of all partitions summarizing the number of problems with same goal type: <type, number of type>
+        //
+        public List<KeyValuePair<ConcreteAST.GroundedClause, int>> GetGoalBasedPartitionSummary()
+        {
+            List<KeyValuePair<ConcreteAST.GroundedClause, int>> data = new List<KeyValuePair<ConcreteAST.GroundedClause, int>>();
+
+            foreach (ProblemEquivalenceClass partition in partitions)
+            {
+                data.Add(new KeyValuePair<ConcreteAST.GroundedClause, int>(graph.vertices[partition.elements[0].goal].data, partition.Size()));
+            }
+
+            return data;
+        }
+
+        //
+        // Construct a list of all partitions summarizing the number of problems with same goal type: <type, number of type>
+        //
+        public List<int> GetPartitionSummary()
+        {
+            List<int> partitionSizes = new List<int>();
+
+            foreach (ProblemEquivalenceClass partition in partitions)
+            {
+                partitionSizes.Add(partition.Size());
+            }
+
+            return partitionSizes;
+        }
+
+        //
+        // Construct a list of all partitions summarizing the number of problems with same goal type: <type, number of type>
+        //
+        public List<KeyValuePair<int, int>> GetDeductivePartitionSummary()
+        {
+            List<KeyValuePair<int, int>> partitionPairs = new List<KeyValuePair<int, int>>();
+
+            // It is possible that there will be NO problems in an anticipated partition
+            for (int p = 0; p < partitions.Count; p++)
+            {
+                int upperBoundIndex = query.stepsPartitions.GetPartitionIndex(partitions[p].elements[0].GetNumDeductiveSteps());
+                int upperBoundValue = upperBoundIndex == query.stepsPartitions.Size() ? int.MaxValue : query.stepsPartitions.GetUpperBound(upperBoundIndex);
+
+                partitionPairs.Add(new KeyValuePair<int, int>(upperBoundValue, partitions[p].Size()));
+            }
+
+            return partitionPairs;
+        }
+
         // For debugging purposes
-        public void DumpPartitions(QueryFeatureVector query)
+        public void DumpPartitions()
         {
             for (int p = 0; p < partitions.Count; p++)
             {
                 System.Diagnostics.Debug.WriteLine("Partition (" + (p + 1) + ") contains " + partitions[p].Size() + " problems.\n" + partitions[p].ToString());
             }
 
-            System.Diagnostics.Debug.WriteLine("Using query " + query.ToString() + ", there are " + partitions.Count + " partitions with " + totalProblems + " problems.\n");
             System.Diagnostics.Debug.WriteLine("Using query " + query.ToString() + ", there are " + partitions.Count + " partitions with " + totalProblems + " problems.\n");
         }
     }

@@ -12,6 +12,12 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public MidpointDefinition() { }
 
+        public static void Clear()
+        {
+            candidateCongruent.Clear();
+            candidateSegments.Clear();
+        }
+
         //
         // This implements forward and Backward instantiation
         // Forward is Midpoint -> Congruent Clause

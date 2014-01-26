@@ -11,19 +11,14 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "SSS";
 
-        public static Boolean MayUnifyWith(GroundedClause c)
-        {
-            return c is Triangle || c is CongruentSegments;
-        }
-
-        private static List<Triangle> unifyCandTris = new List<Triangle>();
-        private static List<CongruentSegments> unifyCandSegments = new List<CongruentSegments>();
+        private static List<Triangle> candidateTriangles = new List<Triangle>();
+        private static List<CongruentSegments> candidateCongruences = new List<CongruentSegments>();
 
         // Resets all saved data.
         public static void Clear()
         {
-            unifyCandTris.Clear();
-            unifyCandSegments.Clear();
+            candidateTriangles.Clear();
+            candidateCongruences.Clear();
         }
 
         //
@@ -46,14 +41,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Do we have enough information for unification?
             //
-            if (c is CongruentSegments && (unifyCandSegments.Count < 2 || unifyCandTris.Count <= 1))
+            if (c is CongruentSegments && (candidateCongruences.Count < 2 || candidateTriangles.Count <= 1))
             {
-                unifyCandSegments.Add((CongruentSegments)c);
+                candidateCongruences.Add((CongruentSegments)c);
                 return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
-            else if (c is Triangle && (!unifyCandTris.Any() || unifyCandSegments.Count < 3))
+            else if (c is Triangle && (!candidateTriangles.Any() || candidateCongruences.Count < 3))
             {
-                unifyCandTris.Add((Triangle)c);
+                candidateTriangles.Add((Triangle)c);
                 return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             }
 
@@ -67,12 +62,12 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 // Check all combinations of triangles to see if they are congruent
                 // This congruence must include the new segment congruence
-                for (int i = 0; i < unifyCandTris.Count; i++)
+                for (int i = 0; i < candidateTriangles.Count; i++)
                 {
-                    for (int j = i + 1; j < unifyCandTris.Count; j++)
+                    for (int j = i + 1; j < candidateTriangles.Count; j++)
                     {
-                        Triangle ct1 = unifyCandTris[i];
-                        Triangle ct2 = unifyCandTris[j];
+                        Triangle ct1 = candidateTriangles[i];
+                        Triangle ct2 = candidateTriangles[j];
 
                         if (!ct1.WasDeducedCongruent(ct2))
                         {
@@ -84,7 +79,7 @@ namespace GeometryTutorLib.GenericInstantiator
                                 applicCongruents.Add(newCs);
 
                                 // Check all other segments
-                                foreach (CongruentSegments ccs in unifyCandSegments)
+                                foreach (CongruentSegments ccs in candidateCongruences)
                                 {
                                     // Does this segment link the two triangles?
                                     if (ccs.LinksTriangles(ct1, ct2))
@@ -102,20 +97,20 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
 
                 // Add this segment to the list of possible clauses to unify later
-                unifyCandSegments.Add(newCs);
+                candidateCongruences.Add(newCs);
             }
             // If this is a new triangle, check for triangles which may be congruent to this new triangle
             else if (c is Triangle)
             {
                 Triangle candidateTri = (Triangle)c;
-                foreach (Triangle ct in unifyCandTris)
+                foreach (Triangle ct in candidateTriangles)
                 {
                     //
                     // Is this concrete triangle congruent to the new candidate?
                     //
                     // Find all applicable congruent segments for both triangles
                     List<CongruentSegments> applicCongruents = new List<CongruentSegments>();
-                    foreach (CongruentSegments ccs in unifyCandSegments)
+                    foreach (CongruentSegments ccs in candidateCongruences)
                     {
                         // Does this segment link the two triangles?
                         if (ccs.LinksTriangles(ct, candidateTri))
@@ -130,7 +125,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
 
                 // Add this triangle to the list of possible clauses to unify later
-                unifyCandTris.Add(candidateTri);
+                candidateTriangles.Add(candidateTri);
             }
 
             return newGrounded;

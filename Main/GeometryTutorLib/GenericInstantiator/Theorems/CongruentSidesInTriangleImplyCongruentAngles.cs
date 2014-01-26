@@ -7,13 +7,9 @@ using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
-    public class CongruentSidesInTriangleImplyCongruentSegments : Theorem
+    public class CongruentSidesInTriangleImplyCongruentAngles : Theorem
     {
         private readonly static string NAME = "If two segments of a triangle are congruent, then the angles opposite those segments are congruent.";
-
-        private CongruentSidesInTriangleImplyCongruentSegments() { }
-        private static readonly CongruentSidesInTriangleImplyCongruentSegments thisDescriptor = new CongruentSidesInTriangleImplyCongruentSegments();
-
         public static Boolean MayUnifyWith(GroundedClause c)
         {
             return (c is CongruentSegments) || (c is Triangle);

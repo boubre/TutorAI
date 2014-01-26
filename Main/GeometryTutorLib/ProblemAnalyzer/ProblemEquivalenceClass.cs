@@ -24,9 +24,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return elements.Count;
         }
 
-        //
-        // CTA: This should add the problem UNIQUELY???
-        //
         public void Add(Problem p)
         {
             elements.Add(p);
@@ -37,12 +34,58 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public bool IsStrictlyIsomorphic(Problem newProblem, QueryFeatureVector query)
         {
+            //
+            // GOAL
+            //
             if (query.goalIsomorphism)
             {
                 if (!AreNodesIsomorphic(elements[0].goal, newProblem.goal)) return false;
             }
 
-//            if (newProblem.Get)
+            //
+            // LENGTH
+            //
+            if (query.lengthPartitioning)
+            {
+                if (query.rangedLengthPartitioning)
+                {
+                    if (!AreRangedEqualLength(query, elements[0], newProblem)) return false;
+                }
+                else
+                {
+                    if (!AreEqualLength(elements[0], newProblem)) return false;
+                }
+            }
+
+            //
+            // WIDTH
+            //
+            if (query.widthPartitioning)
+            {
+                if (query.rangedWidthPartitioning)
+                {
+                    if (!AreRangedEqualWidth(query, elements[0], newProblem)) return false;
+                }
+                else
+                {
+                    if (!AreEqualWidth(elements[0], newProblem)) return false;
+                }
+            }
+
+            //
+            // DEDUCTIVE STEPS
+            //
+            if (query.deductiveStepsPartitioning)
+            {
+                if (query.rangedDeductiveStepsPartitioning)
+                {
+                    if (!AreRangedEqualDeductiveSteps(query, elements[0], newProblem)) return false;
+                }
+                else
+                {
+                    if (!AreEqualDeductiveSteps(elements[0], newProblem)) return false;
+                }
+            }
 
             //
             // Add other query checks here....
@@ -54,6 +97,37 @@ namespace GeometryTutorLib.ProblemAnalyzer
             }
 
             return true;
+        }
+
+        private bool AreEqualLength(Problem thisProblem, Problem thatProblem)
+        {
+            return thisProblem.GetLength() == thatProblem.GetLength();
+        }
+
+        private bool AreEqualWidth(Problem thisProblem, Problem thatProblem)
+        {
+            return thisProblem.GetWidth() == thatProblem.GetWidth();
+        }
+
+        private bool AreEqualDeductiveSteps(Problem thisProblem, Problem thatProblem)
+        {
+            return thisProblem.GetNumDeductiveSteps() == thatProblem.GetNumDeductiveSteps();
+        }
+
+        private bool AreRangedEqualLength(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        {
+            return query.lengthPartitions.GetPartitionIndex(thisProblem.GetLength()) == query.lengthPartitions.GetPartitionIndex(thatProblem.GetLength());
+        }
+
+        private bool AreRangedEqualWidth(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        {
+            return query.widthPartitions.GetPartitionIndex(thisProblem.GetWidth()) == query.widthPartitions.GetPartitionIndex(thatProblem.GetWidth());
+        }
+
+        private bool AreRangedEqualDeductiveSteps(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        {
+            return query.stepsPartitions.GetPartitionIndex(thisProblem.GetNumDeductiveSteps()) ==
+                   query.stepsPartitions.GetPartitionIndex(thatProblem.GetNumDeductiveSteps());
         }
 
         //

@@ -131,7 +131,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             if (baseProblem.goal == 98)
             {
-                Debug.WriteLine("98NO-OP");
+                //Debug.WriteLine("98NO-OP");
             }
 
             // If we did not perform any appending, we have reached a maximal situation

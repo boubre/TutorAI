@@ -69,14 +69,18 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return edges.Count;
         }
 
+        private int memoizedLength = -1;
         public int GetLength()
         {
-            return graph.GetLength();
+            if (memoizedLength == -1) memoizedLength = graph.GetLength();
+            return memoizedLength;
         }
 
+        private int memoizedWidth = -1;
         public int GetWidth()
         {
-            return graph.GetWidth();
+            if (memoizedWidth == -1) memoizedWidth = graph.GetWidth();
+            return memoizedWidth;
         }
 
         public bool ContainsGoalEdge(int targetNode)
