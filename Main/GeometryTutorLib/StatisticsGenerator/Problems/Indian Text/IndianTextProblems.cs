@@ -11,17 +11,17 @@ namespace GeometryTutorLib.StatisticsGenerator
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            problems.Add(new IPage123Example5(false));   // GTG
-            problems.Add(new IPage123Example6(false));   // GTG
-            problems.Add(new IPage128Problem01(false));  // GTG  // Good to analyze
-            problems.Add(new IPage128Problem03(false));  // GTG
-            problems.Add(new IPage120Problem7(false));   // GTG
-            problems.Add(new IPage120Problem8(false));   // GTG  Overlapping Right Triangles
-            problems.Add(new JPage140Problem9(false));   // GTG
-            problems.Add(new JPage140Problem6(false));    // GTG: Interleaving Triangles
-            problems.Add(new JPage140Problem7(false));   // GTG
-            problems.Add(new JPage141Problem11(false));  // GTG
-            problems.Add(new JPage135Example4(false));   // GTG
+            problems.Add(new IPage123Example5(true));   // GTG
+            problems.Add(new IPage123Example6(true));   // GTG
+            problems.Add(new IPage128Problem01(true));  // GTG  // Good to analyze
+            problems.Add(new IPage128Problem03(true));  // GTG
+            problems.Add(new IPage120Problem7(true));   // GTG
+            problems.Add(new IPage120Problem8(true));   // GTG  Overlapping Right Triangles
+            problems.Add(new JPage140Problem9(true));   // GTG
+            problems.Add(new JPage140Problem6(true));   // GTG: Interleaving Triangles
+            problems.Add(new JPage140Problem7(true));   // GTG
+            problems.Add(new JPage141Problem11(true));  // GTG
+            problems.Add(new JPage135Example4(true));   // GTG
 
             problems.Add(new IPage120Problem6(false));   // POINT encoding
 

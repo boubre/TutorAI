@@ -30,18 +30,6 @@ namespace GeometryTutorLib.Pebbler
             pebbleColor = PebblerColorType.NO_PEBBLE;
         }
 
-        public bool IsEdgePebbledForward()
-        {
-            // An edge should NEVER be purple
-            return pebbleColor == PebblerColorType.RED_FORWARD || pebbleColor == PebblerColorType.PURPLE_BOTH;
-        }
-
-        public bool IsEdgePebbledBackward()
-        {
-            // An edge should NEVER be purple
-            return pebbleColor == PebblerColorType.BLUE_BACKWARD || pebbleColor == PebblerColorType.PURPLE_BOTH;
-        }
-
         public bool IsFullyPebbled()
         {
             foreach (int srcNode in sourceNodes)
@@ -54,10 +42,10 @@ namespace GeometryTutorLib.Pebbler
 
         public void SetColor(PebblerColorType color)
         {
-            if (color == PebblerColorType.PURPLE_BOTH)
-            {
-                throw new ArgumentException("Attempt to color an edge PURPLE; this is not possible.");
-            }
+            //if (color == PebblerColorType.PURPLE_BOTH)
+            //{
+            //    throw new ArgumentException("Attempt to color an edge PURPLE; this is not possible.");
+            //}
 
             pebbleColor = color;
         }

@@ -70,7 +70,6 @@ namespace GeometryTutorLib.ConcreteAST
             Point pt = obj as Point;
 
             if (pt == null) return false;
-
             return Utilities.CompareValues(pt.X, X) && Utilities.CompareValues(pt.Y, Y);
         }
 

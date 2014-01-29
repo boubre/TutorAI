@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
+    <Compile Include="GenericInstantiator\Definitions\SupplementaryDefinition.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
     <Compile Include="StatisticsGenerator\ActualProblem.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Similar Triangles\JPage141Problem11.cs" />
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Similar Triangles\JPage152Problem01.cs" />
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Similar Triangles\JPage153Problem09.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\BackwardPage134Problem7.cs" />
     <Compile Include="StatisticsGenerator\Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page113Problem7.cs" />
     <Compile Include="StatisticsGenerator\Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page124Figure31.cs" />
     <Compile Include="StatisticsGenerator\Problems\Jurgensen Geometry %28Orange%29\Congruent Triangles\Page134Problem6.cs" />

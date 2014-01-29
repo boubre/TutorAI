@@ -30,7 +30,6 @@ namespace GeometryTutorLib.GenericInstantiator
         // IsoscelesTriangle(A, B, C),
         // AngleBisector(Segment(M, C), Angle(A, C, B)),
         // Intersection(M, Segment(M, C), Segment(A, B) -> PerpendicularBisector(M, Segment(M, C), Segment(A, B)),
-        //                                                 Midpoint(M, Segment(A, B))
         //
         //   A _____M_____B
         //     \    |    /
@@ -138,15 +137,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // PerpendicularBisector(M, Segment(M, C), Segment(A, B))
             //
-            PerpendicularBisector perpB = new PerpendicularBisector(inter, ab.bisector, NAME);
-            Strengthened s = new Strengthened(inter, perpB, NAME);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, s));
+            Strengthened newPerpB = new Strengthened(inter, new PerpendicularBisector(inter, ab.bisector, NAME), NAME);
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPerpB));
 
             //
             // Midpoint(M, Segment(A, B))
             //
-            Midpoint midpt = new Midpoint(inter.intersect, isoTri.baseSegment, NAME);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
+            //Midpoint midpt = new Midpoint(inter.intersect, isoTri.baseSegment, NAME);
+            //newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
 
             return newGrounded;
         }

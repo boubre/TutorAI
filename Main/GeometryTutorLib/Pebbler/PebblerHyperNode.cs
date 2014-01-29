@@ -44,7 +44,7 @@ namespace GeometryTutorLib.Pebbler
             if (pebble == PebblerColorType.NO_PEBBLE) retS += "NONE";
             if (pebble == PebblerColorType.RED_FORWARD) retS += "RED";
             if (pebble == PebblerColorType.BLUE_BACKWARD) retS += "BLUE";
-            if (pebble == PebblerColorType.PURPLE_BOTH) retS += "PURPLE";
+            //if (pebble == PebblerColorType.PURPLE_BOTH) retS += "PURPLE";
             retS += "), ";
             retS += "SuccN={";
             foreach (int n in nodes) retS += n + ",";

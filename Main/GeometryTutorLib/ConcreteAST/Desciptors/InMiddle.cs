@@ -43,7 +43,7 @@ namespace GeometryTutorLib.ConcreteAST
             Midpoint midpoint = gc as Midpoint;
             if (midpoint == null) return false;
 
-            return this.point.StructurallyEquals(midpoint.midpoint) && this.segment.StructurallyEquals(midpoint.segment);
+            return this.point.StructurallyEquals(midpoint.point) && this.segment.StructurallyEquals(midpoint.segment);
         }
 
         public override bool Covers(GroundedClause gc)
@@ -68,6 +68,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
+            if (obj is Midpoint) return (obj as Midpoint).StructurallyEquals(this);
+
             InMiddle im = obj as InMiddle;
             if (im == null) return false;
             return im.point.StructurallyEquals(point) && im.segment.StructurallyEquals(segment);
@@ -75,6 +77,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
+            if (obj is Midpoint) return (obj as Midpoint).Equals(this);
+
             InMiddle im = obj as InMiddle;
             if (im == null) return false;
             return im.point.Equals(point) && im.segment.Equals(segment);

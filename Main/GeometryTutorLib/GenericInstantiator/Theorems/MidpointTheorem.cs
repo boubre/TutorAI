@@ -29,9 +29,9 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
             // Construct 2AM
-            Multiplication product1 = new Multiplication(new NumericValue(2), new Segment(midpt.midpoint, midpt.segment.Point1));
+            Multiplication product1 = new Multiplication(new NumericValue(2), new Segment(midpt.point, midpt.segment.Point1));
             // Construct 2BM
-            Multiplication product2 = new Multiplication(new NumericValue(2), new Segment(midpt.midpoint, midpt.segment.Point2));
+            Multiplication product2 = new Multiplication(new NumericValue(2), new Segment(midpt.point, midpt.segment.Point2));
 
             // 2X = AB
             GeometricSegmentEquation newEq1 = new GeometricSegmentEquation(product1, midpt.segment, NAME);

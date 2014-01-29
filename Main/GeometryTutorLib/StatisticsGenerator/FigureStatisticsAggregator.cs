@@ -9,6 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     public class FigureStatisticsAggregator
     {
         public int totalProblemsGenerated;
+        public int totalBackwardProblemsGenerated;
         public int totalBookProblemsGenerated;
         public int totalInterestingProblems;
         public int numInterestingPartitions;
@@ -27,7 +28,8 @@ namespace GeometryTutorLib.StatisticsGenerator
 
         public FigureStatisticsAggregator()
         {
-            totalProblemsGenerated = -1; 
+            totalProblemsGenerated = -1;
+            totalBackwardProblemsGenerated = -1;
             totalBookProblemsGenerated = -1;
             totalInterestingProblems = -1;
             numInterestingPartitions = -1;

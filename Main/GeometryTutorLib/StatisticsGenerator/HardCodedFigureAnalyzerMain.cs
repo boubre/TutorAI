@@ -68,6 +68,8 @@ namespace GeometryTutorLib.StatisticsGenerator
             List<ProblemAnalyzer.Problem> candidateProbs = new List<ProblemAnalyzer.Problem>();
             candidateProbs.AddRange(problems.Key);
             candidateProbs.AddRange(problems.Value);
+
+            figureStats.totalBackwardProblemsGenerated = problems.Value.Count;
             figureStats.totalProblemsGenerated = candidateProbs.Count;
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
@@ -190,21 +192,21 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             if (Utilities.PEBBLING_DEBUG)
             {
-                Debug.WriteLine("Forward Vertices after pebbling:");
-                for (int i = 0; i < pebblerGraph.vertices.Length; i++)
-                {
-                    StringBuilder strLocal = new StringBuilder();
-                    strLocal.Append(pebblerGraph.vertices[i].id + ": pebbled(");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
-                    strLocal.Append(")");
-                    Debug.WriteLine(strLocal.ToString());
-                }
+//                Debug.WriteLine("Forward Vertices after pebbling:");
+//                for (int i = 0; i < pebblerGraph.vertices.Length; i++)
+//                {
+//                    StringBuilder strLocal = new StringBuilder();
+//                    strLocal.Append(pebblerGraph.vertices[i].id + ": pebbled(");
+//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
+//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
+//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
+////                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
+//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
+//                    strLocal.Append(")");
+//                    Debug.WriteLine(strLocal.ToString());
+//                }
 
-                pebblerGraph.DebugDumpClauses();
+                pebblerGraph.DebugDumpEdges();
             }
         }
 
@@ -235,10 +237,12 @@ namespace GeometryTutorLib.StatisticsGenerator
             List<ProblemAnalyzer.Problem> generatedBookProblems = goalBasedPartitions.ValidateOriginalProblems(givens, goals);
             figureStats.totalBookProblemsGenerated = generatedBookProblems.Count;
 
-            if (Utilities.DEBUG)
+            if (Utilities.PROBLEM_GEN_DEBUG)
             {
                 goalBasedPartitions.DumpPartitions();
-
+            }
+            if (Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
+            {
                 Debug.WriteLine("\nAll " + generatedBookProblems.Count + " Book-specified problems: \n");
                 foreach (ProblemAnalyzer.Problem bookProb in generatedBookProblems)
                 {

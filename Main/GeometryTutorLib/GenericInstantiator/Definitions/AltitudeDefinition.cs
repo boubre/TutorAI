@@ -27,11 +27,6 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            //if (c is PerpendicularBisector || c is Strengthened)
-            //{
-            //    newGrounded.AddRange(InstantiatePerpendicularBisector(c));
-            //}
-
             if (clause is Triangle || clause is Perpendicular || clause is Strengthened)
             {
                 newGrounded.AddRange(InstantiateToAltitude(clause));

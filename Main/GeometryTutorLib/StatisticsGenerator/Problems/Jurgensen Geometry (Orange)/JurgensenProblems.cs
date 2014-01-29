@@ -49,6 +49,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 
 
 
+            //problems.Add(new BackwardPage134Problem7(false)); 
 
 
             //problems.Add(new Page146Problem12(false));                 // How to solve this on paper? A theorem missing perhaps?

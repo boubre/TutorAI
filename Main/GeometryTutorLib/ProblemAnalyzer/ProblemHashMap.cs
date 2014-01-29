@@ -19,6 +19,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public int size { get; private set; }
         private Pebbler.HyperEdgeMultiMap edgeDatabase;
         private readonly int MAX_GIVENS;
+        private readonly bool FORWARD_GENERATION;
+        private readonly int DEFAULT_MAX_BACKWARD_GIVENS = 2;
 
         // If the user specifies the size, we will never have to rehash
         public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz, int maxGivens)
@@ -31,6 +33,20 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             edgeDatabase = edges;
             MAX_GIVENS = maxGivens;
+            FORWARD_GENERATION = true;
+        }
+
+        public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz)
+        {
+            size = 0;
+            TABLE_SIZE = sz;
+
+            table = new List<Problem>[TABLE_SIZE];
+            generated = new bool[TABLE_SIZE];
+
+            edgeDatabase = edges;
+            MAX_GIVENS = DEFAULT_MAX_BACKWARD_GIVENS;
+            FORWARD_GENERATION = false;
         }
 
         public bool HasNodeBeenGenerated(int node) { return generated[node]; }
@@ -158,6 +174,27 @@ namespace GeometryTutorLib.ProblemAnalyzer
                     // else the list remains unchanged
 
                     // Either way, we are done.
+                    return;
+                }
+                // Check if the givens from new problem are a subset of the givens of the minimal problem.
+                else if (Utilities.Subset<int>(newProblem.givens, oldProblems[p].givens))
+                {
+                    if (Utilities.PROBLEM_GEN_DEBUG)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Filtering for Minimal Givens: " + newProblem.ToString() + " for " + oldProblems[p].ToString());
+                    }
+
+                    return;
+                }
+                // Check if the givens from new problem are a subset of the givens of the minimal problem.
+                else if (Utilities.Subset<int>(oldProblems[p].givens, newProblem.givens))
+                {
+                    if (Utilities.PROBLEM_GEN_DEBUG)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Filtering for Minimal Givens: " + oldProblems[p].ToString() + " for " + newProblem.ToString());
+                    }
+                    table[newProblem.goal].RemoveAt(p);
+                    table[newProblem.goal].Add(newProblem);
                     return;
                 }
             }

@@ -14,7 +14,8 @@ namespace GeometryTutorLib
         public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
         public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && true;   // Hypergraph edges and pebbled nodes
-        public static readonly bool PROBLEM_GEN_DEBUG  = OVERRIDE_DEBUG && true;   // Generating the actual problems
+        public static readonly bool PROBLEM_GEN_DEBUG  = OVERRIDE_DEBUG && false;   // Generating the actual problems
+        public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating backward problems
 
         // Given a sorted list, insert the element from the front to the back.
         public static void InsertAscendingOrdered(List<int> list, int value)

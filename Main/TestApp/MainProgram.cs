@@ -30,6 +30,7 @@ namespace GeometryTestbed
             header += "# Book Probs\t";
             header += "# Probs\t";
             header += "# of Int Probs\t";
+            header += "# Backward Probs\t";
             header += "Ave Width\t";
             header += "Ave Length\t";
             header += "Ave Deductive\t";
@@ -62,7 +63,7 @@ namespace GeometryTestbed
                     problem.Run();
 
                     Debug.Write(++problemCount + "\t\t");
-                    Debug.Write(problem.ToString() + "\n");
+                   // Debug.Write(problem.ToString() + "\n");
                 }
             }
 
@@ -80,6 +81,7 @@ namespace GeometryTestbed
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoals + "\t";
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemsGenerated + "\t";
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalBackwardProblemsGenerated + "\t";
 
             output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemWidth / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems);
             output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemLength / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems);
@@ -91,8 +93,8 @@ namespace GeometryTestbed
                                            GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Milliseconds / 10);
 
             // Queries
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoalPartitions + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t";
+            output += "\t" + GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoalPartitions + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t|\t";
 
             // Query: Difficulty Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalDifficulty)

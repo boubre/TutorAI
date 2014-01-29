@@ -16,52 +16,150 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             candidateCongruent.Clear();
             candidateSegments.Clear();
+            candidateInMiddle.Clear();
+            candidateMidpoint.Clear();
+            candidateStrengthened.Clear();
         }
+
+        private static List<Segment> candidateSegments = new List<Segment>();
+        private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
+        private static List<InMiddle> candidateInMiddle = new List<InMiddle>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+        private static List<Midpoint> candidateMidpoint = new List<Midpoint>();
 
         //
         // This implements forward and Backward instantiation
         // Forward is Midpoint -> Congruent Clause
         // Backward is Congruent -> Midpoint Clause
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
-            if (c is Midpoint || c is Strengthened) return InstantiateMidpoint(c);
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is CongruentSegments || c is Segment) return InstantiateCongruent(c);
+            if (clause is Midpoint || clause is Strengthened || clause is InMiddle)
+            {
+                newGrounded.AddRange(InstantiateFromMidpoint(clause));
+            }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            if (clause is CongruentSegments || (clause is InMiddle && !(clause is Midpoint)))
+            {
+                newGrounded.AddRange(InstantiateToMidpoint(clause));
+            }
+
+            return newGrounded;
         }
 
         //
         // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
         // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B)); This implies: AM = MB
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMidpoint(GroundedClause clause)
-        {
-            if (clause is Midpoint) return InstantiateMidpoint(clause, clause as Midpoint);
-
-            if ((clause as Strengthened).strengthened is Midpoint) return InstantiateMidpoint(clause, (clause as Strengthened).strengthened as Midpoint);
-
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-        }
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateMidpoint(GroundedClause original, Midpoint midpt)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMidpoint(GroundedClause clause)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (clause is InMiddle && !(clause is Midpoint))
+            {
+                InMiddle inMid = clause as InMiddle;
+
+                foreach (Midpoint midpt in candidateMidpoint)
+                {
+                    newGrounded.AddRange(InstantiateFromMidpoint(inMid, midpt, midpt));
+                }
+
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    newGrounded.AddRange(InstantiateFromMidpoint(inMid, streng.strengthened as Midpoint, streng));
+                }
+
+                candidateInMiddle.Add(inMid);
+            }
+            else if (clause is Midpoint)
+            {
+                Midpoint midpt = clause as Midpoint;
+
+                foreach (InMiddle im in candidateInMiddle)
+                {
+                    newGrounded.AddRange(InstantiateFromMidpoint(im, midpt, midpt));
+                }
+
+                candidateMidpoint.Add(midpt);
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                if (!(streng.strengthened is Midpoint)) return newGrounded;
+
+                foreach (InMiddle im in candidateInMiddle)
+                {
+                    newGrounded.AddRange(InstantiateFromMidpoint(im, streng.strengthened as Midpoint, streng));
+                }
+
+                candidateStrengthened.Add(streng);
+            }
+
+            return newGrounded;
+        }
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMidpoint(InMiddle im, Midpoint midpt, GroundedClause original)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            // Does this ImMiddle apply to this midpoint?
+            if (!im.point.StructurallyEquals(midpt.point)) return newGrounded;
+            if (!im.segment.StructurallyEquals(midpt.segment)) return newGrounded;
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
-            // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
-            InMiddle im = new InMiddle(midpt.midpoint, midpt.segment, NAME);
+            // Backward: Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
 
             //
-            // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
+            // Forward: Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
             //
-            Segment left = new Segment(midpt.segment.Point1, midpt.midpoint);
-            Segment right = new Segment(midpt.midpoint, midpt.segment.Point2);
+            Segment left = new Segment(midpt.segment.Point1, midpt.point);
+            Segment right = new Segment(midpt.point, midpt.segment.Point2);
             GeometricCongruentSegments ccss = new GeometricCongruentSegments(left, right, NAME);
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+
+            return newGrounded;
+        }
+
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMidpoint(GroundedClause clause)
+        {
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+
+            if (clause is InMiddle && !(clause is Midpoint))
+            {
+                InMiddle inMid = clause as InMiddle;
+
+                foreach (CongruentSegments css in candidateCongruent)
+                {
+                    newGrounded.AddRange(InstantiateToMidpoint(inMid, css));
+                }
+
+                // No need to add this InMiddle object to the list since it was added previously in InstantiateFrom
+            }
+            else if (clause is CongruentSegments)
+            {
+                CongruentSegments css = clause as CongruentSegments;
+
+                // A reflexive relationship cannot possibly create a midpoint situation
+                if (css.IsReflexive()) return newGrounded;
+
+                // The congruence must relate two collinear segments...
+                if (!css.cs1.IsCollinearWith(css.cs2)) return newGrounded;
+
+                // ...that share a vertex
+                if (css.cs1.SharedVertex(css.cs2) == null) return newGrounded;
+
+                foreach (InMiddle im in candidateInMiddle)
+                {
+                    newGrounded.AddRange(InstantiateToMidpoint(im, css));
+                }
+
+                candidateCongruent.Add(css);
+            }
 
             return newGrounded;
         }
@@ -69,75 +167,27 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Congruent(Segment(A, M), Segment(M, B)) -> Midpoint(M, Segment(A, B))
         //
-        private static List<Segment> candidateSegments = new List<Segment>();
-        private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCongruent(GroundedClause c)
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMidpoint(InMiddle im, CongruentSegments css)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (c is CongruentSegments)
-            {
-                CongruentSegments cs = c as CongruentSegments;
+            Point midpoint = css.cs1.SharedVertex(css.cs2);
 
-                if (cs.IsReflexive()) return newGrounded;
+            // Does this InMiddle relate to the congruent segments?
+            if (!im.point.StructurallyEquals(midpoint)) return newGrounded;
 
-                if (!cs.cs1.IsCollinearWith(cs.cs2)) return newGrounded;
+            // Do the congruent segments combine into a single segment equating to the InMiddle?
+            Segment overallSegment = new Segment(css.cs1.OtherPoint(midpoint), css.cs2.OtherPoint(midpoint));
+            if (!im.segment.StructurallyEquals(overallSegment)) return newGrounded;
 
-                Point midpt = cs.cs1.SharedVertex(cs.cs2);
+            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im, NAME), NAME); 
 
-                // If the segments are collinear, but disconnected
-                if (midpt == null) return newGrounded;
+            // For hypergraph
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(im);
+            antecedent.Add(css);
 
-                for (int s = 0; s < candidateSegments.Count; s++)
-                {
-                    Segment seg = candidateSegments[s];
-                    if (seg.HasPoint(cs.cs1.OtherPoint(midpt)) && seg.HasPoint(cs.cs2.OtherPoint(midpt)))
-                    {
-                        Midpoint newMidpoint = new Midpoint(midpt, seg, NAME);
-
-                        // No need to consider this segment anymore
-                        candidateSegments.RemoveAt(s);
-
-                        // For hypergraph
-                        List<GroundedClause> antecedent = new List<GroundedClause>();
-                        antecedent.Add(seg);
-                        antecedent.Add(cs);
-
-                        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
-                        return newGrounded;
-                    }
-                }
-                // Did not unify so add to the candidate list
-                candidateCongruent.Add(cs);
-            }
-            else if (c is Segment)
-            {
-                Segment segment = c as Segment;
-                for (int cs = 0; cs < candidateCongruent.Count; cs++)
-                {
-                    CongruentSegments conSegs = candidateCongruent[cs];
-                    Point midpt = conSegs.cs1.SharedVertex(conSegs.cs2);
-
-                    if (segment.HasPoint(conSegs.cs1.OtherPoint(midpt)) && segment.HasPoint(conSegs.cs2.OtherPoint(midpt)))
-                    {
-                        Midpoint newMidpoint = new Midpoint(midpt, segment, NAME);
-
-                        // No need to consider this segment anymore
-                        candidateCongruent.RemoveAt(cs);
-
-                        // For hypergraph
-                        List<GroundedClause> antecedent = new List<GroundedClause>();
-                        antecedent.Add(segment);
-                        antecedent.Add(conSegs);
-
-                        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
-                        return newGrounded;
-                    }
-                }
-
-                // Did not unify so add to the candidate list
-                candidateSegments.Add(segment);
-            }
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
 
             return newGrounded;
         }

@@ -61,7 +61,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(s, x)), "Given"));
             given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(t, y)), "Given"));
 
-            goals.Add(new Midpoint(o, GetProblemSegment(intrinsic, new Segment(p, q)), "GOAL"));
+            goals.Add(new Strengthened(GetProblemInMiddle(intrinsic, o, new Segment(p, q)), new Midpoint(o, GetProblemSegment(intrinsic, new Segment(p, q)), "GOAL"), "GOAL"));
 		}
 	}
 }

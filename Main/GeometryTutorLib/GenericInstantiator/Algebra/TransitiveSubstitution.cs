@@ -122,7 +122,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Add predecessors to the equations, congruence relationships, etc.
         //
-        public static void MarkPredecessors(List<KeyValuePair<List<GroundedClause>, GroundedClause>> edges)
+        private static void MarkPredecessors(List<KeyValuePair<List<GroundedClause>, GroundedClause>> edges)
         {
             foreach (KeyValuePair<List<GroundedClause>, GroundedClause> edge in edges)
             {
@@ -134,6 +134,17 @@ namespace GeometryTutorLib.GenericInstantiator
             }
         }
 
+        // Sets all of the deduced nodes to be purely algebraic: A + A -> A
+        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> MakePurelyAlgebraic(List<KeyValuePair<List<GroundedClause>, GroundedClause>> edges)
+        {
+            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> edge in edges)
+            {
+                edge.Value.MakePurelyAlgebraic();
+            }
+
+            return edges;
+        }
+
         //
         // For generation of transitive congruent segments
         //
@@ -141,7 +152,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (css.HasRelationPredecessor(geoCongSeg) || geoCongSeg.HasRelationPredecessor(css)) return newGrounded;
+//            if (css.HasRelationPredecessor(geoCongSeg) || geoCongSeg.HasRelationPredecessor(css)) return newGrounded;
 
             int numSharedExps = css.SharesNumClauses(geoCongSeg);
             switch (numSharedExps)
@@ -173,7 +184,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (pss.HasRelationPredecessor(conSeg) || conSeg.HasRelationPredecessor(pss)) return newGrounded;
+//            if (pss.HasRelationPredecessor(conSeg) || conSeg.HasRelationPredecessor(pss)) return newGrounded;
 
             int numSharedExps = pss.SharesNumClauses(conSeg);
             switch (numSharedExps)
@@ -204,7 +215,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (pas.HasRelationPredecessor(conAng) || conAng.HasRelationPredecessor(pas)) return newGrounded;
+//            if (pas.HasRelationPredecessor(conAng) || conAng.HasRelationPredecessor(pas)) return newGrounded;
 
             int numSharedExps = pas.SharesNumClauses(conAng);
             switch (numSharedExps)
@@ -236,7 +247,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             KeyValuePair<List<GroundedClause>, GroundedClause> newEquationEdge;
 
-            if (segEq.HasRelationPredecessor(congSeg) || congSeg.HasRelationPredecessor(segEq)) return newGrounded;
+//            if (segEq.HasRelationPredecessor(congSeg) || congSeg.HasRelationPredecessor(segEq)) return newGrounded;
 
             newEquationEdge = PerformEquationSubstitution(segEq, congSeg, congSeg.cs1, congSeg.cs2);
             if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
@@ -292,6 +303,30 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
             }
 
+            //
+            // NEW
+            //
+            else if (congSegs is AlgebraicCongruentSegments)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentSegments oldACSS in algCongSegments)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateCongruentSegments(oldACSS, congSegs)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicSegmentEquation aseqs in algSegmentEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateSegmentEquation(aseqs, congSegs)));
+                }
+
+                // New proportions? A + A -> A
+                foreach (AlgebraicProportionalSegments aps in algPropSegs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalSegments(aps, congSegs)));
+                }
+            }
+
             return newGrounded;
         }
 
@@ -314,6 +349,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 foreach (AlgebraicCongruentSegments acs in algCongSegments)
                 {
                     newGrounded.AddRange(CreateProportionalSegments(propSegs, acs));
+                }
+            }
+
+            else if (propSegs is AlgebraicProportionalSegments)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentSegments acs in algCongSegments)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalSegments(propSegs, acs)));
                 }
             }
 
@@ -342,6 +386,19 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
             }
 
+            //
+            // NEW
+            //
+            if (propAngs is AlgebraicProportionalAngles)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentAngles acas in algCongAngles)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalAngles(propAngs, acas)));
+                }
+            }
+
+
             return newGrounded;
         }
 
@@ -352,7 +409,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if (css.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(css)) return newGrounded;
+//            if (css.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(css)) return newGrounded;
 
             int numSharedExps = css.SharesNumClauses(congAng);
             switch (numSharedExps)
@@ -385,7 +442,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
             KeyValuePair<List<GroundedClause>, GroundedClause> newEquationEdge;
 
-            if (angEq.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(angEq)) return newGrounded;
+//            if (angEq.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(angEq)) return newGrounded;
 
             newEquationEdge = PerformEquationSubstitution(angEq, congAng, congAng.ca1, congAng.ca2);
             if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
@@ -438,6 +495,30 @@ namespace GeometryTutorLib.GenericInstantiator
                 foreach (AlgebraicProportionalAngles apas in algPropAngs)
                 {
                     newGrounded.AddRange(CreateProportionalAngles(apas, congAngs));
+                }
+            }
+
+            //
+            // NEW
+            //
+            else if (congAngs is AlgebraicCongruentAngles)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentAngles oldACSS in algCongAngles)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateCongruentAngles(oldACSS, congAngs)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicAngleEquation aseqs in algAngleEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateAngleEquation(aseqs, congAngs)));
+                }
+
+                // New proportions? G + A -> A
+                foreach (AlgebraicProportionalAngles apas in algPropAngs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalAngles(apas, congAngs)));
                 }
             }
 
@@ -655,7 +736,7 @@ namespace GeometryTutorLib.GenericInstantiator
 //Debug.WriteLine("Considering combining: " + oldEq + " + " + newEq);
 
             // Avoid redundant equation generation
-            if (oldEq.HasRelationPredecessor(newEq) || newEq.HasRelationPredecessor(oldEq)) return newGrounded;
+//            if (oldEq.HasRelationPredecessor(newEq) || newEq.HasRelationPredecessor(oldEq)) return newGrounded;
 
             // Determine if there is a direct, transitive relationship with the equations
             newGrounded.AddRange(PerformEquationTransitiviteSubstitution(oldEq, newEq));
@@ -700,6 +781,24 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
             }
 
+            //
+            // NEW
+            //
+            else if (newAngEq is AlgebraicAngleEquation)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentAngles oldACAS in algCongAngles)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateAngleEquation(newAngEq, oldACAS)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicAngleEquation aangs in algAngleEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateNewEquation(aangs, newAngEq)));
+                }
+            }
+
             return newGrounded;
         }
 
@@ -736,6 +835,26 @@ namespace GeometryTutorLib.GenericInstantiator
                     newGrounded.AddRange(CreateNewEquation(aSegs, newSegEq));
                 }
             }
+
+            //
+            // NEW
+            //
+            else if (newSegEq is AlgebraicSegmentEquation)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentSegments oldACSS in algCongSegments)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateSegmentEquation(newSegEq, oldACSS)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicSegmentEquation aSegs in algSegmentEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateNewEquation(aSegs, newSegEq)));
+                }
+            }
+
+
             //
             // Combining TWO algebraic equations only if the result is a congruence: A + A -> Congruent
             //

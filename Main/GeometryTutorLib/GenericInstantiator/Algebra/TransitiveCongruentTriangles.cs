@@ -12,12 +12,15 @@ namespace GeometryTutorLib.GenericInstantiator
         private static readonly string NAME = "Transitivity of Congruent Triangles";
 
         // Congruences imply equations: AB \cong CD -> AB = CD
-        private static List<GeometricCongruentTriangles> candidateCongruentTriangles = new List<GeometricCongruentTriangles>();
+        private static List<GeometricCongruentTriangles> candidateGeoCongruentTriangles = new List<GeometricCongruentTriangles>();
+        private static List<AlgebraicCongruentTriangles> candidateAlgCongruentTriangles = new List<AlgebraicCongruentTriangles>();
+
 
         // Resets all saved data.
         public static void Clear()
         {
-            candidateCongruentTriangles.Clear();
+            candidateGeoCongruentTriangles.Clear();
+            candidateAlgCongruentTriangles.Clear();
         }
 
         //
@@ -35,25 +38,43 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            CongruentTriangles cts = clause as CongruentTriangles;
-            if (cts == null) return newGrounded;
-
-            foreach (GeometricCongruentTriangles gcts in candidateCongruentTriangles)
+            if (clause is GeometricCongruentTriangles)
             {
-                newGrounded.AddRange(InstantiateTransitive(gcts, cts));
-            }
+                GeometricCongruentTriangles newGCTS = clause as GeometricCongruentTriangles;
 
-            if (cts.IsGeometric()) candidateCongruentTriangles.Add(cts as GeometricCongruentTriangles);
+                foreach (GeometricCongruentTriangles oldGCTS in candidateGeoCongruentTriangles)
+                {
+                    newGrounded.AddRange(InstantiateTransitive(oldGCTS, newGCTS));
+                }
+
+                foreach (AlgebraicCongruentTriangles oldACTS in candidateAlgCongruentTriangles)
+                {
+                    newGrounded.AddRange(InstantiateTransitive(oldACTS, newGCTS));
+                }
+
+                candidateGeoCongruentTriangles.Add(newGCTS);
+            }
+            else if (clause is AlgebraicCongruentTriangles)
+            {
+                AlgebraicCongruentTriangles newACTS = clause as AlgebraicCongruentTriangles;
+
+                foreach (GeometricCongruentTriangles oldGCTS in candidateGeoCongruentTriangles)
+                {
+                    newGrounded.AddRange(InstantiateTransitive(oldGCTS, newACTS));
+                }
+
+                candidateAlgCongruentTriangles.Add(newACTS);
+            }
 
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateTransitive(GeometricCongruentTriangles gcts, CongruentTriangles cts)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateTransitive(CongruentTriangles cts1, CongruentTriangles cts2)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            Dictionary<Point, Point> firstTriangleCorrespondence = gcts.HasTriangle(cts.ct1);
-            Dictionary<Point, Point> secondTriangleCorrespondence = gcts.HasTriangle(cts.ct2);
+            Dictionary<Point, Point> firstTriangleCorrespondence = cts1.HasTriangle(cts2.ct1);
+            Dictionary<Point, Point> secondTriangleCorrespondence = cts1.HasTriangle(cts2.ct2);
 
             // Same Congruence
             if (firstTriangleCorrespondence != null && secondTriangleCorrespondence != null) return newGrounded;
@@ -62,11 +83,11 @@ namespace GeometryTutorLib.GenericInstantiator
             if (firstTriangleCorrespondence == null && secondTriangleCorrespondence == null) return newGrounded;
 
             // Acquiring the triangle that links the congruences
-            Triangle linkTriangle = firstTriangleCorrespondence != null ? cts.ct1 : cts.ct2;
+            Triangle linkTriangle = firstTriangleCorrespondence != null ? cts2.ct1 : cts2.ct2;
             List<Point> linkPts = linkTriangle.GetPoints();
 
-            Dictionary<Point, Point> otherCorrGCTSpts = gcts.OtherTriangle(linkTriangle);
-            Dictionary<Point, Point> otherCorrCTSpts = cts.OtherTriangle(linkTriangle);
+            Dictionary<Point, Point> otherCorrGCTSpts = cts1.OtherTriangle(linkTriangle);
+            Dictionary<Point, Point> otherCorrCTSpts = cts2.OtherTriangle(linkTriangle);
 
             // Link the other triangles together in a new congruence
             Dictionary<Point, Point> newCorrespondence = new Dictionary<Point,Point>();
@@ -95,8 +116,8 @@ namespace GeometryTutorLib.GenericInstantiator
             AlgebraicCongruentTriangles acts = new AlgebraicCongruentTriangles(new Triangle(triOne), new Triangle(triTwo), NAME);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
-            antecedent.Add(gcts);
-            antecedent.Add(cts);
+            antecedent.Add(cts1);
+            antecedent.Add(cts2);
 
             newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, acts));
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeometryTutorLib.Pebbler
 {
@@ -15,6 +16,10 @@ namespace GeometryTutorLib.Pebbler
         private List<PebblerHyperEdge>[] table;
         public int size { get; private set; }
 
+        // The actual hypergraph for reference purposes only when adding edges (check for intrinsic)
+        private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> graph;
+        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> g) { graph = g; }
+
         // If the user specifies the size, we will never have to rehash
         public HyperEdgeMultiMap(int sz)
         {
@@ -27,16 +32,34 @@ namespace GeometryTutorLib.Pebbler
         //
         // Add the PebblerHyperEdge to all source node hash values
         //
-        public void Put(PebblerHyperEdge e)
+        public void Put(PebblerHyperEdge edge)
         {
-            long hashVal = (e.targetNode % TABLE_SIZE);
+            // Analyze the edge to determine if it is a mixed edge; all edges are
+            // such that the target is greater than or less than all source nodes
+            // Find the minimum non-intrinsic node (if it exists)
+            edge.sourceNodes.Sort();
+            int minSrc = edge.sourceNodes.Max();
+            foreach (int src in edge.sourceNodes)
+            {
+                if (!graph.vertices[src].data.IsIntrinsic() || !graph.vertices[src].data.IsAxiomatic())
+                {
+                    minSrc = src;
+                }
+            }
+            int maxSrc = edge.sourceNodes.Max();
+            if (minSrc < edge.targetNode && edge.targetNode < maxSrc)
+            {
+                throw new ArgumentException("A mixed edge was pebbled as valid: " + edge);
+            }
+
+            long hashVal = (edge.targetNode % TABLE_SIZE);
 
             if (table[hashVal] == null)
             {
                 table[hashVal] = new List<PebblerHyperEdge>();
             }
 
-            Utilities.AddUnique<PebblerHyperEdge>(table[hashVal], e);
+            Utilities.AddUnique<PebblerHyperEdge>(table[hashVal], edge);
 
             size++;
         }

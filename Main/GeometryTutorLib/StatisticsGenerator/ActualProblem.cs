@@ -11,6 +11,7 @@ namespace GeometryTutorLib.StatisticsGenerator
         public static System.TimeSpan TotalTime = new System.TimeSpan();
         public static int TotalGoals = 0;
         public static int TotalProblemsGenerated = 0;
+        public static int TotalBackwardProblemsGenerated = 0;
         public static int TotalInterestingProblems = 0;
         public static int TotalOriginalBookProblems = 0;
 
@@ -62,6 +63,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             ActualProblem.TotalTime = ActualProblem.TotalTime.Add(figureStats.stopwatch.Elapsed);
             ActualProblem.TotalGoals += goals.Count;
             ActualProblem.TotalProblemsGenerated += figureStats.totalProblemsGenerated;
+            ActualProblem.TotalBackwardProblemsGenerated += figureStats.totalBackwardProblemsGenerated;
             ActualProblem.TotalInterestingProblems += figureStats.totalInterestingProblems;
             ActualProblem.TotalOriginalBookProblems += goals.Count;
 
@@ -96,6 +98,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             statsString += figureStats.totalBookProblemsGenerated + "\t";
             statsString += figureStats.totalProblemsGenerated + "\t";
             statsString += figureStats.totalInterestingProblems + "\t";
+            statsString += figureStats.totalBackwardProblemsGenerated + "\t";
 
             statsString += System.String.Format("{0:N2}\t", figureStats.averageProblemWidth);
             statsString += System.String.Format("{0:N2}\t", figureStats.averageProblemLength);
@@ -442,6 +445,21 @@ namespace GeometryTutorLib.StatisticsGenerator
                 if (inter != null)
                 {
                     if (inter.HasSegment(segment1) && inter.HasSegment(segment2)) return inter;
+                }
+            }
+
+            return null;
+        }
+
+        // Acquire an established InMiddle
+        protected InMiddle GetProblemInMiddle(List<GroundedClause> clauses, Point p, Segment segment)
+        {
+            foreach (GroundedClause clause in clauses)
+            {
+                InMiddle im = clause as InMiddle;
+                if (im != null)
+                {
+                    if (im.point.StructurallyEquals(p) && im.segment.StructurallyEquals(segment)) return im;
                 }
             }
 

@@ -10,21 +10,30 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string NAME = "Definition of Segment Bisector";
 
+        private static List<Intersection> candidateIntersection = new List<Intersection>();
+        private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
+        private static List<InMiddle> candidateInMiddle = new List<InMiddle>();
+        private static List<SegmentBisector> candidateSegmentBisector = new List<SegmentBisector>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+
         // Resets all saved data.
         public static void Clear()
         {
             candidateCongruent.Clear();
             candidateIntersection.Clear();
+            candidateInMiddle.Clear();
+            candidateSegmentBisector.Clear();
+            candidateStrengthened.Clear();
         }
 
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
         {
-            if (c is SegmentBisector || c is Strengthened) return InstantiateFromSegmentBisector(c);
+            if (clause is SegmentBisector || clause is Strengthened || clause is InMiddle) return InstantiateFromSegmentBisector(clause);
 
-            if (c is Intersection || c is CongruentSegments) return InstantiateToSegmentBisector(c);
+            if (clause is Intersection || clause is CongruentSegments) return InstantiateToSegmentBisector(clause);
 
             return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
         }
@@ -39,25 +48,68 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(GroundedClause clause)
         {
-            if (clause is SegmentBisector) return InstantiateFromSegmentBisector(clause, clause as SegmentBisector);
+            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
-            if ((clause as Strengthened).strengthened is SegmentBisector)
+            if (clause is SegmentBisector)
             {
-                return InstantiateFromSegmentBisector(clause, (clause as Strengthened).strengthened as SegmentBisector);
+                SegmentBisector sb = clause as SegmentBisector;
+
+                foreach (InMiddle im in candidateInMiddle)
+                {
+                    newGrounded.AddRange(InstantiateFromSegmentBisector(im, sb, sb));
+                }
+
+                candidateSegmentBisector.Add(sb);
+            }
+            else if (clause is Strengthened)
+            {
+                Strengthened streng = clause as Strengthened;
+
+                if (!(streng.strengthened is SegmentBisector)) return newGrounded;
+
+                foreach (InMiddle im in candidateInMiddle)
+                {
+                    newGrounded.AddRange(InstantiateFromSegmentBisector(im, streng.strengthened as SegmentBisector, streng));
+                }
+                candidateStrengthened.Add(streng);
+            }
+            else if (clause is InMiddle)
+            {
+                InMiddle newIm = clause as InMiddle;
+
+                foreach(SegmentBisector sb in candidateSegmentBisector)
+                {
+                    newGrounded.AddRange(InstantiateFromSegmentBisector(newIm, sb, sb));
+                }
+
+                foreach (Strengthened streng in candidateStrengthened)
+                {
+                    newGrounded.AddRange(InstantiateFromSegmentBisector(newIm, streng.strengthened as SegmentBisector, streng));
+                }
+
+                candidateInMiddle.Add(newIm);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return newGrounded;
         }
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(GroundedClause original, SegmentBisector sb)
+        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(InMiddle im, SegmentBisector sb, GroundedClause original)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
+            // Does this bisector apply to this InMiddle? Check point of intersection
+            if (!im.point.StructurallyEquals(sb.bisected.intersect)) return newGrounded;
+
+            // Segments must equate
+            if (!im.segment.StructurallyEquals(sb.bisected.OtherSegment(sb.bisector))) return newGrounded;
+
             // Create the midpoint
-            Midpoint midpt = new Midpoint(sb.bisected.intersect, sb.bisected.OtherSegment(sb.bisector), NAME);
+            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im, NAME), NAME);
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
+            antecedent.Add(im);
+
+            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
 
             return newGrounded;
         }
@@ -70,8 +122,6 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Congruent(Segment(B, V), Segment(V, A)), Intersection(V, Segment(B, A), Segment(V, C)) -> SegmentBisector(Segment(V, C), Segment(B, A))
         //        
-        private static List<Intersection> candidateIntersection = new List<Intersection>();
-        private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
         public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToSegmentBisector(GroundedClause c)
         {
             List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();

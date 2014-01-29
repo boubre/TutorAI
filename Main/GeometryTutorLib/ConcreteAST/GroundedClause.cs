@@ -26,6 +26,11 @@ namespace GeometryTutorLib.ConcreteAST
         public bool IsGiven() { return given; }
         public void MakeGiven() { given = true; }
 
+        // Denotes: A + A -> A
+        private bool purelyAlgebraic = false;
+        public bool IsPurelyAlgebraic() { return purelyAlgebraic; }
+        public void MakePurelyAlgebraic() { purelyAlgebraic = true; }
+
         // Contains all predecessors
         public List<int> generalPredecessors { get; private set; }
         // Contains only Relation-based predecessors
@@ -51,6 +56,10 @@ namespace GeometryTutorLib.ConcreteAST
         private bool mayBeGoalNode = true;
         public void SetNotAGoalNode() { mayBeGoalNode = false; }
         public bool IsAbleToBeAGoalNode() { return !intrinsic && mayBeGoalNode; }
+
+        private bool isObviousDefinition = false;
+        public void SetClearDefinition() { isObviousDefinition = true; }
+        public bool IsClearDefinition() { return isObviousDefinition; }
 
         public void AddRelationPredecessor(GroundedClause gc)
         {

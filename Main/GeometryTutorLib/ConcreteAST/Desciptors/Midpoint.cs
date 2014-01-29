@@ -8,46 +8,42 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents an angle (degrees), defined by 3 points.
     /// </summary>
-    public class Midpoint : Descriptor
+    public class Midpoint : InMiddle
     {
-        public Point midpoint { get; private set; }
-        public Segment segment { get; private set; }
+        //public Point midpoint { get; private set; }
+        //public Segment segment { get; private set; }
 
-        public Midpoint(Point mid, Segment seg, string just) : base()
-        {
-            midpoint = mid;
-            segment = seg;
-            justification = just;
-        }
+        public Midpoint(Point mid, Segment seg, string just) : base(mid, seg, just) { }
+        public Midpoint(InMiddle im, string just) : base(im.point, im.segment, just) { }
 
         public override bool StructurallyEquals(Object obj)
         {
             Midpoint midptObj = obj as Midpoint;
             if (midptObj == null) return false;
 
-            return midpoint.StructurallyEquals(midptObj.midpoint) && segment.StructurallyEquals(midptObj.segment);
+            return point.StructurallyEquals(midptObj.point) && segment.StructurallyEquals(midptObj.segment);
         }
 
         public override bool Covers(GroundedClause gc)
         {
-            if (gc is Point) return midpoint.Equals(gc as Point) || segment.Covers(gc);
+            if (gc is Point) return point.Equals(gc as Point) || segment.Covers(gc);
             else if (gc is Segment) return segment.Covers(gc);
 
             InMiddle im = gc as InMiddle;
             if (im == null) return false;
-            return midpoint.Covers(im.point) && segment.Covers(im.segment);
+            return point.Covers(im.point) && segment.Covers(im.segment);
         }
 
         public override bool Equals(Object obj)
         {
             Midpoint midptObj = obj as Midpoint;
             if (midptObj == null) return false;
-            return midpoint.Equals(midptObj.midpoint) && segment.Equals(midptObj.segment) && base.Equals(obj);
+            return point.Equals(midptObj.point) && segment.Equals(midptObj.segment) && base.Equals(obj);
         }
 
         public override string ToString()
         {
-            return "Midpoint(" + midpoint.ToString() + ", " + segment.ToString() + "): " + justification;
+            return "Midpoint(" + point.ToString() + ", " + segment.ToString() + "): " + justification;
         }
 
         public override int GetHashCode()

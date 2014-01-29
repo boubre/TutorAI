@@ -83,12 +83,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is Segment)
                 {
                     HandleDeducedClauses(worklist, Segment.Instantiate(clause));
-                    HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleBisectorDefinition.Instantiate(clause));
                 }
                 else if (clause is InMiddle)
                 {
                     HandleDeducedClauses(worklist, SegmentAdditionAxiom.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, SegmentBisectorDefinition.Instantiate(clause));
                 }
                 else if (clause is Intersection)
                 {
@@ -119,9 +121,9 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, ParallelImplyAltIntCongruentAngles.Instantiate(clause));
                         HandleDeducedClauses(worklist, ParallelImplySameSideInteriorSupplementary.Instantiate(clause));
-                        HandleDeducedClauses(worklist, Intersection.InstantiateSupplementary(clause));
                         HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, SupplementaryDefinition.Instantiate(clause));
                     }
                 }
                 else if (clause is Complementary)
@@ -329,16 +331,21 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 if (graphNode == null)
                 {
-                    // This node is not in the graph so add it; this should succeed
-                    if (graph.AddNode(newEdge.Value))
+                    // Check to see if the new node is purely algebraic: A + A -> A
+                    // If so, do not add the new node to the graph (nor add the edge).
+                    if (!newEdge.Value.IsPurelyAlgebraic())
                     {
-                        newEdge.Value.SetID(graph.Size());
+                        // This node is not in the graph so add it; this should succeed
+                        if (graph.AddNode(newEdge.Value))
+                        {
+                            newEdge.Value.SetID(graph.Size());
+                        }
+
+                        // Also add to the worklist
+                        worklist.Add(newEdge.Value);
+
+                        AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
                     }
-
-                    // Also add to the worklist
-                    worklist.Add(newEdge.Value);
-
-                    AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
                 }
 
                 //

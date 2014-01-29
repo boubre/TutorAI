@@ -22,7 +22,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         private void Verify()
         {
-            if (points.Count < 3) throw new ArgumentException("A Collinear relationship requires at least 3 points: " + this.ToString());
+            if (points.Count < 2) throw new ArgumentException("A Collinear relationship requires at least 2 points: " + this.ToString());
 
             // Create a segment of the endpoints to compare all points for collinearity
             Segment line = new Segment(points[0], points[points.Count - 1]);
