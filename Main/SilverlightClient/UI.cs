@@ -410,21 +410,22 @@ namespace LiveGeometry
 
         void ParseToAst()
         {
-            if (parseWorker.IsBusy != true)
+            if (!parseWorker.IsBusy)
             {
                 parseController = new ParseController();
                 DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing, parseController);
 
                 //Set up parse chain
                 parseController.addParseAction(() => { parser.ParseDrawing(); });
-                parseController.addParseAction(() => { parseResult = parser.GetParsedFigures(); });
-                parseController.addParseAction(() => { parser.calculateIntersections(parseResult); });
-                parseController.addParseAction(() => { parser.calculateInMiddle(parseResult); });
-                parseController.addParseAction(() => { parser.calculateLineEquality(parseResult); });
-                parseController.addParseAction(() => { parseResult = parser.removeDuplicates(parseResult); });
-                parseController.addParseAction(() => { parser.calculateMidpoints(parseResult); });
-                parseController.addParseAction(() => { parser.calculateTriangles(parseResult); });
-                parseController.addParseAction(() => { parseResult = parser.removeDuplicates(parseResult); });
+                parseController.addParseAction(() => { parser.removeDuplicateSegments(); });
+                parseController.addParseAction(() => { parser.calculateCollinear(); });
+                parseController.addParseAction(() => { parser.calculateCongruentSegments(); });
+                parseController.addParseAction(() => { parser.calculateIntersections(); });
+                parseController.addParseAction(() => { parser.calculateAngles(); });
+                parseController.addParseAction(() => { parser.removeDuplicateAngles(); });
+                parseController.addParseAction(() => { parser.calculateCongruentAngles(); });
+                parseController.addParseAction(() => { parser.calculateRightAngles(); });
+                parseController.addParseAction(() => { parseResult = parser.getClauses(); });
 
                 // Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
@@ -436,28 +437,14 @@ namespace LiveGeometry
             //Execute Front-End Parse
             parseController.executeParse();
 
-            //Debug Print
-            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
-            {
-                Debug.WriteLine(gc);
-                Debug.WriteLine("--------------------");
-                //UIDebugPublisher.publishString(gc.ToString());
-            }
-            Debug.WriteLine("=====END=====");
-            
-            //Execute Back-End
-            UIDebugPublisher.publishString("Publish string example");
-
-            // Must pass to the back end:
-            //   1) A list of all intrinsic properties:
-            //          + Points
-            //          + All collinear points (that are in the drawing); points may be collinear but disconnected (these points are NOT collinear)
-            //          + Any segments which cannot be generated from collinear relationships (dangling segments)
-            //   2) All givens in the problem; these equate to any disambiguation asked of the user.
-            //       All such clauses which are given need to be instances of Geometric objects (if it applies). That is, congruent segments require GeometricCongruentSegments, angles GeometricCongruentSegments, etc. 
-            //
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
             List<GeometryTutorLib.ProblemAnalyzer.Problem> problems = analyzer.AnalyzeFigure();
+
+            //Example of UI Output to AI Window
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem p in problems)
+            {
+                UIDebugPublisher.publishString(p.ToString());
+            }
         }
         void DisplayParseOptions()
         {
