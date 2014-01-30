@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransversalPerpendicularToParallelImplyBothPerpendicular : Theorem
     {
         private readonly static string NAME = "If a transversal is perpendicular to one of two parallel lines, then it is perpendicular to the other one also.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSVERSAL_PERPENDICULAR_TO_PARALLEL_IMPLY_BOTH_PERPENDICULAR);
 
         private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
@@ -37,9 +38,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                   |       |
         //                                   F       A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Parallel)
             {
@@ -122,9 +123,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGeneratePerpendicular(Perpendicular perp, Parallel parallel, Intersection inter, GroundedClause original)
+        private static List<EdgeAggregator> CheckAndGeneratePerpendicular(Perpendicular perp, Parallel parallel, Intersection inter, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The perpendicular intersection must refer to one of the parallel segments
             Segment shared = perp.CommonSegment(parallel);
@@ -141,8 +142,7 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!inter.OtherSegment(otherShared).Equals(perp.OtherSegment(shared))) return newGrounded;
 
             // Strengthen the old intersection to be perpendicular
-            Perpendicular newPerp = new Perpendicular(inter, NAME);
-            Strengthened strengthenedPerp = new Strengthened(inter, newPerp, NAME);
+            Strengthened strengthenedPerp = new Strengthened(inter, new Perpendicular(inter));
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -150,7 +150,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(parallel);
             antecedent.Add(inter);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, strengthenedPerp));
+            newGrounded.Add(new EdgeAggregator(antecedent, strengthenedPerp, annotation));
 
             return newGrounded;
         }

@@ -12,8 +12,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AltIntCongruentAnglesImplyParallel : Theorem
     {
         private readonly static string ALT_INT_NAME = "Alternate Interior Angles Formed by a Transversal Imply Parallel Lines";
-
-        public AltIntCongruentAnglesImplyParallel() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(ALT_INT_NAME, GenericInstantiator.JustificationSwitch.ALT_INT_CONGRUENT_ANGLES_IMPLY_PARALLEL);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<CongruentAngles> candAngles = new List<CongruentAngles>();
@@ -39,10 +38,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                      / N
         //                                     A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is CongruentAngles) && !(c is Intersection)) return newGrounded;
 
@@ -82,9 +81,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateAlternateInteriorImplyParallel(Intersection inter1, Intersection inter2, CongruentAngles conAngles)
+        private static List<EdgeAggregator> CheckAndGenerateAlternateInteriorImplyParallel(Intersection inter1, Intersection inter2, CongruentAngles conAngles)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The two intersections should not be at the same vertex
             if (inter1.intersect.Equals(inter2.intersect)) return newGrounded;
@@ -150,7 +149,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have an alternate interior scenario
             //
-            GeometricParallel newParallel = new GeometricParallel(parallelCand1, parallelCand2, ALT_INT_NAME);
+            GeometricParallel newParallel = new GeometricParallel(parallelCand1, parallelCand2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -158,7 +157,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(inter2);
             antecedent.Add(conAngles);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newParallel));
+            newGrounded.Add(new EdgeAggregator(antecedent, newParallel, annotation));
 
             return newGrounded;
         }

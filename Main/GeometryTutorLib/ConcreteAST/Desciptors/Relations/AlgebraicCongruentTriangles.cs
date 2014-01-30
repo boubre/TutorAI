@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class AlgebraicCongruentTriangles : CongruentTriangles
     {
-        public AlgebraicCongruentTriangles(Triangle t1, Triangle t2, string just) : base(t1, t2, just) { }
+        public AlgebraicCongruentTriangles(Triangle t1, Triangle t2) : base(t1, t2) { }
 
         public new void BuildUnparse(StringBuilder sb, int tabDepth)
         {

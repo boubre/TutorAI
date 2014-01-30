@@ -457,7 +457,7 @@ namespace LiveGeometry
             //       All such clauses which are given need to be instances of Geometric objects (if it applies). That is, congruent segments require GeometricCongruentSegments, angles GeometricCongruentSegments, etc. 
             //
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
-            List<GeometryTutorLib.ProblemAnalyzer.Problem> problems = analyzer.AnalyzeFigure();
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
         }
         void DisplayParseOptions()
         {

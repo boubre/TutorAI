@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransitiveSubstitution : GenericRule
     {
         private static readonly string NAME = "Transitive Substitution";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_SUBSTITUTION);
 
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentSegments> geoCongSegments = new List<GeometricCongruentSegments>();
@@ -68,9 +69,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //     G + A -> A
         //     A + A -X> A  <- Not allowed
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have an equation or congruence?
             if (!(clause is Equation) && !(clause is Congruent) && !(clause is ProportionalSegments)) return newGrounded;
@@ -122,24 +123,24 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Add predecessors to the equations, congruence relationships, etc.
         //
-        private static void MarkPredecessors(List<KeyValuePair<List<GroundedClause>, GroundedClause>> edges)
+        private static void MarkPredecessors(List<EdgeAggregator> edges)
         {
-            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> edge in edges)
+            foreach (EdgeAggregator edge in edges)
             {
-                foreach (GroundedClause predNode in edge.Key)
+                foreach (GroundedClause predNode in edge.antecedent)
                 {
-                    edge.Value.AddRelationPredecessor(predNode);
-                    edge.Value.AddRelationPredecessors(predNode.relationPredecessors);
+                    edge.consequent.AddRelationPredecessor(predNode);
+                    edge.consequent.AddRelationPredecessors(predNode.relationPredecessors);
                 }
             }
         }
 
         // Sets all of the deduced nodes to be purely algebraic: A + A -> A
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> MakePurelyAlgebraic(List<KeyValuePair<List<GroundedClause>, GroundedClause>> edges)
+        private static List<EdgeAggregator> MakePurelyAlgebraic(List<EdgeAggregator> edges)
         {
-            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> edge in edges)
+            foreach (EdgeAggregator edge in edges)
             {
-                edge.Value.MakePurelyAlgebraic();
+                edge.consequent.MakePurelyAlgebraic();
             }
 
             return edges;
@@ -148,9 +149,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive congruent segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateCongruentSegments(CongruentSegments css, CongruentSegments geoCongSeg)
+        private static List<EdgeAggregator> CreateCongruentSegments(CongruentSegments css, CongruentSegments geoCongSeg)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            if (css.HasRelationPredecessor(geoCongSeg) || geoCongSeg.HasRelationPredecessor(css)) return newGrounded;
 
@@ -180,9 +181,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive proportional segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateProportionalSegments(ProportionalSegments pss, CongruentSegments conSeg)
+        private static List<EdgeAggregator> CreateProportionalSegments(ProportionalSegments pss, CongruentSegments conSeg)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            if (pss.HasRelationPredecessor(conSeg) || conSeg.HasRelationPredecessor(pss)) return newGrounded;
 
@@ -211,9 +212,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive proportional angles
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateProportionalAngles(ProportionalAngles pas, CongruentAngles conAng)
+        private static List<EdgeAggregator> CreateProportionalAngles(ProportionalAngles pas, CongruentAngles conAng)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            if (pas.HasRelationPredecessor(conAng) || conAng.HasRelationPredecessor(pas)) return newGrounded;
 
@@ -242,17 +243,17 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Substitute this new segment congruence into old segment equations
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateSegmentEquation(SegmentEquation segEq, CongruentSegments congSeg)
+        private static List<EdgeAggregator> CreateSegmentEquation(SegmentEquation segEq, CongruentSegments congSeg)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            KeyValuePair<List<GroundedClause>, GroundedClause> newEquationEdge;
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+            EdgeAggregator newEquationEdge;
 
 //            if (segEq.HasRelationPredecessor(congSeg) || congSeg.HasRelationPredecessor(segEq)) return newGrounded;
 
             newEquationEdge = PerformEquationSubstitution(segEq, congSeg, congSeg.cs1, congSeg.cs2);
-            if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
             newEquationEdge = PerformEquationSubstitution(segEq, congSeg, congSeg.cs2, congSeg.cs1);
-            if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
 
             return newGrounded;
         }
@@ -260,9 +261,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewCongruentSegments(CongruentSegments congSegs)
+        private static List<EdgeAggregator> HandleNewCongruentSegments(CongruentSegments congSegs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentSegments gcss in geoCongSegments)
@@ -333,9 +334,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewProportionalSegments(ProportionalSegments propSegs)
+        private static List<EdgeAggregator> HandleNewProportionalSegments(ProportionalSegments propSegs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentSegments gcs in geoCongSegments)
@@ -367,9 +368,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewProportionalAngles(ProportionalAngles propAngs)
+        private static List<EdgeAggregator> HandleNewProportionalAngles(ProportionalAngles propAngs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentAngles gcas in geoCongAngles)
@@ -405,9 +406,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive congruent Angles
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateCongruentAngles(CongruentAngles css, CongruentAngles congAng)
+        private static List<EdgeAggregator> CreateCongruentAngles(CongruentAngles css, CongruentAngles congAng)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            if (css.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(css)) return newGrounded;
 
@@ -437,17 +438,17 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Substitute this new angle congruence into old angle equations
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateAngleEquation(AngleEquation angEq, CongruentAngles congAng)
+        private static List<EdgeAggregator> CreateAngleEquation(AngleEquation angEq, CongruentAngles congAng)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            KeyValuePair<List<GroundedClause>, GroundedClause> newEquationEdge;
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+            EdgeAggregator newEquationEdge;
 
 //            if (angEq.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(angEq)) return newGrounded;
 
             newEquationEdge = PerformEquationSubstitution(angEq, congAng, congAng.ca1, congAng.ca2);
-            if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
             newEquationEdge = PerformEquationSubstitution(angEq, congAng, congAng.ca2, congAng.ca1);
-            if (newEquationEdge.Value != null) newGrounded.Add(newEquationEdge);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
 
             return newGrounded;
         }
@@ -455,9 +456,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Angles
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewCongruentAngles(CongruentAngles congAngs)
+        private static List<EdgeAggregator> HandleNewCongruentAngles(CongruentAngles congAngs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentAngles gcss in geoCongAngles)
@@ -565,11 +566,11 @@ namespace GeometryTutorLib.GenericInstantiator
             Equation newEq = null;
             if (equationType == SEGMENT_EQUATION)
             {
-                newEq = new AlgebraicSegmentEquation(left, right, NAME);
+                newEq = new AlgebraicSegmentEquation(left, right);
             }
             else if (equationType == ANGLE_EQUATION)
             {
-                newEq = new AlgebraicAngleEquation(left, right, NAME);
+                newEq = new AlgebraicAngleEquation(left, right);
             }
 
             //
@@ -599,7 +600,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Given two equations, perform a direct, transitive substitution of one equation into the other (and vice versa)
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> PerformEquationTransitiviteSubstitution(Equation eq1, Equation eq2)
+        private static List<EdgeAggregator> PerformEquationTransitiviteSubstitution(Equation eq1, Equation eq2)
         {
             List<GroundedClause> newRelations = new List<GroundedClause>();
 
@@ -640,11 +641,11 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(eq1);
             antecedent.Add(eq2);
 
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             foreach (GroundedClause gc in newRelations)
             {
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gc));
+                newGrounded.Add(new EdgeAggregator(antecedent, gc, annotation));
             }
 
             return newGrounded;
@@ -681,7 +682,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //        case Equation.NONE_ATOMIC:
         //            // If neither side of this new equation are atomic, for simplicty,
         //            // we do not perform a substitution
-        //            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        //            return new List<EdgeAggregator>();
         //    }
 
         //    KeyValuePair<List<GroundedClause>, GroundedClause> cl;
@@ -729,9 +730,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Given an old and new set of angle measure equations substitute if possible.
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateNewEquation(Equation oldEq, Equation newEq)
+        private static List<EdgeAggregator> CreateNewEquation(Equation oldEq, Equation newEq)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //Debug.WriteLine("Considering combining: " + oldEq + " + " + newEq);
 
@@ -750,9 +751,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from an Equation Containing Angle measurements
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewAngleEquation(AngleEquation newAngEq)
+        private static List<EdgeAggregator> HandleNewAngleEquation(AngleEquation newAngEq)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentAngles gcas in geoCongAngles)
@@ -805,9 +806,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from an Equation Containing Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewSegmentEquation(SegmentEquation newSegEq)
+        private static List<EdgeAggregator> HandleNewSegmentEquation(SegmentEquation newSegEq)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentSegments gcss in geoCongSegments)
@@ -880,12 +881,11 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Substitute some clause (subbedEq) into an equation (eq)
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> PerformEquationSubstitution(Equation eq, GroundedClause subbedEq,
-                                                                                                      GroundedClause toFind, GroundedClause toSub)
+        private static EdgeAggregator PerformEquationSubstitution(Equation eq, GroundedClause subbedEq, GroundedClause toFind, GroundedClause toSub)
         {
             //Debug.WriteLine("Substituting with " + eq.ToString() + " and " + subbedEq.ToString());
 
-            if (!eq.Contains(toFind)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
+            if (!eq.Contains(toFind)) return null;
 
             //
             // Make a deep copy of the equation
@@ -893,11 +893,11 @@ namespace GeometryTutorLib.GenericInstantiator
             Equation newEq = null;
             if (eq is SegmentEquation)
             {
-                newEq = new AlgebraicSegmentEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy(), NAME);
+                newEq = new AlgebraicSegmentEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy());
             }
             else if (eq is AngleEquation)
             {
-                newEq = new AlgebraicAngleEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy(), NAME);
+                newEq = new AlgebraicAngleEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy());
             }
 
             // Substitute into the copy
@@ -914,16 +914,16 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Create a congruence relationship if it applies
             GroundedClause newCongruence = HandleCongruence(simplified);
-            if (newCongruence != null) return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCongruence);
+            if (newCongruence != null) return new EdgeAggregator(antecedent, newCongruence, annotation);
 
             // If a congruence was not established, create a complementary or supplementary relationship, if applicable
             if (simplified is AngleEquation && newCongruence == null)
             {
                 GroundedClause newRelation = HandleAngleRelation(simplified);
-                if (newRelation != null) return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newRelation);
+                if (newRelation != null) return new EdgeAggregator(antecedent, newRelation, annotation);
             }
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, simplified);
+            return new EdgeAggregator(antecedent, simplified, annotation);
         }
 
         //
@@ -942,11 +942,11 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 // Do not generate for lines; that is, 180^o angles
                 //if (((Angle)simplified.lhs).IsStraightAngle() && ((Angle)simplified.lhs).IsStraightAngle()) return null;
-                newCongruent = new AlgebraicCongruentAngles((Angle)simplified.lhs, (Angle)simplified.rhs, simplified.GetJustification());
+                newCongruent = new AlgebraicCongruentAngles((Angle)simplified.lhs, (Angle)simplified.rhs);
             }
             else if (simplified is AlgebraicSegmentEquation)
             {
-                newCongruent = new AlgebraicCongruentSegments((Segment)simplified.lhs, (Segment)simplified.rhs, simplified.GetJustification());
+                newCongruent = new AlgebraicCongruentSegments((Segment)simplified.lhs, (Segment)simplified.rhs);
             }
 
             // There is no need to simplify a congruence, so just return
@@ -1003,11 +1003,11 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 if (Utilities.CompareValues(atomicValue.value, 90))
                 {
-                    newRelation = new Complementary((Angle)nonAtomicSide[0], (Angle)nonAtomicSide[1], NAME);
+                    newRelation = new Complementary((Angle)nonAtomicSide[0], (Angle)nonAtomicSide[1]);
                 }
                 else if (Utilities.CompareValues(atomicValue.value, 180))
                 {
-                    newRelation = new Supplementary((Angle)nonAtomicSide[0], (Angle)nonAtomicSide[1], NAME);
+                    newRelation = new Supplementary((Angle)nonAtomicSide[0], (Angle)nonAtomicSide[1]);
                 }
             }
 
@@ -1044,7 +1044,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Descriptor newDescriptor = null;
             //if (Utilities.CompareValues(numeral.value, 90))
             //{
-            //    newDescriptor = new Perpendicular(angle.GetVertex(), angle.ray1, angle.ray2, NAME);
+            //    newDescriptor = new Perpendicular(angle.GetVertex(), angle.ray1, angle.ray2);
             //}
             //else
             if (Utilities.CompareValues(numeral.value, 180))
@@ -1053,7 +1053,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 pts.Add(angle.A);
                 pts.Add(angle.B);
                 pts.Add(angle.C);
-                newDescriptor = new Collinear(pts, NAME);
+                newDescriptor = new Collinear(pts);
             }
 
             return newDescriptor;
@@ -1062,14 +1062,13 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // This is pure transitivity where A + B = C , A + B = D -> C = D
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> PerformNonAtomicEquationSubstitution(Equation eq, GroundedClause subbedEq,
-                                                                                                               GroundedClause toFind, GroundedClause toSub)
+        private static EdgeAggregator PerformNonAtomicEquationSubstitution(Equation eq, GroundedClause subbedEq, GroundedClause toFind, GroundedClause toSub)
         {
             //Debug.WriteLine("Substituting with " + eq.ToString() + " and " + subbedEq.ToString());
 
             // If there is a deduction relationship between the given congruences, do not perform another substitution
             //  subbedEq.HasPredecessor(eq)
-            if (eq.HasGeneralPredecessor(subbedEq) || subbedEq.HasGeneralPredecessor(eq)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
+            //if (eq.HasGeneralPredecessor(subbedEq) || subbedEq.HasGeneralPredecessor(eq)) return new EdgeAggregator(null, null);
 
             //
             // Verify that the non-atomic sides to both equations are the exact same
@@ -1094,19 +1093,19 @@ namespace GeometryTutorLib.GenericInstantiator
             // Now, the lists must be the same; we check for containment in both directions
             foreach (GroundedClause originalTerm in originalTerms)
             {
-                if (!subbedTerms.Contains(originalTerm)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
+                if (!subbedTerms.Contains(originalTerm)) return null;
             }
 
             foreach (GroundedClause subbedTerm in subbedTerms)
             {
-                if (!originalTerms.Contains(subbedTerm)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
+                if (!originalTerms.Contains(subbedTerm)) return null;
             }
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(eq);
             antecedent.Add(subbedEq);
-            KeyValuePair<List<GroundedClause>, GroundedClause> newPair;
+            EdgeAggregator newEdge;
 
             //
             // Generate a simple equation or an algebraic congruent statement
@@ -1116,11 +1115,11 @@ namespace GeometryTutorLib.GenericInstantiator
                 Equation newEquation = null;
                 if (eq is AngleEquation)
                 {
-                    newEquation = new AlgebraicAngleEquation(atomicOriginal.DeepCopy(), toSub.DeepCopy(), NAME);
+                    newEquation = new AlgebraicAngleEquation(atomicOriginal.DeepCopy(), toSub.DeepCopy());
                 }
                 else if (eq is SegmentEquation)
                 {
-                    newEquation = new AlgebraicSegmentEquation(atomicOriginal.DeepCopy(), toSub.DeepCopy(), NAME);
+                    newEquation = new AlgebraicSegmentEquation(atomicOriginal.DeepCopy(), toSub.DeepCopy());
                 }
 
                 if (newEquation == null)
@@ -1129,18 +1128,18 @@ namespace GeometryTutorLib.GenericInstantiator
                     throw new NullReferenceException("Unexpected Problem in Non-atomic substitution (equation)...");
                 }
 
-                newPair = new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newEquation);
+                newEdge = new EdgeAggregator(antecedent, newEquation, annotation);
             }
             else
             {
                 Congruent newCongruent = null;
                 if (eq is AngleEquation)
                 {
-                    newCongruent = new AlgebraicCongruentAngles((Angle)atomicOriginal.DeepCopy(), (Angle)toSub.DeepCopy(), NAME);
+                    newCongruent = new AlgebraicCongruentAngles((Angle)atomicOriginal.DeepCopy(), (Angle)toSub.DeepCopy());
                 }
                 else if (eq is SegmentEquation)
                 {
-                    newCongruent = new AlgebraicCongruentSegments((Segment)atomicOriginal.DeepCopy(), (Segment)toSub.DeepCopy(), NAME);
+                    newCongruent = new AlgebraicCongruentSegments((Segment)atomicOriginal.DeepCopy(), (Segment)toSub.DeepCopy());
                 }
 
                 if (newCongruent == null)
@@ -1149,10 +1148,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     throw new NullReferenceException("Unexpected Problem in Non-atomic substitution (Congruence)...");
                 }
 
-                newPair = new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCongruent);
+                newEdge = new EdgeAggregator(antecedent, newCongruent, annotation);
             }
 
-            return newPair;
+            return newEdge;
         }
 
         //

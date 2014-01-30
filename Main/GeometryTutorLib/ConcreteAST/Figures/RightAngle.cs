@@ -10,8 +10,8 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public class RightAngle : Angle
     {
-        public RightAngle(Point a, Point b, Point c, string just) : base(a, b, c) { justification = just; }
-        public RightAngle(Angle angle, string just) : base(angle.A, angle.B, angle.C) { justification = just; }
+        public RightAngle(Point a, Point b, Point c) : base(a, b, c) { }
+        public RightAngle(Angle angle) : base(angle.A, angle.B, angle.C) { }
 
         // CTA: Be careful with equality; this is object-based equality
         // If we check for angle measure equality that is distinct.

@@ -12,7 +12,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
     public class PartitionedProblemSpace
     {
         // To access node value information; mapping problem values back to the Geometric Graph
-        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
+        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
 
         // The list of equivalent problem sets as defined by the query vector
         List<ProblemEquivalenceClass> partitions;
@@ -20,7 +20,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
         private int totalProblems;
 
-        public PartitionedProblemSpace(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g, QueryFeatureVector query)
+        public PartitionedProblemSpace(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g, QueryFeatureVector query)
         {
             graph = g;
             partitions = new List<ProblemEquivalenceClass>();
@@ -28,13 +28,13 @@ namespace GeometryTutorLib.ProblemAnalyzer
             totalProblems = 0;
         }
 
-        public void ConstructPartitions(List<Problem> problems)
+        public void ConstructPartitions(List<Problem<Hypergraph.EdgeAnnotation>> problems)
         {
             totalProblems += problems.Count;
             //
             // For each problem, add to the appropriate partition based on the query vector
             //
-            foreach (Problem problem in problems)
+            foreach (Problem<Hypergraph.EdgeAnnotation> problem in problems)
             {
                 bool added = false;
                 foreach (ProblemEquivalenceClass partition in partitions)
@@ -59,7 +59,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Validate that we have generated all of the original problems from the text (based strictly on givens and goals)
         //
-        public List<Problem> ValidateOriginalProblems(List<ConcreteAST.GroundedClause> givens, List<ConcreteAST.GroundedClause> goals)
+        public List<Problem<Hypergraph.EdgeAnnotation>> ValidateOriginalProblems(List<ConcreteAST.GroundedClause> givens, List<ConcreteAST.GroundedClause> goals)
         {
             if (!goals.Any())
             {
@@ -88,11 +88,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Search through all the partitiions in the space for matching problems
             // We specifically seek problems with the same givens so we can then check the goals
             //
-            List<Problem> validatedProblems = new List<Problem>();
+            List<Problem<Hypergraph.EdgeAnnotation>> validatedProblems = new List<Problem<Hypergraph.EdgeAnnotation>>();
             bool[] marked = new bool[goals.Count];
             foreach (ProblemEquivalenceClass partition in partitions)
             {
-                foreach (Problem problem in partition.elements)
+                foreach (Problem<Hypergraph.EdgeAnnotation> problem in partition.elements)
                 {
                     // Does this problem have one of the goals?
                     if (goalIndices.Contains(problem.goal))

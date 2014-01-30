@@ -9,6 +9,8 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SupplementaryDefinition : Definition
     {
         private readonly static string NAME = "Definition of Supplementary";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SUPPLEMENTARY_DEFINITION);
+
 
         private static List<Intersection> candidateIntersections = new List<Intersection>();
         private static List<Angle> candidateAngles = new List<Angle>();
@@ -19,9 +21,9 @@ namespace GeometryTutorLib.GenericInstantiator
             candidateIntersections.Clear();
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Intersection)
             {
@@ -46,9 +48,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                  Supplementary(Angle(D, X, C), Angle(C, X, A))
         //                                                  Supplementary(Angle(C, X, A), Angle(A, X, B))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToSupplementary(Intersection inter)
+        public static List<EdgeAggregator> InstantiateToSupplementary(Intersection inter)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The situation looks like this:
             //  |
@@ -84,12 +86,12 @@ namespace GeometryTutorLib.GenericInstantiator
                 Angle newAngle1 = Angle.AcquireFigureAngle(new Angle(left, inter.intersect, up));
                 Angle newAngle2 = Angle.AcquireFigureAngle(new Angle(right, inter.intersect, up));
 
-                Supplementary supp = new Supplementary(newAngle1, newAngle2, NAME);
+                Supplementary supp = new Supplementary(newAngle1, newAngle2);
                 supp.SetNotASourceNode();
                 supp.SetNotAGoalNode();
                 supp.SetClearDefinition();
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(MakeAntecedent(inter, supp.angle1, supp.angle2), supp));
+                newGrounded.Add(new EdgeAggregator(MakeAntecedent(inter, supp.angle1, supp.angle2), supp, annotation));
             }
 
             //
@@ -103,10 +105,10 @@ namespace GeometryTutorLib.GenericInstantiator
                 Angle newAngle4 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
 
                 List<Supplementary> newSupps = new List<Supplementary>();
-                newSupps.Add(new Supplementary(newAngle1, newAngle2, NAME));
-                newSupps.Add(new Supplementary(newAngle2, newAngle4, NAME));
-                newSupps.Add(new Supplementary(newAngle3, newAngle4, NAME));
-                newSupps.Add(new Supplementary(newAngle3, newAngle1, NAME));
+                newSupps.Add(new Supplementary(newAngle1, newAngle2));
+                newSupps.Add(new Supplementary(newAngle2, newAngle4));
+                newSupps.Add(new Supplementary(newAngle3, newAngle4));
+                newSupps.Add(new Supplementary(newAngle3, newAngle1));
 
                 foreach (Supplementary supp in newSupps)
                 {
@@ -114,7 +116,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     supp.SetNotAGoalNode();
                     supp.SetClearDefinition();
 
-                    newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(MakeAntecedent(inter, supp.angle1, supp.angle2), supp));
+                    newGrounded.Add(new EdgeAggregator(MakeAntecedent(inter, supp.angle1, supp.angle2), supp, annotation));
                 }
             }
 

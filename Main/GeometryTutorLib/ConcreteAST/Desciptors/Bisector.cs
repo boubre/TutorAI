@@ -7,10 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public abstract class Bisector : Descriptor
     {
-        public Bisector(string just) : base()
-        {
-            justification = just;
-        }
+        public Bisector() : base() { }
 
         public override int GetHashCode()
         {

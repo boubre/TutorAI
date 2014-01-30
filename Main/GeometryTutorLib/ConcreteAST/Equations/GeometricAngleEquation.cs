@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
         public GeometricAngleEquation() : base() { }
 
         public GeometricAngleEquation(GroundedClause l, GroundedClause r) : base(l, r) { }
-        public GeometricAngleEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
+        //public GeometricAngleEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
 
         public override GroundedClause DeepCopy()
         {

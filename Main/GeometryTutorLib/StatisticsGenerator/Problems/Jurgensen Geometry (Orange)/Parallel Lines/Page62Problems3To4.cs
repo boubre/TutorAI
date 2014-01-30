@@ -33,28 +33,28 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(a);
             pts.Add(c);
             pts.Add(k);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(e);
             pts.Add(a);
             pts.Add(b);
             pts.Add(h);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(g);
             pts.Add(b);
             pts.Add(d);
             pts.Add(j);
-            Collinear coll3 = new Collinear(pts, "Intrinsic");
+            Collinear coll3 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(l);
             pts.Add(c);
             pts.Add(d);
             pts.Add(i);
-            Collinear coll4 = new Collinear(pts, "Intrinsic");
+            Collinear coll4 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -62,25 +62,25 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateSegmentClauses(coll4));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(b, d)), "Given"));
+            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d))));
+            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(b, d))));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, a, f)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, e)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, a)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(a, c, d)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, i)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, k)), "GOAL"));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, d, j)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, a, f))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, e))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, a))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(a, c, d))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, i))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, k))));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, d, j))));
 
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(f, a, e)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(g, b, a)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, b)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, h)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, a)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, c)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(k, c, d)), "GOAL"));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(j, d, i)), "GOAL"));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(f, a, e))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(g, b, a))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, b))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, h))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, a))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, c))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(k, c, d))));
+            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(j, d, i))));
         }
     }
 }

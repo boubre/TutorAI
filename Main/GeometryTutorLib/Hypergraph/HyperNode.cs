@@ -13,10 +13,6 @@ namespace GeometryTutorLib.Hypergraph
         public T data;
         public int id;
 
-        //public List<int> forwardSuccNodes;
-        //public List<int> backwardSuccNodes;
-        //public List<int> predecessorNodes;
-
         public List<HyperEdge<A>> forwardEdges;
         public List<HyperEdge<A>> backwardEdges;
 
@@ -41,9 +37,9 @@ namespace GeometryTutorLib.Hypergraph
         }
 
         // Creating a shallow copy of this node as a pebbler node
-        public PebblerHyperNode<T> CreatePebblerNode()
+        public PebblerHyperNode<T, A> CreatePebblerNode()
         {
-            return new PebblerHyperNode<T>(data, id);
+            return new PebblerHyperNode<T, A>(data, id);
         }
 
         public override string ToString()

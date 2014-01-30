@@ -160,7 +160,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Congruent(Segment(A, B), Segment(C, D)) -> AB = CD
         // Congruent(Angle(A, B, C), Angle(D, E, F)) -> m\angle ABC = m\angle DEF
         //
-        //public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        //public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         //{
         //    List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
 
@@ -176,7 +176,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         //        AlgebraicAngleEquation angEq = new AlgebraicAngleEquation(ccas.ca1.DeepCopy(), ccas.ca2.DeepCopy(), ANGLE_NAME);
 
-        //        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+        //        newGrounded.Add(new EdgeAggregator(antecedent, angEq));
         //    }
         //    // Congruent(Angle(A, B, C), Angle(D, E, F)) -> m\angle ABC = m\angle DEF
         //    else if (clause is GeometricCongruentSegments)
@@ -185,7 +185,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         //        AlgebraicSegmentEquation segEq = new AlgebraicSegmentEquation(ccss.cs1.DeepCopy(), ccss.cs2.DeepCopy(), SEGMENT_NAME);
 
-        //        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, segEq));
+        //        newGrounded.Add(new EdgeAggregator(antecedent, segEq));
         //    }
 
         //    return newGrounded;

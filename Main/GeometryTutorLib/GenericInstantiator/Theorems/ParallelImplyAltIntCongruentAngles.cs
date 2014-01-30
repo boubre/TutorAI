@@ -9,8 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ParallelImplyAltIntCongruentAngles : Theorem
     {
         private readonly static string NAME = "Alternate Interior Angles"; //"Parallel Lines Imply Congruent Alternate Interior Angles";
-
-        public ParallelImplyAltIntCongruentAngles() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Parallel> candidateParallel = new List<Parallel>();
@@ -37,10 +36,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                      / N
         //                                     A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Parallel) && !(c is Intersection)) return newGrounded;
 
@@ -78,9 +77,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateParallelImplyAlternateInterior(Intersection inter1, Intersection inter2, Parallel parallel)
+        private static List<EdgeAggregator> CheckAndGenerateParallelImplyAlternateInterior(Intersection inter1, Intersection inter2, Parallel parallel)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The two intersections should not be at the same vertex
             if (inter1.intersect.Equals(inter2.intersect)) return newGrounded;
@@ -229,92 +228,6 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             return newGrounded;
-
-            ////
-            //// Are these angles on the opposite side of the transversal?
-            ////
-            //// Make a simple transversal from the two intersection points
-            //Segment simpleTransversal = new Segment(inter1.intersect, inter2.intersect);
-
-            ////    A_______M________B
-            ////           /
-            ////          /
-            ////   ______/_______
-            ////  C      N       D
-            //// Verify which side the outer points of the parallel segments lie; that is, is B on same side as C or alternate side?
-
-            //List<GeometricCongruentAngles> newCongruences = new List<GeometricCongruentAngles>();
-            
-            //// Create a segment from these two points so we can compare distances
-            //Segment crossing = new Segment(coincidingParallel1.Point1, coincidingParallel2.Point1);
-
-            //// Will this crossing segment actually intersect the real transversal in the middle of the two segments
-            //Point intersection = transversal.FindIntersection(crossing);
-
-            //// If the intersection is between the two intersection points, they are points are on the opposite side
-            //Angle altIntAngle1 = null;  // Pair 1
-            //Angle altIntAngle2 = null;
-            //Angle altIntAngle3 = null;  // Pair 2
-            //Angle altIntAngle4 = null;
-            //if (Segment.Between(intersection, inter1.intersect, inter2.intersect))
-            //{
-            //    // Do we have an enclosed situation?
-            //    //  __________
-            //    //      /
-            //    //     /
-            //    //    /_________
-            //    //
-            //    if (inter1.StandsOnEndpoint() || inter2.StandsOnEndpoint())
-            //    {
-            //        altIntAngle1 = new Angle(coincidingParallel1.OtherPoint(inter1.intersect), inter1.intersect, inter2.intersect);
-            //        altIntAngle2 = new Angle(coincidingParallel2.OtherPoint(inter2.intersect), inter2.intersect, inter1.intersect);
-            //        newCongruences.Add(new GeometricCongruentAngles(altIntAngle1, altIntAngle2, NAME));
-            //    }
-            //    else
-            //    {
-            //        altIntAngle1 = new Angle(coincidingParallel1.Point1, inter1.intersect, inter2.intersect);
-            //        altIntAngle2 = new Angle(coincidingParallel2.Point1, inter2.intersect, inter1.intersect);
-
-            //        altIntAngle3 = new Angle(coincidingParallel1.Point2, inter1.intersect, inter2.intersect);
-            //        altIntAngle4 = new Angle(coincidingParallel2.Point2, inter2.intersect, inter1.intersect);
-
-            //        newCongruences.Add(new GeometricCongruentAngles(altIntAngle1, altIntAngle2, NAME));
-            //        newCongruences.Add(new GeometricCongruentAngles(altIntAngle3, altIntAngle4, NAME));
-            //    }
-            //}
-            //else
-            //{
-            //    // We cannot have an enclosed situation
-            //    //  __________
-            //    //      /
-            //    //     /
-            //    //    /_________
-            //    //
-            //    if (inter1.StandsOnEndpoint() || inter2.StandsOnEndpoint()) return newGrounded;
-
-            //    altIntAngle1 = new Angle(coincidingParallel1.Point1, inter1.intersect, inter2.intersect);
-            //    altIntAngle2 = new Angle(coincidingParallel2.Point2, inter2.intersect, inter1.intersect);
-
-            //    altIntAngle3 = new Angle(coincidingParallel1.Point2, inter1.intersect, inter2.intersect);
-            //    altIntAngle4 = new Angle(coincidingParallel2.Point1, inter2.intersect, inter1.intersect);
-
-            //    newCongruences.Add(new GeometricCongruentAngles(altIntAngle1, altIntAngle2, NAME));
-            //    newCongruences.Add(new GeometricCongruentAngles(altIntAngle3, altIntAngle4, NAME));
-            //}
-            ////
-            //// Now we have the desired construction
-            ////
-
-            //// Construct hyperedge
-            //List<GroundedClause> antecedent = new List<GroundedClause>();
-            //antecedent.Add(inter1);
-            //antecedent.Add(inter2);
-            //antecedent.Add(parallel);
-
-            //foreach (GeometricCongruentAngles gcas in newCongruences)
-            //{
-            //    newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcas));
-            //}
         }
 
         //
@@ -328,9 +241,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //           bottom
         //
         //   Returns: <bottom, off>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateToppedFShape(Parallel parallel, Intersection inter1, Intersection inter2, Intersection bottom, Point off)
+        private static List<EdgeAggregator> GenerateToppedFShape(Parallel parallel, Intersection inter1, Intersection inter2, Intersection bottom, Point off)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Intersection top = inter1.Equals(bottom) ? inter2 : inter1;
 
@@ -351,7 +264,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(off, bottom.intersect, top.intersect),
-                                                                        new Angle(oppSide, top.intersect, bottom.intersect), NAME);
+                                                                        new Angle(oppSide, top.intersect, bottom.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, inter1, inter2);
@@ -366,9 +279,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //              |_____ offStands     offStands _____|
         //
         // Returns <offStands, offCross>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateCrossedT(Parallel parallel, Intersection inter1, Intersection inter2, Point offStands, Point offCross)
+        private static List<EdgeAggregator> GenerateCrossedT(Parallel parallel, Intersection inter1, Intersection inter2, Point offStands, Point offCross)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Determine which is the crossing intersection and which stands on the endpoints
@@ -404,7 +317,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(offStands, standsInter.intersect, crossingInter.intersect),
-                                                                        new Angle(oppSide, crossingInter.intersect, standsInter.intersect), NAME);
+                                                                        new Angle(oppSide, crossingInter.intersect, standsInter.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, inter1, inter2);
@@ -419,9 +332,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //   offThis ______|
         //
         // Return <offThis, offThat>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateSimpleS(Parallel parallel, Intersection inter1, Point offThis, Intersection inter2, Point offThat)
+        private static List<EdgeAggregator> GenerateSimpleS(Parallel parallel, Intersection inter1, Point offThis, Intersection inter2, Point offThat)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Generate the new congruence
@@ -429,7 +342,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(offThat, inter2.intersect, inter1.intersect),
-                                                                        new Angle(offThis, inter1.intersect, inter2.intersect), NAME);
+                                                                        new Angle(offThis, inter1.intersect, inter2.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, inter1, inter2);
@@ -441,9 +354,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                     |
         // leftStands     _____|_____    rightStands
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateFlying(Parallel parallel, Intersection inter1, Intersection inter2, Point offCross)
+        private static List<EdgeAggregator> GenerateFlying(Parallel parallel, Intersection inter1, Intersection inter2, Point offCross)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Determine which is the crossing intersection and which stands on the endpoints
@@ -492,11 +405,11 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(rightCross, crossingInter.intersect, standsInter.intersect),
-                                                                        new Angle(leftStands, standsInter.intersect, crossingInter.intersect), NAME);
+                                                                        new Angle(leftStands, standsInter.intersect, crossingInter.intersect));
             newAngleRelations.Add(gca);
 
             gca = new GeometricCongruentAngles(new Angle(leftCross, crossingInter.intersect, standsInter.intersect),
-                                               new Angle(rightStands, standsInter.intersect, crossingInter.intersect), NAME);
+                                               new Angle(rightStands, standsInter.intersect, crossingInter.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, inter1, inter2);
@@ -509,9 +422,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //         |         |
         //   leftBottom rightBottom
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateH(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        private static List<EdgeAggregator> GenerateH(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Segment transversal = crossingInterLeft.AcquireTransversal(crossingInterRight);
 
@@ -549,10 +462,10 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(leftTop, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                                                        new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                                                        new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect));
             newAngleRelations.Add(gca);
             gca = new GeometricCongruentAngles(new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect),
-                                               new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect), NAME);
+                                               new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, crossingInterLeft, crossingInterRight);
@@ -565,9 +478,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //              |         |
         //         leftBottom rightBottom
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateDualCrossings(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        private static List<EdgeAggregator> GenerateDualCrossings(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Segment transversal = crossingInterLeft.AcquireTransversal(crossingInterRight);
 
@@ -612,18 +525,18 @@ namespace GeometryTutorLib.GenericInstantiator
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
             GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(leftTop, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                                                        new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                                                        new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect));
             newAngleRelations.Add(gca);
             gca = new GeometricCongruentAngles(new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect),
-                                               new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect), NAME);
+                                               new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect));
             newAngleRelations.Add(gca);
 
             return MakeRelations(newAngleRelations, parallel, crossingInterLeft, crossingInterRight);
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> MakeRelations(List<CongruentAngles> newAngleRelations, Parallel parallel, Intersection inter1, Intersection inter2)
+        private static List<EdgeAggregator> MakeRelations(List<CongruentAngles> newAngleRelations, Parallel parallel, Intersection inter1, Intersection inter2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -633,7 +546,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             foreach (CongruentAngles newAngles in newAngleRelations)
             {
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngles));
+                newGrounded.Add(new EdgeAggregator(antecedent, newAngles, annotation));
             }
 
             return newGrounded;

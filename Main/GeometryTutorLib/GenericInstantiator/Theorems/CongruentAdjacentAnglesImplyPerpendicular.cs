@@ -4,16 +4,12 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAST;
 
-
 namespace GeometryTutorLib.GenericInstantiator
 {
-
-
     public class CongruentAdjacentAnglesImplyPerpendicular : Theorem
     {
         private readonly static string NAME = "Congruent Adjacent Angles Imply Perpendicular Segments";
-
-        public CongruentAdjacentAnglesImplyPerpendicular() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<CongruentAngles> candAngles = new List<CongruentAngles>();
@@ -35,10 +31,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                         / M
         //                                        /
         //                                       A
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (c is CongruentAngles)
             {
@@ -75,9 +71,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateCongruentAdjacentImplyPerpendicular(Intersection intersection, CongruentAngles conAngles)
+        private static List<EdgeAggregator> CheckAndGenerateCongruentAdjacentImplyPerpendicular(Intersection intersection, CongruentAngles conAngles)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The given angles must belong to the intersection. That is, the vertex must align and all rays must overlay the intersection.
             if (!intersection.InducesBothAngles(conAngles)) return newGrounded;
@@ -85,14 +81,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have perpendicular scenario
             //
-            Strengthened streng = new Strengthened(intersection, new Perpendicular(intersection, NAME), NAME);
+            Strengthened streng = new Strengthened(intersection, new Perpendicular(intersection));
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(intersection);
             antecedent.Add(conAngles);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
+            newGrounded.Add(new EdgeAggregator(antecedent, streng, annotation));
 
             return newGrounded;
         }

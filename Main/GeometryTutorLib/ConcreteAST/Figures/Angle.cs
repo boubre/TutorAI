@@ -350,10 +350,33 @@ namespace GeometryTutorLib.ConcreteAST
                    Segment.Between(angleDoesNotBelong.intersect, angleBelongs.intersect, angleRayOnTraversal.OtherPoint(this.GetVertex())); 
         }
 
+        public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause pred, GroundedClause c)
+        {
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
+
+            if (c is Angle) return newGrounded;
+
+            //Angle angle = c as Angle;
+
+            //if (IsSpecialAngle(angle.measure))
+            //{
+            //    GeometricAngleEquation angEq = new GeometricAngleEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
+            //    List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
+            //    newClauses.Add(new EdgeAggregator(antecedent, angEq));
+            //}
+
+            return newGrounded;
+        }
+
         //
         // Maintain a public repository of all angle objects in the figure
         //
-        public static void Clear() { figureAngles.Clear(); }
+        public static void Clear()
+        {
+            figureAngles.Clear();
+            candidateTriangles.Clear();
+            knownSharedAngles.Clear();
+        }
         public static List<Angle> figureAngles = new List<Angle>();
         public static void Record(GroundedClause clause)
         {
@@ -369,34 +392,16 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause pred, GroundedClause c)
-        {
-            if (c is Angle) return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            //Angle angle = c as Angle;
-
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-            //if (IsSpecialAngle(angle.measure))
-            //{
-            //    GeometricAngleEquation angEq = new GeometricAngleEquation(angle, new NumericValue((int)angle.measure), "Given:tbd");
-            //    List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(pred);
-            //    newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
-            //}
-
-            return newClauses;
-        }
-
         //
         // Each angle is congruent to itself; only generate if both rays are shared
         //
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<Angle> knownSharedAngles = new List<Angle>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateReflexiveAngles(GroundedClause clause)
+        public static List<GenericInstantiator.EdgeAggregator> InstantiateReflexiveAngles(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             Triangle newTriangle = clause as Triangle;
-
             if (newTriangle == null) return newGrounded;
 
             //
@@ -406,20 +411,20 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 if (newTriangle.HasAngle(oldTriangle.AngleA))
                 {
-                    KeyValuePair<List<GroundedClause>, GroundedClause> newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleA);
-                    if (newClause.Key != null) newGrounded.Add(newClause);
+                    GenericInstantiator.EdgeAggregator newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleA);
+                    if (newClause != null) newGrounded.Add(newClause);
                 }
 
                 if (newTriangle.HasAngle(oldTriangle.AngleB))
                 {
-                    KeyValuePair<List<GroundedClause>, GroundedClause> newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleB);
-                    if (newClause.Key != null) newGrounded.Add(newClause);
+                    GenericInstantiator.EdgeAggregator newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleB);
+                    if (newClause != null) newGrounded.Add(newClause);
                 }
 
                 if (newTriangle.HasAngle(oldTriangle.AngleC))
                 {
-                    KeyValuePair<List<GroundedClause>, GroundedClause> newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleC);
-                    if (newClause.Key != null) newGrounded.Add(newClause);
+                    GenericInstantiator.EdgeAggregator newClause = GenerateAngleCongruence(newTriangle, oldTriangle.AngleC);
+                    if (newClause != null) newGrounded.Add(newClause);
                 }
             }
 
@@ -431,23 +436,26 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Generate the actual angle congruence
         //
-        public static KeyValuePair<List<GroundedClause>, GroundedClause> GenerateAngleCongruence(Triangle tri, Angle angle)
+        private static readonly string REFLEXIVE_ANGLE_NAME = "Reflexive Angles";
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_ANGLE_NAME, GenericInstantiator.JustificationSwitch.REFLEXIVE);
+
+        public static GenericInstantiator.EdgeAggregator GenerateAngleCongruence(Triangle tri, Angle angle)
         {
             //
             // If we have already generated a reflexive congruence, avoid regenerating
             //
             foreach (Angle oldSharedAngle in knownSharedAngles)
             {
-                if (oldSharedAngle.Equates(angle)) return new KeyValuePair<List<GroundedClause>, GroundedClause>(null, null);
+                if (oldSharedAngle.Equates(angle)) return null;
             }
 
             // Generate
-            GeometricCongruentAngles gcas = new GeometricCongruentAngles(angle, angle, "Reflexive");
+            GeometricCongruentAngles gcas = new GeometricCongruentAngles(angle, angle);
 
             // This is an 'obvious' notion so it should be intrinsic to any figure
             gcas.MakeIntrinsic();
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(Utilities.MakeList<GroundedClause>(Angle.AcquireFigureAngle(angle)), gcas);
+            return new GenericInstantiator.EdgeAggregator(Utilities.MakeList<GroundedClause>(Angle.AcquireFigureAngle(angle)), gcas, reflexAnnotation);
         }
 
 

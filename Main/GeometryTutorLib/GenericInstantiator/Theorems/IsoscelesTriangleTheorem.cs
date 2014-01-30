@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class IsoscelesTriangleTheorem : Theorem
     {
         private readonly static string NAME = "Isosceles Triangle Theorem: Base Angles are Congruent";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM);
 
         private IsoscelesTriangleTheorem() { }
         private static readonly IsoscelesTriangleTheorem thisDescriptor = new IsoscelesTriangleTheorem();
@@ -18,9 +19,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // In order for two triangles to be isosceles, we require the following:
         //    IsoscelesTriangle(A, B, C) -> \angle BAC \cong \angle BCA
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>,GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (c is IsoscelesTriangle) return InstantiateTheorem(c, c as IsoscelesTriangle);
 
@@ -36,17 +37,13 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateTheorem(GroundedClause original, IsoscelesTriangle isoTri)
+        public static List<EdgeAggregator> InstantiateTheorem(GroundedClause original, IsoscelesTriangle isoTri)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
-
-            GeometricCongruentAngles newCongSegs = new GeometricCongruentAngles(isoTri.baseAngleOppositeLeg1, isoTri.baseAngleOppositeLeg2, NAME); // ... thisDescriptor)
+            GeometricCongruentAngles newCongSegs = new GeometricCongruentAngles(isoTri.baseAngleOppositeLeg1, isoTri.baseAngleOppositeLeg2);
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCongSegs));
-
-            return newGrounded;
+            return Utilities.MakeList<EdgeAggregator>(new EdgeAggregator(antecedent, newCongSegs, annotation));
         }
     }
 }

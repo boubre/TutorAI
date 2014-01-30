@@ -10,15 +10,15 @@ namespace GeometryTutorLib.Pebbler
     // Hence, a path with n source nodes is hashed n times; this allows for fast access
     // Collisions are thus handled by chaining
     //
-    public class HyperEdgeMultiMap
+    public class HyperEdgeMultiMap<A>
     {
         private readonly int TABLE_SIZE;
-        private List<PebblerHyperEdge>[] table;
+        private List<PebblerHyperEdge<A>>[] table;
         public int size { get; private set; }
 
         // The actual hypergraph for reference purposes only when adding edges (check for intrinsic)
-        private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> graph;
-        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> g) { graph = g; }
+        private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
+        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g) { graph = g; }
 
         // If the user specifies the size, we will never have to rehash
         public HyperEdgeMultiMap(int sz)
@@ -26,13 +26,13 @@ namespace GeometryTutorLib.Pebbler
             size = 0;
             TABLE_SIZE = sz;
             
-            table = new List<PebblerHyperEdge>[TABLE_SIZE];
+            table = new List<PebblerHyperEdge<A>>[TABLE_SIZE];
         }
 
         //
         // Add the PebblerHyperEdge to all source node hash values
         //
-        public void Put(PebblerHyperEdge edge)
+        public void Put(PebblerHyperEdge<A> edge)
         {
             // Analyze the edge to determine if it is a mixed edge; all edges are
             // such that the target is greater than or less than all source nodes
@@ -56,16 +56,16 @@ namespace GeometryTutorLib.Pebbler
 
             if (table[hashVal] == null)
             {
-                table[hashVal] = new List<PebblerHyperEdge>();
+                table[hashVal] = new List<PebblerHyperEdge<A>>();
             }
 
-            Utilities.AddUnique<PebblerHyperEdge>(table[hashVal], edge);
+            Utilities.AddUnique<PebblerHyperEdge<A>>(table[hashVal], edge);
 
             size++;
         }
 
         // Another option to acquire the pertinent problems
-        public List<PebblerHyperEdge> GetBasedOnGoal(int goalNodeIndex)
+        public List<PebblerHyperEdge<A>> GetBasedOnGoal(int goalNodeIndex)
         {
             if (goalNodeIndex < 0 || goalNodeIndex >= TABLE_SIZE)
             {
@@ -83,8 +83,8 @@ namespace GeometryTutorLib.Pebbler
             {
                 if (table[ell] != null)
                 {
-                    retS += ell + ":\n"; 
-                    foreach (PebblerHyperEdge PebblerHyperEdge in table[ell])
+                    retS += ell + ":\n";
+                    foreach (PebblerHyperEdge<A> PebblerHyperEdge in table[ell])
                     {
                         retS += PebblerHyperEdge.ToString() + "\n";
                     }

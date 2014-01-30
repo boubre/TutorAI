@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class GeometricSimilarTriangles : SimilarTriangles
     {
-        public GeometricSimilarTriangles(Triangle t1, Triangle t2, string just) : base(t1, t2, just) { }
+        public GeometricSimilarTriangles(Triangle t1, Triangle t2) : base(t1, t2) { }
 
         public override bool IsAlgebraic() { return false; }
         public override bool IsGeometric() { return true; }

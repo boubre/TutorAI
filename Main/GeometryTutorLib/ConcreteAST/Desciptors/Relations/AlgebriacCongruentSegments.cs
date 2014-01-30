@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
     //
     public class AlgebraicCongruentSegments : CongruentSegments
     {
-        public AlgebraicCongruentSegments(Segment s1, Segment s2, string just) : base(s1, s2, just) { }
+        public AlgebraicCongruentSegments(Segment s1, Segment s2) : base(s1, s2) { }
 
         public override int GetHashCode()
         {

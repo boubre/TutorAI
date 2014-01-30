@@ -25,25 +25,25 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(r);
             pts.Add(z);
             pts.Add(s);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(r);
             pts.Add(t);
             pts.Add(w);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(z);
             pts.Add(x);
             pts.Add(w);
-            Collinear coll3 = new Collinear(pts, "Intrinsic");
+            Collinear coll3 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(t);
             pts.Add(x);
             pts.Add(s);
-            Collinear coll4 = new Collinear(pts, "Intrinsic");
+            Collinear coll4 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -52,12 +52,12 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, z)),
-                                                     GetProblemSegment(intrinsic, new Segment(r, t)), "Given"));
+                                                     GetProblemSegment(intrinsic, new Segment(r, t))));
 
             given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(z, s)),
-                                                     GetProblemSegment(intrinsic, new Segment(t, w)), "Given"));
+                                                     GetProblemSegment(intrinsic, new Segment(t, w))));
 
-            goals.Add(new GeometricCongruentTriangles(new Triangle(r, s, t), new Triangle(r, w, z), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(r, s, t), new Triangle(r, w, z)));
         }
     }
 }

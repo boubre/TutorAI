@@ -15,9 +15,9 @@ namespace GeometryTutorLib
         private List<ConcreteAST.GroundedClause> givens;
 
         private Precomputer.CoordinatePrecomputer precomputer;
-        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
+        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
         private GenericInstantiator.Instantiator instantiator;
-        private Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebblerGraph;
+        private Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
         private ProblemAnalyzer.PathGenerator pathGenerator;
         private GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator = null;
         private ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
@@ -27,6 +27,8 @@ namespace GeometryTutorLib
 
         public UIFigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs)
         {
+            figure = new List<ConcreteAST.GroundedClause>();
+
             //
             // Calculate all objects describing the figure
             //
@@ -55,7 +57,7 @@ namespace GeometryTutorLib
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
-        public List<ProblemAnalyzer.Problem> AnalyzeFigure()
+        public List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> AnalyzeFigure()
         {
             // Precompute all coordinate-based interesting relations (problem goal nodes)
             // These become the basis for the template-based problem generation (these are the goals)
@@ -74,16 +76,16 @@ namespace GeometryTutorLib
             Pebble();
 
             // Analyze paths in the hypergraph to generate the pair of <forward problems, backward problems> (precomputed nodes are goals)
-            KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> problems = GenerateTemplateProblems();
+            KeyValuePair<List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>, List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>> problems = GenerateTemplateProblems();
 
             // Combine the problems together into one list
-            List<ProblemAnalyzer.Problem> candidateProbs = new List<ProblemAnalyzer.Problem>();
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> candidateProbs = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
             candidateProbs.AddRange(problems.Key);
             candidateProbs.AddRange(problems.Value);
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
             interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
-            List<ProblemAnalyzer.Problem> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
 
             // Partition the problem-space based on the query vector defined (by us or the user)
             problemSpacePartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, queryVector);
@@ -151,7 +153,7 @@ namespace GeometryTutorLib
                 {
                     if (component.CanBeStrengthenedTo(given))
                     {
-                        currentGiven = new ConcreteAST.Strengthened(component, given, "Given");
+                        currentGiven = new ConcreteAST.Strengthened(component, given);
                         break;
                     }
                 }
@@ -230,7 +232,7 @@ namespace GeometryTutorLib
         //
         // Generate all of the problems based on the precomputed values (these precomputations are the problem goals)
         //
-        private KeyValuePair<List<ProblemAnalyzer.Problem>, List<ProblemAnalyzer.Problem>> GenerateTemplateProblems()
+        private KeyValuePair<List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>, List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>> GenerateTemplateProblems()
         {
             templateProblemGenerator = new ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
 
@@ -279,7 +281,7 @@ namespace GeometryTutorLib
                     newClauses.Add(newSegment);
                     for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
                     {
-                        newClauses.Add(new ConcreteAST.InMiddle(collinear.points[imIndex], newSegment, "INTRINSIC"));
+                        newClauses.Add(new ConcreteAST.InMiddle(collinear.points[imIndex], newSegment));
                     }
                 }
             }
@@ -345,7 +347,7 @@ namespace GeometryTutorLib
                                         // Construct the triangle based on the sides to ensure reflexivity clauses are generated
 
                                         newTriangles.Add(new ConcreteAST.Triangle(GetProblemSegment(clauses, side1),
-                                                                                  GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
+                                                                                  GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3)));
                                         break;
                                     }
                                 }
@@ -371,13 +373,13 @@ namespace GeometryTutorLib
             foreach (ConcreteAST.Triangle triangle in triangles)
             {
                 ConcreteAST.Point vertex = triangle.SegmentA.SharedVertex(triangle.SegmentB);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentB, "Intrinsic"));
+                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentB));
 
                 vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentB, triangle.SegmentC, "Intrinsic"));
+                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentB, triangle.SegmentC));
 
                 vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentC, "Intrinsic"));
+                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentC));
             }
 
             //
@@ -430,7 +432,7 @@ namespace GeometryTutorLib
                             // Create the intersection
                             if (actualInter != null)
                             {
-                                AddIntersection(newIntersections, new ConcreteAST.Intersection(actualInter, maximalSegments[s1], maximalSegments[s2], "Intrinsic"));
+                                AddIntersection(newIntersections, new ConcreteAST.Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
                             }
                         }
                     }

@@ -29,7 +29,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //           the nodes are strictly isomoprhic if A is relationally isomorphic to some element E in node B
         //
 
-        //public static int GradedIsomorphism(Problem problem1, Problem problem2, Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
+        //public static int GradedIsomorphism(Problem problem1, Problem problem2, Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph)
         //{
         //    // 1. Choose the larger problem to modify (based on number of edges).
         //    Problem modifiedProblem = problem1.edges.Count > problem2.edges.Count ? problem1 : problem2;
@@ -65,11 +65,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
 
         // To access node value information; mapping problem values back to the Geometric Graph
-        //Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
+        //Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
 
         //List<Problem> partition;
 
-        //public ProblemPartition(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
+        //public ProblemPartition(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)
         //{
         //    graph = g;
         //    partition = new List<Problem>();

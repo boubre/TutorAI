@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AnglesOfEqualMeasureAreCongruent : Axiom
     {
         private readonly static string NAME = "Angles of Equal Measure Are Congruent";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT);
 
         private static List<AngleEquation> candiateAngleEquations = new List<AngleEquation>();
 
@@ -18,9 +19,9 @@ namespace GeometryTutorLib.GenericInstantiator
             candiateAngleEquations.Clear();
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             AngleEquation newAngEq = clause as AngleEquation;
             if (newAngEq == null) return newGrounded;
@@ -46,14 +47,14 @@ namespace GeometryTutorLib.GenericInstantiator
                     // Do the angles have the same measure
                     if (Utilities.CompareValues(newAngleAndMeasure.Value, oldEqAngle.Value))
                     {
-                        AlgebraicCongruentAngles acas = new AlgebraicCongruentAngles(newAngleAndMeasure.Key, oldEqAngle.Key, NAME);
+                        AlgebraicCongruentAngles acas = new AlgebraicCongruentAngles(newAngleAndMeasure.Key, oldEqAngle.Key);
 
                         // For hypergraph construction
                         List<GroundedClause> antecedent = new List<GroundedClause>();
                         antecedent.Add(newAngEq);
                         antecedent.Add(oldEq);
 
-                        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, acas));
+                        newGrounded.Add(new EdgeAggregator(antecedent, acas, annotation));
                     }
                 }
             }

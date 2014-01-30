@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SegmentBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Segment Bisector";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SEGMENT_BISECTOR_DEFINITION);
 
         private static List<Intersection> candidateIntersection = new List<Intersection>();
         private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();
@@ -29,13 +30,13 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             if (clause is SegmentBisector || clause is Strengthened || clause is InMiddle) return InstantiateFromSegmentBisector(clause);
 
             if (clause is Intersection || clause is CongruentSegments) return InstantiateToSegmentBisector(clause);
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
         //     B ---------V---------A
@@ -46,9 +47,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // SegmentBisector(Segment(V, C), Segment(B, A)) -> Midpoint(V, Segment(B, A))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateFromSegmentBisector(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is SegmentBisector)
             {
@@ -92,9 +93,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
             return newGrounded;
         }
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromSegmentBisector(InMiddle im, SegmentBisector sb, GroundedClause original)
+        public static List<EdgeAggregator> InstantiateFromSegmentBisector(InMiddle im, SegmentBisector sb, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Does this bisector apply to this InMiddle? Check point of intersection
             if (!im.point.StructurallyEquals(sb.bisected.intersect)) return newGrounded;
@@ -103,13 +104,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!im.segment.StructurallyEquals(sb.bisected.OtherSegment(sb.bisector))) return newGrounded;
 
             // Create the midpoint
-            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im, NAME), NAME);
+            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im));
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
             antecedent.Add(im);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
+            newGrounded.Add(new EdgeAggregator(antecedent, newMidpoint, annotation));
 
             return newGrounded;
         }
@@ -122,9 +123,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Congruent(Segment(B, V), Segment(V, A)), Intersection(V, Segment(B, A), Segment(V, C)) -> SegmentBisector(Segment(V, C), Segment(B, A))
         //        
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToSegmentBisector(GroundedClause c)
+        public static List<EdgeAggregator> InstantiateToSegmentBisector(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (c is CongruentSegments)
             {
@@ -180,9 +181,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                  \
         //                   C
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(Point intersectionPoint, Intersection inter, CongruentSegments cs)
+        private static List<EdgeAggregator> InstantiateToDef(Point intersectionPoint, Intersection inter, CongruentSegments cs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Does the given point of intersection apply to this actual intersection object
             if (!intersectionPoint.Equals(inter.intersect)) return newGrounded;
@@ -207,14 +208,14 @@ namespace GeometryTutorLib.GenericInstantiator
                     overallSegment.PointIsOnAndBetweenEndpoints(bisectedSegment.Point2)) return newGrounded;
             }
 
-            SegmentBisector newSB = new SegmentBisector(inter, bisector, NAME);
+            SegmentBisector newSB = new SegmentBisector(inter, bisector);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(inter);
             antecedent.Add(cs);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newSB));
+            newGrounded.Add(new EdgeAggregator(antecedent, newSB, annotation));
             return newGrounded;
         }
     }

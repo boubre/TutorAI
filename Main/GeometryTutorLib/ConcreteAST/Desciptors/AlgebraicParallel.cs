@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class AlgebraicParallel : Parallel
     {
-        public AlgebraicParallel(Segment segment1, Segment segment2, string just) : base(segment1, segment2, just) { }
+        public AlgebraicParallel(Segment segment1, Segment segment2) : base(segment1, segment2) { }
 
         public override int GetHashCode()
         {

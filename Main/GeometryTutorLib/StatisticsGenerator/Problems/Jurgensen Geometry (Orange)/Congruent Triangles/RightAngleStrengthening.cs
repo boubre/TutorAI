@@ -21,7 +21,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new RightAngle(b, a, c, "Given"));
+            given.Add(new RightAngle(b, a, c));
         }
     }
 }

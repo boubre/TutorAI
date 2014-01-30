@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleAdditionAxiom : Axiom
     {
         private readonly static string NAME = "Angle Addition Axiom";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLE_ADDITION_AXIOM);
 
         // Candidate angles
         private static List<Angle> unifyCandAngles = new List<Angle>();
@@ -22,9 +23,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Angle(A, B, C), Angle(C, B, D) -> Angle(A, B, C) + Angle(C, B, D) = Angle(A, B, D)
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Angle)) return newGrounded;
 
@@ -44,9 +45,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAngles(Angle angle1, Angle angle2)
+        private static List<EdgeAggregator> InstantiateAngles(Angle angle1, Angle angle2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // An angle may have multiple names
             if (angle1.Equates(angle2)) return newGrounded;
@@ -70,7 +71,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Point exteriorPt2 = angle1.OtherPoint(shared);
             Angle newAngle = new Angle(exteriorPt1, vertex, exteriorPt2);
             Addition sum = new Addition(angle1, angle2);
-            GeometricAngleEquation geoAngEq = new GeometricAngleEquation(sum, newAngle, NAME);
+            GeometricAngleEquation geoAngEq = new GeometricAngleEquation(sum, newAngle);
             geoAngEq.MakeAxiomatic(); // This is an axiomatic equation
 
             // For hypergraph construction
@@ -78,7 +79,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(angle1);
             antecedent.Add(angle2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, geoAngEq));
+            newGrounded.Add(new EdgeAggregator(antecedent, geoAngEq, annotation));
 
             return newGrounded;
         }

@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AASimilarity : Axiom
     {
         private readonly static string NAME = "AA Similarity";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.AA_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();
@@ -36,10 +37,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                 Proportional(Segment(B, C), Segment(E, F))
         //                                                 Congruent(Angle(C, A, B), Angle(F, D, E)),
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentAngles)
             {
@@ -88,10 +89,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Checks for AA given the 4 values
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAASimilarity(Triangle tri1, Triangle tri2,
-                                                                                                        CongruentAngles cas1, CongruentAngles cas2)
+        private static List<EdgeAggregator> InstantiateAASimilarity(Triangle tri1, Triangle tri2, CongruentAngles cas1, CongruentAngles cas2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // All congruence pairs must minimally relate the triangles
@@ -129,7 +129,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Construct the new clauses: similar triangles and resultant components
             //
-            GeometricSimilarTriangles simTris = new GeometricSimilarTriangles(new Triangle(triangleOne), new Triangle(triangleTwo), NAME);
+            GeometricSimilarTriangles simTris = new GeometricSimilarTriangles(new Triangle(triangleOne), new Triangle(triangleTwo));
 
             // Hypergraph edge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -138,7 +138,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(cas1);
             antecedent.Add(cas2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, simTris));
+            newGrounded.Add(new EdgeAggregator(antecedent, simTris, annotation));
 
             // Add all the corresponding parts as new Similar clauses
             newGrounded.AddRange(SimilarTriangles.GenerateComponents(simTris, triangleOne, triangleTwo));

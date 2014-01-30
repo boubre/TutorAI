@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
         public GroundedClause original { get; private set; }
         public GroundedClause strengthened { get; private set; }
 
-        public Strengthened(GroundedClause orig, GroundedClause streng, string just) : base()
+        public Strengthened(GroundedClause orig, GroundedClause streng) : base()
         {
             original = orig;
             strengthened = streng;

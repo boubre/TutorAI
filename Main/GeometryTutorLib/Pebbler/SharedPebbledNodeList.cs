@@ -9,14 +9,14 @@ namespace GeometryTutorLib.Pebbler
     //
     // This code is based on the MSDN example for Producer / Consumer in C#
     //
-    public class SharedPebbledNodeList
+    public class SharedPebbledNodeList<A>
     {
         // This is shared data structure between the producer (Pebbler) and consumer (path generator) threads
-        private List<PebblerHyperEdge> edgeList;
+        private List<PebblerHyperEdge<A>> edgeList;
 
         public SharedPebbledNodeList()
         {
-            edgeList = new List<PebblerHyperEdge>();
+            edgeList = new List<PebblerHyperEdge<A>>();
         }
 
         // State flag
@@ -37,12 +37,12 @@ namespace GeometryTutorLib.Pebbler
         //
         // Consumer method
         //
-        public PebblerHyperEdge ReadEdge()
+        public PebblerHyperEdge<A> ReadEdge()
         {
             // If writing is known to be done and the list is empty, this is an error
             if (IsReadingAndWritingComplete()) return null;
 
-            PebblerHyperEdge readEdge = null;
+            PebblerHyperEdge<A> readEdge = null;
 
             // Enter synchronization block
             lock (this)
@@ -84,7 +84,7 @@ namespace GeometryTutorLib.Pebbler
         //
         // Producer method
         //
-        public void WriteEdge(PebblerHyperEdge edgeToWrite)
+        public void WriteEdge(PebblerHyperEdge<A> edgeToWrite)
         {
             // Enter synchronization block
             lock (this)

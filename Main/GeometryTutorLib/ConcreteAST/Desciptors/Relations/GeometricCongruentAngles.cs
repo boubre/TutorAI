@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
     //
     public class GeometricCongruentAngles : CongruentAngles
     {
-        public GeometricCongruentAngles(Angle a1, Angle a2, string just) : base(a1, a2, just) { }
+        public GeometricCongruentAngles(Angle a1, Angle a2) : base(a1, a2) { }
 
         public override bool IsAlgebraic() { return false; }
         public override bool IsGeometric() { return true; }

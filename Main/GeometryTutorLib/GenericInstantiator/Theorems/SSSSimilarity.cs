@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SSSSimilarity : Theorem
     {
         private readonly static string NAME = "SSS Similarity";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SSS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<ProportionalSegments> candidateSegments = new List<ProportionalSegments>();
@@ -33,10 +34,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Note: we need to figure out the proper order of the sides to guarantee congruence
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If this is a new segment, check for congruent triangles with this new piece of information
             if (clause is ProportionalSegments)
@@ -91,9 +92,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Of all the congruent segment pairs, choose a subset of 3. Exhaustively check all; if they work, return the set.
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckForSSS(Triangle ct1, Triangle ct2, ProportionalSegments pss1, ProportionalSegments pss2, ProportionalSegments pss3)
+        private static List<EdgeAggregator> CheckForSSS(Triangle ct1, Triangle ct2, ProportionalSegments pss1, ProportionalSegments pss2, ProportionalSegments pss3)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // The proportional relationships need to link the given triangles
@@ -139,7 +140,7 @@ namespace GeometryTutorLib.GenericInstantiator
             simTriAntecedent.Add(pss2);
             simTriAntecedent.Add(pss3);
 
-            newGrounded.AddRange(SASSimilarity.GenerateCorrespondingParts(pointPairs, simTriAntecedent, NAME));
+            newGrounded.AddRange(SASSimilarity.GenerateCorrespondingParts(pointPairs, simTriAntecedent, annotation));
 
             return newGrounded;
         }

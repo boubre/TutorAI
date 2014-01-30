@@ -27,29 +27,29 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(a);
             pts.Add(m);
             pts.Add(c);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(b);
             pts.Add(m);
             pts.Add(d);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            //given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, m)), GetProblemSegment(intrinsic, new Segment(m, c)), "Given"));
-            given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(b, d)), "Given"));
-            given.Add(new RightAngle(GetProblemAngle(intrinsic, new Angle(b, c, d)), "Given"));
+            //given.Add(new Midpoint(m, GetProblemSegment(intrinsic, new Segment(a, c))));
+            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, m)), GetProblemSegment(intrinsic, new Segment(m, c))));
+            given.Add(new Midpoint(GetProblemInMiddle(intrinsic, m, GetProblemSegment(intrinsic, new Segment(b, d)))));
+            given.Add(new RightAngle(GetProblemAngle(intrinsic, new Angle(b, c, d))));
 
-            goals.Add(new GeometricCongruentTriangles(new Triangle(b, m, c), new Triangle(d, m, a), "GOAL"));
-            goals.Add(new Strengthened(GetProblemAngle(intrinsic, new Angle(a, d, c)), new RightAngle(GetProblemAngle(intrinsic, new Angle(a, d, c)), "GOAL"), "GOAL"));
-            goals.Add(new GeometricCongruentTriangles(new Triangle(a, d, c), new Triangle(b, c, d), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(b, m, c), new Triangle(d, m, a)));
+            goals.Add(new Strengthened(GetProblemAngle(intrinsic, new Angle(a, d, c)), new RightAngle(GetProblemAngle(intrinsic, new Angle(a, d, c)))));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(a, d, c), new Triangle(b, c, d)));
 
             Multiplication product = new Multiplication(new NumericValue(2), GetProblemSegment(intrinsic, new Segment(c, m)));
-            goals.Add(new GeometricSegmentEquation(product, GetProblemSegment(intrinsic, new Segment(b, d)), "GOAL"));
+            goals.Add(new GeometricSegmentEquation(product, GetProblemSegment(intrinsic, new Segment(b, d))));
         }
     }
 }

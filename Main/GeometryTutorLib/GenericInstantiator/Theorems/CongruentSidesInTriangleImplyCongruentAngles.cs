@@ -10,10 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentSidesInTriangleImplyCongruentAngles : Theorem
     {
         private readonly static string NAME = "If two segments of a triangle are congruent, then the angles opposite those segments are congruent.";
-        public static Boolean MayUnifyWith(GroundedClause c)
-        {
-            return (c is CongruentSegments) || (c is Triangle);
-        }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES);
 
         private static List<CongruentSegments> candSegs = new List<CongruentSegments>();
         private static List<Triangle> candTris = new List<Triangle>();
@@ -33,62 +30,35 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Triangle(A, B, C), Congruent(Segment(A, B), Segment(A, C)) -> Congruent(\angle ABC, \angle ACB)
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            if (!MayUnifyWith(c)) return newGrounded;
-
-            //
-            // Unify
-            //
-            if (c is CongruentSegments)
+            if (clause is CongruentSegments)
             {
-                CongruentSegments css = c as CongruentSegments;
+                CongruentSegments css = clause as CongruentSegments;
 
                 // Only generate or add to possible congruent pairs if this is a non-reflexive relation
-                if (!css.IsReflexive())
+                if (css.IsReflexive()) return newGrounded;
+
+                for (int t = 0; t < candTris.Count; t++)
                 {
-                    for (int t = 0; t < candTris.Count; t++)
-                    {
-                        if (candTris[t].HasSegment(css.cs1) && candTris[t].HasSegment(css.cs2))
-                        {
-                            newGrounded.Add(GenerateCongruentAngles(candTris[t], css));
-
-                            // There should be only one possible Isosceles triangle from this congruent Segments
-                            // So we can remove this relationship and triangle from consideration
-                            candTris.RemoveAt(t);
-
-                            return newGrounded;
-                        }
-                    }
-
-                    candSegs.Add(css);
+                    newGrounded.AddRange(InstantiateToCongruence(candTris[t], css));
                 }
 
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+                candSegs.Add(css);
             }
-
-            else if (c is Triangle)
+            else if (clause is Triangle)
             {
-                Triangle newTriangle = c as Triangle;
+                Triangle newTriangle = clause as Triangle;
 
                 //
                 // Do any of the congruent segment pairs merit calling this new triangle isosceles?
                 //
-                for (int cs = 0; cs < candSegs.Count; cs++)
+                foreach (CongruentSegments css in candSegs)
                 {
-                    // No need to check for this, in theory, since we never add any reflexive expressions to the list
-                    if (!candSegs[cs].IsReflexive())
-                    {
-                        if (newTriangle.HasSegment(candSegs[cs].cs1) && newTriangle.HasSegment(candSegs[cs].cs2))
-                        {
-                            newGrounded.Add(GenerateCongruentAngles(newTriangle, candSegs[cs]));
-
-                            return newGrounded;
-                        }
-                    }
+                    newGrounded.AddRange(InstantiateToCongruence(newTriangle, css));
                 }
 
                 // Add the the list of candidates if it was not determined isosceles now.
@@ -101,15 +71,21 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Just generate the new angle congruence
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> GenerateCongruentAngles(Triangle tri, CongruentSegments css)
+        private static List<EdgeAggregator> InstantiateToCongruence(Triangle tri, CongruentSegments css)
         {
-            GeometricCongruentAngles newConAngs = new GeometricCongruentAngles(tri.GetOppositeAngle(css.cs1), tri.GetOppositeAngle(css.cs2), NAME); // ..., thisDescriptor)
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            if (!tri.HasSegment(css.cs1) || !tri.HasSegment(css.cs2)) return newGrounded;
+
+            GeometricCongruentAngles newConAngs = new GeometricCongruentAngles(tri.GetOppositeAngle(css.cs1), tri.GetOppositeAngle(css.cs2));
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(css);
             antecedent.Add(tri);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newConAngs);
+            newGrounded.Add(new EdgeAggregator(antecedent, newConAngs, annotation));
+            
+            return newGrounded;
         }
     }
 }

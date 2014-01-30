@@ -9,8 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorTheorem : Theorem
     {
         private readonly static string NAME = "Angle Bisector Theorem";
-
-        public AngleBisectorTheorem() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLE_BISECTOR_THEOREM);
 
         //
         // AngleBisector(SegmentA, D), Angle(C, A, B)) -> 2 m\angle CAD = m \angle CAB,
@@ -24,9 +23,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //    |    \
         //    C     D
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is AngleBisector)) return newGrounded;
 
@@ -39,14 +38,14 @@ namespace GeometryTutorLib.GenericInstantiator
             Multiplication product2 = new Multiplication(new NumericValue(2), adjacentAngles.Value);
 
             // 2X = AB
-            GeometricAngleEquation newEq1 = new GeometricAngleEquation(product1, angleBisector.angle, NAME);
-            GeometricAngleEquation newEq2 = new GeometricAngleEquation(product2, angleBisector.angle, NAME);
+            GeometricAngleEquation newEq1 = new GeometricAngleEquation(product1, angleBisector.angle);
+            GeometricAngleEquation newEq2 = new GeometricAngleEquation(product2, angleBisector.angle);
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(angleBisector);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newEq1));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newEq2));
+            newGrounded.Add(new EdgeAggregator(antecedent, newEq1, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, newEq2, annotation));
 
             return newGrounded;
         }

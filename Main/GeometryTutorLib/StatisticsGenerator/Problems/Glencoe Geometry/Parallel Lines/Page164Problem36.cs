@@ -26,21 +26,21 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(f);
             pts.Add(b);
             pts.Add(c);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             List<Point> pts2 = new List<Point>();
             pts2.Add(d);
             pts2.Add(b);
             pts2.Add(a);
-            Collinear coll2 = new Collinear(pts2, "Intrinsic");
+            Collinear coll2 = new Collinear(pts2);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(b, d, e)), GetProblemAngle(intrinsic, new Angle(c, b, d)), "Given"));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(b, d, e)), GetProblemAngle(intrinsic, new Angle(c, b, d))));
 
-            goals.Add(new GeometricParallel(de, new Segment(f, c), "GOAL"));
+            goals.Add(new GeometricParallel(de, new Segment(f, c)));
         }
     }
 }

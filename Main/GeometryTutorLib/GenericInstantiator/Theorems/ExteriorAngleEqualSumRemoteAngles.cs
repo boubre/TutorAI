@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ExteriorAngleEqualSumRemoteAngles : Theorem
     {
         private readonly static string NAME = "Exterior Angle is Equal to the Sum of Remote Interior Angles";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES);
 
         private static List<Triangle> unifyCandTris = new List<Triangle>();
         private static List<Angle> unifyCandAngles = new List<Angle>();
@@ -24,9 +25,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Triangle(A, B, C), Angle(D, A, B) -> Equation(m\angle DAB = m\angle ABC + m\angle BCA)
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Triangle) && !(c is Angle)) return newGrounded;
 
@@ -66,7 +67,7 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> ConstructExteriorRelationship(Triangle tri, Angle extAngle)
+        private static EdgeAggregator ConstructExteriorRelationship(Triangle tri, Angle extAngle)
         {
             //
             // Acquire the remote angles
@@ -80,7 +81,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Construct the new equation
             //
             Addition sum = new Addition(remote1, remote2);
-            GeometricAngleEquation eq = new GeometricAngleEquation(extAngle, sum, NAME);
+            GeometricAngleEquation eq = new GeometricAngleEquation(extAngle, sum);
 
             //
             // For the hypergraph
@@ -88,7 +89,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
             antecedent.Add(extAngle);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq);
+            return new EdgeAggregator(antecedent, eq, annotation);
         }
     }
 }

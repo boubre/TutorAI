@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Angle angle { get; private set; }
         public Segment bisector { get; private set; }
 
-        public AngleBisector(Angle a, Segment b, string just) : base(just)
+        public AngleBisector(Angle a, Segment b) : base()
         {
             angle = a;
             bisector = b;

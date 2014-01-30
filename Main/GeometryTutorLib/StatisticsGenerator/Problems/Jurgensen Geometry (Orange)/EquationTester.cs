@@ -16,7 +16,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(a);
             pts.Add(m);
             pts.Add(b);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));

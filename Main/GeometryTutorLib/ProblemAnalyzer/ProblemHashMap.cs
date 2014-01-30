@@ -11,24 +11,24 @@ namespace GeometryTutorLib.ProblemAnalyzer
     //   + No resizing / rehashing is needed because we will know ahead of time how many nodes there are
     //     in the hypergraph and problems are based on nodes in the graph
     //
-    public class ProblemHashMap
+    public class ProblemHashMap<A>
     {
         private readonly int TABLE_SIZE;
-        private List<Problem>[] table;
+        private List<Problem<A>>[] table;
         private bool[] generated;
         public int size { get; private set; }
-        private Pebbler.HyperEdgeMultiMap edgeDatabase;
+        private Pebbler.HyperEdgeMultiMap<A> edgeDatabase;
         private readonly int MAX_GIVENS;
         private readonly bool FORWARD_GENERATION;
         private readonly int DEFAULT_MAX_BACKWARD_GIVENS = 2;
 
         // If the user specifies the size, we will never have to rehash
-        public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz, int maxGivens)
+        public ProblemHashMap(Pebbler.HyperEdgeMultiMap<A> edges, int sz, int maxGivens)
         {
             size = 0;
             TABLE_SIZE = sz;
-            
-            table = new List<Problem>[TABLE_SIZE];
+
+            table = new List<Problem<A>>[TABLE_SIZE];
             generated = new bool[TABLE_SIZE];
 
             edgeDatabase = edges;
@@ -36,12 +36,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
             FORWARD_GENERATION = true;
         }
 
-        public ProblemHashMap(Pebbler.HyperEdgeMultiMap edges, int sz)
+        public ProblemHashMap(Pebbler.HyperEdgeMultiMap<A> edges, int sz)
         {
             size = 0;
             TABLE_SIZE = sz;
 
-            table = new List<Problem>[TABLE_SIZE];
+            table = new List<Problem<A>>[TABLE_SIZE];
             generated = new bool[TABLE_SIZE];
 
             edgeDatabase = edges;
@@ -53,16 +53,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public void SetGenerated(int node)
         {
             // If the node results in no problems, create an empty list
-            if (table[node] == null) table[node] = new List<Problem>(); 
+            if (table[node] == null) table[node] = new List<Problem<A>>(); 
             generated[node] = true;
         }
 
         //
         // Get a single list of all the problems
         //
-        public List<Problem> GetAll()
+        public List<Problem<A>> GetAll()
         {
-            List<Problem> all = new List<Problem>();
+            List<Problem<A>> all = new List<Problem<A>>();
 
             for (int i = 0; i < table.Length; i++)
             {
@@ -78,10 +78,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         // Add a list of problems to the structure unchecked (we assume all have the same goal node)
-        public void PutUnchecked(List<Problem> problems)
+        public void PutUnchecked(List<Problem<A>> problems)
         {
             int goal = problems[0].goal;
-            foreach(Problem problem in problems)
+            foreach (Problem<A> problem in problems)
             {
                 if (problem.goal != goal)
                 {
@@ -91,7 +91,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             if (table[problems[0].goal] == null)
             {
-                table[problems[0].goal] = new List<Problem>(problems);
+                table[problems[0].goal] = new List<Problem<A>>(problems);
                 size += problems.Count;
             }
             else
@@ -102,7 +102,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         // Can any edge in the edgeDatabase be used to deduce any of the givens?
-        private PebblerHyperEdge BasicMinimality(Problem newProblem)
+        private PebblerHyperEdge<A> BasicMinimality(Problem<A> newProblem)
         {
             // Combine the givens and path into a single list
             List<int> givensAndPath = new List<int>(newProblem.givens);
@@ -112,12 +112,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
             foreach (int given in newProblem.givens)
             {
                 // Acquire all edges with this given as a goal
-                List<PebblerHyperEdge> edges = edgeDatabase.GetBasedOnGoal(given);
+                List<PebblerHyperEdge<A>> edges = edgeDatabase.GetBasedOnGoal(given);
 
                 if (edges != null)
                 {
                     // Analyze each basic edge to see if all of the hyperedge nodes are in the givens or path
-                    foreach (PebblerHyperEdge edge in edges)
+                    foreach (PebblerHyperEdge<A> edge in edges)
                     {
                         if (Utilities.Subset<int>(givensAndPath, edge.sourceNodes)) return edge;
                     }
@@ -131,12 +131,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Add the problem to all source node hash values
         //
-        public void Put(Problem newProblem)
+        public void Put(Problem<A> newProblem)
         {
             if (newProblem.givens.Count > MAX_GIVENS) return;
 
             //  Check that no edges may be used to deduce any given in the problem
-            Pebbler.PebblerHyperEdge edge = BasicMinimality(newProblem);
+            Pebbler.PebblerHyperEdge<A> edge = BasicMinimality(newProblem);
             if (edge != null)
             {
                 throw new ArgumentException("The following problem is not minimal since " + edge + " can deduce a given in " + newProblem);
@@ -146,7 +146,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Keeping null lists is important to determine if no problems exist vs. exploration has not occurred
             if (table[newProblem.goal] == null)
             {
-                table[newProblem.goal] = new List<Problem>();
+                table[newProblem.goal] = new List<Problem<A>>();
                 table[newProblem.goal].Add(newProblem);
                 size++;
                 return;
@@ -156,7 +156,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // We verify minimality here for problems in the map
             // We note that the goals equate already; we are verifying the givens (not the suppressed)
             // Based on this criteria for entry in the table, a problem may only equate with a single other problem in terms of goal / sources
-            List<Problem> oldProblems = table[newProblem.goal];
+            List<Problem<A>> oldProblems = table[newProblem.goal];
             for (int p = 0; p < oldProblems.Count; p++)
             {
                 // Check if the givens from the minimal problem and this candidate problem equate exactly
@@ -205,7 +205,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         // Acquire a problem based on the goal only
-        public List<Problem> Get(Problem p)
+        public List<Problem<A>> Get(Problem<A> p)
         {
             return Get(p.goal);
         }
@@ -213,7 +213,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Another option to acquire the pertinent problems
         //
-        public List<Problem> Get(int key)
+        public List<Problem<A>> Get(int key)
         {
             if (key < 0 || key >= TABLE_SIZE)
             {
@@ -231,8 +231,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
             {
                 if (table[ell] != null)
                 {
-                    retS += ell + ":\n"; 
-                    foreach (Problem problem in table[ell])
+                    retS += ell + ":\n";
+                    foreach (Problem<A> problem in table[ell])
                     {
                         retS += problem.ToString() + "\n";
                     }

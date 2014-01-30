@@ -30,11 +30,11 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(x, y, p)), "Given"));
+            given.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(x, y, p))));
             Addition sum = new Addition(GetProblemAngle(intrinsic, new Angle(p, y, z)), GetProblemAngle(intrinsic, new Angle(x, y, p)));
-            given.Add(new GeometricAngleEquation(sum, new NumericValue(90), "Given"));
+            given.Add(new GeometricAngleEquation(sum, new NumericValue(90)));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(p, y, z)), "GOAL"));
+            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(p, y, z))));
         }
     }
 }

@@ -10,8 +10,8 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string COMPLEMENT_NAME = "If two angles are complements of congruent angles (or of the same angle), then the two are congruent and the other combinations are complements.";
         private readonly static string SUPPLEMENT_NAME = "If two angles are supplements of congruent angles (or of the same angle), then the two are congruent and the other combinations are supplements.";
-
-        public RelationsOfCongruentAnglesAreCongruent() { }
+        private static Hypergraph.EdgeAnnotation compAnnotation = new Hypergraph.EdgeAnnotation(COMPLEMENT_NAME, GenericInstantiator.JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation suppAnnotation = new Hypergraph.EdgeAnnotation(SUPPLEMENT_NAME, GenericInstantiator.JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
 
         private static List<AnglePairRelation> candRelation = new List<AnglePairRelation>();
         private static List<CongruentAngles> candCongruentAngles = new List<CongruentAngles>();
@@ -55,10 +55,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                 3  /              /\ 4
         //       ____________/              /__\__________________
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is CongruentAngles) && !(c is AnglePairRelation)) return newGrounded;
 
@@ -99,9 +99,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> DirectRelations(AnglePairRelation relation1, AnglePairRelation relation2)
+        private static List<EdgeAggregator> DirectRelations(AnglePairRelation relation1, AnglePairRelation relation2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have the same type of relation?
             if (relation1.GetType() != relation2.GetType()) return newGrounded;
@@ -117,21 +117,21 @@ namespace GeometryTutorLib.GenericInstantiator
             if (otherAngle1.Equates(otherAngle2)) return newGrounded;
 
             // The other two angles are then congruent
-            GeometricCongruentAngles gcas = new GeometricCongruentAngles(otherAngle1, otherAngle2, relation1 is Complementary ? COMPLEMENT_NAME : SUPPLEMENT_NAME);
+            GeometricCongruentAngles gcas = new GeometricCongruentAngles(otherAngle1, otherAngle2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(relation1);
             antecedent.Add(relation2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcas));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcas, relation1 is Complementary ? compAnnotation : suppAnnotation));
 
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> IndirectRelations(CongruentAngles cas, AnglePairRelation relation1, AnglePairRelation relation2)
+        private static List<EdgeAggregator> IndirectRelations(CongruentAngles cas, AnglePairRelation relation1, AnglePairRelation relation2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have the same type of relation?
             if (relation1.GetType() != relation2.GetType()) return newGrounded;
@@ -155,7 +155,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Congruent(Angle(1), Angle(3))
             //
             // The other two angles from the relation pairs are then congruent
-            GeometricCongruentAngles gcas = new GeometricCongruentAngles(otherAngle1, otherAngle2, relation1 is Complementary ? COMPLEMENT_NAME : SUPPLEMENT_NAME);
+            GeometricCongruentAngles gcas = new GeometricCongruentAngles(otherAngle1, otherAngle2);
 
             // Avoid direct cyclic congruent angle generation
             if (cas.StructurallyEquals(gcas)) return newGrounded;
@@ -172,26 +172,26 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             if (relation1 is Complementary && relation2 is Complementary)
             {
-                Complementary comp1 = new Complementary(shared1, otherAngle2, COMPLEMENT_NAME);
-                Complementary comp2 = new Complementary(shared2, otherAngle1, COMPLEMENT_NAME);
+                Complementary comp1 = new Complementary(shared1, otherAngle2);
+                Complementary comp2 = new Complementary(shared2, otherAngle1);
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, comp1));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, comp2));
+                newGrounded.Add(new EdgeAggregator(antecedent, comp1, compAnnotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, comp2, compAnnotation));
             }
             else if (relation1 is Supplementary && relation2 is Supplementary)
             {
-                Supplementary supp1 = new Supplementary(shared1, otherAngle2, SUPPLEMENT_NAME);
-                Supplementary supp2 = new Supplementary(shared2, otherAngle1, SUPPLEMENT_NAME);
+                Supplementary supp1 = new Supplementary(shared1, otherAngle2);
+                Supplementary supp2 = new Supplementary(shared2, otherAngle1);
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, supp1));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, supp2));
+                newGrounded.Add(new EdgeAggregator(antecedent, supp1, suppAnnotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, supp2, suppAnnotation));
             }
             else
             {
                 throw new ArgumentException("RelationsOfCongruent:: Expected a supplementary or complementary angle, not " + relation1.GetType());
             }
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcas));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcas, relation1 is Complementary ? compAnnotation : suppAnnotation));
 
             return newGrounded;
         }

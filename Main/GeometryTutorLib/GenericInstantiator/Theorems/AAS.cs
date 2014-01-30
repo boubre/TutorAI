@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AAS: Theorem
     {
         private readonly static string NAME = "AAS";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.AAS);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();
@@ -35,10 +36,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //    Congruent(Segment(C, A), Segment(F, D)),
         //    Congruent(Angle(A, C, B), Angle(D, F, E)) -> Congruent(Triangle(A, B, C), Triangle(D, E, F)),
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentSegments)
             {
@@ -118,10 +119,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Checks for ASA given the 5 values
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateAAS(Triangle tri1, Triangle tri2,
+        private static List<EdgeAggregator> InstantiateAAS(Triangle tri1, Triangle tri2,
                                                                                                CongruentAngles cas1, CongruentAngles cas2, CongruentSegments css)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // All congruence pairs must minimally relate the triangles
@@ -167,7 +168,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Construct the new clauses: congruent triangles and CPCTC
             //
-            GeometricCongruentTriangles gcts = new GeometricCongruentTriangles(new Triangle(triangleOne), new Triangle(triangleTwo), NAME);
+            GeometricCongruentTriangles gcts = new GeometricCongruentTriangles(new Triangle(triangleOne), new Triangle(triangleTwo));
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -177,7 +178,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(cas2);
             antecedent.Add(css);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcts));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcts, annotation));
 
             // Add all the corresponding parts as new congruent clauses
             newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(gcts, triangleOne, triangleTwo));
@@ -227,12 +228,12 @@ namespace GeometryTutorLib.GenericInstantiator
 //        //                                                                                          Congruent(Segment(A, C), Angle(D, F)),
 //        //                                                                                          Congruent(Angle(B, A, C), Angle(E, D, F)),
 //        //
-//        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+//        public static List<EdgeAggregator> Instantiate(GroundedClause c)
 //        {
 //            //
 //            // The list of new grounded clauses if they are deduced
 //            //
-//            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+//            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            // Do we have a segment or triangle?
 //            if (!(c is CongruentSegments) && !(c is CongruentAngles) && !(c is Triangle))
@@ -318,11 +319,11 @@ namespace GeometryTutorLib.GenericInstantiator
 //        //
 //        // Acquires all of the applicable congruent segments as well as congruent angles. Then checks for SAS
 //        //
-//        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckAAS(Triangle ct1, Triangle ct2,
+//        private static List<EdgeAggregator> CollectAndCheckAAS(Triangle ct1, Triangle ct2,
 //                                                                                                   List<CongruentSegments> applicSegments,
 //                                                                                                   List<CongruentAngles> applicAngles)
 //        {
-//            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+//            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
 //            // Has this congruence been established before? If so, do not deduce it again.
 //            //if (ct1.HasEstablishedCongruence(ct2) || ct2.HasEstablishedCongruence(ct1)) return newGrounded;
@@ -373,7 +374,7 @@ namespace GeometryTutorLib.GenericInstantiator
 //            antecedent.Add(ct1);
 //            antecedent.Add(ct2);
 
-//            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cts));
+//            newGrounded.Add(new EdgeAggregator(antecedent, cts));
 
 //            //
 //            // We should not add any new congruences to the graph (thus creating cycles)
@@ -396,7 +397,7 @@ namespace GeometryTutorLib.GenericInstantiator
 //        //
 //        // Acquires all of the applicable congruent segments as well as congruent angles. Then checks for SAS
 //        //
-//        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckAAS(Triangle ct1, Triangle ct2, Congruent cc)
+//        private static List<EdgeAggregator> CollectAndCheckAAS(Triangle ct1, Triangle ct2, Congruent cc)
 //        {
 //            List<CongruentSegments> applicSegments = new List<CongruentSegments>();
 //            List<CongruentAngles> applicAngles = new List<CongruentAngles>();

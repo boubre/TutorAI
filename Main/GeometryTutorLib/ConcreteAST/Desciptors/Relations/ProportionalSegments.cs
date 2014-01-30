@@ -15,12 +15,10 @@ namespace GeometryTutorLib.ConcreteAST
         public KeyValuePair<int, int> proportion { get; protected set; }
         public double dictatedProportion { get; protected set; }
 
-        public ProportionalSegments(Segment segment1, Segment segment2, string just) : base()
+        public ProportionalSegments(Segment segment1, Segment segment2) : base()
         {
             smallerSegment = segment1.Length < segment2.Length ? segment1 : segment2;
             largerSegment = segment1.Length < segment2.Length ? segment2 : segment1;
-
-            justification = just;
 
             proportion = Utilities.RationalRatio(segment1.Length, segment2.Length);
 
@@ -138,9 +136,13 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Convert an equation to a proportion: 2AM = MC -> Proportional(Segment(A, M), Segment(M, C))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateEquation(GroundedClause clause)
+        //
+        private static readonly string ATOM_NAME = "Atomic Segment Equations are Proportional";
+        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+
+        public static List<GenericInstantiator.EdgeAggregator> InstantiateEquation(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             if (!(clause is SegmentEquation)) return newGrounded;
 
@@ -157,10 +159,10 @@ namespace GeometryTutorLib.ConcreteAST
                     if (ratio.Key <= 2 && ratio.Value <= 2)
                     {
                         AlgebraicProportionalSegments prop = new AlgebraicProportionalSegments((Segment)flattened.lhsExps[0].DeepCopy(),
-                                                                                               (Segment)flattened.rhsExps[0].DeepCopy(), "Atomic Equations are Proportional");
+                                                                                               (Segment)flattened.rhsExps[0].DeepCopy());
 
                         List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
-                        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, prop));
+                        newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, prop, atomAnnotation));
                     }
                 }
             }
@@ -168,12 +170,14 @@ namespace GeometryTutorLib.ConcreteAST
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateTransitiveProportion(ProportionalSegments pss, CongruentSegments conSegs)
+        private static readonly string PROP_TRANS_NAME = "Segment Proportional / Congruence Transitivity";
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(ProportionalSegments pss, CongruentSegments conSegs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
-            // Did either of these proportions come from the other?
-            if (pss.HasRelationPredecessor(conSegs) || conSegs.HasRelationPredecessor(pss)) return newGrounded;
+            //// Did either of these proportions come from the other?
+            //if (pss.HasRelationPredecessor(conSegs) || conSegs.HasRelationPredecessor(pss)) return newGrounded;
 
             //
             // Create the antecedent clauses
@@ -187,13 +191,13 @@ namespace GeometryTutorLib.ConcreteAST
             //
             Segment shared = pss.SegmentShared(conSegs);
 
-            AlgebraicProportionalSegments newPS = new AlgebraicProportionalSegments(pss.OtherSegment(shared), conSegs.OtherSegment(shared), "Proportional / Congruence Transitivity");
+            AlgebraicProportionalSegments newPS = new AlgebraicProportionalSegments(pss.OtherSegment(shared), conSegs.OtherSegment(shared));
 
             // Update relationship among the congruence pairs to limit cyclic information generation
             //newPS.AddPredecessor(pss);
             //newPS.AddPredecessor(conSegs);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPS));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newPS, propAnnotation));
 
             return newGrounded;
         }
@@ -201,9 +205,12 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Convert a proportion to an equation: Proportional(Segment(A, M), Segment(M, C)) -> 2AM = MC
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateProportion(GroundedClause clause)
+        private static readonly string DEF_NAME = "Defintion of Proportional Segments";
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+
+        public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             if (!(clause is ProportionalSegments)) return newGrounded;
 
@@ -237,15 +244,15 @@ namespace GeometryTutorLib.ConcreteAST
             Equation newEquation = null;
             if (propSegs is AlgebraicProportionalSegments)
             {
-                newEquation = new AlgebraicSegmentEquation(lhs, rhs, "Defintion of Proportional Segments");
+                newEquation = new AlgebraicSegmentEquation(lhs, rhs);
             }
             else if (propSegs is GeometricProportionalSegments)
             {
-                newEquation = new GeometricSegmentEquation(lhs, rhs, "Defintion of Proportional Segments");
+                newEquation = new GeometricSegmentEquation(lhs, rhs);
             }
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(propSegs);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newEquation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newEquation, defAnnotation));
 
             return newGrounded;
         }

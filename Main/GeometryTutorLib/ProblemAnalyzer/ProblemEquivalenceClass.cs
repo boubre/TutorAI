@@ -10,13 +10,13 @@ namespace GeometryTutorLib.ProblemAnalyzer
     public class ProblemEquivalenceClass
     {
         // To access node value information; mapping problem values back to the Geometric Graph
-        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
-        public List<Problem> elements { get; private set; }
+        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
+        public List<Problem<Hypergraph.EdgeAnnotation>> elements { get; private set; }
 
-        public ProblemEquivalenceClass(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
+        public ProblemEquivalenceClass(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)
         {
             graph = g;
-            elements = new List<Problem>();
+            elements = new List<Problem<Hypergraph.EdgeAnnotation>>();
         }
 
         public int Size()
@@ -24,7 +24,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return elements.Count;
         }
 
-        public void Add(Problem p)
+        public void Add(Problem<Hypergraph.EdgeAnnotation> p)
         {
             elements.Add(p);
         }
@@ -32,7 +32,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Given a problem and query vector determine strict isomorphism between this problem and this partition of problems
         //
-        public bool IsStrictlyIsomorphic(Problem newProblem, QueryFeatureVector query)
+        public bool IsStrictlyIsomorphic(Problem<Hypergraph.EdgeAnnotation> newProblem, QueryFeatureVector query)
         {
             //
             // GOAL
@@ -102,32 +102,32 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return true;
         }
 
-        private bool AreEqualLength(Problem thisProblem, Problem thatProblem)
+        private bool AreEqualLength(Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return thisProblem.GetLength() == thatProblem.GetLength();
         }
 
-        private bool AreEqualWidth(Problem thisProblem, Problem thatProblem)
+        private bool AreEqualWidth(Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return thisProblem.GetWidth() == thatProblem.GetWidth();
         }
 
-        private bool AreEqualDeductiveSteps(Problem thisProblem, Problem thatProblem)
+        private bool AreEqualDeductiveSteps(Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return thisProblem.GetNumDeductiveSteps() == thatProblem.GetNumDeductiveSteps();
         }
 
-        private bool AreRangedEqualLength(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        private bool AreRangedEqualLength(QueryFeatureVector query, Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return query.lengthPartitions.GetPartitionIndex(thisProblem.GetLength()) == query.lengthPartitions.GetPartitionIndex(thatProblem.GetLength());
         }
 
-        private bool AreRangedEqualWidth(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        private bool AreRangedEqualWidth(QueryFeatureVector query, Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return query.widthPartitions.GetPartitionIndex(thisProblem.GetWidth()) == query.widthPartitions.GetPartitionIndex(thatProblem.GetWidth());
         }
 
-        private bool AreRangedEqualDeductiveSteps(QueryFeatureVector query, Problem thisProblem, Problem thatProblem)
+        private bool AreRangedEqualDeductiveSteps(QueryFeatureVector query, Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
         {
             return query.stepsPartitions.GetPartitionIndex(thisProblem.GetNumDeductiveSteps()) ==
                    query.stepsPartitions.GetPartitionIndex(thatProblem.GetNumDeductiveSteps());
@@ -414,7 +414,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             String retS = "";
 
-            foreach (Problem p in elements)
+            foreach (Problem<Hypergraph.EdgeAnnotation> p in elements)
             {
                 retS += p.ConstructProblemAndSolution(graph) + "\n\n";
             }

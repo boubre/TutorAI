@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     {
 
         private readonly static string NAME = "Hypotenuse Leg";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.HYPOTENUSE_LEG);
 
         private static List<RightTriangle> candidateRightTriangles = new List<RightTriangle>();
         private static List<CongruentSegments> candidateSegments = new List<CongruentSegments>();
@@ -39,10 +40,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Note: we need to figure out the proper order of the sides to guarantee congruence
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentSegments)
             {
@@ -160,15 +161,15 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Acquires all of the applicable congruent segments; then checks HL
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(RightTriangle rt1, RightTriangle rt2, CongruentSegments css1, CongruentSegments css2)
+        private static List<EdgeAggregator> ReconfigureAndCheck(RightTriangle rt1, RightTriangle rt2, CongruentSegments css1, CongruentSegments css2)
         {
             return CollectAndCheckHL(rt1, rt2, css1, css2, rt1, rt2);
         }
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(RightTriangle rt1,  Strengthened streng, CongruentSegments css1, CongruentSegments css2)
+        private static List<EdgeAggregator> ReconfigureAndCheck(RightTriangle rt1,  Strengthened streng, CongruentSegments css1, CongruentSegments css2)
         {
             return CollectAndCheckHL(rt1, streng.strengthened as RightTriangle, css1, css2, rt1, streng);
         }
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> ReconfigureAndCheck(Strengthened streng1,  Strengthened streng2, CongruentSegments css1, CongruentSegments css2)
+        private static List<EdgeAggregator> ReconfigureAndCheck(Strengthened streng1,  Strengthened streng2, CongruentSegments css1, CongruentSegments css2)
         {
             return CollectAndCheckHL(streng1.strengthened as RightTriangle, streng2.strengthened as RightTriangle, css1, css2, streng1, streng2);
         }
@@ -176,11 +177,11 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Acquires all of the applicable congruent segments; then checks HL
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckHL(RightTriangle rt1, RightTriangle rt2, 
+        private static List<EdgeAggregator> CollectAndCheckHL(RightTriangle rt1, RightTriangle rt2, 
                                                                                                   CongruentSegments css1, CongruentSegments css2,
                                                                                                   GroundedClause original1, GroundedClause original2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The Congruence pairs must relate the two triangles
             if (!css1.LinksTriangles(rt1, rt2) || !css2.LinksTriangles(rt1, rt2)) return newGrounded;
@@ -230,7 +231,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Construct the new deduced relationships
             //
             GeometricCongruentTriangles ccts = new GeometricCongruentTriangles(new Triangle(triangleOne),
-                                                                               new Triangle(triangleTwo), NAME);
+                                                                               new Triangle(triangleTwo));
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -239,7 +240,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(css1);
             antecedent.Add(css2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccts));
+            newGrounded.Add(new EdgeAggregator(antecedent, ccts, annotation));
 
             // Add all the corresponding parts as new congruent clauses
             newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(ccts, triangleOne, triangleTwo));

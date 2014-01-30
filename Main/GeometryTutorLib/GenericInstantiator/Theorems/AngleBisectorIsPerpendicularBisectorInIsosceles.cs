@@ -9,8 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorIsPerpendicularBisectorInIsosceles : Theorem
     {
         private readonly static string NAME = "The bisector of the vertex angle of an isosceles triangle is perpendicular to the base at its midpoint.";
-
-        public AngleBisectorIsPerpendicularBisectorInIsosceles() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES);
 
         private static List<IsoscelesTriangle> candidateIsosceles = new List<IsoscelesTriangle>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
@@ -39,9 +38,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //         \|/
         //          C
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Strengthened) && !(c is IsoscelesTriangle) && !(c is AngleBisector) && !(c is Intersection)) return newGrounded;
 
@@ -108,9 +107,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GeneratePerpendicularBisector(GroundedClause tri, AngleBisector ab, Intersection inter)
+        public static List<GenericInstantiator.EdgeAggregator> GeneratePerpendicularBisector(GroundedClause tri, AngleBisector ab, Intersection inter)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             IsoscelesTriangle isoTri = (tri is Strengthened ? (tri as Strengthened).strengthened : tri) as IsoscelesTriangle;
 
@@ -134,17 +133,9 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(ab);
             antecedent.Add(inter);
 
-            //
             // PerpendicularBisector(M, Segment(M, C), Segment(A, B))
-            //
-            Strengthened newPerpB = new Strengthened(inter, new PerpendicularBisector(inter, ab.bisector, NAME), NAME);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPerpB));
-
-            //
-            // Midpoint(M, Segment(A, B))
-            //
-            //Midpoint midpt = new Midpoint(inter.intersect, isoTri.baseSegment, NAME);
-            //newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, midpt));
+            Strengthened newPerpB = new Strengthened(inter, new PerpendicularBisector(inter, ab.bisector));
+            newGrounded.Add(new EdgeAggregator(antecedent, newPerpB, annotation));
 
             return newGrounded;
         }

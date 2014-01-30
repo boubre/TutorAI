@@ -7,16 +7,12 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class GeometricParallel : Parallel
     {
-        public GeometricParallel(Segment segment1, Segment segment2, string just) : base(segment1, segment2, just) {}
+        public GeometricParallel(Segment segment1, Segment segment2) : base(segment1, segment2) {}
 
         public override bool IsAlgebraic() { return false; }
         public override bool IsGeometric() { return true; }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(Object obj)
         {

@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
     //
     public class GeometricCongruentSegments : CongruentSegments
     {
-        public GeometricCongruentSegments(Segment s1, Segment s2, string just) : base(s1, s2, just) { }
+        public GeometricCongruentSegments(Segment s1, Segment s2) : base(s1, s2) { }
 
         public override bool IsAlgebraic() { return false; }
         public override bool IsGeometric() { return true; }

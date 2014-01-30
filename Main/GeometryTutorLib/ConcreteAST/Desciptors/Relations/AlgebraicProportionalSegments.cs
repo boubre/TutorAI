@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public class AlgebraicProportionalSegments : ProportionalSegments
     {
-        public AlgebraicProportionalSegments(Segment segment1, Segment segment2, string just) : base(segment1, segment2, just) { }
+        public AlgebraicProportionalSegments(Segment segment1, Segment segment2) : base(segment1, segment2) { }
 
         public override bool IsAlgebraic() { return true; }
         public override bool IsGeometric() { return false; }
@@ -30,7 +30,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "AlgebraicProportional(" + largerSegment.ToString() + " < " + dictatedProportion + " > " + smallerSegment.ToString() + "): " + justification;
+            return "AlgebraicProportional(" + largerSegment.ToString() + " < " + dictatedProportion + " > " + smallerSegment.ToString() + ") " + justification;
         }
     }
 }

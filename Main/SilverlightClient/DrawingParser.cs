@@ -129,9 +129,9 @@ namespace LiveGeometry
                             figures.Add(new GeometryTutorLib.ConcreteAST.Segment(intersection, segments[i].Point2));
                             figures.Add(new GeometryTutorLib.ConcreteAST.Segment(segments[j].Point1, intersection));
                             figures.Add(new GeometryTutorLib.ConcreteAST.Segment(intersection, segments[j].Point2));
-                            figures.Add(new GeometryTutorLib.ConcreteAST.InMiddle(intersection, segments[i], "Intrinsic"));
-                            figures.Add(new GeometryTutorLib.ConcreteAST.InMiddle(intersection, segments[j], "Intrinsic"));
-                            figures.Add(new GeometryTutorLib.ConcreteAST.Intersection(intersection, segments[i], segments[j], "Intrinsic"));
+                            figures.Add(new GeometryTutorLib.ConcreteAST.InMiddle(intersection, segments[i]));
+                            figures.Add(new GeometryTutorLib.ConcreteAST.InMiddle(intersection, segments[j]));
+                            figures.Add(new GeometryTutorLib.ConcreteAST.Intersection(intersection, segments[i], segments[j]));
                         }
                     }
                 }
@@ -186,11 +186,11 @@ namespace LiveGeometry
                     {
                         if (isMidpoint(segment.Point1, point, segment.Point2))
                         {
-                            clauses.Add(new GeometryTutorLib.ConcreteAST.Midpoint(point, segment, "Given"));
+                            clauses.Add(new GeometryTutorLib.ConcreteAST.Midpoint(new GeometryTutorLib.ConcreteAST.InMiddle(point, segment)));
                         }
                         else
                         {
-                            clauses.Add(new GeometryTutorLib.ConcreteAST.InMiddle(point, segment, "Intrinsic"));
+                            clauses.Add(new GeometryTutorLib.ConcreteAST.InMiddle(point, segment));
                         }
                     }
                 }
@@ -249,7 +249,7 @@ namespace LiveGeometry
             for (int i = 0; i < segments.Length - 1; i++)
                 for (int j = i + 1; j < segments.Length; j++)
                     if (segments[i].Length == segments[j].Length)
-                        clauses.Add(new GeometryTutorLib.ConcreteAST.GeometricCongruentSegments(segments[i], segments[j], "Given"));
+                        clauses.Add(new GeometryTutorLib.ConcreteAST.GeometricCongruentSegments(segments[i], segments[j]));
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace LiveGeometry
                     {
                         parseController.addDialog("Is point " + mid + " a midpoint?",
                             "Disambiguate Midpoint",
-                            () => clauses.Add(new GeometryTutorLib.ConcreteAST.Midpoint(mid, im.segment, "Given")),
+                            () => clauses.Add(new GeometryTutorLib.ConcreteAST.Midpoint(new GeometryTutorLib.ConcreteAST.InMiddle(mid, im.segment))),
                             () => { }
                         );
                     }
@@ -307,7 +307,7 @@ namespace LiveGeometry
                             else if (segments[k].Point1.Equals(segments[i].Point2) && segments[k].Point2.Equals(segments[j].Point2) ||
                                 segments[k].Point1.Equals(segments[j].Point2) && segments[k].Point2.Equals(segments[i].Point2))
                             {
-                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k], "intrinsic"));
+                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k]));
                                 break;
                             }
                         }
@@ -320,7 +320,7 @@ namespace LiveGeometry
                             else if (segments[k].Point1.Equals(segments[i].Point2) && segments[k].Point2.Equals(segments[j].Point1) ||
                                 segments[k].Point1.Equals(segments[j].Point1) && segments[k].Point2.Equals(segments[i].Point2))
                             {
-                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k], "intrinsic"));
+                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k]));
                                 break;
                             }
                         }
@@ -333,7 +333,7 @@ namespace LiveGeometry
                             else if (segments[k].Point1.Equals(segments[i].Point1) && segments[k].Point2.Equals(segments[j].Point2) ||
                                 segments[k].Point1.Equals(segments[j].Point2) && segments[k].Point2.Equals(segments[i].Point1))
                             {
-                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k], "intrinsic"));
+                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k]));
                                 break;
                             }
                         }
@@ -346,7 +346,7 @@ namespace LiveGeometry
                             else if (segments[k].Point1.Equals(segments[i].Point1) && segments[k].Point2.Equals(segments[j].Point1) ||
                                 segments[k].Point1.Equals(segments[j].Point1) && segments[k].Point2.Equals(segments[i].Point1))
                             {
-                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k], "intrinsic"));
+                                clauses.Add(new GeometryTutorLib.ConcreteAST.Triangle(segments[i], segments[j], segments[k]));
                                 break;
                             }
                         }
@@ -433,7 +433,7 @@ namespace LiveGeometry
                     "Disambiguate Isosceles",
                     () => 
                     {
-                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.IsoscelesTriangle(csegs[0], csegs[1], csegs[2], "Given");
+                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.IsoscelesTriangle(csegs[0], csegs[1], csegs[2]);
                         parsed.Add(pgon, t);
                         if (t.isRightTriangle())
                         {
@@ -445,7 +445,7 @@ namespace LiveGeometry
                     },
                     () => 
                     {
-                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2], "Given");
+                        GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2]);
                         parsed.Add(pgon, t);
                         if (t.isRightTriangle())
                         {

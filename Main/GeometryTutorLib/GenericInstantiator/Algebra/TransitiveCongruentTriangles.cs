@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransitiveCongruentTriangles : GenericRule
     {
         private static readonly string NAME = "Transitivity of Congruent Triangles";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES);
 
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentTriangles> candidateGeoCongruentTriangles = new List<GeometricCongruentTriangles>();
@@ -34,9 +35,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //     G + A -> A
         //     A + A -X> A  <- Not allowed
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is GeometricCongruentTriangles)
             {
@@ -69,9 +70,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateTransitive(CongruentTriangles cts1, CongruentTriangles cts2)
+        public static List<EdgeAggregator> InstantiateTransitive(CongruentTriangles cts1, CongruentTriangles cts2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Dictionary<Point, Point> firstTriangleCorrespondence = cts1.HasTriangle(cts2.ct1);
             Dictionary<Point, Point> secondTriangleCorrespondence = cts1.HasTriangle(cts2.ct2);
@@ -113,13 +114,13 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Create the new congruence
             //
-            AlgebraicCongruentTriangles acts = new AlgebraicCongruentTriangles(new Triangle(triOne), new Triangle(triTwo), NAME);
+            AlgebraicCongruentTriangles acts = new AlgebraicCongruentTriangles(new Triangle(triOne), new Triangle(triTwo));
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(cts1);
             antecedent.Add(cts2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, acts));
+            newGrounded.Add(new EdgeAggregator(antecedent, acts, annotation));
 
             return newGrounded;
         }

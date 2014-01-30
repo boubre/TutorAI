@@ -9,8 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MidpointDefinition : Definition
     {
         private readonly static string NAME = "Definition of Midpoint";
-
-        public MidpointDefinition() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.MIDPOINT_DEFINITION);
 
         public static void Clear()
         {
@@ -32,9 +31,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // Forward is Midpoint -> Congruent Clause
         // Backward is Congruent -> Midpoint Clause
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Midpoint || clause is Strengthened || clause is InMiddle)
             {
@@ -53,9 +52,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
         // Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B)); This implies: AM = MB
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMidpoint(GroundedClause clause)
+        private static List<EdgeAggregator> InstantiateFromMidpoint(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is InMiddle && !(clause is Midpoint))
             {
@@ -100,9 +99,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
             return newGrounded;
         }
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMidpoint(InMiddle im, Midpoint midpt, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateFromMidpoint(InMiddle im, Midpoint midpt, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Does this ImMiddle apply to this midpoint?
             if (!im.point.StructurallyEquals(midpt.point)) return newGrounded;
@@ -112,22 +111,22 @@ namespace GeometryTutorLib.GenericInstantiator
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
             // Backward: Midpoint(M, Segment(A, B)) -> InMiddle(A, M, B)
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, im));
+            newGrounded.Add(new EdgeAggregator(antecedent, im, annotation));
 
             //
             // Forward: Midpoint(M, Segment(A, B)) -> Congruent(Segment(A,M), Segment(M,B))
             //
             Segment left = new Segment(midpt.segment.Point1, midpt.point);
             Segment right = new Segment(midpt.point, midpt.segment.Point2);
-            GeometricCongruentSegments ccss = new GeometricCongruentSegments(left, right, NAME);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+            GeometricCongruentSegments ccss = new GeometricCongruentSegments(left, right);
+            newGrounded.Add(new EdgeAggregator(antecedent, ccss, annotation));
 
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMidpoint(GroundedClause clause)
+        private static List<EdgeAggregator> InstantiateToMidpoint(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is InMiddle && !(clause is Midpoint))
             {
@@ -167,9 +166,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Congruent(Segment(A, M), Segment(M, B)) -> Midpoint(M, Segment(A, B))
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMidpoint(InMiddle im, CongruentSegments css)
+        private static List<EdgeAggregator> InstantiateToMidpoint(InMiddle im, CongruentSegments css)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Point midpoint = css.cs1.SharedVertex(css.cs2);
 
@@ -180,14 +179,14 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment overallSegment = new Segment(css.cs1.OtherPoint(midpoint), css.cs2.OtherPoint(midpoint));
             if (!im.segment.StructurallyEquals(overallSegment)) return newGrounded;
 
-            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im, NAME), NAME); 
+            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im)); 
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(im);
             antecedent.Add(css);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
+            newGrounded.Add(new EdgeAggregator(antecedent, newMidpoint, annotation));
 
             return newGrounded;
         }

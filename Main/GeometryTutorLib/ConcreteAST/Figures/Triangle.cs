@@ -41,9 +41,8 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="a">The segment opposite point a</param>
         /// <param name="b">The segment opposite point b</param>
         /// <param name="c">The segment opposite point c</param>
-        public Triangle(Segment a, Segment b, Segment c, string just) : base()
+        public Triangle(Segment a, Segment b, Segment c) : base()
         {
-            justification = just;
             SegmentA = a;
             SegmentB = b;
             SegmentC = c;
@@ -70,34 +69,7 @@ namespace GeometryTutorLib.ConcreteAST
             addSuperFigureToDependencies();
         }
 
-        public Triangle(Point a, Point b, Point c) : base()
-        {
-            Point1 = a;
-            Point2 = b;
-            Point3 = c;
-
-            SegmentA = new Segment(a, b);
-            SegmentB = new Segment(a, c);
-            SegmentC = new Segment(b, c);
-
-            AngleA = new Angle(Point1, Point2, Point3);
-            AngleB = new Angle(Point2, Point3, Point1);
-            AngleC = new Angle(Point3, Point1, Point2);
-
-            isRight = isRightTriangle();
-            provenRight = false;
-            givenRight = false;
-            isIsosceles = IsIsosceles();
-            provenIsosceles = false;
-            isEquilateral = IsEquilateral();
-            provenEquilateral = false;
-
-            congruencePairs = new List<Triangle>();
-            similarPairs = new List<Triangle>();
-
-            addSuperFigureToDependencies();
-        }
-
+        public Triangle(Point a, Point b, Point c) : this(new Segment(a, b), new Segment(b, c), new Segment(a, c)) { }
         public Triangle(List<Point> pts) : this(pts[0], pts[1], pts[2]) { }
 
         protected void addSuperFigureToDependencies()
@@ -524,28 +496,31 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // RightTriangle(A, B, C) -> Segment(A, B), Segment(B, C), Segment(A, C), m\angle ABC = 90^o
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        private static readonly string INTRINSIC_NAME = "Intrinsic";
+        private static Hypergraph.EdgeAnnotation intrinsicAnnotation = new Hypergraph.EdgeAnnotation(INTRINSIC_NAME, true);
+
+        public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             Triangle tri = c as Triangle;
             if (tri == null) return newGrounded;
 
             // Generate the FOL for segments
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(tri);
-            tri.SegmentA.SetJustification("Intrinsic");
-            tri.SegmentB.SetJustification("Intrinsic");
-            tri.SegmentC.SetJustification("Intrinsic");
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentA));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentB));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.SegmentC));
+            //tri.SegmentA.SetJustification("Intrinsic");
+            //tri.SegmentB.SetJustification("Intrinsic");
+            //tri.SegmentC.SetJustification("Intrinsic");
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.SegmentA, intrinsicAnnotation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.SegmentB, intrinsicAnnotation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.SegmentC, intrinsicAnnotation));
 
-            tri.AngleA.SetJustification("Intrinsic");
-            tri.AngleB.SetJustification("Intrinsic");
-            tri.AngleC.SetJustification("Intrinsic");
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleA));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleB));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, tri.AngleC));
+            //tri.AngleA.SetJustification("Intrinsic");
+            //tri.AngleB.SetJustification("Intrinsic");
+            //tri.AngleC.SetJustification("Intrinsic");
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.AngleA, intrinsicAnnotation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.AngleB, intrinsicAnnotation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, tri.AngleC, intrinsicAnnotation));
 
             // If this is a right triangle, generate the FOL equation
             if (tri.provenRight)
@@ -783,7 +758,7 @@ namespace GeometryTutorLib.ConcreteAST
                 //
                 if (thatTriangle.isEquilateral)
                 {
-                    strengthened.Add(new Strengthened(thatTriangle, new EquilateralTriangle(thatTriangle, "Precomputed"), "Precomputed"));
+                    strengthened.Add(new Strengthened(thatTriangle, new EquilateralTriangle(thatTriangle)));
                 }
 
                 //
@@ -791,7 +766,7 @@ namespace GeometryTutorLib.ConcreteAST
                 //
                 if (thatTriangle.isRight)
                 {
-                    strengthened.Add(new Strengthened(thatTriangle, new RightTriangle(thatTriangle, "Precomputed"), "Precomputed"));
+                    strengthened.Add(new Strengthened(thatTriangle, new RightTriangle(thatTriangle)));
                 }
 
                 return strengthened;
@@ -802,7 +777,7 @@ namespace GeometryTutorLib.ConcreteAST
             //
             if (thatTriangle.isIsosceles)
             {
-                strengthened.Add(new Strengthened(thatTriangle, new IsoscelesTriangle(thatTriangle, "Precomputed"), "Precomputed"));
+                strengthened.Add(new Strengthened(thatTriangle, new IsoscelesTriangle(thatTriangle)));
             }
 
             //
@@ -810,7 +785,7 @@ namespace GeometryTutorLib.ConcreteAST
             //
             if (thatTriangle.isEquilateral)
             {
-                strengthened.Add(new Strengthened(thatTriangle, new EquilateralTriangle(thatTriangle, "Precomputed"), "Precomputed"));
+                strengthened.Add(new Strengthened(thatTriangle, new EquilateralTriangle(thatTriangle)));
             }
 
             //
@@ -820,7 +795,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 if (thatTriangle.isRight)
                 {
-                    strengthened.Add(new Strengthened(thatTriangle, new RightTriangle(thatTriangle, "Precomputed"), "Precomputed"));
+                    strengthened.Add(new Strengthened(thatTriangle, new RightTriangle(thatTriangle)));
                 }
             }
 

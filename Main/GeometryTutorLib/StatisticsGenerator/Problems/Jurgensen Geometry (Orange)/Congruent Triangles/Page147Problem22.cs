@@ -31,30 +31,30 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts.Add(b);
 			pts.Add(e);
 			pts.Add(d);
-			Collinear coll1 = new Collinear(pts, "Intrinsic");
+			Collinear coll1 = new Collinear(pts);
 
 			List<Point> pts2 = new List<Point>();
 			pts2.Add(b);
 			pts2.Add(m);
 			pts2.Add(c);
-			Collinear coll2 = new Collinear(pts2, "Intrinsic");
+			Collinear coll2 = new Collinear(pts2);
 
 			List<Point> pts3 = new List<Point>();
 			pts3.Add(d);
 			pts3.Add(c);
 			pts3.Add(f);
-			Collinear coll3 = new Collinear(pts3, "Intrinsic");
+			Collinear coll3 = new Collinear(pts3);
 
 			intrinsic.AddRange(GenerateSegmentClauses(coll1));
 			intrinsic.AddRange(GenerateSegmentClauses(coll2));
 			intrinsic.AddRange(GenerateSegmentClauses(coll3));
 			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 			
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(m, c)), "Given"));
-			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, d, a)), GetProblemAngle(intrinsic, new Angle(a, d, c)), "Given"));		
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ab), GetProblemSegment(intrinsic, ae), GetProblemSegment(intrinsic, new Segment(b, e)), "Given"));
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, am), GetProblemSegment(intrinsic, new Segment(m, c)), "Given"));
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, af), GetProblemSegment(intrinsic, new Segment(c, f)), "Given"));
+			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(m, c))));
+			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, d, a)), GetProblemAngle(intrinsic, new Angle(a, d, c))));		
+			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ab), GetProblemSegment(intrinsic, ae), GetProblemSegment(intrinsic, new Segment(b, e))));
+			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, am), GetProblemSegment(intrinsic, new Segment(m, c))));
+			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, af), GetProblemSegment(intrinsic, new Segment(c, f))));
             
 		}
 	}

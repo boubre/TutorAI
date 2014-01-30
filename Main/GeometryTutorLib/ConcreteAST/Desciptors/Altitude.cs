@@ -10,11 +10,10 @@ namespace GeometryTutorLib.ConcreteAST
         public Triangle triangle { get; private set; }
         public Segment segment { get; private set; }
 
-        public Altitude(Triangle tri, Segment alt, string just) : base()
+        public Altitude(Triangle tri, Segment alt) : base()
         {
             triangle = tri;
             segment = alt;
-            justification = just;
         }
 
         // Does this altitude cover the given clause

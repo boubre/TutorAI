@@ -12,13 +12,11 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment rhs { get; protected set; }
 
         public Intersection() : base() { }
-
-        public Intersection(Point i, Segment l, Segment r, string just) : base()
+        public Intersection(Point i, Segment l, Segment r) : base()
         {
             intersect = i;
             lhs = l;
             rhs = r;
-            justification = just;
         }
 
         //

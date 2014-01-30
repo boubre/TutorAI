@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TwoPairsCongruentAnglesImplyThirdPairCongruent : Theorem
     {
         private readonly static string NAME = "Two pairs of Congruent Angles in two triangles imply third pair of triangles are congruent.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateCongruent = new List<CongruentAngles>();
@@ -32,9 +33,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //    Congruent(Angle(A, B, C), Angle(D, E, F)),
         //    Congruent(Angle(A, C, B), Angle(D, F, E)) -> Congruent(Angle(B, A, C), Angle(E, D, F)),
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have a segment or triangle?
             if (!(c is CongruentAngles) && !(c is Triangle)) return newGrounded;
@@ -87,9 +88,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Acquires all of the applicable congruent segments as well as congruent angles. Then checks for SAS
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateThirdCongruentPair(Triangle tri1, Triangle tri2, CongruentAngles cas1, CongruentAngles cas2)
+        private static List<EdgeAggregator> CheckAndGenerateThirdCongruentPair(Triangle tri1, Triangle tri2, CongruentAngles cas1, CongruentAngles cas2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // We have eliminated all reflexive relationships at this point
 
@@ -109,7 +110,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Angle thirdAngle1 = tri1.OtherAngle(firstAngleTri1, secondAngleTri1);
             Angle thirdAngle2 = tri2.OtherAngle(firstAngleTri2, secondAngleTri2);
 
-            CongruentAngles newCas = new CongruentAngles(thirdAngle1, thirdAngle2, NAME);
+            CongruentAngles newCas = new CongruentAngles(thirdAngle1, thirdAngle2);
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -118,7 +119,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(cas1);
             antecedent.Add(cas2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newCas));
+            newGrounded.Add(new EdgeAggregator(antecedent, newCas, annotation));
 
             return newGrounded;
         }

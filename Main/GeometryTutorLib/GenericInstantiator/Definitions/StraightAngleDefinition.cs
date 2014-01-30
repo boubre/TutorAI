@@ -8,6 +8,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class StraightAngleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Straight Angle";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.STRAIGHT_ANGLE_DEFINITION);
 
         public StraightAngleDefinition() { }
 
@@ -16,29 +17,22 @@ namespace GeometryTutorLib.GenericInstantiator
         // All angles will have measure 180^o
         // There will be nC3 resulting clauses.
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            if (!(c is Collinear)) return newGrounded;
-
-            Collinear cc = c as Collinear;
+            Collinear cc = clause as Collinear;
+            if (cc == null) return newGrounded;
 
             for (int i = 0; i < cc.points.Count - 2; i++)
             {
                 for (int j = i + 1; j < cc.points.Count - 1; j++)
                 {
-                    if (i != j)
+                    for (int k = j + 1; k < cc.points.Count; k++)
                     {
-                        for (int k = j + 1; k < cc.points.Count; k++)
-                        {
-                            if (j != k)
-                            {
-                                Angle newAngle = new Angle(cc.points[i], cc.points[j], cc.points[k]);
-                                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cc);
-                                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAngle));
-                            }
-                        }
+                        Angle newAngle = new Angle(cc.points[i], cc.points[j], cc.points[k]);
+                        List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(cc);
+                        newGrounded.Add(new EdgeAggregator(antecedent, newAngle, annotation));
                     }
                 }
             }

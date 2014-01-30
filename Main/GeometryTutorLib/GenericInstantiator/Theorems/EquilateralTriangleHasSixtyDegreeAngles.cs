@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class EquilateralTriangleHasSixtyDegreeAngles : Theorem
     {
         private readonly static string NAME = "An equilateral triangle has three sixty degree angles.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.EQUILATERAL_TRIANGLE_HAS_SIXTY_DEGREE_ANGLES);
 
         public EquilateralTriangleHasSixtyDegreeAngles() { }
 
@@ -18,9 +19,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                 Equation(m \angle CAB = 60)
         //
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is EquilateralTriangle) && !(c is Strengthened)) return newGrounded;
 
@@ -39,13 +40,13 @@ namespace GeometryTutorLib.GenericInstantiator
             //                              -> Equation(m \angle ABC = 60),  
             //                                 Equation(m \angle BCA = 60),
             //                                 Equation(m \angle CAB = 60)
-            GeometricAngleEquation eq1 = new GeometricAngleEquation(eqTri.AngleA, new NumericValue(60), NAME);
-            GeometricAngleEquation eq2 = new GeometricAngleEquation(eqTri.AngleB, new NumericValue(60), NAME);
-            GeometricAngleEquation eq3 = new GeometricAngleEquation(eqTri.AngleC, new NumericValue(60), NAME);
+            GeometricAngleEquation eq1 = new GeometricAngleEquation(eqTri.AngleA, new NumericValue(60));
+            GeometricAngleEquation eq2 = new GeometricAngleEquation(eqTri.AngleB, new NumericValue(60));
+            GeometricAngleEquation eq3 = new GeometricAngleEquation(eqTri.AngleC, new NumericValue(60));
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq1));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq2));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, eq3));
+            newGrounded.Add(new EdgeAggregator(antecedent, eq1, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, eq2, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, eq3, annotation));
 
             return newGrounded;
         }

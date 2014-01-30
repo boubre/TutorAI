@@ -38,9 +38,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //     G + A -> A
         //     A + A -X> A  <- Not allowed
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have appropriate clauses?
             if (!(clause is Parallel) && !(clause is SimilarTriangles)) return newGrounded;
@@ -74,9 +74,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Parallel Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewParallelRelation(Parallel parallel)
+        private static List<EdgeAggregator> HandleNewParallelRelation(Parallel parallel)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricParallel gp in geoParallel)
@@ -99,9 +99,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive Parallel Lines
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateTransitiveParallelSegments(Parallel parallel1, Parallel parallel2)
+        private static List<EdgeAggregator> CreateTransitiveParallelSegments(Parallel parallel1, Parallel parallel2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If there is a deduction relationship between the given congruences, do not perform another substitution
             // CTA: remove?
@@ -137,9 +137,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of SimilarTriangles Segments
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> HandleNewSimilarTrianglesRelation(SimilarTriangles simTris)
+        private static List<EdgeAggregator> HandleNewSimilarTrianglesRelation(SimilarTriangles simTris)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricSimilarTriangles gsts in geoSimilarTriangles)
@@ -162,9 +162,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive SimilarTriangles Lines
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateTransitiveSimilarTriangles(SimilarTriangles simTris1, SimilarTriangles simTris2)
+        private static List<EdgeAggregator> CreateTransitiveSimilarTriangles(SimilarTriangles simTris1, SimilarTriangles simTris2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If there is a deduction relationship between the given congruences, do not perform another substitution
             // CTA: remove?

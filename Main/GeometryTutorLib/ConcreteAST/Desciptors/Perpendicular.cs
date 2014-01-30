@@ -9,9 +9,7 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public Intersection originalInter { get; private set; }
 
-        //public Perpendicular(Point i, Segment l, Segment r, string just) : base(i, l, r, just) { }
-        public Perpendicular(Intersection inter, String just)
-            : base(inter.intersect, inter.lhs, inter.rhs, just)
+        public Perpendicular(Intersection inter) : base(inter.intersect, inter.lhs, inter.rhs)
         {
             originalInter = inter;
         }

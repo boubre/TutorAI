@@ -9,13 +9,14 @@ namespace GeometryTutorLib.GenericInstantiator
     public class PerpendicularBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Perpendicular Bisector";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION);
 
         //
         // PerpendicularBisector(Intersection(X, Segment(A, B), Segment(C, D)), Bisector(Segment(C, D))) ->
         //                         Perpendicular(Intersection(X, Segment(A, B), Segment(C, D)), Bisector(Segment(C, D))),
         //                         SegmentBisector(Intersection(X, Segment(A, B), Segment(C, D)), Bisector(Segment(C, D)))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             if (clause is PerpendicularBisector) return InstantiateFromPerpendicularBisector(clause, clause as PerpendicularBisector);
 
@@ -24,20 +25,20 @@ namespace GeometryTutorLib.GenericInstantiator
                 return InstantiateFromPerpendicularBisector(clause, (clause as Strengthened).strengthened as PerpendicularBisector);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicularBisector(GroundedClause original, PerpendicularBisector pb)
+        public static List<EdgeAggregator> InstantiateFromPerpendicularBisector(GroundedClause original, PerpendicularBisector pb)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
 
-            Strengthened streng1 = new Strengthened(pb.originalInter, new Perpendicular(pb.originalInter, NAME), NAME);
-            Strengthened streng2 = new Strengthened(pb.originalInter, new SegmentBisector(pb.originalInter, pb.bisector, NAME), NAME);
+            Strengthened streng1 = new Strengthened(pb.originalInter, new Perpendicular(pb.originalInter));
+            Strengthened streng2 = new Strengthened(pb.originalInter, new SegmentBisector(pb.originalInter, pb.bisector));
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng1));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng2));
+            newGrounded.Add(new EdgeAggregator(antecedent, streng1, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, streng2, annotation));
 
             return newGrounded;
         }

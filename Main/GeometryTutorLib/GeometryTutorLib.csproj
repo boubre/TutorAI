@@ -58,7 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
+    <Compile Include="GenericInstantiator\JustificationSwitch.cs" />
     <Compile Include="GenericInstantiator\Definitions\SupplementaryDefinition.cs" />
+    <Compile Include="GenericInstantiator\EdgeAggregator.cs" />
+    <Compile Include="Hypergraph\EdgeAnnotation.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
     <Compile Include="StatisticsGenerator\ActualProblem.cs" />
@@ -135,7 +138,9 @@
     <Compile Include="StatisticsGenerator\Problems\Holt McDougall Geometry\Transversals\Page197Problem35.cs" />
     <Compile Include="StatisticsGenerator\Problems\Holt McDougall Geometry\Transversals\Page197Problem36.cs" />
     <Compile Include="StatisticsGenerator\Problems\Holt McDougall Geometry\Transversals\Page197Problem37.cs" />
-    <Compile Include="StatisticsGenerator\Problems\Indian Text\Backup.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage119Problem5.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage119Problem3.cs" />
+    <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage119Problem2.cs" />
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage120Problem8.cs" />
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage123Example5.cs" />
     <Compile Include="StatisticsGenerator\Problems\Indian Text\Congruent Triangles\IPage123Example6.cs" />
@@ -354,12 +359,10 @@
     <Compile Include="ProblemAnalyzer\ProblemGradedIsomorphism.cs" />
     <Compile Include="ProblemAnalyzer\InterestingProblemCalculator.cs" />
     <Compile Include="ProblemAnalyzer\TemplateProblemGenerator.cs" />
-    <Compile Include="ProblemAnalyzer\GeneratorHashtable.cs" />
     <Compile Include="ProblemAnalyzer\QueryFeatureVector.cs" />
     <Compile Include="ProblemAnalyzer\PartitionedProblemSpace.cs" />
     <Compile Include="ProblemAnalyzer\ProblemEquivalenceClass.cs" />
     <Compile Include="ProblemAnalyzer\ProblemHashMap.cs" />
-    <Compile Include="ProblemAnalyzer\Path.cs" />
     <Compile Include="ProblemAnalyzer\PathGenerator.cs" />
     <Compile Include="Pebbler\PebblerHyperEdge.cs" />
     <Compile Include="Pebbler\PebblerHypergraph.cs" />

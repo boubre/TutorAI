@@ -13,11 +13,10 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment segment1 { get; private set; }
         public Segment segment2 { get; private set; }
 
-        public Parallel(Segment segment1, Segment segment2, string just) : base()
+        public Parallel(Segment segment1, Segment segment2) : base()
         {
             this.segment1 = segment1;
             this.segment2 = segment2;
-            justification = just;
 
             if (!segment1.IsParallelWith(segment2))
             {
@@ -92,13 +91,12 @@ namespace GeometryTutorLib.ConcreteAST
             return "Parallel(" + segment1.ToString() + ", " + segment2.ToString() + "): " + justification;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateTransitiveParallel(Parallel parallel1, Parallel parallel2)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        private static readonly string NAME = "Transitivity";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_PARALLEL);
 
-            // Did either of these congruences come from the other?
-            // CTA: We don't need this anymore since use is restricted by class TransitiveSubstitution
-            if (parallel1.HasRelationPredecessor(parallel2) || parallel2.HasRelationPredecessor(parallel1)) return newGrounded;
+        public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveParallel(Parallel parallel1, Parallel parallel2)
+        {
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             //
             // Create the antecedent clauses
@@ -112,9 +110,9 @@ namespace GeometryTutorLib.ConcreteAST
             //
             Segment shared = parallel1.SharedSegment(parallel2);
            
-            AlgebraicParallel newAP = new AlgebraicParallel(parallel1.OtherSegment(shared), parallel2.OtherSegment(shared), "Transitivity");
+            AlgebraicParallel newAP = new AlgebraicParallel(parallel1.OtherSegment(shared), parallel2.OtherSegment(shared));
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAP));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newAP, annotation));
 
             return newGrounded;
         }

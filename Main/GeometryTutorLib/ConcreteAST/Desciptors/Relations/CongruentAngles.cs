@@ -22,7 +22,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Deduced Node Information
         //
-        public CongruentAngles(Angle a1, Angle a2, string just) : base()
+        public CongruentAngles(Angle a1, Angle a2) : base()
         {
             if (!Utilities.CompareValues(a1.measure, a2.measure))
             {
@@ -31,7 +31,6 @@ namespace GeometryTutorLib.ConcreteAST
 
             ca1 = a1;
             ca2 = a2;
-            justification = just;
         }
 
         public override bool Covers(GroundedClause gc)
@@ -53,13 +52,6 @@ namespace GeometryTutorLib.ConcreteAST
         public override bool Equals(Object obj)
         {
             return this.StructurallyEquals(obj);
-
-            //CongruentAngles cas = obj as CongruentAngles;
-
-            //if (cas == null) return false;
-
-            //return base.Equals(obj) && ((ca1.Equals(cas.ca1) && ca2.Equals(cas.ca2)) ||
-            //                            (ca1.Equals(cas.ca2) && ca2.Equals(cas.ca1)));
         }
 
         public override bool IsReflexive()

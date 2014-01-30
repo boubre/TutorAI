@@ -63,7 +63,7 @@ namespace GeometryTestbed
                     problem.Run();
 
                     Debug.Write(++problemCount + "\t\t");
-                   // Debug.Write(problem.ToString() + "\n");
+                    Debug.Write(problem.ToString() + "\n");
                 }
             }
 

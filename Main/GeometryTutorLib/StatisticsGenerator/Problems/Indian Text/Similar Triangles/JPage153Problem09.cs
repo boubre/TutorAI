@@ -27,13 +27,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(b);
             pts.Add(d);
             pts.Add(c);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricProportionalSegments(GetProblemSegment(intrinsic, new Segment(b, d)), GetProblemSegment(intrinsic, new Segment(c, d)), "Given"));
-            given.Add(new GeometricProportionalSegments(ab, ac, "Given"));
+            given.Add(new GeometricProportionalSegments(GetProblemSegment(intrinsic, new Segment(b, d)), GetProblemSegment(intrinsic, new Segment(c, d))));
+            given.Add(new GeometricProportionalSegments(ab, ac));
         }
     }
 }

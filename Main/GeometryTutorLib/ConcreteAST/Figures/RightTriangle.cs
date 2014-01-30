@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public class RightTriangle : Triangle
     {
-        public RightTriangle(Segment a, Segment b, Segment c, string just) : base(a, b, c, just)
+        public RightTriangle(Segment a, Segment b, Segment c) : base(a, b, c)
         {
             provenRight = true;
 
@@ -19,7 +19,7 @@ namespace GeometryTutorLib.ConcreteAST
             rightAngle = Utilities.CompareValues(AngleC.measure, 90) ? AngleC : rightAngle;
         }
 
-        public RightTriangle(Triangle t, string just) : base(t.SegmentA, t.SegmentB, t.SegmentC, just)
+        public RightTriangle(Triangle t) : base(t.SegmentA, t.SegmentB, t.SegmentC)
         {
             provenRight = true;
 

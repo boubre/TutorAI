@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class AlgebraicProportionalAngles : ProportionalAngles
     {
-        public AlgebraicProportionalAngles(Angle angle1, Angle angle2, string just) : base(angle1, angle2, just) { }
+        public AlgebraicProportionalAngles(Angle angle1, Angle angle2) : base(angle1, angle2) { }
 
         public override bool IsAlgebraic() { return true; }
         public override bool IsGeometric() { return false; }

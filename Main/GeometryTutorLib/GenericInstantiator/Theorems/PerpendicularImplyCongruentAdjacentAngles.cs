@@ -7,13 +7,10 @@ using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
-
-
     public class PerpendicularImplyCongruentAdjacentAngles : Theorem
     {
         private readonly static string NAME = "Perpendicular Segments Imply Congruent Adjacent Angles";
-
-        public PerpendicularImplyCongruentAdjacentAngles() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_IMPLY_CONGRUENT_ADJACENT_ANGLES);
 
         private static List<Perpendicular> candPerpendicular = new List<Perpendicular>();
         private static List<Angle> candAngles = new List<Angle>();
@@ -34,10 +31,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                         / M
         //                                        /
         //                                       A
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Angle) && !(c is Perpendicular)) return newGrounded;
 
@@ -83,9 +80,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGeneratePerpendicularImplyCongruentAdjacent(Perpendicular perp, Angle angle1, Angle angle2)
+        private static List<EdgeAggregator> CheckAndGeneratePerpendicularImplyCongruentAdjacent(Perpendicular perp, Angle angle1, Angle angle2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!Utilities.CompareValues(angle1.measure, angle2.measure)) return newGrounded;
 
@@ -95,7 +92,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have perpendicular -> congruent angles scenario
             //
-            GeometricCongruentAngles gcas = new GeometricCongruentAngles(angle1, angle2, NAME);
+            GeometricCongruentAngles gcas = new GeometricCongruentAngles(angle1, angle2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -103,7 +100,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(angle1);
             antecedent.Add(angle2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcas));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcas, annotation));
 
             return newGrounded;
         }

@@ -10,6 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ParallelImplySameSideInteriorSupplementary : Theorem
     {
         private readonly static string NAME = "Same-Side Supplementary"; // "If two parallel lines are cut by a transversal, then Same-Side Interior Angles are Supplementary.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PARALLEL_IMPLY_SAME_SIDE_INTERIOR_SUPPLEMENTARY);
 
         public ParallelImplySameSideInteriorSupplementary() { }
 
@@ -39,10 +40,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                      / N
         //                                     A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Parallel) && !(c is Intersection)) return newGrounded;
 
@@ -80,9 +81,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateParallelImplySameSide(Intersection inter1, Intersection inter2, Parallel parallel)
+        private static List<EdgeAggregator> CheckAndGenerateParallelImplySameSide(Intersection inter1, Intersection inter2, Parallel parallel)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The two intersections should not be at the same vertex
             if (inter1.intersect.Equals(inter2.intersect)) return newGrounded;
@@ -242,9 +243,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //           bottom
         //
         //   Returns: <bottom, off>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateToppedFShape(Parallel parallel, Intersection inter1, Intersection inter2, Intersection bottom, Point off)
+        private static List<EdgeAggregator> GenerateToppedFShape(Parallel parallel, Intersection inter1, Intersection inter2, Intersection bottom, Point off)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Intersection top = inter1.Equals(bottom) ? inter2 : inter1;
 
@@ -266,7 +267,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(off, bottom.intersect, top.intersect),
-                                                   new Angle(sameSide, top.intersect, bottom.intersect), NAME);
+                                                   new Angle(sameSide, top.intersect, bottom.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -283,9 +284,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //   |
         //  down 
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFIntersection(Parallel parallel, Intersection inter1, Point off1, Intersection inter2, Point off2)
+        private static List<EdgeAggregator> InstantiateFIntersection(Parallel parallel, Intersection inter1, Point off1, Intersection inter2, Point off2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Point offEnd = null;
             Point offStands = null;
@@ -340,7 +341,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(offEnd, endpt.intersect, stands.intersect),
-                                                   new Angle(offStands, stands.intersect, endpt.intersect), NAME);
+                                                   new Angle(offStands, stands.intersect, endpt.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -355,9 +356,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         //     Inter 1       Inter 2
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiatePiIntersection(Parallel parallel, Intersection inter1, Point off1, Intersection inter2, Point off2)
+        private static List<EdgeAggregator> InstantiatePiIntersection(Parallel parallel, Intersection inter1, Point off1, Intersection inter2, Point off2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //Segment transversal = inter1.AcquireTransversal(inter2);
 
@@ -373,7 +374,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(off1, inter1.intersect, inter2.intersect),
-                                                   new Angle(off2, inter2.intersect, inter1.intersect), NAME);
+                                                   new Angle(off2, inter2.intersect, inter1.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -388,9 +389,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //              |_____ offStands     offStands _____|
         //
         // Returns <offStands, offCross>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateCrossedT(Parallel parallel, Intersection inter1, Intersection inter2, Point offStands, Point offCross)
+        private static List<EdgeAggregator> GenerateCrossedT(Parallel parallel, Intersection inter1, Intersection inter2, Point offStands, Point offCross)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Determine which is the crossing intersection and which stands on the endpoints
@@ -426,7 +427,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(offStands, standsInter.intersect, crossingInter.intersect),
-                                                   new Angle(sameSide, crossingInter.intersect, standsInter.intersect), NAME);
+                                                   new Angle(sameSide, crossingInter.intersect, standsInter.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -441,9 +442,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //   offThat   ______|
         //
         // Return <offThis, offThat>
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateSimpleC(Parallel parallel, Intersection inter1, Point offThis, Intersection inter2, Point offThat)
+        private static List<EdgeAggregator> GenerateSimpleC(Parallel parallel, Intersection inter1, Point offThis, Intersection inter2, Point offThat)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Generate the new supplement relationship
@@ -451,7 +452,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(offThis, inter1.intersect, inter2.intersect),
-                                                   new Angle(offThat, inter2.intersect, inter1.intersect), NAME);
+                                                   new Angle(offThat, inter2.intersect, inter1.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -463,9 +464,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                     |
         // leftStands     _____|_____    rightStands
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateFlying(Parallel parallel, Intersection inter1, Intersection inter2, Point offCross)
+        private static List<EdgeAggregator> GenerateFlying(Parallel parallel, Intersection inter1, Intersection inter2, Point offCross)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Determine which is the crossing intersection and which stands on the endpoints
@@ -514,11 +515,11 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(leftStands, standsInter.intersect, crossingInter.intersect),
-                                                   new Angle(leftCross, crossingInter.intersect, standsInter.intersect), NAME);
+                                                   new Angle(leftCross, crossingInter.intersect, standsInter.intersect));
             newSupps.Add(supp);
 
             supp = new Supplementary(new Angle(rightStands, standsInter.intersect, crossingInter.intersect),
-                                     new Angle(rightCross, crossingInter.intersect, standsInter.intersect), NAME);
+                                     new Angle(rightCross, crossingInter.intersect, standsInter.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
@@ -531,9 +532,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //         |         |
         //   leftBottom rightBottom
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateH(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        private static List<EdgeAggregator> GenerateH(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Segment transversal = crossingInterLeft.AcquireTransversal(crossingInterRight);
 
@@ -571,11 +572,11 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(leftTop, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                                   new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                                   new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect));
             newSupps.Add(supp);
 
             supp = new Supplementary(new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                     new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                     new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, crossingInterLeft, crossingInterRight);
@@ -588,9 +589,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //              |         |
         //         leftBottom rightBottom
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateDualCrossings(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
+        private static List<EdgeAggregator> GenerateDualCrossings(Parallel parallel, Intersection crossingInterLeft, Intersection crossingInterRight)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Segment transversal = crossingInterLeft.AcquireTransversal(crossingInterRight);
 
@@ -642,19 +643,19 @@ namespace GeometryTutorLib.GenericInstantiator
             List<Supplementary> newSupps = new List<Supplementary>();
 
             Supplementary supp = new Supplementary(new Angle(leftTop, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                                   new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                                   new Angle(rightTop, crossingInterRight.intersect, crossingInterLeft.intersect));
             newSupps.Add(supp);
 
             supp = new Supplementary(new Angle(leftBottom, crossingInterLeft.intersect, crossingInterRight.intersect),
-                                     new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect), NAME);
+                                     new Angle(rightBottom, crossingInterRight.intersect, crossingInterLeft.intersect));
             newSupps.Add(supp);
 
             return MakeHypergraphRelation(newSupps, parallel, crossingInterLeft, crossingInterRight);
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> MakeHypergraphRelation(List<Supplementary> newSupps, Parallel parallel, Intersection inter1, Intersection inter2)
+        private static List<EdgeAggregator> MakeHypergraphRelation(List<Supplementary> newSupps, Parallel parallel, Intersection inter1, Intersection inter2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -664,7 +665,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             foreach (Supplementary supp in newSupps)
             {
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, supp));
+                newGrounded.Add(new EdgeAggregator(antecedent, supp, annotation));
             }
 
             return newGrounded;

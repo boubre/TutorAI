@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Intersection bisected { get; private set; }
         public Segment bisector { get; private set; }
 
-        public SegmentBisector(Intersection b, Segment bisec, string just) : base(just)
+        public SegmentBisector(Intersection b, Segment bisec) : base()
         {
             bisected = b;
             bisector = bisec;

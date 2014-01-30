@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MedianDefinition : Definition
     {
         private readonly static string NAME = "Definition of Median";
-        public MedianDefinition() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.MEDIAN_DEFINITION);
 
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<SegmentBisector> candidateBisector = new List<SegmentBisector>();
@@ -31,9 +31,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Median || clause is InMiddle) newGrounded.AddRange(InstantiateFromMedian(clause));
 
@@ -50,9 +50,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Median(Segment(V, C), Triangle(C, A, B)) -> Midpoint(V, Segment(B, A))
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(GroundedClause clause)
+        private static List<EdgeAggregator> InstantiateFromMedian(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is InMiddle && !(clause is Midpoint))
             {
@@ -80,9 +80,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromMedian(InMiddle im, Median median)
+        private static List<EdgeAggregator> InstantiateFromMedian(InMiddle im, Median median)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Which point is on the side of the triangle?
             Point vertexOnTriangle = median.theTriangle.GetVertexOn(median.medianSegment);
@@ -100,13 +100,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!im.segment.StructurallyEquals(segmentCutByMedian)) return newGrounded;
 
             // Create the midpoint
-            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im, NAME), NAME);
+            Strengthened newMidpoint = new Strengthened(im, new Midpoint(im));
 
             // For hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(median);
             antecedent.Add(im);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMidpoint));
+            newGrounded.Add(new EdgeAggregator(antecedent, newMidpoint, annotation));
 
             return newGrounded;
         }
@@ -119,9 +119,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // SegmentBisector(Segment(V, C), Segment(B, A)), Triangle(A, B, C) -> Median(Segment(V, C), Triangle(A, B, C))
         //        
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(GroundedClause clause)
+        private static List<EdgeAggregator> InstantiateToMedian(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Triangle)
             {
@@ -170,9 +170,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Take the angle congruence and bisector and create the AngleBisector relation
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToMedian(Triangle tri, SegmentBisector sb, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateToMedian(Triangle tri, SegmentBisector sb, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The Bisector cannot be a side of the triangle.
             if (tri.CoincidesWithASide(sb.bisector) != null) return newGrounded;
@@ -190,14 +190,14 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!sb.bisector.PointIsOnAndBetweenEndpoints(oppPoint)) return newGrounded;
 
             // -> Median(Segment(V, C), Triangle(A, B, C))
-            Median newMedian = new Median(sb.bisector, tri, NAME);
+            Median newMedian = new Median(sb.bisector, tri);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(tri);
             antecedent.Add(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newMedian));
+            newGrounded.Add(new EdgeAggregator(antecedent, newMedian, annotation));
 
             return newGrounded;
         }

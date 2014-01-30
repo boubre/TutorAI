@@ -35,26 +35,26 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(b);
             pts.Add(m);
             pts.Add(c);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(q);
             pts.Add(n);
             pts.Add(r);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Median(am, GetProblemTriangle(intrinsic, new Triangle(a, b, c)), "Given"));
-            given.Add(new Median(pn, GetProblemTriangle(intrinsic, new Triangle(p, q, r)), "Given"));
-            given.Add(new GeometricCongruentSegments(ab, pq, "Given"));
-            given.Add(new GeometricCongruentSegments(am, pn, "Given"));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(q, n)), "Given"));
+            given.Add(new Median(am, GetProblemTriangle(intrinsic, new Triangle(a, b, c))));
+            given.Add(new Median(pn, GetProblemTriangle(intrinsic, new Triangle(p, q, r))));
+            given.Add(new GeometricCongruentSegments(ab, pq));
+            given.Add(new GeometricCongruentSegments(am, pn));
+            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(q, n))));
 
-            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, m)), GetProblemTriangle(intrinsic, new Triangle(p, q, n)), "GOAL"));
-            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemTriangle(intrinsic, new Triangle(p, q, r)), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, m)), GetProblemTriangle(intrinsic, new Triangle(p, q, n))));
+            goals.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemTriangle(intrinsic, new Triangle(p, q, r))));
 
         }
     }

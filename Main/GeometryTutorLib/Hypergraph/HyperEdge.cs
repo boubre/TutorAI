@@ -12,8 +12,8 @@ namespace GeometryTutorLib.Hypergraph
     public class HyperEdge<A>
     {
         // Allows us to note how the edge was derived
-        public A annotation;
-
+        public A annotation { get; private set; }
+        
         public List<int> sourceNodes;
         public int targetNode;
 
@@ -29,10 +29,10 @@ namespace GeometryTutorLib.Hypergraph
             }
         }
 
-        public PebblerHyperEdge CreatePebblerEdge()
-        {
-            return new PebblerHyperEdge(sourceNodes, targetNode);
-        }
+        //public PebblerHyperEdge CreatePebblerEdge()
+        //{
+        //    return new PebblerHyperEdge(sourceNodes, targetNode);
+        //}
 
         // The source nodes and target must be the same for equality.
         public override bool Equals(object obj)

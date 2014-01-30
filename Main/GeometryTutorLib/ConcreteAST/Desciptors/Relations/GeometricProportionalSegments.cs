@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class GeometricProportionalSegments : ProportionalSegments
     {
-        public GeometricProportionalSegments(Segment segment1, Segment segment2, string just) : base(segment1, segment2, just) { }
+        public GeometricProportionalSegments(Segment segment1, Segment segment2) : base(segment1, segment2) { }
 
         public override bool IsAlgebraic() { return false; }
         public override bool IsGeometric() { return true; }

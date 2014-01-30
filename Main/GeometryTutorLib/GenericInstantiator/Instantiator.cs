@@ -14,17 +14,17 @@ namespace GeometryTutorLib.GenericInstantiator
     public class Instantiator
     {
         // Contains all processed clauses and relationships amongst the clauses
-        Hypergraph<GroundedClause, int> graph;
+        Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation> graph;
 
         public Instantiator()
         {
-            graph = new Hypergraph<GroundedClause, int>();
+            graph = new Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation>();
         }
 
         //
         // Main instantiation function for all figures stated in the given list; worklist technique to construct the graph
         //
-        public Hypergraph<GroundedClause, int> Instantiate(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
+        public Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation> Instantiate(List<ConcreteAST.GroundedClause> figure, List<ConcreteAST.GroundedClause> givens)
         {
             // The worklist initialized to initial set of ground clauses from the figure
             List<GroundedClause> worklist = new List<GroundedClause>(figure);
@@ -316,15 +316,14 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Forward Instantiation does not permit any cycles in the resultant graph. We may deduce 
         //
-        private void HandleDeducedClauses(List<GroundedClause> worklist,
-                                          List<KeyValuePair<List<GroundedClause>, GroundedClause>> newVals)
+        private void HandleDeducedClauses(List<GroundedClause> worklist, List<EdgeAggregator> newVals)
         {
-            foreach (KeyValuePair<List<GroundedClause>, GroundedClause> newEdge in newVals)
+            foreach (EdgeAggregator newEdge in newVals)
             {
                 //Debug.WriteLine(newEdge.Value.clauseId + "(" + graph.Size() + ")" + ": " + newEdge.Value);
 
 
-                GroundedClause graphNode = graph.GetNode(newEdge.Value);
+                GroundedClause graphNode = graph.GetNode(newEdge.consequent);
 
                 //
                 // If the node is not in the graph already?
@@ -333,18 +332,18 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     // Check to see if the new node is purely algebraic: A + A -> A
                     // If so, do not add the new node to the graph (nor add the edge).
-                    if (!newEdge.Value.IsPurelyAlgebraic())
+                    if (!newEdge.consequent.IsPurelyAlgebraic())
                     {
                         // This node is not in the graph so add it; this should succeed
-                        if (graph.AddNode(newEdge.Value))
+                        if (graph.AddNode(newEdge.consequent))
                         {
-                            newEdge.Value.SetID(graph.Size());
+                            newEdge.consequent.SetID(graph.Size());
                         }
 
                         // Also add to the worklist
-                        worklist.Add(newEdge.Value);
+                        worklist.Add(newEdge.consequent);
 
-                        AddForwardEdge(newEdge.Key, newEdge.Value, 0); // 0: Annotation to be handled later
+                        AddForwardEdge(newEdge.antecedent, newEdge.consequent, newEdge.annotation); // 0: Annotation to be handled later
                     }
                 }
 
@@ -353,15 +352,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 else
                 {
-                    AddForwardEdge(newEdge.Key, graphNode, 0); // 0: Annotation to be handled later
+                    AddForwardEdge(newEdge.antecedent, graphNode, newEdge.annotation);
                 }
             }
         }
 
-        private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, int annotation)
+        private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, EdgeAnnotation annotation)
         {
             // Add the hyperedge to the hypergraph
-            graph.AddForwardEdge(antecedent, consequent, annotation); // 0: Annotation to be handled later
+            graph.AddForwardEdge(antecedent, consequent, annotation);
 
             // Create the linkage between the antecedent and consequent for coverage
             foreach (GroundedClause ante in antecedent)
@@ -488,6 +487,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Theorems
             //
             AAS.Clear();
+            AdjacentAnglesPerpendicularImplyComplementary.Clear();
             AltIntCongruentAnglesImplyParallel.Clear();
             AltitudeOfRightTrianglesImpliesSimilar.Clear();
             AngleBisectorIsPerpendicularBisectorInIsosceles.Clear();
@@ -504,7 +504,6 @@ namespace GeometryTutorLib.GenericInstantiator
             SASSimilarity.Clear();
             SSSSimilarity.Clear();
             TransversalPerpendicularToParallelImplyBothPerpendicular.Clear();
-            TransitiveCongruentTriangles.Clear();
             TriangleProportionality.Clear();
             TwoPairsCongruentAnglesImplyThirdPairCongruent.Clear();
         }

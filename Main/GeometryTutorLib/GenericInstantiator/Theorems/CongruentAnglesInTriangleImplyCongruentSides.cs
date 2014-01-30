@@ -10,9 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentAnglesInTriangleImplyCongruentSides : Theorem
     {
         private readonly static string NAME = "If two angles of a triangle are congruent, then the sides opposite those angles are congruent.";
-
-        private CongruentAnglesInTriangleImplyCongruentSides() { }
-        private static readonly CongruentAnglesInTriangleImplyCongruentSides thisDescriptor = new CongruentAnglesInTriangleImplyCongruentSides();
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES);
 
         public static Boolean MayUnifyWith(GroundedClause c)
         {
@@ -37,10 +35,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Triangle(A, B, C), Congruent(\angle ABC, \angle ACB) -> Congruent(Segment(A, B), Segment(A, C))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!MayUnifyWith(c)) return newGrounded;
 
@@ -71,7 +69,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     candAngs.Add(cas);
                 }
 
-                return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+                return new List<EdgeAggregator>();
             }
 
             else if (c is Triangle)
@@ -105,15 +103,15 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Just generate the new triangle
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> GenerateCongruentSides(Triangle tri, CongruentAngles cas)
+        private static EdgeAggregator GenerateCongruentSides(Triangle tri, CongruentAngles cas)
         {
-            GeometricCongruentSegments newConSegs = new GeometricCongruentSegments(tri.OtherSide(cas.ca1), tri.OtherSide(cas.ca2), NAME); // ..., thisDescriptor)
+            GeometricCongruentSegments newConSegs = new GeometricCongruentSegments(tri.OtherSide(cas.ca1), tri.OtherSide(cas.ca2));
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(cas);
             antecedent.Add(tri);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newConSegs);
+            return new EdgeAggregator(antecedent, newConSegs, annotation);
         }
     }
 }

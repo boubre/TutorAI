@@ -17,16 +17,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private Dictionary<List<List<int>>, List<int>> edges;
 
         // The original hypergraph (for reference purposes)
-        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
+        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
 
-        public GradedProblemTree(Problem thatProblem, Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g)
+        public GradedProblemTree(Problem<Hypergraph.EdgeAnnotation> thatProblem, Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)
         {
             goal = thatProblem.goal;
             edges = new Dictionary<List<List<int>>, List<int>>();
             this.graph = g;
 
             // Note: the edges in this structure are reversed
-            foreach (PebblerHyperEdge edge in thatProblem.edges)
+            foreach (PebblerHyperEdge<Hypergraph.EdgeAnnotation> edge in thatProblem.edges)
             {
                 // Construct the list of lists (as nodes are now multi-element lists)
                 List<List<int>> sources = new List<List<int>>();
@@ -457,7 +457,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 //            return str.ToString();
 //        }
 
-//        public string ConstructProblemAndSolution(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph)
+//        public string ConstructProblemAndSolution(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph)
 //        {
 //            // Determine the suppressed nodes in the graph and break
 //            // the givens into those that must be explicitly stated to the user and those that are implicit.

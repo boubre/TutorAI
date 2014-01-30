@@ -23,25 +23,25 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(c);
             pts.Add(d);
             pts.Add(b);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(d);
             pts.Add(p);
             pts.Add(a);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(c);
             pts.Add(p);
             pts.Add(e);
-            Collinear coll3 = new Collinear(pts, "Intrinsic");
+            Collinear coll3 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(a);
             pts.Add(e);
             pts.Add(b);
-            Collinear coll4 = new Collinear(pts, "Intrinsic");
+            Collinear coll4 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -49,13 +49,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateSegmentClauses(coll4));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(a, d)), "Given"));
-            given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(c, e)), "Given"));
+            given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(a, d))));
+            given.Add(new Altitude(GetProblemTriangle(intrinsic, new Triangle(a, b, c)), GetProblemSegment(intrinsic, new Segment(c, e))));
 
-            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(c, d, p), "Given"));
-            goals.Add(new GeometricSimilarTriangles(new Triangle(a, b, d), new Triangle(c, b, e), "Given"));
-            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(a, d, b), "Given"));
-            goals.Add(new GeometricSimilarTriangles(new Triangle(p, d, c), new Triangle(b, e, c), "Given"));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(c, d, p)));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, b, d), new Triangle(c, b, e)));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(a, e, p), new Triangle(a, d, b)));
+            goals.Add(new GeometricSimilarTriangles(new Triangle(p, d, c), new Triangle(b, e, c)));
         }
     }
 }

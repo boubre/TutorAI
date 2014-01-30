@@ -27,25 +27,25 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(a);
             pts.Add(e);
             pts.Add(b);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(a);
             pts.Add(f);
             pts.Add(c);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(e);
             pts.Add(x);
             pts.Add(c);
-            Collinear coll3 = new Collinear(pts, "Intrinsic");
+            Collinear coll3 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(f);
             pts.Add(x);
             pts.Add(b);
-            Collinear coll4 = new Collinear(pts, "Intrinsic");
+            Collinear coll4 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -53,11 +53,11 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateSegmentClauses(coll4));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Midpoint(e, GetProblemSegment(intrinsic, new Segment(a, b)), "Given"));
-            given.Add(new Midpoint(f, GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a,b)), GetProblemSegment(intrinsic, new Segment(a, c)), "Given"));
+            given.Add(new Midpoint(GetProblemInMiddle(intrinsic, e, GetProblemSegment(intrinsic, new Segment(a, b)))));
+            given.Add(new Midpoint(GetProblemInMiddle(intrinsic, f, GetProblemSegment(intrinsic, new Segment(a, c)))));
+            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a,b)), GetProblemSegment(intrinsic, new Segment(a, c))));
 
-            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, f)), GetProblemSegment(intrinsic, new Segment(c, e)), "GOAL"));
+            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, f)), GetProblemSegment(intrinsic, new Segment(c, e))));
         }
     }
 }

@@ -34,28 +34,28 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(e);
             pts.Add(g);
             pts.Add(l);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             List<Point> pts2 = new List<Point>();
             pts2.Add(d);
             pts2.Add(f);
             pts2.Add(h);
             pts2.Add(k);
-            Collinear coll2 = new Collinear(pts2, "Intrinsic");
+            Collinear coll2 = new Collinear(pts2);
 
             List<Point> pts3 = new List<Point>();
             pts3.Add(b);
             pts3.Add(e);
             pts3.Add(f);
             pts3.Add(i);
-            Collinear coll3 = new Collinear(pts3, "Intrinsic");
+            Collinear coll3 = new Collinear(pts3);
 
             List<Point> pts4 = new List<Point>();
             pts4.Add(c);
             pts4.Add(g);
             pts4.Add(h);
             pts4.Add(j);
-            Collinear coll4 = new Collinear(pts4, "Intrinsic");
+            Collinear coll4 = new Collinear(pts4);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -64,10 +64,10 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
             
             given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(f, h, g)),
-                                                   GetProblemAngle(intrinsic, new Angle(f, e, g)), "Given"));
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, l)), GetProblemSegment(intrinsic, new Segment(d, k)), "Given"));
+                                                   GetProblemAngle(intrinsic, new Angle(f, e, g))));
+            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, l)), GetProblemSegment(intrinsic, new Segment(d, k))));
 
-            goals.Add(new GeometricParallel(new Segment(b, i), new Segment(c, j), "GOAL"));
+            goals.Add(new GeometricParallel(new Segment(b, i), new Segment(c, j)));
         }
     }
 }

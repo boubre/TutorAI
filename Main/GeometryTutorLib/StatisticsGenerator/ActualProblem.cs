@@ -150,7 +150,7 @@ namespace GeometryTutorLib.StatisticsGenerator
                     newClauses.Add(newSegment);
                     for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
                     {
-                        newClauses.Add(new InMiddle(collinear.points[imIndex], newSegment, "INTRINSIC"));
+                        newClauses.Add(new InMiddle(collinear.points[imIndex], newSegment));
                     }
                 }
             }
@@ -224,7 +224,7 @@ namespace GeometryTutorLib.StatisticsGenerator
                                     {
                                         // Construct the triangle based on the sides to ensure reflexivity clauses are generated
 
-                                        newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3), "Intrinsic"));
+                                        newTriangles.Add(new Triangle(GetProblemSegment(clauses, side1), GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3)));
                                         if (this.problemIsOn && GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
                                         {
                                             System.Diagnostics.Debug.WriteLine(newTriangles[newTriangles.Count - 1].ToString());
@@ -254,13 +254,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             foreach (Triangle triangle in triangles)
             {
                 Point vertex = triangle.SegmentA.SharedVertex(triangle.SegmentB);
-                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentB, "Intrinsic"));
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentB));
 
                 vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentB, triangle.SegmentC, "Intrinsic"));
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentB, triangle.SegmentC));
                 
                 vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentC, "Intrinsic"));
+                AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentC));
             }
 
             //
@@ -313,7 +313,7 @@ namespace GeometryTutorLib.StatisticsGenerator
                             // Create the intersection
                             if (actualInter != null)
                             {
-                                AddIntersection(newIntersections, new Intersection(actualInter, maximalSegments[s1], maximalSegments[s2], "Intrinsic"));
+                                AddIntersection(newIntersections, new Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
                             }
                         }
                     }

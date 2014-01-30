@@ -8,15 +8,16 @@ namespace GeometryTutorLib.GenericInstantiator
 {
     public class VerticalAnglesTheorem : Theorem
     {
-        private readonly static string NAME = "Vertical Angles Theorem";
+        private static readonly string NAME = "Vertical Angles Theorem";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.VERTICAL_ANGLES);
 
         //
         // Intersect(X, Segment(A, B), Segment(C, D)) -> Congruent(Angle(A, X, C), Angle(B, X, D)),
         //                                               Congruent(Angle(A, X, D), Angle(C, X, B))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Intersection inter = c as Intersection;
             if (inter == null) return newGrounded;
@@ -39,9 +40,9 @@ namespace GeometryTutorLib.GenericInstantiator
             Angle ang2Set1 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
             antecedent1.Add(ang1Set1);
             antecedent1.Add(ang2Set1);
-            GeometricCongruentAngles cca1 = new GeometricCongruentAngles(ang1Set1, ang2Set1, NAME);
+            GeometricCongruentAngles cca1 = new GeometricCongruentAngles(ang1Set1, ang2Set1);
             cca1.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent1, cca1));
+            newGrounded.Add(new EdgeAggregator(antecedent1, cca1, annotation));
 
             //
             // Congruent(Angle(A, X, D), Angle(C, X, B))
@@ -51,9 +52,9 @@ namespace GeometryTutorLib.GenericInstantiator
             Angle ang2Set2 = Angle.AcquireFigureAngle(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
             antecedent2.Add(ang1Set2);
             antecedent2.Add(ang2Set2);
-            GeometricCongruentAngles cca2 = new GeometricCongruentAngles(ang1Set2, ang2Set2, NAME);
+            GeometricCongruentAngles cca2 = new GeometricCongruentAngles(ang1Set2, ang2Set2);
             cca2.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent2, cca2));
+            newGrounded.Add(new EdgeAggregator(antecedent2, cca2, annotation));
 
             return newGrounded;
         }

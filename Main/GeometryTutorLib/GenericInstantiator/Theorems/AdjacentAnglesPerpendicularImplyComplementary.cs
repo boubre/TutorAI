@@ -4,16 +4,18 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAST;
 
-
 namespace GeometryTutorLib.GenericInstantiator
 {
-
-
     public class AdjacentAnglesPerpendicularImplyComplementary : Theorem
     {
         private readonly static string NAME = "If the exterior sides of two adjacent angles are perpendicular, then the angles are complementary.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ADJACENT_ANGLES_PERPENDICULAR_IMPLY_COMPLEMENTARY);
 
-        public AdjacentAnglesPerpendicularImplyComplementary() { }
+        public static void Clear()
+        {
+            candAngles.Clear();
+            candPerpendicular.Clear();
+        }
 
         private static List<Perpendicular> candPerpendicular = new List<Perpendicular>();
         private static List<Angle> candAngles = new List<Angle>();
@@ -30,10 +32,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //       |/_____________________ C
         //       B
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Angle) && !(c is Perpendicular)) return newGrounded;
 
@@ -69,9 +71,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGeneratePerpendicularImplyCongruentAdjacent(Perpendicular perp, Angle angle1, Angle angle2)
+        private static List<EdgeAggregator> CheckAndGeneratePerpendicularImplyCongruentAdjacent(Perpendicular perp, Angle angle1, Angle angle2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!Utilities.CompareValues(angle1.measure + angle2.measure, 90)) return newGrounded;
 
@@ -88,7 +90,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have perpendicular -> complementary angles scenario
             //
-            Complementary cas = new Complementary(angle1, angle2, NAME);
+            Complementary cas = new Complementary(angle1, angle2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -96,7 +98,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(angle1);
             antecedent.Add(angle2);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cas));
+            newGrounded.Add(new EdgeAggregator(antecedent, cas, annotation));
 
             return newGrounded;
         }

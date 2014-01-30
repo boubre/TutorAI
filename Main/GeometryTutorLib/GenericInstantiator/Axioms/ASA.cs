@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ASA : CongruentTriangleAxiom
     {
         private readonly static string NAME = "ASA";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ASA);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();
@@ -38,10 +39,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                 Congruent(Segment(A, C), Angle(D, F)),
         //                                                 Congruent(Angle(B, A, C), Angle(E, D, F)),
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentSegments)
             {
@@ -122,10 +123,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Checks for ASA given the 5 values
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateASA(Triangle tri1, Triangle tri2,
+        private static List<EdgeAggregator> InstantiateASA(Triangle tri1, Triangle tri2,
                                                                                                CongruentAngles cas1, CongruentAngles cas2, CongruentSegments css)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // All congruence pairs must minimally relate the triangles
@@ -169,7 +170,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Construct the new clauses: congruent triangles and CPCTC
             //
-            GeometricCongruentTriangles gcts = new GeometricCongruentTriangles(new Triangle(triangleOne), new Triangle(triangleTwo), NAME);
+            GeometricCongruentTriangles gcts = new GeometricCongruentTriangles(new Triangle(triangleOne), new Triangle(triangleTwo));
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -179,7 +180,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(cas2);
             antecedent.Add(css);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcts));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcts, annotation));
 
             // Add all the corresponding parts as new congruent clauses
             newGrounded.AddRange(CongruentTriangles.GenerateCPCTC(gcts, triangleOne, triangleTwo));

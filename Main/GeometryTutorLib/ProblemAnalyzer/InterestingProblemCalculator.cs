@@ -10,14 +10,14 @@ namespace GeometryTutorLib.ProblemAnalyzer
     {
         private readonly bool INTERESTING_DEBUG = false;
 
-        private Hypergraph<GroundedClause, int> graph;
+        private Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation> graph;
         private List<GroundedClause> figure;
         private List<GroundedClause> givens;
         private List<int> givenIndices;
         private List<GroundedClause> goals;
         private List<int> goalIndices;
 
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens, List<GroundedClause> goals)
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation> g, List<GroundedClause> f, List<GroundedClause> givens, List<GroundedClause> goals)
         {
             this.graph = g;
             this.figure = f;
@@ -56,7 +56,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             }
         }
 
-        public InterestingProblemCalculator(Hypergraph<GroundedClause, int> g, List<GroundedClause> f, List<GroundedClause> givens)
+        public InterestingProblemCalculator(Hypergraph<GroundedClause, Hypergraph.EdgeAnnotation> g, List<GroundedClause> f, List<GroundedClause> givens)
         {
             this.graph = g;
             this.figure = f;
@@ -91,11 +91,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Given a set of problems, determine which partition of problems meets the 'interesting' criteria
         //
-        public List<Problem> DetermineInterestingProblems(List<Problem> problems)
+        public List<Problem<Hypergraph.EdgeAnnotation>> DetermineInterestingProblems(List<Problem<Hypergraph.EdgeAnnotation>> problems)
         {
-            List<Problem> interesting = new List<Problem>();
+            List<Problem<Hypergraph.EdgeAnnotation>> interesting = new List<Problem<Hypergraph.EdgeAnnotation>>();
 
-            foreach (Problem p in problems)
+            foreach (Problem<Hypergraph.EdgeAnnotation> p in problems)
             {
                 //if (IsInteresting(p)) interesting.Add(p);
                 if (IsInterestingWithGivens(p)) interesting.Add(p);
@@ -104,7 +104,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return interesting;
         }
 
-        private bool IsInterestingWithGivens(Problem problem)
+        private bool IsInterestingWithGivens(Problem<Hypergraph.EdgeAnnotation> problem)
         {
             // If there are no givens, but there are goals deduced we say it is interesting
             if (!givenIndices.Any()) return true;
@@ -157,7 +157,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //   1. It is minimal in its given information
         //   2. The problem implies all of the facts of the given figure; that is, if the set of all the facts of a figure are not in the source of the problem, then reject 
         //
-        private bool IsInteresting(Problem problem)
+        private bool IsInteresting(Problem<Hypergraph.EdgeAnnotation> problem)
         {
             if (problem.givens.Count > 4) return false;
 
@@ -186,7 +186,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Does a problem cover 100% of the given information
         //
-        private bool ProblemCoversAllFigureGivens(Problem problem)
+        private bool ProblemCoversAllFigureGivens(Problem<Hypergraph.EdgeAnnotation> problem)
         {
             // Look at the target node of the problem.
             // Since the target is dependent on all preceding nodes, it will contain all of their covered nodes.
@@ -211,7 +211,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //   2. The problem implies all of the facts of the given figure; that is, if the set of all the facts of a figure are not in the source of the problem, then reject 
         //
         // Returns a 
-        private double[] InterestingProblemCoverage(Problem problem)
+        private double[] InterestingProblemCoverage(Problem<Hypergraph.EdgeAnnotation> problem)
         {
             List<int> problemGivens = problem.givens;
 

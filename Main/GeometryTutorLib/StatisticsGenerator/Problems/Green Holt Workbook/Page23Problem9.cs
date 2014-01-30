@@ -30,21 +30,21 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(w);
             pts.Add(x);
             pts.Add(z);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(v, u, w)), GetProblemAngle(intrinsic, new Angle(u, w, v)), "Given"));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(z, x, y)), GetProblemAngle(intrinsic, new Angle(u, w, v)), "Given"));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(z, x, y)), GetProblemAngle(intrinsic, new Angle(x, z, y)), "Given"));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(v, u, w)), GetProblemAngle(intrinsic, new Angle(u, w, v))));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(z, x, y)), GetProblemAngle(intrinsic, new Angle(u, w, v))));
+            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(z, x, y)), GetProblemAngle(intrinsic, new Angle(x, z, y))));
 
-            given.Add(new GeometricCongruentSegments(uv, vw, "Given"));
-            given.Add(new GeometricCongruentSegments(yx, vw, "Given"));
-            given.Add(new GeometricCongruentSegments(yx, yz, "Given"));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(u, x)), GetProblemSegment(intrinsic, new Segment(w, z)), "Given"));
+            given.Add(new GeometricCongruentSegments(uv, vw));
+            given.Add(new GeometricCongruentSegments(yx, vw));
+            given.Add(new GeometricCongruentSegments(yx, yz));
+            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(u, x)), GetProblemSegment(intrinsic, new Segment(w, z))));
 
-            goals.Add(new GeometricCongruentTriangles(new Triangle(u, v, w), new Triangle(x, y, z), "GOAL"));
+            goals.Add(new GeometricCongruentTriangles(new Triangle(u, v, w), new Triangle(x, y, z)));
         }
     }
 }

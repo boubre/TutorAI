@@ -97,7 +97,7 @@ namespace GeometryTutorLib.Precomputer
                     //
                     if (segments[s1].CoordinateCongruent(segments[s2]))
                     {
-                        descriptors.Add(new CongruentSegments(segments[s1], segments[s2], "Precomputation"));
+                        descriptors.Add(new CongruentSegments(segments[s1], segments[s2]));
                     }
 
                     //
@@ -105,7 +105,7 @@ namespace GeometryTutorLib.Precomputer
                     //
                     if (segments[s1].CoordinateParallel(segments[s2]))
                     {
-                        descriptors.Add(new Parallel(segments[s1], segments[s2], "Precomputation"));
+                        descriptors.Add(new Parallel(segments[s1], segments[s2]));
                     }
                     //
                     // Perpendicular, bisector, perpendicular bisector
@@ -118,26 +118,26 @@ namespace GeometryTutorLib.Precomputer
                         Point intersectionBisec = segments[s1].CoordinateBisector(segments[s2]); // returns the actual intersection point
                         if (intersectionPerp != null && intersectionBisec != null)
                         {
-                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), segments[s2], "Precomputation"));
+                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2]), segments[s2]));
                         }
                         else if (intersectionPerp != null)
                         {
-                            descriptors.Add(new Perpendicular(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), "Precomputation"));
+                            descriptors.Add(new Perpendicular(new Intersection(intersectionPerp, segments[s1], segments[s2])));
                         }
                         else if (intersectionBisec != null)
                         {
-                            descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s1], segments[s2], "Precomputation"), segments[s2], "Precomputation"));
+                            descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s1], segments[s2]), segments[s2]));
                         }
 
                         // We may have a bisector in the other direction
                         intersectionBisec = segments[s2].CoordinateBisector(segments[s1]);
                         if (intersectionPerp != null && intersectionBisec != null)
                         {
-                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2], "Precomputation"), segments[s1], "Precomputation"));
+                            descriptors.Add(new PerpendicularBisector(new Intersection(intersectionPerp, segments[s1], segments[s2]), segments[s1]));
                         }
                         else if (intersectionBisec != null)
                         {
-                            descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s2], segments[s1], "Precomputation"), segments[s1], "Precomputation"));
+                            descriptors.Add(new SegmentBisector(new Intersection(intersectionBisec, segments[s2], segments[s1]), segments[s1]));
                         }
                     }
 
@@ -154,7 +154,7 @@ namespace GeometryTutorLib.Precomputer
                             {
                                 System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + segments[s1] + " : " + segments[s2]);
                             }
-                            descriptors.Add(new ProportionalSegments(segments[s1], segments[s2], "Precomputation"));
+                            descriptors.Add(new ProportionalSegments(segments[s1], segments[s2]));
                         }
                     }
                 }
@@ -169,16 +169,16 @@ namespace GeometryTutorLib.Precomputer
                 {
                     if (angles[a1].CoordinateCongruent(angles[a2]) && !Utilities.CompareValues(angles[a1].measure, 180))
                     {
-                        descriptors.Add(new CongruentAngles(angles[a1], angles[a2], "Precomputation"));
+                        descriptors.Add(new CongruentAngles(angles[a1], angles[a2]));
                     }
 
                     if (angles[a1].IsComplementaryTo(angles[a2]))
                     {
-                        descriptors.Add(new Complementary(angles[a1], angles[a2], "Precomputation"));
+                        descriptors.Add(new Complementary(angles[a1], angles[a2]));
                     }
                     else if (angles[a1].IsSupplementaryTo(angles[a2]))
                     {
-                        descriptors.Add(new Supplementary(angles[a1], angles[a2], "Precomputation"));
+                        descriptors.Add(new Supplementary(angles[a1], angles[a2]));
                     }
 
                     //
@@ -194,7 +194,7 @@ namespace GeometryTutorLib.Precomputer
                             {
                                 System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + angles[a1] + " : " + angles[a2]);
                             }
-                            descriptors.Add(new ProportionalAngles(angles[a1], angles[a2], "Precomputation"));
+                            descriptors.Add(new ProportionalAngles(angles[a1], angles[a2]));
                         }
                     }
                 }
@@ -210,11 +210,11 @@ namespace GeometryTutorLib.Precomputer
                     KeyValuePair<Triangle, Triangle> corresponding = triangles[t1].CoordinateCongruent(triangles[t2]);
                     if (corresponding.Key != null && corresponding.Value != null)
                     {
-                        descriptors.Add(new CongruentTriangles(corresponding.Key, corresponding.Value, "Precomputation"));
+                        descriptors.Add(new CongruentTriangles(corresponding.Key, corresponding.Value));
                     }
                     else if (triangles[t1].CoordinateSimilar(triangles[t2]))
                     {
-                        descriptors.Add(new SimilarTriangles(triangles[t1], triangles[t2], "Precomputation"));
+                        descriptors.Add(new SimilarTriangles(triangles[t1], triangles[t2]));
                     }
                 }
             }
@@ -229,13 +229,13 @@ namespace GeometryTutorLib.Precomputer
                     // Medians
                     if (tri.CoordinateMedian(segment))
                     {
-                        descriptors.Add(new Median(segment, tri, "Precomputation"));
+                        descriptors.Add(new Median(segment, tri));
                     }
 
                     // Altitude
                     if (tri.CoordinateAltitude(segment))
                     {
-                        descriptors.Add(new Altitude(tri, segment, "Precomputation"));
+                        descriptors.Add(new Altitude(tri, segment));
                     }
                 }
             }
@@ -250,7 +250,7 @@ namespace GeometryTutorLib.Precomputer
                         // Angle Bisector
                         if (angle.CoordinateAngleBisector(segment))
                         {
-                            descriptors.Add(new AngleBisector(angle, segment, "Precomputation"));
+                            descriptors.Add(new AngleBisector(angle, segment));
                         }
                     }
                 }
@@ -301,7 +301,7 @@ namespace GeometryTutorLib.Precomputer
             {
                 if (Utilities.CompareValues(angle.measure, 90))
                 {
-                    strengthened.Add(new Strengthened(angle, new RightAngle(angle, "Precomputation"), "Precomputation"));
+                    strengthened.Add(new Strengthened(angle, new RightAngle(angle)));
                 }
             }
 

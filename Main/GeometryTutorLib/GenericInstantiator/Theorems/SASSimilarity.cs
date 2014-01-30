@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SASSimilarity : Theorem
     {
         private readonly static string NAME = "SAS Similarity";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SAS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateCongruentAngles = new List<CongruentAngles>();
@@ -34,10 +35,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Note: we need to figure out the proper order of the sides to guarantee similarity
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If this is a new segment, check for Similar triangles with this new piece of information
             if (clause is ProportionalSegments)
@@ -116,9 +117,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // 
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CollectAndCheckSAS(Triangle ct1, Triangle ct2, CongruentAngles cas, ProportionalSegments pss1, ProportionalSegments pss2)
+        private static List<EdgeAggregator> CollectAndCheckSAS(Triangle ct1, Triangle ct2, CongruentAngles cas, ProportionalSegments pss1, ProportionalSegments pss2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Proportions must actually equate
             if (!pss1.ProportionallyEquals(pss2)) return newGrounded;
@@ -178,14 +179,14 @@ namespace GeometryTutorLib.GenericInstantiator
             simTriAntecedent.Add(pss1);
             simTriAntecedent.Add(pss2);
 
-            newGrounded.AddRange(GenerateCorrespondingParts(pairs, simTriAntecedent, NAME));
+            newGrounded.AddRange(GenerateCorrespondingParts(pairs, simTriAntecedent, annotation));
 
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateCorrespondingParts(List<KeyValuePair<Point, Point>> pairs, List<GroundedClause> antecedent, string justification)
+        public static List<GenericInstantiator.EdgeAggregator> GenerateCorrespondingParts(List<KeyValuePair<Point, Point>> pairs, List<GroundedClause> antecedent, Hypergraph.EdgeAnnotation givenAnnotation)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If pairs is populated, we have a Similiarity
             if (!pairs.Any()) return newGrounded;
@@ -199,9 +200,9 @@ namespace GeometryTutorLib.GenericInstantiator
                 triangleTwo.Add(pair.Value);
             }
 
-            GeometricSimilarTriangles simTris = new GeometricSimilarTriangles(new Triangle(triangleOne), new Triangle(triangleTwo), justification);
+            GeometricSimilarTriangles simTris = new GeometricSimilarTriangles(new Triangle(triangleOne), new Triangle(triangleTwo));
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, simTris));
+            newGrounded.Add(new EdgeAggregator(antecedent, simTris, givenAnnotation));
 
             // Add all the corresponding parts as new Similar clauses
             newGrounded.AddRange(SimilarTriangles.GenerateComponents(simTris, triangleOne, triangleTwo));

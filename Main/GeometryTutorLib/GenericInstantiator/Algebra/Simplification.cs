@@ -55,22 +55,21 @@ namespace GeometryTutorLib.GenericInstantiator
             Equation inflated = null;
             GroundedClause singleLeftExp = InflateEntireSide(across.lhsExps);
             GroundedClause singleRightExp = InflateEntireSide(across.rhsExps);
-            string newJustification = original.GetJustification() + " and " + NAME;
             if (original is AlgebraicSegmentEquation)
             {
-                inflated = new AlgebraicSegmentEquation(singleLeftExp, singleRightExp, newJustification);
+                inflated = new AlgebraicSegmentEquation(singleLeftExp, singleRightExp);
             }
             else if (original is GeometricSegmentEquation)
             {
-                inflated = new GeometricSegmentEquation(singleLeftExp, singleRightExp, newJustification);
+                inflated = new GeometricSegmentEquation(singleLeftExp, singleRightExp);
             }
             else if (original is AlgebraicAngleEquation)
             {
-                inflated = new AlgebraicAngleEquation(singleLeftExp, singleRightExp, newJustification);
+                inflated = new AlgebraicAngleEquation(singleLeftExp, singleRightExp);
             }
             else if (original is GeometricAngleEquation)
             {
-                inflated = new GeometricAngleEquation(singleLeftExp, singleRightExp, newJustification);
+                inflated = new GeometricAngleEquation(singleLeftExp, singleRightExp);
             }
 
             // If simplifying didn't do anything, return the original equation

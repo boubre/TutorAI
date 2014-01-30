@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
         public GeometricSegmentEquation() : base() { }
 
         public GeometricSegmentEquation(GroundedClause l, GroundedClause r) : base(l, r) { }
-        public GeometricSegmentEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
+//        public GeometricSegmentEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
 
         public override GroundedClause DeepCopy()
         {

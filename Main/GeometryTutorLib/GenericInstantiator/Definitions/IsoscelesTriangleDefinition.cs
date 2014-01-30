@@ -10,9 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class IsoscelesTriangleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Isosceles Triangle";
-
-        private IsoscelesTriangleDefinition() { }
-        private static readonly IsoscelesTriangleDefinition thisDescriptor = new IsoscelesTriangleDefinition();
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION);
 
         public static Boolean MayUnifyWith(GroundedClause c)
         {
@@ -38,12 +36,12 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         //  This does not generate a new clause explicitly; it simply strengthens the existent object
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             if (c is IsoscelesTriangle || c is Strengthened) return InstantiateDefinition(c);
 
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is CongruentSegments) && !(c is Triangle)) return newGrounded;
 
@@ -102,21 +100,21 @@ namespace GeometryTutorLib.GenericInstantiator
         // DO NOT generate a new clause, instead, report the result and generate all applicable
         // clauses attributed to this strengthening of a triangle from scalene to isosceles
         //
-        private static KeyValuePair<List<GroundedClause>, GroundedClause> StrengthenToIsosceles(Triangle tri, CongruentSegments ccss)
+        private static EdgeAggregator StrengthenToIsosceles(Triangle tri, CongruentSegments ccss)
         {
-            Strengthened newStrengthened = new Strengthened(tri, new IsoscelesTriangle(tri, "Strengthened"), NAME);
+            Strengthened newStrengthened = new Strengthened(tri, new IsoscelesTriangle(tri));
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(ccss);
             antecedent.Add(tri);
 
-            return new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newStrengthened);
+            return new EdgeAggregator(antecedent, newStrengthened, annotation);
         }
 
         //
         // IsoscelesTriangle(A, B, C) -> Congruent(Segment(A, B), Segment(A, C))
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateDefinition(GroundedClause clause)
+        private static List<EdgeAggregator> InstantiateDefinition(GroundedClause clause)
         {
             if (clause is IsoscelesTriangle) return InstantiateDefinition(clause, clause as IsoscelesTriangle);
 
@@ -125,19 +123,19 @@ namespace GeometryTutorLib.GenericInstantiator
                 return InstantiateDefinition(clause, (clause as Strengthened).strengthened as IsoscelesTriangle);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateDefinition(GroundedClause original, IsoscelesTriangle isoTri)
+        private static List<EdgeAggregator> InstantiateDefinition(GroundedClause original, IsoscelesTriangle isoTri)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            GeometricCongruentSegments gcs = new GeometricCongruentSegments(isoTri.leg1, isoTri.leg2, NAME);
+            GeometricCongruentSegments gcs = new GeometricCongruentSegments(isoTri.leg1, isoTri.leg2);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gcs));
+            newGrounded.Add(new EdgeAggregator(antecedent, gcs, annotation));
 
             return newGrounded;
         }

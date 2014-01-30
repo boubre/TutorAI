@@ -9,12 +9,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
 {
     public class TemplateProblemGenerator
     {
-        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph;
-        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebblerGraph;
+        Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
+        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
         ProblemAnalyzer.PathGenerator pathGenerator;
 
-        public TemplateProblemGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> g,
-                                        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause> pebblerG,
+        public TemplateProblemGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g,
+                                        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerG,
                                         ProblemAnalyzer.PathGenerator generator)
         {
             graph = g;
@@ -25,40 +25,44 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Generate all forward and backward problems based on the template nodes in the input list
         //
-        public KeyValuePair<List<Problem>, List<Problem>> Generate(List<Descriptor> descriptors, List<Strengthened> strengthened, List<GroundedClause> givens)
+        public KeyValuePair<List<Problem<Hypergraph.EdgeAnnotation>>, List<Problem<Hypergraph.EdgeAnnotation>>> Generate(List<Descriptor> descriptors,
+                                                                                                                         List<Strengthened> strengthened,
+                                                                                                                         List<GroundedClause> givens)
         {
             // Combine the precomputed descriptors and strengthened clauses together into one list
             List<GroundedClause> descriptorsAndStrengthened = new List<GroundedClause>();
             descriptors.ForEach(r => descriptorsAndStrengthened.Add(r));
             strengthened.ForEach(r => descriptorsAndStrengthened.Add(r));
 
-            List<Problem> forwardList = GenerateForwardProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, givens.Count);
-            List<Problem> backwardList = GenerateBackwardProblems(givens, pebblerGraph.backwardPebbledEdges);
+            List<Problem<Hypergraph.EdgeAnnotation>> forwardList = GenerateForwardProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, givens.Count);
+            List<Problem<Hypergraph.EdgeAnnotation>> backwardList = GenerateBackwardProblems(givens, pebblerGraph.backwardPebbledEdges);
 
             if (Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
             {
                 Debug.WriteLine("--------------------------------- Begin Backward problems----------------------------");
-                foreach (Problem problem in backwardList)
+                foreach (Problem<Hypergraph.EdgeAnnotation> problem in backwardList)
                 {
                     Debug.WriteLine(problem.ConstructProblemAndSolution(graph) + "\n");
                 }
                 Debug.WriteLine("--------------------------------- End Backward problems----------------------------");
             }
 
-            return new KeyValuePair<List<Problem>, List<Problem>>(forwardList, backwardList);
+            return new KeyValuePair<List<Problem<Hypergraph.EdgeAnnotation>>, List<Problem<Hypergraph.EdgeAnnotation>>>(forwardList, backwardList);
         }
 
         //
         // Generates all forward directional problems using the template-based clauses from the pre-computation
         //
-        private List<Problem> GenerateForwardProblems(List<GroundedClause> goalClauses, Pebbler.HyperEdgeMultiMap edgeDatabase, int numGivens)
+        private List<Problem<Hypergraph.EdgeAnnotation>> GenerateForwardProblems(List<GroundedClause> goalClauses,
+                                                                                 Pebbler.HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> edgeDatabase,
+                                                                                 int numGivens)
         {
             System.Diagnostics.Debug.WriteLine("Forward");
 
             List<int> clauseIndices = AcquireGoalIndices(goalClauses);
 
             // The resultant structure of problems; graph size dictates associated array size in hashMap; number of givens is a limiting factor the size of problems
-            ProblemHashMap problems = new ProblemHashMap(edgeDatabase, graph.vertices.Count, numGivens);
+            ProblemHashMap<Hypergraph.EdgeAnnotation> problems = new ProblemHashMap<Hypergraph.EdgeAnnotation>(edgeDatabase, graph.vertices.Count, numGivens);
 
             // Generate all the problems based on the node indices
             foreach (int goalNode in clauseIndices)
@@ -74,7 +78,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return FilterForMinimalAndRedundantProblems(problems.GetAll());
         }
 
-        private List<Problem> GenerateBackwardProblems(List<GroundedClause> goalClauses, Pebbler.HyperEdgeMultiMap edgeDatabase)
+        private List<Problem<Hypergraph.EdgeAnnotation>> GenerateBackwardProblems(List<GroundedClause> goalClauses,
+                                                                                  Pebbler.HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> edgeDatabase)
         {
             System.Diagnostics.Debug.WriteLine("Backward");
 
@@ -82,7 +87,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             // The resultant structure of problems; graph size dictates associated array size in hashMap; number of givens is a limiting factor the size of problems
             // Problem generation limits the number of givens in BACKWARD problems to 4 (or the constant in the HashMap structure)
-            ProblemHashMap problems = new ProblemHashMap(edgeDatabase, graph.vertices.Count);
+            ProblemHashMap<Hypergraph.EdgeAnnotation> problems = new ProblemHashMap<Hypergraph.EdgeAnnotation>(edgeDatabase, graph.vertices.Count);
 
             // Generate all the problems based on the node indices
             foreach (int goalNode in clauseIndices)
@@ -102,11 +107,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Filter the backward problems so that only problems with goals (which were givens) persist.
         //
-        private List<Problem> FilterBackwardProblems(List<int> goalIndices, List<Problem> problems)
+        private List<Problem<Hypergraph.EdgeAnnotation>> FilterBackwardProblems(List<int> goalIndices, List<Problem<Hypergraph.EdgeAnnotation>> problems)
         {
-            List<Problem> filtered = new List<Problem>();
+            List<Problem<Hypergraph.EdgeAnnotation>> filtered = new List<Problem<Hypergraph.EdgeAnnotation>>();
 
-            foreach (Problem problem in problems)
+            foreach (Problem<Hypergraph.EdgeAnnotation> problem in problems)
             {
                 if (goalIndices.Contains(problem.goal)) filtered.Add(problem);
             }
@@ -155,9 +160,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
         // If a problem has a subset of givens (compared to another problem) then the problem with the subset is chosen.
         // If a problem has the same givens and goal, the shorter (edge-based) problem is chosen.
         //
-        public List<Problem> FilterForMinimalAndRedundantProblems(List<Problem> problems)
+        public List<Problem<Hypergraph.EdgeAnnotation>> FilterForMinimalAndRedundantProblems(List<Problem<Hypergraph.EdgeAnnotation>> problems)
         {
-            List<Problem> filtered = new List<Problem>();
+            List<Problem<Hypergraph.EdgeAnnotation>> filtered = new List<Problem<Hypergraph.EdgeAnnotation>>();
 
             // It is possible for no problems to be generated
             if (!problems.Any()) return problems;
@@ -177,7 +182,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 if (!marked[p1])
                 {
                     // Save the minimal problem
-                    Problem minimalProblem = problems[p1];
+                    Problem<Hypergraph.EdgeAnnotation> minimalProblem = problems[p1];
                     for (int p2 = p1 + 1; p2 < problems.Count; p2++)
                     {
                         // If we have not yet compared to a problem

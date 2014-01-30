@@ -16,7 +16,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment cs1 { get; private set; }
         public Segment cs2 { get; private set; }
 
-        public CongruentSegments(Segment s1, Segment s2, string just) : base()
+        public CongruentSegments(Segment s1, Segment s2) : base()
         {
             if (!Utilities.CompareValues(s1.Length, s2.Length))
             {
@@ -25,7 +25,6 @@ namespace GeometryTutorLib.ConcreteAST
 
             cs1 = s1;
             cs2 = s2;
-            justification = just;
         }
 
         public override int GetHashCode()

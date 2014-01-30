@@ -13,16 +13,12 @@ namespace GeometryTutorLib.ConcreteAST
         //{
         //    this.bisector = bisector;
         //}
-        public PerpendicularBisector(Intersection inter, Segment bisector, String just) : base(inter, just)
+        public PerpendicularBisector(Intersection inter, Segment bisector) : base(inter)
         {
             this.bisector = bisector;
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool StructurallyEquals(Object obj)
         {

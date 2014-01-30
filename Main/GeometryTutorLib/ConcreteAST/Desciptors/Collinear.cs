@@ -12,10 +12,9 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // We assume the points are ordered how they appear
         // But we verify just in case
-        public Collinear(List<Point> pts, string just) : base()
+        public Collinear(List<Point> pts) : base()
         {
             points = new List<Point>(pts);
-            justification = just;
 
             Verify();
         }

@@ -10,10 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AltitudeOfRightTrianglesImpliesSimilar : Theorem
     {
         private readonly static string NAME = "If the altitude is drawn to the hypotenuse of a right triangle, then the two triangles formed are similar to the original triangle and to each other.";
-
-        private AltitudeOfRightTrianglesImpliesSimilar() { }
-
-        private static readonly AltitudeOfRightTrianglesImpliesSimilar thisDescriptor = new AltitudeOfRightTrianglesImpliesSimilar();
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR);
 
         private static List<Altitude> candidateAltitudes = new List<Altitude>();
         private static List<RightTriangle> candRightTriangles = new List<RightTriangle>();
@@ -40,9 +37,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                                        Similar(RightTriangle(S, N, U), RightTriangle(U, N, T))
         //                                                                        Similar(RightTriangle(U, N, T), RightTriangle(S, U, T))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Altitude) && !(c is RightTriangle) && !(c is Strengthened)) return newGrounded;
 
@@ -90,9 +87,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateRight(RightTriangle rt, Altitude altitude, GroundedClause original)
+        public static List<EdgeAggregator> InstantiateRight(RightTriangle rt, Altitude altitude, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The altitude must connect the vertex defining the right angle and the opposite side.
             if (!altitude.segment.HasPoint(rt.rightAngle.GetVertex())) return newGrounded;
@@ -126,17 +123,17 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // CTA: We did not check to see points aligned, but these are the original triangles from the figure
-            GeometricSimilarTriangles gsts1 = new GeometricSimilarTriangles(rt, first, NAME);
-            GeometricSimilarTriangles gsts2 = new GeometricSimilarTriangles(rt, second, NAME);
-            GeometricSimilarTriangles gsts3 = new GeometricSimilarTriangles(first, second, NAME);
+            GeometricSimilarTriangles gsts1 = new GeometricSimilarTriangles(rt, first);
+            GeometricSimilarTriangles gsts2 = new GeometricSimilarTriangles(rt, second);
+            GeometricSimilarTriangles gsts3 = new GeometricSimilarTriangles(first, second);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
             antecedent.Add(altitude);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gsts1));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gsts2));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, gsts3));
+            newGrounded.Add(new EdgeAggregator(antecedent, gsts1, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gsts2, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gsts3, annotation));
 
             return newGrounded;
         }

@@ -10,8 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SameSideSuppleAnglesImplyParallel : Theorem
     {
         private readonly static string SAME_SIDE_INT_SUPPLE_NAME = "Same-Side Interior Angles Formed by a Transversal Are Supplementary Imply Parallel Lines";
-
-        public SameSideSuppleAnglesImplyParallel() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(SAME_SIDE_INT_SUPPLE_NAME, GenericInstantiator.JustificationSwitch.SAME_SIDE_SUPPLE_ANGLES_IMPLY_PARALLEL);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Supplementary> candSupps = new List<Supplementary>();
@@ -37,10 +36,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                      / N
         //                                     A
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Supplementary) && !(c is Intersection)) return newGrounded;
 
@@ -78,9 +77,9 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateSameSideInteriorImplyParallel(Intersection inter1, Intersection inter2, Supplementary supp)
+        private static List<EdgeAggregator> CheckAndGenerateSameSideInteriorImplyParallel(Intersection inter1, Intersection inter2, Supplementary supp)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Get the transversal (shared segment), if it exists
             Segment transversal = inter1.AcquireTransversal(inter2);
@@ -129,7 +128,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Now we have an alternate interior scenario
             //
-            GeometricParallel newParallel = new GeometricParallel(parallelCand1, parallelCand2, SAME_SIDE_INT_SUPPLE_NAME);
+            GeometricParallel newParallel = new GeometricParallel(parallelCand1, parallelCand2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -137,7 +136,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(inter2);
             antecedent.Add(supp);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newParallel));
+            newGrounded.Add(new EdgeAggregator(antecedent, newParallel, annotation));
 
             return newGrounded;
         }

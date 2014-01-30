@@ -13,20 +13,16 @@ namespace GeometryTutorLib.ConcreteAST
     //
     public class AlgebraicCongruentAngles : CongruentAngles
     {
-        public AlgebraicCongruentAngles(Angle a1, Angle a2, string just) : base(a1, a2, just) { }
+        public AlgebraicCongruentAngles(Angle a1, Angle a2) : base(a1, a2) { }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool IsAlgebraic() { return true; }
         public override bool IsGeometric() { return false; }
 
         public override string ToString()
         {
-            return "AlgebraicCongruent(" + ca1.ToString() + ", " + ca2.ToString() + "): " + justification;
+            return "AlgebraicCongruent(" + ca1.ToString() + ", " + ca2.ToString() + ") " + justification;
         }
     }
 }

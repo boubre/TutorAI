@@ -31,25 +31,25 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(h);
             pts.Add(x);
             pts.Add(i);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(x);
             pts.Add(j);
             pts.Add(a);
-            Collinear coll2 = new Collinear(pts, "Intrinsic");
+            Collinear coll2 = new Collinear(pts);
 
             pts = new List<Point>();
             pts.Add(a);
             pts.Add(k);
             pts.Add(n);
-            Collinear coll3 = new Collinear(pts, "Intrinsic");
+            Collinear coll3 = new Collinear(pts);
             
             pts = new List<Point>();
             pts.Add(m);
             pts.Add(n);
             pts.Add(p);
-            Collinear coll4 = new Collinear(pts, "Intrinsic");
+            Collinear coll4 = new Collinear(pts);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
@@ -57,9 +57,9 @@ namespace GeometryTutorLib.StatisticsGenerator
             intrinsic.AddRange(GenerateSegmentClauses(coll4));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, x, j)), GetProblemAngle(intrinsic, new Angle(a, j, k)), "Given"));
+            given.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, x, j)), GetProblemAngle(intrinsic, new Angle(a, j, k))));
 
-            goals.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(h, i)), GetProblemSegment(intrinsic, new Segment(j, k)), "GOAL"));
+            goals.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(h, i)), GetProblemSegment(intrinsic, new Segment(j, k))));
         }
     }
 }

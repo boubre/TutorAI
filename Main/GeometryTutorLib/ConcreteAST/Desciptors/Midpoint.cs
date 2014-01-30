@@ -13,8 +13,8 @@ namespace GeometryTutorLib.ConcreteAST
         //public Point midpoint { get; private set; }
         //public Segment segment { get; private set; }
 
-        public Midpoint(Point mid, Segment seg, string just) : base(mid, seg, just) { }
-        public Midpoint(InMiddle im, string just) : base(im.point, im.segment, just) { }
+        //public Midpoint(Point mid, Segment seg) : base(mid, seg, just) { }
+        public Midpoint(InMiddle im) : base(im.point, im.segment) { }
 
         public override bool StructurallyEquals(Object obj)
         {

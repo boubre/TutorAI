@@ -10,9 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class RightTriangleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Right Triangle";
-
-        private RightTriangleDefinition() { }
-        private static readonly RightTriangleDefinition thisDescriptor = new RightTriangleDefinition();
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.RIGHT_TRIANGLE_DEFINITION);
 
         private static List<RightAngle> candidateRightAngles = new List<RightAngle>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
@@ -26,7 +24,7 @@ namespace GeometryTutorLib.GenericInstantiator
             candidateTriangles.Clear();
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             //
             // Instantiating FROM a right triangle
@@ -43,21 +41,21 @@ namespace GeometryTutorLib.GenericInstantiator
                 return InstantiateToRightTriangle(clause);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromRightTriangle(RightTriangle rightTri, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateFromRightTriangle(RightTriangle rightTri, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             
             // Strengthen the old triangle to a right triangle
-            Strengthened newStrengthened = new Strengthened(rightTri.rightAngle, new RightAngle(rightTri.rightAngle, NAME), NAME);
+            Strengthened newStrengthened = new Strengthened(rightTri.rightAngle, new RightAngle(rightTri.rightAngle));
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newStrengthened));
+            newGrounded.Add(new EdgeAggregator(antecedent, newStrengthened, annotation));
 
             return newGrounded;
         }
@@ -74,10 +72,10 @@ namespace GeometryTutorLib.GenericInstantiator
         // Triangle(A, B, C), RightAngle(A, B, C) -> RightTriangle(A, B, C)
         //
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToRightTriangle(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateToRightTriangle(GroundedClause clause)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Triangle)
             {
@@ -124,22 +122,22 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // DO NOT generate a new clause, instead, report the result and generate all applicable
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> StrengthenToRightTriangle(Triangle tri, RightAngle ra, GroundedClause original)
+        private static List<EdgeAggregator> StrengthenToRightTriangle(Triangle tri, RightAngle ra, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // This angle must belong to this triangle.
             if (!tri.HasAngle(ra)) return newGrounded;
             
             // Strengthen the old triangle to a right triangle
-            Strengthened newStrengthened = new Strengthened(tri, new RightTriangle(tri, "Strengthened"), NAME);
+            Strengthened newStrengthened = new Strengthened(tri, new RightTriangle(tri));
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(tri);
             antecedent.Add(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newStrengthened));
+            newGrounded.Add(new EdgeAggregator(antecedent, newStrengthened, annotation));
 
             return newGrounded;
         }

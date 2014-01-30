@@ -45,12 +45,12 @@ namespace GeometryTutorLib
         }
 
         // Acquire the index of the clause in the hypergraph based only on structure
-        public static int StructuralIndex(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph, ConcreteAST.GroundedClause g)
+        public static int StructuralIndex(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph, ConcreteAST.GroundedClause g)
         {
             //
             // Handle general case
             //
-            List<Hypergraph.HyperNode<ConcreteAST.GroundedClause, int>> vertices = graph.vertices;
+            List<Hypergraph.HyperNode<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation>> vertices = graph.vertices;
 
             for (int v = 0; v < vertices.Count; v++)
             {
@@ -78,7 +78,7 @@ namespace GeometryTutorLib
         //
         // Acquires the hypergraph index value of the given nodes using structural equality
         //
-        public static List<int> CollectGraphIndices(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, int> graph, List<ConcreteAST.GroundedClause> clauses)
+        public static List<int> CollectGraphIndices(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph, List<ConcreteAST.GroundedClause> clauses)
         {
             List<int> indices = new List<int>();
 

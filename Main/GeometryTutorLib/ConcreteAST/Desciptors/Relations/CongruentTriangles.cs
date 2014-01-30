@@ -7,16 +7,13 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class CongruentTriangles : Congruent
     {
-        private static readonly string CPCTC_NAME = "CPCTC";
-
         public Triangle ct1 { get; protected set; }
         public Triangle ct2 { get; protected set; }
 
-        public CongruentTriangles(Triangle t1, Triangle t2, string just) : base()
+        public CongruentTriangles(Triangle t1, Triangle t2) : base()
         {
             ct1 = t1;
             ct2 = t2;
-            justification = just;
         }
 
         public override bool Covers(GroundedClause gc)
@@ -181,24 +178,23 @@ namespace GeometryTutorLib.ConcreteAST
             ct2.AddCongruentTriangle(ct1);
         }
 
+
+        private static readonly string CPCTC_NAME = "CPCTC";
+        private static Hypergraph.EdgeAnnotation cpctcAnnotation = new Hypergraph.EdgeAnnotation(CPCTC_NAME, GenericInstantiator.JustificationSwitch.TRIANGLE_CONGREUNCE);
+
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
         //
-        private static List<GroundedClause> GenerateCPCTCSegments(List<Point> orderedTriOnePts,
-                                                                  List<Point> orderedTriTwoPts)
+        private static List<GroundedClause> GenerateCPCTCSegments(List<Point> orderedTriOnePts, List<Point> orderedTriTwoPts)
         {
             List<GroundedClause> congSegments = new List<GroundedClause>();
 
-            //
             // Cycle through the points creating the angles: ABC - DEF ; BCA - EFD ; CAB - FDE
-            //
             for (int i = 0; i < orderedTriOnePts.Count; i++)
             {
                 Segment cs1 = new Segment(orderedTriOnePts.ElementAt(0), orderedTriOnePts.ElementAt(1));
                 Segment cs2 = new Segment(orderedTriTwoPts.ElementAt(0), orderedTriTwoPts.ElementAt(1));
-                GeometricCongruentSegments ccss = new GeometricCongruentSegments(cs1, cs2, CPCTC_NAME);
-
-                congSegments.Add(ccss);
+                congSegments.Add(new GeometricCongruentSegments(cs1, cs2));
 
                 // rotate the lists
                 Point tmp = orderedTriOnePts.ElementAt(0);
@@ -221,14 +217,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             List<GroundedClause> congAngles = new List<GroundedClause>();
 
-            //
             // Cycle through the points creating the angles: ABC - DEF ; BCA - EFD ; CAB - FDE
-            //
             for (int i = 0; i < orderedTriOnePts.Count; i++)
             {
-                GeometricCongruentAngles ccas = new GeometricCongruentAngles(new Angle(orderedTriOnePts),
-                                                                             new Angle(orderedTriTwoPts), CPCTC_NAME);
-                congAngles.Add(ccas);
+                congAngles.Add(new GeometricCongruentAngles(new Angle(orderedTriOnePts), new Angle(orderedTriTwoPts)));
 
                 // rotate the lists
                 Point tmp = orderedTriOnePts[0];
@@ -243,39 +235,38 @@ namespace GeometryTutorLib.ConcreteAST
             return congAngles;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> GenerateCPCTC(CongruentTriangles ccts,
+        public static List<GenericInstantiator.EdgeAggregator> GenerateCPCTC(CongruentTriangles ccts,
                                                          List<Point> orderedTriOnePts,
                                                          List<Point> orderedTriTwoPts)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newClauses = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(ccts);
             List<GroundedClause> congAngles = GenerateCPCTCAngles(orderedTriOnePts, orderedTriTwoPts);
 
             foreach (GeometricCongruentAngles ccas in congAngles)
             {
-                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccas));
+                newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, ccas, cpctcAnnotation));
             }
 
             List<GroundedClause> congSegments = GenerateCPCTCSegments(orderedTriOnePts, orderedTriTwoPts);
             foreach (GroundedClause ccss in congSegments)
             {
-                newClauses.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+                newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, ccss, cpctcAnnotation));
             }
 
-            return newClauses;
+            return newGrounded;
         }
 
         //
         // Generate all corresponding conngruent components.
         // Ensure vertices correpsond appropriately.
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             CongruentTriangles conTris = clause as CongruentTriangles;
-
             if (conTris == null) return newGrounded;
 
             List<Point> orderedTriOnePts = new List<Point>();

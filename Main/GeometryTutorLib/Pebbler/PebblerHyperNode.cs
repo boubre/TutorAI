@@ -6,13 +6,13 @@ using GeometryTutorLib.Hypergraph;
 
 namespace GeometryTutorLib.Pebbler
 {
-    public class PebblerHyperNode<T>
+    public class PebblerHyperNode<T, A>
     {
         public T data; // Original Hypergraph representation
         public int id; // index of original hypergraph node
 
         public List<int> nodes;
-        public List<PebblerHyperEdge> edges;
+        public List<PebblerHyperEdge<A>> edges;
 
         // Coloration of the edge when pebbled
         public PebblerColorType pebble;
@@ -23,17 +23,17 @@ namespace GeometryTutorLib.Pebbler
             data = thatData;
             pebble = PebblerColorType.NO_PEBBLE;
 
-            edges = new List<PebblerHyperEdge>();
+            edges = new List<PebblerHyperEdge<A>>();
         }
 
-        public void AddEdge(PebblerHyperEdge edge)
+        public void AddEdge(PebblerHyperEdge<A> edge)
         {
             edges.Add(edge);
         }
 
-        public void AddEdge(List<int> src, int target)
+        public void AddEdge(A annotation, List<int> src, int target)
         {
-            edges.Add(new PebblerHyperEdge(src, target));
+            edges.Add(new PebblerHyperEdge<A>(src, target, annotation));
         }
 
         public override string ToString()
@@ -50,7 +50,7 @@ namespace GeometryTutorLib.Pebbler
             foreach (int n in nodes) retS += n + ",";
             if (nodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
             retS += "}, SuccE = { ";
-            foreach (PebblerHyperEdge edge in edges) { retS += edge.ToString() + ", "; }
+            foreach (PebblerHyperEdge<A> edge in edges) { retS += edge.ToString() + ", "; }
             if (edges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
             retS += " } }";
 

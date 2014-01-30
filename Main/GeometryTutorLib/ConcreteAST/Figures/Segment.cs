@@ -303,22 +303,24 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Each segment is congruent to itself; only generate if it is a shared segment
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause gc)
+        private static readonly string REFLEXIVE_SEGMENT_NAME = "Reflexive Segments";
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, GenericInstantiator.JustificationSwitch.REFLEXIVE);
+
+        public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause gc)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             Segment segment = gc as Segment;
-
             if (segment == null) return newGrounded;
 
             // Only generate reflexive if this segment is shared
             if (!segment.isShared()) return newGrounded;
 
-            GeometricCongruentSegments ccss = new GeometricCongruentSegments(segment, segment, "Reflexive");
+            GeometricCongruentSegments ccss = new GeometricCongruentSegments(segment, segment);
             ccss.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(segment);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, ccss));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, ccss, reflexAnnotation));
 
             return newGrounded;
         }

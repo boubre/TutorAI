@@ -22,14 +22,14 @@ namespace GeometryTutorLib.Pebbler
     //
     // A reduced version of the original hypergraph that provides simple pebbling and exploration
     //
-    public class PebblerHypergraph<T>
+    public class PebblerHypergraph<T, A>
     {
         // The main graph data structure
-        public PebblerHyperNode<T>[] vertices { get; private set; }
+        public PebblerHyperNode<T, A>[] vertices { get; private set; }
 
         // The actual hypergraph for reference purposes only
-        private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> graph;
-        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, int> g)
+        private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
+        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)
         {
             graph = g;
             forwardPebbledEdges.SetOriginalHypergraph(g);
@@ -37,18 +37,18 @@ namespace GeometryTutorLib.Pebbler
         }
 
         // A static list of edges that can be processed using means other than a fixpoint analysis.
-        public HyperEdgeMultiMap forwardPebbledEdges { get; private set; }
-        public HyperEdgeMultiMap backwardPebbledEdges { get; private set; }
+        public HyperEdgeMultiMap<A> forwardPebbledEdges { get; private set; }
+        public HyperEdgeMultiMap<A> backwardPebbledEdges { get; private set; }
 
         // For backward pebbling only: if we have pebbled an edge completely, the target node is then reachable.
         private List<int> backwardEdgeReachableNodes;
 
-        public PebblerHypergraph(PebblerHyperNode<T>[] inputVertices)
+        public PebblerHypergraph(PebblerHyperNode<T, A>[] inputVertices)
         {
             graph = null; // This must be set outside to use
             vertices = inputVertices;
-            forwardPebbledEdges = new HyperEdgeMultiMap(vertices.Length);
-            backwardPebbledEdges = new HyperEdgeMultiMap(vertices.Length);
+            forwardPebbledEdges = new HyperEdgeMultiMap<A>(vertices.Length);
+            backwardPebbledEdges = new HyperEdgeMultiMap<A>(vertices.Length);
             backwardEdgeReachableNodes = new List<int>();
         }
 
@@ -57,11 +57,11 @@ namespace GeometryTutorLib.Pebbler
         //
         public void ClearPebbles()
         {
-            foreach (PebblerHyperNode<T> node in vertices)
+            foreach (PebblerHyperNode<T, A> node in vertices)
             {
                 node.pebble = PebblerColorType.NO_PEBBLE;
 
-                foreach (PebblerHyperEdge edge in node.edges)
+                foreach (PebblerHyperEdge<A> edge in node.edges)
                 {
                     edge.sourcePebbles.Clear();
                     edge.SetColor(PebblerColorType.NO_PEBBLE);
@@ -211,7 +211,7 @@ namespace GeometryTutorLib.Pebbler
         // Given a node, pebble the reachable parts of the graph (in the forward direction)
         // We pebble in a breadth first manner
         //
-        private void ForwardTraversal(HyperEdgeMultiMap edgeDatabase, List<int> nodesToPebble)
+        private void ForwardTraversal(HyperEdgeMultiMap<A> edgeDatabase, List<int> nodesToPebble)
         {
             List<int> worklist = new List<int>(nodesToPebble);
 
@@ -228,7 +228,7 @@ namespace GeometryTutorLib.Pebbler
                 vertices[currentNodeIndex].pebble = PebblerColorType.RED_FORWARD;
 
                 // For all hyperedges leaving this node, mark a pebble along the arc
-                foreach (PebblerHyperEdge currentEdge in vertices[currentNodeIndex].edges)
+                foreach (PebblerHyperEdge<A> currentEdge in vertices[currentNodeIndex].edges)
                 {
                     if (!currentEdge.IsFullyPebbled())
                     {
@@ -281,7 +281,7 @@ namespace GeometryTutorLib.Pebbler
                 vertices[fIndex].pebble = PebblerColorType.RED_FORWARD; //.BLUE_BACKWARD;
 
                 // For all hyperedges leaving this node, mark a pebble along the arc
-                foreach (PebblerHyperEdge currentEdge in vertices[fIndex].edges)
+                foreach (PebblerHyperEdge<A> currentEdge in vertices[fIndex].edges)
                 {
                     // Only pursue edges that are unpebbled or blue
                     if (currentEdge.pebbleColor == PebblerColorType.NO_PEBBLE || currentEdge.pebbleColor == PebblerColorType.RED_FORWARD) //.BLUE_BACKWARD)
@@ -299,235 +299,6 @@ namespace GeometryTutorLib.Pebbler
                 }
             }
         }
-
-        //
-        // Given a node, pebble the reachable parts of the graph (in the backward direction) avoiding forward edges
-        // We pebble in a breadth first manner
-        //
-        //private void BackwardTraversal(List<int> nodesToPebble)
-        //{
-        //    List<int> worklist = new List<int>(nodesToPebble);
-
-        //    //
-        //    // Pebble until the list is empty
-        //    //
-        //    while (worklist.Any())
-        //    {
-        //        // Acquire the next value to consider; high values 
-        //        int currentNodeIndex = worklist[worklist.Count - 1];
-        //        worklist.RemoveAt(worklist.Count - 1);
-
-        //        //
-        //        // Pebble the current node as a backward and percolate forward
-        //        //
-        //        vertices[currentNodeIndex].pebble = PebblerColorType.BLUE_BACKWARD;
-
-        //        //
-        //        // For all hyperedges leaving this node, mark a pebble along the arc
-        //        //
-        //        foreach (PebblerHyperEdge currentEdge in vertices[currentNodeIndex].edges)
-        //        {
-        //            // Avoid a fully pebbled edge
-        //            if (!currentEdge.IsFullyPebbled())
-        //            {
-        //                // Indicate the node has been pebbled by adding to the list of pebbled vertices
-        //                Utilities.AddUnique<int>(currentEdge.sourcePebbles, currentNodeIndex);
-
-        //                // Set the color of the edge (as a forward edge)
-        //                currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-
-        //                // With this new node, check if the edge is full pebbled; if so, percolate
-        //                if (currentEdge.IsFullyPebbled())
-        //                {
-        //                    // Has the target of this edge been pebbled previously? BLUE Pebbled -> BLUE Pebbled means we have a backward edge
-        //                    if (IsNodePebbledBackward(currentEdge.targetNode))
-        //                    {
-        //                        currentEdge.SetColor(PebblerColorType.BLACK_EDGE);
-        //                    }
-        //                    // Check for RED from forward analysis
-        //                    else if (IsNodePebbledForward(currentEdge.targetNode) || IsNodeNotPebbled(currentEdge.targetNode))
-        //                    {
-        //                        // Success, we have a backward (BLUE) edge
-        //                        // Construct a static set of pebbled hyperedges for problem construction
-        //                        backwardPebbledEdges.Put(currentEdge);
-
-        //                        // Add this node to the worklist to percolate further; add such that order is maintained
-        //                        //worklist.Add(currentEdge.targetNode);
-        //                        if (!worklist.Contains(currentEdge.targetNode))
-        //                        {
-        //                            worklist.Add(currentEdge.targetNode);
-        //                            worklist.Sort();
-        //                            //Utilities.InsertOrdered(worklist, currentEdge.targetNode);
-        //                        }
-        //                        }
-        //                        else
-        //                        {
-        //                            throw new ArgumentException("Unexpected coloring of node: " + currentNodeIndex + " " + vertices[currentEdge.targetNode].pebble);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-        ////
-        //// Given a node, pebble the reachable parts of the graph (in the forward direction)
-        ////
-        //// true indicates the node was pebbled as being a forward (RED) node
-        //// false indicates a previously visited node (eventually PURPLE) which means we have a backward (BLUE) edge
-        ////
-        //private bool ForwardTraversal(int currentNodeIndex, List<PebblerHyperEdge> backwardEdges, List<int> backwardReachableNodes)
-        //{
-        //    // Error check since we never turn any node to anything but RED (forward)
-        //    if (IsNodePebbledBackward(currentNodeIndex))
-        //    {
-        //        throw new ArgumentException("Forward pebbling should not result in any backward nodes: " + currentNodeIndex);
-        //    }
-
-        //    //
-        //    // Has this node already been visited in the forward direction? If so, this is the second time we are visiting it.
-        //    // False indicates that this edge is a back edge and the entirety of the edge should be pebbled in the backward direction
-        //    // We do not need to include the target node in the backward reachable nodes since all source nodes will eventually pebble
-        //    // the target during backward analysis and we want to minimize the number of nodes pebbled (and use percolation of pebbles as much as possible).
-        //    //
-        //    if (IsNodePebbledForward(currentNodeIndex)) return false;
-
-        //    //
-        //    // Pebble the current node as a forward node and percolate forward
-        //    //
-        //    vertices[currentNodeIndex].pebble = PebblerColorType.RED_FORWARD;
-
-        //    //
-        //    // For all hyperedges leaving this node, mark a pebble along the arc
-        //    //
-        //    foreach (PebblerHyperEdge currentEdge in vertices[currentNodeIndex].edges)
-        //    {
-        //        // Avoid backward (BLUE) edges which deduced a previously reached node
-        //        if (currentEdge.pebbleColor != PebblerColorType.BLUE_BACKWARD)
-        //        {
-        //            if (!currentEdge.IsFullyPebbled())
-        //            {
-        //                // Indicate the node has been pebbled by adding to the list of pebbled vertices; should not have to be a unique addition
-        //                Utilities.AddUnique<int>(currentEdge.sourcePebbles, currentNodeIndex);
-
-        //                // Set the color of the edge (as a forward edge)
-        //                currentEdge.SetColor(PebblerColorType.RED_FORWARD);
-
-        //                // With this new node, check if the edge is full pebbled; if so, percolate
-        //                if (currentEdge.IsFullyPebbled())
-        //                {
-        //                    // Percolate this node through the graph recursively; recursion will pebble the target node
-        //                    if (ForwardTraversal(currentEdge.targetNode, backwardEdges, backwardReachableNodes))
-        //                    {
-        //                        // Success, we have a forward (RED) edge
-        //                        // Construct a static set of pebbled hyperedges for other uses
-        //                        forwardPebbledEdges.Put(currentEdge);
-        //                    }
-        //                    // forward traversal lead to a backward edge; mark this edge as a backward edge (BLUE)
-        //                    else
-        //                    {
-        //                        currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-        //                        backwardEdges.Add(currentEdge);
-        //                        Utilities.AddUniqueList<int>(backwardReachableNodes, currentEdge.sourceNodes);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return true;
-        //}
-
-
-
-
-
-
-
-        //
-        // Given a node, pebble the reachable parts of the graph (in the backward direction)
-        //
-        // In this algorithm, pebbling of a node may ONLY arise from pebbling an edge completely
-        // That is, edge pebbling takes priority over node pebbling.
-        //private bool BackwardTraversal(int currentNodeIndex)
-        //{
-        //    // Has this node already been pebbled backward (BLUE or PURPLE)? If so, return indicating a cycle
-        //    if (IsNodePebbledBackward(currentNodeIndex))
-        //    {
-        //        return !backwardEdgeReachableNodes.Contains(currentNodeIndex);
-        //    }
-
-        //    // Has this node already been pebbled forward (RED); make it purple
-        //    if (IsNodePebbledForward(currentNodeIndex))
-        //    {
-        //        vertices[currentNodeIndex].pebble = PebblerColorType.PURPLE_BOTH;
-        //    }
-
-        //    // If no pebble, upgrade to a backward (BLUE) node
-        //    if (vertices[currentNodeIndex].pebble == PebblerColorType.NO_PEBBLE)
-        //    {
-        //        vertices[currentNodeIndex].pebble = PebblerColorType.BLUE_BACKWARD;
-        //    }
-
-        //    //
-        //    // For each non-forward (non-RED) edge leaving this node, pebble accordingly
-        //    //
-        //    foreach (PebblerHyperEdge currentEdge in vertices[currentNodeIndex].edges)
-        //    {
-        //        if (currentEdge.pebbleColor != PebblerColorType.BLACK_EDGE)
-        //        {
-        //            //
-        //            // Handle first the case where we have an edge that was NOT fully pebbled from a forward analysis; this edge could turn into a backward edge.
-        //            //
-        //            if (currentEdge.pebbleColor == PebblerColorType.RED_FORWARD && !currentEdge.IsFullyPebbled())
-        //            {
-        //                // Clear the pebbles and change the color
-        //                currentEdge.sourcePebbles.Clear();
-        //                currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-        //            }
-
-        //            //
-        //            // Pebble the edge, if it is a candidate backward edge
-        //            //
-        //            if (currentEdge.pebbleColor != PebblerColorType.RED_FORWARD)
-        //            {
-        //                if (!currentEdge.IsFullyPebbled())
-        //                {
-        //                    // Indicate the edge color
-        //                    currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-
-        //                    // Pebble this part of the edge with this node
-        //                    Utilities.AddUnique<int>(currentEdge.sourcePebbles, currentNodeIndex);
-
-        //                    // Now, check to see if the target node is available to pebble: number of incoming vertices equates to the number of pebbles
-        //                    if (currentEdge.IsFullyPebbled())
-        //                    {
-        //                        // Percolate this node through the graph recursively; recursion will pebble the target node
-        //                        if (BackwardTraversal(currentEdge.targetNode))
-        //                        {
-        //                            //
-        //                            // Success, we have a backward (BLUE) edge
-        //                            // Construct a static set of pebbled hyperedges for other uses
-        //                            //
-        //                            backwardPebbledEdges.Put(currentEdge);
-
-        //                            // Add the target of this edge as a reachable node (from an edge), not just a pebbling
-        //                            Utilities.AddUnique<int>(backwardEdgeReachableNodes, currentEdge.targetNode);
-        //                        }
-        //                        // check if backward traversal lead to a (cyclic) backward, back-edge; mark this edge as a bad (cyclic backward)
-        //                        else if (backwardEdgeReachableNodes.Contains(currentEdge.targetNode))
-        //                        {
-        //                            currentEdge.SetColor(PebblerColorType.BLACK_EDGE);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return true;
-        //}
 
         public void DebugDumpClauses()
         {
@@ -577,7 +348,7 @@ namespace GeometryTutorLib.Pebbler
                 if (vertices[v].edges.Any())
                 {
                     edgeStr.Append(v + ": {");
-                    foreach (PebblerHyperEdge edge in vertices[v].edges)
+                    foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
                         if (v == edge.sourceNodes.Min())
                         {
@@ -628,7 +399,7 @@ namespace GeometryTutorLib.Pebbler
                 if (vertices[v].edges.Any())
                 {
                     bool containsBlueEdge = false;
-                    foreach (PebblerHyperEdge edge in vertices[v].edges)
+                    foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
                         if (edge.pebbleColor == Pebbler.PebblerColorType.BLUE_BACKWARD && v == edge.sourceNodes.Min())
                         {
@@ -640,7 +411,7 @@ namespace GeometryTutorLib.Pebbler
                     if (containsBlueEdge)
                     {
                         edgeStr.Append(v + ": {");
-                        foreach (PebblerHyperEdge edge in vertices[v].edges)
+                        foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
                             if (edge.pebbleColor == Pebbler.PebblerColorType.BLUE_BACKWARD)
                             {
@@ -695,7 +466,7 @@ namespace GeometryTutorLib.Pebbler
                 if (vertices[v].edges.Any())
                 {
                     bool containsEdge = false;
-                    foreach (PebblerHyperEdge edge in vertices[v].edges)
+                    foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
                         if (edge.pebbleColor != Pebbler.PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
                         {
@@ -707,7 +478,7 @@ namespace GeometryTutorLib.Pebbler
                     if (containsEdge)
                     {
                         edgeStr.Append(v + ": {");
-                        foreach (PebblerHyperEdge edge in vertices[v].edges)
+                        foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
                             if (edge.pebbleColor != Pebbler.PebblerColorType.RED_FORWARD)
                             {
@@ -735,7 +506,7 @@ namespace GeometryTutorLib.Pebbler
                 if (vertices[v].edges.Any())
                 {
                     bool containsEdge = false;
-                    foreach (PebblerHyperEdge edge in vertices[v].edges)
+                    foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
                         if (edge.pebbleColor == Pebbler.PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
                         {
@@ -747,7 +518,7 @@ namespace GeometryTutorLib.Pebbler
                     if (containsEdge)
                     {
                         edgeStr.Append(v + ": {");
-                        foreach (PebblerHyperEdge edge in vertices[v].edges)
+                        foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
                             if (edge.pebbleColor == Pebbler.PebblerColorType.RED_FORWARD)
                             {
@@ -776,76 +547,3 @@ namespace GeometryTutorLib.Pebbler
         }
     }
 }
-
-
-//private bool BackwardTraversal(int currentNodeIndex)
-//{
-//    // Has this node already been pebbled backward (BLUE or PURPLE)? If so, return indicating a cycle
-//    if (IsNodePebbledBackward(currentNodeIndex)) return false;
-
-//    // Has this node already been pebbled forward (RED); make it purple
-//    if (IsNodePebbledForward(currentNodeIndex))
-//    {
-//        vertices[currentNodeIndex].pebble = PebblerColorType.PURPLE_BOTH;
-//    }
-//    // If no pebble, upgrade to a backward (BLUE) node
-//    if (vertices[currentNodeIndex].pebble == PebblerColorType.NO_PEBBLE)
-//    {
-//        vertices[currentNodeIndex].pebble = PebblerColorType.BLUE_BACKWARD;
-//    }
-
-//    //
-//    // For each non-forward (non-RED) edge leaving this node, pebble accordingly
-//    //
-//    foreach (PebblerHyperEdge currentEdge in vertices[currentNodeIndex].edges)
-//    {
-//        if (currentEdge.pebbleColor != PebblerColorType.BLACK_EDGE)
-//        {
-//            //
-//            // Handle first the case where we have an edge that was NOT fully pebbled from a forward analysis; this edge could turn into a backward edge.
-//            //
-//            if (currentEdge.pebbleColor == PebblerColorType.RED_FORWARD && !currentEdge.IsFullyPebbled())
-//            {
-//                // Clear the pebbles and change the color
-//                currentEdge.sourcePebbles.Clear();
-//                currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-//            }
-
-//            //
-//            // Pebble the edge, if it is a candidate backward edge
-//            //
-//            if (currentEdge.pebbleColor != PebblerColorType.RED_FORWARD)
-//            {
-//                if (!currentEdge.IsFullyPebbled())
-//                {
-//                    // Indicate the edge color
-//                    currentEdge.SetColor(PebblerColorType.BLUE_BACKWARD);
-
-//                    // Pebble this part of the edge with this node
-//                    Utilities.AddUnique<int>(currentEdge.sourcePebbles, currentNodeIndex);
-
-//                    // Now, check to see if the target node is available to pebble: number of incoming vertices equates to the number of pebbles
-//                    if (currentEdge.IsFullyPebbled())
-//                    {
-//                        // Percolate this node through the graph recursively; recursion will pebble the target node
-//                        if (BackwardTraversal(currentEdge.targetNode))
-//                        {
-//                            //
-//                            // Success, we have a backward (BLUE) edge
-//                            // Construct a static set of pebbled hyperedges for other uses
-//                            //
-//                            backwardPebbledEdges.Put(currentEdge);
-//                        }
-//                        // backward traversal lead to a (cyclic) backward, back-edge; mark this edge as a bad (cyclic backward)
-//                        else
-//                        {
-//                            currentEdge.SetColor(PebblerColorType.BLACK_EDGE);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    return true;
-//}

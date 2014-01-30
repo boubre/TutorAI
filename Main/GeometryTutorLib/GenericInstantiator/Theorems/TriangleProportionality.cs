@@ -12,8 +12,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TriangleProportionality : Theorem
     {
         private readonly static string NAME = "A Line Parallel to One Side of a Triangle and Intersects the Other Two Sides, then it Divides the Sides Proportionally";
-
-        public TriangleProportionality() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRIANGLE_PROPORTIONALITY);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Triangle> candTriangle = new List<Triangle>();
@@ -42,10 +41,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //    B /__________\ C
         //
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Parallel) && !(c is Intersection) && !(c is Triangle)) return newGrounded;
 
@@ -104,11 +103,10 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CheckAndGenerateProportionality(Triangle tri,
-                                                                                                           Intersection inter1,
-                                                                                                           Intersection inter2, Parallel parallel)
+        private static List<EdgeAggregator> CheckAndGenerateProportionality(Triangle tri, Intersection inter1,
+                                                                            Intersection inter2, Parallel parallel)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The two intersections should not be at the same vertex
             if (inter1.intersect.Equals(inter2.intersect)) return newGrounded;
@@ -188,8 +186,8 @@ namespace GeometryTutorLib.GenericInstantiator
             // Construct the new proprtional relationships
             //
             Point sharedVertex = triangleSide1.SharedVertex(triangleSide2);
-            GeometricProportionalSegments newProp1 = new GeometricProportionalSegments(new Segment(sharedVertex, off2), triangleSide1, NAME);
-            GeometricProportionalSegments newProp2 = new GeometricProportionalSegments(new Segment(sharedVertex, off1), triangleSide2, NAME);
+            GeometricProportionalSegments newProp1 = new GeometricProportionalSegments(new Segment(sharedVertex, off2), triangleSide1);
+            GeometricProportionalSegments newProp2 = new GeometricProportionalSegments(new Segment(sharedVertex, off1), triangleSide2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -198,8 +196,8 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(inter2);
             antecedent.Add(parallel);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newProp1));
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newProp2));
+            newGrounded.Add(new EdgeAggregator(antecedent, newProp1, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, newProp2, annotation));
 
             return newGrounded;
         }

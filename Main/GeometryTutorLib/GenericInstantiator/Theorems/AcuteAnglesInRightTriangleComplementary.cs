@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AcuteAnglesInRightTriangleComplementary : Theorem
     {
         private readonly static string NAME = "The two acute angles in a right triangle are complementary.";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY);
 
         //
         // In order for two triangles to be congruent, we require the following:
@@ -21,9 +22,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //    |_____\
         //    B      C
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Triangle) && !(c is Strengthened)) return newGrounded;
 
@@ -53,18 +54,18 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // We know at this point that we have a right triangle
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateRightTriangle(Triangle tri, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateRightTriangle(Triangle tri, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             KeyValuePair<Angle, Angle> acuteAngles = tri.GetAcuteAngles();
 
-            Complementary newComp = new Complementary(acuteAngles.Key, acuteAngles.Value, NAME);
+            Complementary newComp = new Complementary(acuteAngles.Key, acuteAngles.Value);
 
             // Hypergraph
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newComp));
+            newGrounded.Add(new EdgeAggregator(antecedent, newComp, annotation));
 
             return newGrounded;
         }

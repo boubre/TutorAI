@@ -8,12 +8,15 @@ namespace GeometryTutorLib.GenericInstantiator
 {
     public class RightAngleDefinition : Definition
     {
-        private readonly static string NAME = "Definition of Right Angle";
-        private readonly static string NAME_TRANS = "Transitivity of Congruent Angles With a Right Angle";
+        private readonly static string DEF_NAME = "Definition of Right Angle";
+        private readonly static string TRANS_NAME = "Transitivity of Congruent Angles With a Right Angle";
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.RIGHT_ANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(TRANS_NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE);
+
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Strengthened streng = clause as Strengthened;
 
@@ -30,12 +33,12 @@ namespace GeometryTutorLib.GenericInstantiator
                 return InstantiateToRightAngle(clause);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromRightAngle(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateFromRightAngle(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             RightAngle ra = null;
 
@@ -46,11 +49,11 @@ namespace GeometryTutorLib.GenericInstantiator
             // Strengthening may be something else
             if (ra == null) return newGrounded;
 
-            GeometricAngleEquation angEq = new GeometricAngleEquation(ra, new NumericValue(90), NAME);
+            GeometricAngleEquation angEq = new GeometricAngleEquation(ra, new NumericValue(90));
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(clause);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+            newGrounded.Add(new EdgeAggregator(antecedent, angEq, defAnnotation));
 
             return newGrounded;
         }
@@ -65,9 +68,9 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<CongruentAngles> candidateCongruentAngles = new List<CongruentAngles>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
         private static List<RightAngle> candidateRightAngles = new List<RightAngle>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToRightAngle(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateToRightAngle(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentAngles)
             {
@@ -122,20 +125,20 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Congruent(Angle(A, B, C), Angle(D, E, F), RightAngle(A, B, C) -> RightAngle(D, E, F)
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToRightAngle(RightAngle ra, CongruentAngles cas, GroundedClause original)
+        public static List<EdgeAggregator> InstantiateToRightAngle(RightAngle ra, CongruentAngles cas, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // The congruent must have the given angle in order to generate
             if (!cas.HasAngle(ra)) return newGrounded;
 
             Angle toBeRight = cas.OtherAngle(ra);
-            Strengthened newRightAngle = new Strengthened(toBeRight, new RightAngle(toBeRight, NAME_TRANS), NAME_TRANS);
+            Strengthened newRightAngle = new Strengthened(toBeRight, new RightAngle(toBeRight));
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
             antecedent.Add(cas);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newRightAngle));
+            newGrounded.Add(new EdgeAggregator(antecedent, newRightAngle, transAnnotation));
 
             return newGrounded;
         }

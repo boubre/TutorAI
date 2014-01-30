@@ -9,8 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Angle Bisector";
-
-        public AngleBisectorDefinition() { }
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLE_BISECTOR_DEFINITION);
 
         public static void Clear()
         {
@@ -23,13 +22,13 @@ namespace GeometryTutorLib.GenericInstantiator
         // Forward is Midpoint -> Congruent Clause
         // Backward is Congruent -> Midpoint Clause
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             if (c is AngleBisector) return InstantiateBisector(c as AngleBisector);
 
             if (c is CongruentAngles || c is Segment) return InstantiateCongruent(c);
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
         //      V---------------A
@@ -40,20 +39,19 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // AngleBisector(Angle(A, V, B), Segment(V, C)) -> Congruent(Angle, A, V, C), Angle(C, V, B))
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateBisector(AngleBisector ab)
+        private static List<EdgeAggregator> InstantiateBisector(AngleBisector ab)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Create the two adjacent angles
             Point vertex = ab.angle.GetVertex();
             Point interiorPt = ab.angle.IsOnInteriorExplicitly(ab.bisector.Point1) ? ab.bisector.Point1 : ab.bisector.Point2;
             Angle adj1 = new Angle(ab.angle.ray1.OtherPoint(vertex), vertex, interiorPt);
             Angle adj2 = new Angle(ab.angle.ray2.OtherPoint(vertex), vertex, interiorPt);
-            GeometricCongruentAngles cas = new GeometricCongruentAngles(adj1, adj2, NAME);
+            GeometricCongruentAngles cas = new GeometricCongruentAngles(adj1, adj2);
 
             // For hypergraph
-            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(ab);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, cas));
+            newGrounded.Add(new EdgeAggregator(Utilities.MakeList<GroundedClause>(ab), cas, annotation));
 
             return newGrounded;
         }
@@ -68,9 +66,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         private static List<Segment> candidateSegments = new List<Segment>();
         private static List<CongruentAngles> candidateCongruent = new List<CongruentAngles>();
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateCongruent(GroundedClause c)
+        private static List<EdgeAggregator> InstantiateCongruent(GroundedClause c)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (c is CongruentAngles)
             {
@@ -118,9 +116,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // Congruent(Angle, A, V, C), Angle(C, V, B)),  Segment(V, C)) -> AngleBisector(Angle(A, V, B)  
         //
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToDef(CongruentAngles cas, Segment segment)
+        private static List<EdgeAggregator> InstantiateToDef(CongruentAngles cas, Segment segment)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Find the shared segment between the two angles; we know it is valid if we reach this point
             Segment shared = cas.AreAdjacent();
@@ -151,14 +149,14 @@ namespace GeometryTutorLib.GenericInstantiator
             //   B
             if (!combinedAngle.IsOnInteriorExplicitly(segment.Point1) && !combinedAngle.IsOnInteriorExplicitly(segment.Point2)) return newGrounded;            
             
-            AngleBisector newAB = new AngleBisector(combinedAngle, segment, NAME);
+            AngleBisector newAB = new AngleBisector(combinedAngle, segment);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(segment);
             antecedent.Add(cas);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newAB));
+            newGrounded.Add(new EdgeAggregator(antecedent, newAB, annotation));
             return newGrounded;
         }
     }

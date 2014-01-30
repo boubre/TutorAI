@@ -7,7 +7,7 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Supplementary : AnglePairRelation
     {
-        public Supplementary(Angle ang1, Angle ang2, string just) : base(ang1, ang2, just)
+        public Supplementary(Angle ang1, Angle ang2) : base(ang1, ang2)
         {
             if (!Utilities.CompareValues(ang1.measure + ang2.measure, 180))
             {

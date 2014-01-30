@@ -25,22 +25,22 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(j);
             pts.Add(l);
             pts.Add(n);
-            Collinear coll1 = new Collinear(pts, "Intrinsic");
+            Collinear coll1 = new Collinear(pts);
 
             List<Point> pts2 = new List<Point>();
             pts2.Add(k);
             pts2.Add(m);
             pts2.Add(n);
-            Collinear coll2 = new Collinear(pts2, "Intrinsic");
+            Collinear coll2 = new Collinear(pts2);
 
             intrinsic.AddRange(GenerateSegmentClauses(coll1));
             intrinsic.AddRange(GenerateSegmentClauses(coll2));
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new IsoscelesTriangle(GetProblemSegment(intrinsic, new Segment(k, n)), GetProblemSegment(intrinsic, new Segment(j, n)), jk, "Given"));
-            given.Add(new GeometricParallel(jk, lm, "Given"));
+            given.Add(new IsoscelesTriangle(GetProblemSegment(intrinsic, new Segment(k, n)), GetProblemSegment(intrinsic, new Segment(j, n)), jk));
+            given.Add(new GeometricParallel(jk, lm));
 
-            goals.Add(new Strengthened(GetProblemTriangle(intrinsic, new Triangle(n, m, l)),  new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(n, m, l)), "GOAL"), "GOAL"));
+            goals.Add(new Strengthened(GetProblemTriangle(intrinsic, new Triangle(n, m, l)),  new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(n, m, l)))));
         }
     }
 }

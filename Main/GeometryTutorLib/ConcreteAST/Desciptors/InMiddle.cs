@@ -18,11 +18,10 @@ namespace GeometryTutorLib.ConcreteAST
         /// </summary>
         /// <param name="p">A point that lies on the segment</param>
         /// <param name="segment">A segment</param>
-        public InMiddle(Point p, Segment segment, string just) : base()
+        public InMiddle(Point p, Segment segment) : base()
         {
             this.point = p;
             this.segment = segment;
-            justification = just;
         }
 
         //
@@ -32,7 +31,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (Utilities.CompareValues(Point.calcDistance(point, segment.Point1), Point.calcDistance(point, segment.Point2)))
             {
-                return new Strengthened(this, new Midpoint(point, segment, "Precomputed"), "Precomputed");
+                return new Strengthened(this, new Midpoint(this));
             }
 
             return null;

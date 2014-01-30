@@ -33,10 +33,10 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
 
-            given.Add(new GeometricCongruentTriangles(new Triangle(a, b, c), new Triangle(d, e, f), "Given"));
-            given.Add(new GeometricCongruentTriangles(new Triangle(f, d, e), new Triangle(p, m, n), "Given"));
+            given.Add(new GeometricCongruentTriangles(new Triangle(a, b, c), new Triangle(d, e, f)));
+            given.Add(new GeometricCongruentTriangles(new Triangle(f, d, e), new Triangle(p, m, n)));
 
-            goals.Add(new AlgebraicCongruentTriangles(new Triangle(a, b, c), new Triangle(m, n, p), "Given"));
+            goals.Add(new AlgebraicCongruentTriangles(new Triangle(a, b, c), new Triangle(m, n, p)));
         }
     }
 }

@@ -10,11 +10,10 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment medianSegment { get; private set; }
         public Triangle theTriangle { get; private set; }
 
-        public Median(Segment segment, Triangle thatTriangle, string just)
+        public Median(Segment segment, Triangle thatTriangle)
         {
             medianSegment = segment;
             theTriangle = thatTriangle;
-            justification = just;
         }
 
         // Does this median cover the given clause

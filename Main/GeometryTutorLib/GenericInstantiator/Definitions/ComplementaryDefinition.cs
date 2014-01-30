@@ -9,11 +9,12 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ComplementaryDefinition : Definition
     {
         private readonly static string NAME = "Definition of Complementary";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.COMPLEMENTARY_DEFINITION);
 
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             if (clause is Complementary) return InstantiateFromComplementary(clause as Complementary);
 
@@ -22,7 +23,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 return InstantiateToComplementary(clause);
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
         public static void Clear()
@@ -35,9 +36,9 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<AngleEquation> candidateAngleEquations = new List<AngleEquation>();
         private static List<RightAngle> candidateRightAngles = new List<RightAngle>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToComplementary(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateToComplementary(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is AngleEquation)
             {
@@ -114,15 +115,15 @@ namespace GeometryTutorLib.GenericInstantiator
         // 
         // Complementary(Angle(A, B, C), Angle(D, E, F)) -> Angle(A, B, C) + Angle(D, E, F) = 90
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromComplementary(Complementary comp)
+        public static List<EdgeAggregator> InstantiateFromComplementary(Complementary comp)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(comp);
 
-            GeometricAngleEquation angEq = new GeometricAngleEquation(new Addition(comp.angle1, comp.angle2), new NumericValue(90), NAME);
+            GeometricAngleEquation angEq = new GeometricAngleEquation(new Addition(comp.angle1, comp.angle2), new NumericValue(90));
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, angEq));
+            newGrounded.Add(new EdgeAggregator(antecedent, angEq, annotation));
 
             return newGrounded;
         }
@@ -130,9 +131,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // 
         // RightAngle(A, B, C), Angle(A, B, X) + Angle(X, B, C) = 90 -> Complementary(Angle(A, B, X), Angle(X, B, C))
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToComplementary(AngleEquation eq, RightAngle ra, GroundedClause original)
+        public static List<EdgeAggregator> InstantiateToComplementary(AngleEquation eq, RightAngle ra, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Acquire the two angles from the equation
@@ -149,12 +150,12 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!ra.HasSegment(angle1.OtherRayEquates(shared)) || !ra.HasSegment(angle2.OtherRayEquates(shared))) return newGrounded;
 
             // Success, we have correspondence
-            Complementary comp = new Complementary(angle1, angle2, NAME);
+            Complementary comp = new Complementary(angle1, angle2);
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, comp));
+            newGrounded.Add(new EdgeAggregator(antecedent, comp, annotation));
 
             return newGrounded;
         }

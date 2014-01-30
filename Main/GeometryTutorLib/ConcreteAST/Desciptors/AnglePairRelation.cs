@@ -13,11 +13,10 @@ namespace GeometryTutorLib.ConcreteAST
         public Angle angle1 { get; protected set; }
         public Angle angle2 { get; protected set; }
 
-        public AnglePairRelation(Angle ang1, Angle ang2, string just) : base()
+        public AnglePairRelation(Angle ang1, Angle ang2) : base()
         {
             angle1 = ang1;
             angle2 = ang2;
-            justification = just;
         }
 
         public override bool Covers(GroundedClause gc)

@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentSegmentsImplyProportionalSegmentsDefinition : Definition
     {
         private readonly static string NAME = "Congruent Segments Imply Proportional Segments";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentSegments> candidateCongruentSegments = new List<CongruentSegments>();
@@ -31,10 +32,10 @@ namespace GeometryTutorLib.GenericInstantiator
         //                                                  Proportional(Segment(B, C), Segment(D, E)),
         //                                                  Proportional(Segment(B, C), Segment(E, F)),
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause c)
+        public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
             // The list of new grounded clauses if they are deduced
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Triangle) && !(c is CongruentSegments)) return newGrounded;
 
@@ -87,9 +88,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // 
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> IfCongruencesApplyToTrianglesGenerate(Triangle ct1, Triangle ct2, CongruentSegments css1, CongruentSegments css2)
+        private static List<EdgeAggregator> IfCongruencesApplyToTrianglesGenerate(Triangle ct1, Triangle ct2, CongruentSegments css1, CongruentSegments css2)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // The congruent relationships need to link the given triangles
@@ -118,23 +119,23 @@ namespace GeometryTutorLib.GenericInstantiator
             GeometricProportionalSegments newProp = null;
             if (!Utilities.CompareValues(seg1Tri1.Length, seg1Tri2.Length))
             {
-                newProp = new GeometricProportionalSegments(seg1Tri1, seg1Tri2, NAME);
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(propAntecedent, newProp));
+                newProp = new GeometricProportionalSegments(seg1Tri1, seg1Tri2);
+                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
             }
             if (!Utilities.CompareValues(seg1Tri1.Length, seg2Tri2.Length))
             {
-                newProp = new GeometricProportionalSegments(seg1Tri1, seg2Tri2, NAME);
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(propAntecedent, newProp));
+                newProp = new GeometricProportionalSegments(seg1Tri1, seg2Tri2);
+                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
             }
             if (!Utilities.CompareValues(seg2Tri1.Length, seg1Tri2.Length))
             {
-                newProp = new GeometricProportionalSegments(seg2Tri1, seg1Tri2, NAME);
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(propAntecedent, newProp));
+                newProp = new GeometricProportionalSegments(seg2Tri1, seg1Tri2);
+                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
             }
             if (!Utilities.CompareValues(seg2Tri1.Length, seg2Tri2.Length))
             {
-                newProp = new GeometricProportionalSegments(seg2Tri1, seg2Tri2, NAME);
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(propAntecedent, newProp));
+                newProp = new GeometricProportionalSegments(seg2Tri1, seg2Tri2);
+                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
             }
 
             return newGrounded;

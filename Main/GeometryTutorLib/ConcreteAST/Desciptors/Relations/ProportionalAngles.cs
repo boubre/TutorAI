@@ -20,12 +20,10 @@ namespace GeometryTutorLib.ConcreteAST
             return largerAngle.Covers(gc) || smallerAngle.Covers(gc);
         }
 
-        public ProportionalAngles(Angle angle1, Angle angle2, string just) : base()
+        public ProportionalAngles(Angle angle1, Angle angle2) : base()
         {
             smallerAngle = angle1.measure < angle2.measure ? angle1 : angle2;
             largerAngle = angle1.measure < angle2.measure ? angle2 : angle1;
-
-            justification = just;
 
             proportion = Utilities.RationalRatio(angle1.measure, angle2.measure);
 
@@ -117,11 +115,14 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // Convert an equation to a proportion: 2AM = MC -> Proportional(Angle(A, M), Angle(M, C))
+        // Convert an equation to a proportion: 2AM = MC -> Proportional(Angle(A, M), Angle(M, C))        public static List<GenericInstantiator.EdgeAggregator>
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        private static readonly string ATOM_NAME = "Atomic Angle Equations are Proportional";
+        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+
+        public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             if (!(clause is AngleEquation)) return newGrounded;
 
@@ -138,10 +139,10 @@ namespace GeometryTutorLib.ConcreteAST
                     if (ratio.Key <= 2 && ratio.Value <= 2)
                     {
                         AlgebraicProportionalAngles prop = new AlgebraicProportionalAngles((Angle)flattened.lhsExps[0].DeepCopy(),
-                                                                                               (Angle)flattened.rhsExps[0].DeepCopy(), "Atomic Equations are Proportional");
+                                                                                           (Angle)flattened.rhsExps[0].DeepCopy());
 
                         List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
-                        newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, prop));
+                        newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, prop, atomAnnotation));
                     }
                 }
             }
@@ -149,12 +150,14 @@ namespace GeometryTutorLib.ConcreteAST
             return newGrounded;
         }
 
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> CreateTransitiveProportion(ProportionalAngles pss, CongruentAngles conAngs)
+        private static readonly string PROP_TRANS_NAME = "Angle Proportional / Congruence Transitivity";
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(ProportionalAngles pss, CongruentAngles conAngs)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
-            // Did either of these proportions come from the other?
-            if (pss.HasRelationPredecessor(conAngs) || conAngs.HasRelationPredecessor(pss)) return newGrounded;
+            //// Did either of these proportions come from the other?
+            //if (pss.HasRelationPredecessor(conAngs) || conAngs.HasRelationPredecessor(pss)) return newGrounded;
 
             //
             // Create the antecedent clauses
@@ -168,13 +171,13 @@ namespace GeometryTutorLib.ConcreteAST
             //
             Angle shared = pss.AngleShared(conAngs);
 
-            AlgebraicProportionalAngles newPS = new AlgebraicProportionalAngles(pss.OtherAngle(shared), conAngs.OtherAngle(shared), "Proportional / Congruence Transitivity");
+            AlgebraicProportionalAngles newPS = new AlgebraicProportionalAngles(pss.OtherAngle(shared), conAngs.OtherAngle(shared));
 
             // Update relationship among the congruence pairs to limit cyclic information generation
             //newPS.AddPredecessor(pss);
             //newPS.AddPredecessor(conAngs);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newPS));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newPS, propAnnotation));
 
             return newGrounded;
         }
@@ -182,13 +185,15 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Convert a proportion to an equation: Proportional(Angle(A, M), Angle(M, C)) -> 2AM = MC
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateProportion(GroundedClause clause)
-        {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+        private static readonly string DEF_NAME = "Defintion of Proportional Angles";
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
 
-            if (!(clause is ProportionalAngles)) return newGrounded;
+        public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
+        {
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             ProportionalAngles propAngs = clause as ProportionalAngles;
+            if (propAngs == null) return newGrounded;
 
             // Do not generate equations based on 'forced' proportions
             if (propAngs.proportion.Key == -1 || propAngs.proportion.Value == -1) return newGrounded;
@@ -209,15 +214,15 @@ namespace GeometryTutorLib.ConcreteAST
             Equation newEquation = null;
             if (propAngs is AlgebraicProportionalAngles)
             {
-                newEquation = new AlgebraicAngleEquation(productLHS, rhs, "Defintion of Proportional Angles");
+                newEquation = new AlgebraicAngleEquation(productLHS, rhs);
             }
             else if (propAngs is GeometricProportionalAngles)
             {
-                newEquation = new GeometricAngleEquation(productLHS, rhs, "Defintion of Proportional Angles");
+                newEquation = new GeometricAngleEquation(productLHS, rhs);
             }
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(propAngs);
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, newEquation));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newEquation, defAnnotation));
 
             return newGrounded;
         }

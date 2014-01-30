@@ -9,6 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class PerpendicularDefinition : Definition
     {
         private readonly static string NAME = "Definition of Perpendicular";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_DEFINITION);
 
         public static void Clear()
         {
@@ -18,7 +19,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // This implements forward and Backward instantiation
         //
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> Instantiate(GroundedClause clause)
+        public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             // FROM Perpendicular
             if (clause is Perpendicular) return InstantiateFromPerpendicular(clause, clause as Perpendicular);
@@ -41,15 +42,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
             }
 
-            return new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            return new List<EdgeAggregator>();
         }
 
         // 
         // Perpendicular(B, Segment(A, B), Segment(B, C)) -> RightAngle(), RightAngle()
         //
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateFromPerpendicular(GroundedClause original, Perpendicular perp)
+        private static List<EdgeAggregator> InstantiateFromPerpendicular(GroundedClause original, Perpendicular perp)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
 
@@ -62,9 +63,9 @@ namespace GeometryTutorLib.GenericInstantiator
                 Point top = perp.lhs.OtherPoint(perp.intersect);
                 Point right = perp.rhs.OtherPoint(perp.intersect);
 
-                Strengthened streng = new Strengthened(new Angle(top, perp.intersect, right), new RightAngle(top, perp.intersect, right, NAME), NAME);
+                Strengthened streng = new Strengthened(new Angle(top, perp.intersect, right), new RightAngle(top, perp.intersect, right));
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
+                newGrounded.Add(new EdgeAggregator(antecedent, streng, annotation));
             }
             //          top
             //           |
@@ -90,11 +91,11 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else return newGrounded;
 
-                Strengthened topRight = new Strengthened(new Angle(top, center, right), new RightAngle(top, center, right, NAME), NAME);
-                Strengthened topLeft = new Strengthened(new Angle(top, center, left), new RightAngle(top, center, left, NAME), NAME);
+                Strengthened topRight = new Strengthened(new Angle(top, center, right), new RightAngle(top, center, right));
+                Strengthened topLeft = new Strengthened(new Angle(top, center, left), new RightAngle(top, center, left));
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, topRight));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, topLeft));
+                newGrounded.Add(new EdgeAggregator(antecedent, topRight, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, topLeft, annotation));
             }
             //          top
             //           |
@@ -111,15 +112,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 Point left = perp.rhs.Point1;
                 Point right = perp.rhs.Point2;
 
-                Strengthened topRight = new Strengthened(new Angle(top, center, right), new RightAngle(top, center, right, NAME), NAME);
-                Strengthened bottomRight = new Strengthened(new Angle(right, center, bottom), new RightAngle(right, center, bottom, NAME), NAME);
-                Strengthened bottomLeft = new Strengthened(new Angle(left, center, bottom), new RightAngle(left, center, bottom, NAME), NAME);
-                Strengthened topLeft = new Strengthened(new Angle(top, center, left), new RightAngle(top, center, left, NAME), NAME);
+                Strengthened topRight = new Strengthened(new Angle(top, center, right), new RightAngle(top, center, right));
+                Strengthened bottomRight = new Strengthened(new Angle(right, center, bottom), new RightAngle(right, center, bottom));
+                Strengthened bottomLeft = new Strengthened(new Angle(left, center, bottom), new RightAngle(left, center, bottom));
+                Strengthened topLeft = new Strengthened(new Angle(top, center, left), new RightAngle(top, center, left));
 
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, topRight));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, bottomRight));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, bottomLeft));
-                newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, topLeft));
+                newGrounded.Add(new EdgeAggregator(antecedent, topRight, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, bottomRight, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, bottomLeft, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, topLeft, annotation));
             }
             else return newGrounded;
 
@@ -130,9 +131,9 @@ namespace GeometryTutorLib.GenericInstantiator
         // RightAngle(A, B, C), Intersection(B, Segment(A, B), SubSegment(B, C)) -> Perpendicular(B, Segment(A, B), Segment(B, C))
         //
         private static List<Intersection> candidateIntersections = new List<Intersection>();
-        public static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToPerpendicular(GroundedClause clause)
+        public static List<EdgeAggregator> InstantiateToPerpendicular(GroundedClause clause)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Intersection)
             {
@@ -164,21 +165,21 @@ namespace GeometryTutorLib.GenericInstantiator
             return newGrounded;
         }
 
-        private static List<KeyValuePair<List<GroundedClause>, GroundedClause>> InstantiateToPerpendicular(Intersection inter, RightAngle ra, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateToPerpendicular(Intersection inter, RightAngle ra, GroundedClause original)
         {
-            List<KeyValuePair<List<GroundedClause>, GroundedClause>> newGrounded = new List<KeyValuePair<List<GroundedClause>, GroundedClause>>();
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // This angle must apply to this intersection (same vertex as well as the segments inducing this angle)
             if (!inter.InducesNonStraightAngle(ra)) return newGrounded;
 
             // We are strengthening an intersection to a perpendicular 'labeling'
-            Strengthened streng = new Strengthened(inter, new Perpendicular(inter, NAME), NAME);
+            Strengthened streng = new Strengthened(inter, new Perpendicular(inter));
 
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
             antecedent.Add(inter);
 
-            newGrounded.Add(new KeyValuePair<List<GroundedClause>, GroundedClause>(antecedent, streng));
+            newGrounded.Add(new EdgeAggregator(antecedent, streng, annotation));
 
             return newGrounded;
         }
