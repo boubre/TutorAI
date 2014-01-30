@@ -65,16 +65,19 @@ namespace LiveGeometry
         /// Return clauses that should be passed to the back-end.
         /// </summary>
         /// <returns>Back-end input.</returns>
-        public List<GroundedClause> getClauses()
+        public KeyValuePair<List<GroundedClause>, List<GroundedClause>> getClauses()
         {
-            List<GroundedClause> rv = new List<GroundedClause>();
-            points.ForEach((Point p) => rv.Add(p));
-            collinear.ForEach((Collinear c) => rv.Add(c));
-            triangles.ForEach((Triangle t) => rv.Add(t));
-            congSegs.ForEach((GeometricCongruentSegments gcs) => rv.Add(gcs));
-            congAngles.ForEach((GeometricCongruentAngles cga) => rv.Add(cga));
-            rightAngles.ForEach((RightAngle r) => rv.Add(r));
-            return rv;
+            List<GroundedClause> intrinsic = new List<GroundedClause>();
+            points.ForEach((Point p) => intrinsic.Add(p));
+            collinear.ForEach((Collinear c) => intrinsic.Add(c));
+            triangles.ForEach((Triangle t) => intrinsic.Add(t));
+
+            List<GroundedClause> givens = new List<GroundedClause>();
+            congSegs.ForEach((GeometricCongruentSegments gcs) => givens.Add(gcs));
+            congAngles.ForEach((GeometricCongruentAngles cga) => givens.Add(cga));
+            rightAngles.ForEach((RightAngle r) => givens.Add(r));
+
+            return new KeyValuePair<List<GroundedClause>,List<GroundedClause>>(intrinsic, givens);
         }
 
         /// <summary>

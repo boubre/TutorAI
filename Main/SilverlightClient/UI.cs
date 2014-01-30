@@ -20,7 +20,7 @@ namespace LiveGeometry
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private ParseOptionsWindow parseOptionsWindow;
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
-        private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
+        private KeyValuePair<List<GeometryTutorLib.ConcreteAST.GroundedClause>, List<GeometryTutorLib.ConcreteAST.GroundedClause>> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
         private ParseController parseController;
 
@@ -437,13 +437,13 @@ namespace LiveGeometry
             //Execute Front-End Parse
             parseController.executeParse();
 
-            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult.Key, parseResult.Value); // <intrinsic, given>
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 
             //Example of UI Output to AI Window
-            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> p in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
-                UIDebugPublisher.publishString(p.ToString());
+                UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
         }
         void DisplayParseOptions()

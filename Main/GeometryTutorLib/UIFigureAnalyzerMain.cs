@@ -15,7 +15,7 @@ namespace GeometryTutorLib
         private List<ConcreteAST.GroundedClause> givens;
 
         private Precomputer.CoordinatePrecomputer precomputer;
-        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
+        public Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph { get; private set; }
         private GenericInstantiator.Instantiator instantiator;
         private Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
         private ProblemAnalyzer.PathGenerator pathGenerator;
