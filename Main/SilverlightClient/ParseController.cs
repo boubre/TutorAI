@@ -34,27 +34,28 @@ namespace LiveGeometry
             parseActions.Enqueue(a);
         }
 
-        /// <summary>
+        /// /// <summary>
         /// Add a dialog that will be displayed after the current action is complete.
         /// This dialog will block the parse thread but not the UI, and the next parse action cannot occur until
         /// after all dialogs have been resolved.
         /// </summary>
         /// <param name="message">The message of the dialog.</param>
         /// <param name="title">The title of the dialog.</param>
+        /// /// <param name="parameters">Parameters to pass to the yes/no actions.</param>
         /// <param name="yesAction">The Action to execute if the Yes button is clicked.</param>
-        /// <param name="noAction">The Action to execute if the No button is clicked.</param>
-        public void addDialog(string message, string title, Action yesAction, Action noAction)
+        /// <param name="noAction">The Action to execute if the No button is clicked.</param>  
+        public void addDialog(string message, string title, object[] parameters, Action<object[]> yesAction, Action<object[]> noAction)
         {
             ParseDisambiguationWindow pdw = new ParseDisambiguationWindow(message, title);
             pdw.Closed += new EventHandler((object sender, EventArgs e) =>
             {
                 if (pdw.DialogResult == ParseDisambiguationWindow.Result.Yes)
                 {
-                    yesAction();
+                    yesAction(parameters);
                 }
                 else if (pdw.DialogResult == ParseDisambiguationWindow.Result.No)
                 {
-                    noAction();
+                    noAction(parameters);
                 }
                 waitHandle.Set();
             });

@@ -51,6 +51,7 @@ namespace DynamicGeometry.UI
             messageText.Text = message;
             messageText.MaxWidth = 300;
             messageText.MinWidth = 300;
+            messageText.TextWrapping = TextWrapping.Wrap;
             messageText.Margin = new Thickness(0, 0, 0, 10);
 
             //Create option buttons
