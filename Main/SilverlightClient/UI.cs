@@ -441,7 +441,7 @@ namespace LiveGeometry
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 
             //Example of UI Output to AI Window
-            foreach (GeometryTutorLib.ProblemAnalyzer.Problem p in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> p in problems)
             {
                 UIDebugPublisher.publishString(p.ToString());
             }

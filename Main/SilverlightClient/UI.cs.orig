@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DynamicGeometry;
+using DynamicGeometry.UI;
 using ImageTools;
 using ImageTools.IO;
 using ImageTools.IO.Bmp;
@@ -17,8 +18,11 @@ namespace LiveGeometry
     public partial class Page
     {
         private BackgroundWorker parseWorker = new BackgroundWorker();
-        private List<GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause> parseResult;
+        private ParseOptionsWindow parseOptionsWindow;
+        private ProblemCharacteristicsWindow problemCharacteristicsWindow;
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
+        private ParseController parseController;
 
         private void initParseWorker()
         {
@@ -406,52 +410,71 @@ namespace LiveGeometry
 
         void ParseToAst()
         {
-<<<<<<< HEAD
-            DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-            List<GeometryTutorLib.ConcreteAST.GroundedClause> parseResult = parser.ParseDrawing();
-            parser.calculateIntersections(parseResult);
-            parser.calculateInMiddle(parseResult);
-            parser.calculateLineEquality(parseResult);
-            parser.calculateMidpoints(parseResult);
-            parser.calculateTriangles(parseResult);
-            parseResult = parser.removeDuplicates(parseResult);
-
-            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in parseResult)
-=======
-            if (parseWorker.IsBusy != true)
+            if (!parseWorker.IsBusy)
             {
-                //Do front-end parsing on UI thread
-                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing);
-                parseResult = parser.ParseDrawing();
-                parser.calculateIntersections(parseResult);
-                parser.calculateInMiddle(parseResult);
-                parser.calculateLineEquality(parseResult);
-                parser.calculateMidpoints(parseResult);
-                parser.calculateTriangles(parseResult);
-                parseResult = parser.removeDuplicates(parseResult);
+                parseController = new ParseController();
+                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing, parseController);
 
-                // Do back-end computation on background worker
+                //Set up parse chain
+                parseController.addParseAction(() => { parser.ParseDrawing(); });
+                parseController.addParseAction(() => { parser.removeDuplicateSegments(); });
+                parseController.addParseAction(() => { parser.calculateCollinear(); });
+                parseController.addParseAction(() => { parser.calculateCongruentSegments(); });
+                parseController.addParseAction(() => { parser.calculateIntersections(); });
+                parseController.addParseAction(() => { parser.calculateAngles(); });
+                parseController.addParseAction(() => { parser.removeDuplicateAngles(); });
+                parseController.addParseAction(() => { parser.calculateCongruentAngles(); });
+                parseController.addParseAction(() => { parser.calculateRightAngles(); });
+                parseController.addParseAction(() => { parseResult = parser.getClauses(); });
+
+                // Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
         }
 
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
-            foreach (GeometryTutorLib.ConcreteAbstractSyntax.GroundedClause gc in parseResult)
->>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
-            {
-                Debug.WriteLine(gc);
-                Debug.WriteLine("--------------------");
-            }
-            Debug.WriteLine("=====END=====");
+            //Execute Front-End Parse
+            parseController.executeParse();
 
+            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
 <<<<<<< HEAD
-            // The givens have to be differentiated from the intrisic clauses
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult, new List<GeometryTutorLib.ConcreteAST.GroundedClause>());
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 =======
-            UIDebugPublisher.publishString("Publish string example");
-            GeometryTutorLib.BridgeUItoBackEnd.AnalyzeFigure(parseResult);
->>>>>>> 8397a84bc91d81552eda116a1a78e6dec9a77895
+            List<GeometryTutorLib.ProblemAnalyzer.Problem> problems = analyzer.AnalyzeFigure();
+
+            //Example of UI Output to AI Window
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem p in problems)
+            {
+                UIDebugPublisher.publishString(p.ToString());
+            }
+>>>>>>> 329a76349e4a0d897124969ca7cd60ebed8c3976
+        }
+        void DisplayParseOptions()
+        {
+            parseOptionsWindow.Show();
+        }
+
+        void ParseOptionsWindow_Closed(object sender, EventArgs e)
+        {
+            if (isolatedSettings.Contains("UserParseGroup"))
+            {
+                isolatedSettings["UserParseGroup"] = ParseGroupWindow.GetUserGroups();
+            }
+            else
+            {
+                isolatedSettings.Add("UserParseGroup", ParseGroupWindow.GetUserGroups());
+            }
+        }
+
+        void DisplayProblemCharacteristics()
+        {
+            problemCharacteristicsWindow.Show();
+        }
+
+        void ProblemCharacteristicsWindow_Closed(object sender, EventArgs e)
+        {
+            //Do whatever needs to be done when the problem characteristics window closes
         }
     }
 }

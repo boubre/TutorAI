@@ -13,7 +13,7 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="a">The segment opposite point a</param>
         /// <param name="b">The segment opposite point b</param>
         /// <param name="c">The segment opposite point c</param>
-        public EquilateralTriangle(Segment a, Segment b, Segment c, string just) : base(a, b, c)
+        public EquilateralTriangle(Segment a, Segment b, Segment c) : base(a, b, c)
         {
             provenIsosceles = true;
             provenEquilateral = true;
