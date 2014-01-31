@@ -1141,7 +1141,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Intersection(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + "): " + justification;
+            return "Intersection(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + ") " + justification;
         }
     }
 }

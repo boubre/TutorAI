@@ -437,7 +437,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Generate the actual angle congruence
         //
         private static readonly string REFLEXIVE_ANGLE_NAME = "Reflexive Angles";
-        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_ANGLE_NAME, GenericInstantiator.JustificationSwitch.REFLEXIVE);
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_ANGLE_NAME, JustificationSwitch.REFLEXIVE);
 
         public static GenericInstantiator.EdgeAggregator GenerateAngleCongruence(Triangle tri, Angle angle)
         {

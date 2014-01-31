@@ -33,8 +33,8 @@ namespace LiveGeometry
             CommandSettings = new Command(OpenSettings, GetImageFromResource("Repair.png"), "Settings", "Drawing");
             CommandHomepage = new Command(Homepage, GetImageFromResource("Homepage.png"), "Homepage", "Drawing");
             CommandParse = new Command(ParseToAst, GetImageFromResource("Parse.png"), "Parse", "Parsing");
-            CommandParseOptions = new Command(DisplayParseOptions, GetImageFromResource("ParseOptions.png"), "Parse Options", "Parsing");
-            CommandProblemCharacteristics = new Command(DisplayProblemCharacteristics, GetImageFromResource("ParseOptions.png"), "Problem Characteristics", "Parsing");
+            CommandParseOptions = new Command(DisplayParseOptions, GetImageFromResource("ParseOptions.png"), "Def and Theorem Options", "Parsing");
+            CommandProblemCharacteristics = new Command(DisplayProblemCharacteristics, GetImageFromResource("ParseOptions.png"), "Desired Problem Characteristics", "Parsing");
 
             drawingHost.DrawingControl.CommandUndo.Icon = GetImageFromResource("Undo.png");
             drawingHost.DrawingControl.CommandRedo.Icon = GetImageFromResource("Redo.png");

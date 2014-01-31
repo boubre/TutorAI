@@ -97,8 +97,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             foreach (Problem<Hypergraph.EdgeAnnotation> p in problems)
             {
-                //if (IsInteresting(p)) interesting.Add(p);
-                if (IsInterestingWithGivens(p)) interesting.Add(p);
+                if (IsInterestingWithGivens(p))
+                {
+                    interesting.Add(p);
+                }
             }
 
             return interesting;
@@ -124,10 +126,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
-            bool problemContainsOtherGivens = problem.givens.Count - numGivensInProblem > 0;
+            problem.interestingPercentage = (int)((double)(numGivensInProblem) / givenIndices.Count * 100); 
 
-            return !problemContainsOtherGivens && numGivensInProblem >= 1;  // givens.Count || numGivensInProblem > 1;
-//            return numGivensInProblem <= givens.Count;
+            bool problemContainsOtherGivens = problem.givens.Count - numGivensInProblem > 0;
+            bool interesting = !problemContainsOtherGivens && numGivensInProblem > 0;
+
+            return interesting;
         }
 
         //

@@ -11,8 +11,8 @@ namespace GeometryTutorLib.GenericInstantiator
         private readonly static string DEF_NAME = "Definition of Right Angle";
         private readonly static string TRANS_NAME = "Transitivity of Congruent Angles With a Right Angle";
 
-        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.RIGHT_ANGLE_DEFINITION);
-        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(TRANS_NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE);
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, JustificationSwitch.RIGHT_ANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(TRANS_NAME, JustificationSwitch.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE);
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {

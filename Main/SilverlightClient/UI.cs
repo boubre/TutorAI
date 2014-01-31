@@ -436,6 +436,7 @@ namespace LiveGeometry
         {
             //Execute Front-End Parse
             parseController.executeParse();
+            UIDebugPublisher.clearWindow();
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult.Key, parseResult.Value); // <intrinsic, given>
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();

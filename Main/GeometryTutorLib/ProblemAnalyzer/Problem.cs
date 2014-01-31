@@ -24,6 +24,9 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public List<PebblerHyperEdge<A>> edges { get; private set; }
         public DiGraph graph { get; private set; }
 
+        // For final determination of interestingness
+        public int interestingPercentage = 0;
+
         // For backward problem generation
         public Problem()
         {

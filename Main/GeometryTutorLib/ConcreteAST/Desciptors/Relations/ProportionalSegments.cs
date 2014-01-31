@@ -130,7 +130,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Proportional(" + largerSegment.ToString() + " < " + dictatedProportion +  " > " + smallerSegment.ToString() + "): " + justification;
+            return "Proportional(" + largerSegment.ToString() + " < " + dictatedProportion +  " > " + smallerSegment.ToString() + ") " + justification;
         }
 
         //
@@ -138,7 +138,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         //
         private static readonly string ATOM_NAME = "Atomic Segment Equations are Proportional";
-        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> InstantiateEquation(GroundedClause clause)
         {
@@ -171,7 +171,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string PROP_TRANS_NAME = "Segment Proportional / Congruence Transitivity";
-        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, JustificationSwitch.SIMILARITY);
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(ProportionalSegments pss, CongruentSegments conSegs)
         {
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
@@ -206,7 +206,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Convert a proportion to an equation: Proportional(Segment(A, M), Segment(M, C)) -> 2AM = MC
         //
         private static readonly string DEF_NAME = "Defintion of Proportional Segments";
-        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
         {

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MidpointDefinition : Definition
     {
         private readonly static string NAME = "Definition of Midpoint";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.MIDPOINT_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MIDPOINT_DEFINITION);
 
         public static void Clear()
         {

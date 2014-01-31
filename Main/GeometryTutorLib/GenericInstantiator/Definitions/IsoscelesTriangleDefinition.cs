@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class IsoscelesTriangleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Isosceles Triangle";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION);
 
         public static Boolean MayUnifyWith(GroundedClause c)
         {

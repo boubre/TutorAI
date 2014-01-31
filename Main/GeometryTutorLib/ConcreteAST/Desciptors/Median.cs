@@ -50,7 +50,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Median(" + medianSegment.ToString() + ", " + theTriangle.ToString() + "): " + justification;
+            return "Median(" + medianSegment.ToString() + ", " + theTriangle.ToString() + ") " + justification;
         }
     }
 }

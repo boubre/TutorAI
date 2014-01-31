@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CorrespondingAnglesOfParallelLines : Axiom
     {
         private static readonly string NAME = "Corresponding Angles"; // "If Two Parallel Lines are Cut by a Transversal, then Corresponding Angles are Congruent (Axiom)";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CORRESPONDING_ANGLES_OF_PARALLEL_LINES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CORRESPONDING_ANGLES_OF_PARALLEL_LINES);
 
         private static List<Parallel> candidateParallel = new List<Parallel>();
         private static List<Intersection> candidateIntersection = new List<Intersection>();

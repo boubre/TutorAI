@@ -40,7 +40,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Perpendicular(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + "): " + justification;
+            return "Perpendicular(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + ") " + justification;
         }
     }
 }

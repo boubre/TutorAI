@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ASA : CongruentTriangleAxiom
     {
         private readonly static string NAME = "ASA";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ASA);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ASA);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();

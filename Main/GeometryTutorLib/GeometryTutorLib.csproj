@@ -58,10 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
-    <Compile Include="GenericInstantiator\JustificationSwitch.cs" />
+    <Compile Include="JustificationSwitch.cs" />
     <Compile Include="GenericInstantiator\Definitions\SupplementaryDefinition.cs" />
     <Compile Include="GenericInstantiator\EdgeAggregator.cs" />
     <Compile Include="Hypergraph\EdgeAnnotation.cs" />
+    <Compile Include="Pebbler\Pebbler.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
     <Compile Include="StatisticsGenerator\ActualProblem.cs" />
@@ -328,7 +329,7 @@
     <Compile Include="GenericInstantiator\Theorems\AngleBisectorTheorem.cs" />
     <Compile Include="GenericInstantiator\Theorems\AngleBisectorIsPerpendicularBisectorInIsosceles.cs" />
     <Compile Include="GenericInstantiator\Theorems\AltitudeOfRightTrianglesImpliesSimilar.cs" />
-    <Compile Include="GenericInstantiator\Definitions\CongruentSegmentsImplyProportionalSegmentsDefinition.cs" />
+    <Compile Include="GenericInstantiator\Axioms\CongruentSegmentsImplyProportionalSegmentsDefinition.cs" />
     <Compile Include="GenericInstantiator\Theorems\ParallelImplySameSideInteriorSupplementary.cs" />
     <Compile Include="GenericInstantiator\Theorems\ParallelImplyAltIntCongruentAngles.cs" />
     <Compile Include="GenericInstantiator\Theorems\TransversalPerpendicularToParallelImplyBothPerpendicular.cs" />

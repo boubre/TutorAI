@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AASimilarity : Axiom
     {
         private readonly static string NAME = "AA Similarity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.AA_SIMILARITY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.AA_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();

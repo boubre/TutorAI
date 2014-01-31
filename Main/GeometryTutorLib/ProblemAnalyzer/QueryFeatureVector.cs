@@ -10,11 +10,11 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public bool deductiveStepsPartitioning { get; private set; }
 
         public bool rangedLengthPartitioning { get; private set; }
-        public IntegerPartition lengthPartitions { get; private set; }
+        public NumericPartition<int> lengthPartitions { get; private set; }
         public bool rangedWidthPartitioning { get; private set; }
-        public IntegerPartition widthPartitions { get; private set; }
+        public NumericPartition<int> widthPartitions { get; private set; }
         public bool rangedDeductiveStepsPartitioning { get; private set; }
-        public IntegerPartition stepsPartitions { get; private set; }
+        public NumericPartition<int> stepsPartitions { get; private set; }
 
         public int minLength { get; private set; }
         public int maxLength { get; private set; }
@@ -22,7 +22,10 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public int maxWidth { get; private set; }
 
         // The number of desired goals from the original figure statement
-        //public int numberOfOriginalGivens { get; private set; }
+        public int numberOfOriginalGivens { get; private set; }
+
+        public bool interestingPartitioning { get; private set; }
+        public NumericPartition<int> interestingPartitions { get; private set; }
 
         public bool sourceIsomorphism { get; private set; }
         public bool pathIsomorphism { get; private set; }
@@ -40,13 +43,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
             deductiveStepsPartitioning = false;
             rangedDeductiveStepsPartitioning = false;
 
-            lengthPartitions = new IntegerPartition();
-            widthPartitions = new IntegerPartition();
-            stepsPartitions = new IntegerPartition();
+            lengthPartitions = new NumericPartition<int>();
+            widthPartitions = new NumericPartition<int>();
+            stepsPartitions = new NumericPartition<int>();
+            interestingPartitions = new NumericPartition<int>();
 
-            // Default to 100% of the givens
-            //numberOfOriginalGivens = numGivens;
-
+            interestingPartitioning = false;
             sourceIsomorphism = false;
             pathIsomorphism = false;
             goalIsomorphism = false;
@@ -61,13 +63,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
             deductiveStepsPartitioning = false;
             rangedDeductiveStepsPartitioning = false;
 
-            lengthPartitions = new IntegerPartition(lengthParts);
-            widthPartitions = new IntegerPartition(widthParts);
-            stepsPartitions = new IntegerPartition(stepParts);
+            lengthPartitions = new NumericPartition<int>(lengthParts);
+            widthPartitions = new NumericPartition<int>(widthParts);
+            stepsPartitions = new NumericPartition<int>(stepParts);
+            interestingPartitions = new NumericPartition<int>();
 
-            // Default to 100% of the givens
-            //numberOfOriginalGivens = numGivens;
-
+            interestingPartitioning = false;
             sourceIsomorphism = false;
             pathIsomorphism = false;
             goalIsomorphism = false;
@@ -80,37 +81,37 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Note: this is an inequality check implementation; for example we use <= to compare with the upper bound, NOT <
         //
-        public class IntegerPartition
+        public class NumericPartition<T> where T : IComparable
         {
-            private List<int> partitionUpperBounds;
+            private List<T> partitionUpperBounds;
 
-            public IntegerPartition() { partitionUpperBounds = new List<int>(); }
+            public NumericPartition() { partitionUpperBounds = new List<T>(); }
 
-            public IntegerPartition(List<int> ubs)
+            public NumericPartition(List<T> ubs)
             {
-                partitionUpperBounds = new List<int>(ubs);
+                partitionUpperBounds = new List<T>(ubs);
 
                 partitionUpperBounds.Sort();
             }
 
-            public void SetPartitions(List<int> ubs)
+            public void SetPartitions(List<T> ubs)
             {
-                partitionUpperBounds = new List<int>(ubs);
+                partitionUpperBounds = new List<T>(ubs);
 
                 partitionUpperBounds.Sort();
             }
 
-            public int GetUpperBound(int index) { return partitionUpperBounds[index]; }
+            public T GetUpperBound(int index) { return partitionUpperBounds[index]; }
             public int Size() { return partitionUpperBounds.Count; }
 
             // Given the specific value, we reutrn the index; this facilitates comparing
             // indices to determine if two problems are in the same dictated partitions
-            public int GetPartitionIndex(int value)
+            public int GetPartitionIndex(T value)
             {
                 // General case with > 1 partition value
                 for (int p = 0; p < partitionUpperBounds.Count; p++)
                 {
-                    if (value <= partitionUpperBounds[p]) return p;
+                    if (value.CompareTo(partitionUpperBounds[p]) <= 0) return p;
                 }
 
                 // The value is greater than all given partitions (also handles case where only 1 partition value given)
@@ -127,6 +128,17 @@ namespace GeometryTutorLib.ProblemAnalyzer
             partitionBounds.Add(2);
             partitionBounds.Add(5);
             partitionBounds.Add(10);
+            return partitionBounds;
+        }
+
+        public static List<int> ConstructInterestingPartitionBounds()
+        {
+            List<int> partitionBounds = new List<int>();
+            partitionBounds.Add(25);
+            partitionBounds.Add(50);
+            partitionBounds.Add(75);
+            partitionBounds.Add(99);
+            partitionBounds.Add(100);
             return partitionBounds;
         }
 
@@ -184,45 +196,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return query;
         }
 
-        //public static QueryFeatureVector ConstructWidthBasedQueryVector(int minWidth, int maxWidth)
-        //{
-        //    QueryFeatureVector query = new QueryFeatureVector();
+        public static QueryFeatureVector ConstructInterestingnessIsomorphismQueryVector(List<int> partitions)
+        {
+            QueryFeatureVector query = new QueryFeatureVector();
 
-        //    query.widthPartitioning = true;
+            query.interestingPartitioning = true;
 
-        //    query.minWidth = minWidth;
-        //    query.maxWidth = maxWidth;
+            query.interestingPartitions.SetPartitions(partitions);
 
-        //    return query;
-        //}
-
-        //public static QueryFeatureVector ConstructLengthBasedQueryVector(int minLength, int maxLength)
-        //{
-        //    QueryFeatureVector query = new QueryFeatureVector();
-
-        //    query.lengthPartitioning = true;
-
-        //    query.minLength = minLength;
-        //    query.maxLength = maxLength;
-
-        //    return query;
-        //}
-
-        //public static QueryFeatureVector ConstructWidthLengthBasedQueryVector(int minLength, int maxLength, int minWidth, int maxWidth)
-        //{
-        //    QueryFeatureVector query = new QueryFeatureVector();
-
-        //    query.widthPartitioning = true;
-        //    query.lengthPartitioning = true;
-
-        //    query.minLength = minLength;
-        //    query.maxLength = maxLength;
-
-        //    query.minWidth = minWidth;
-        //    query.maxWidth = maxWidth;
-
-        //    return query;
-        //}
+            return query;
+        }
 
         public override string ToString()
         {

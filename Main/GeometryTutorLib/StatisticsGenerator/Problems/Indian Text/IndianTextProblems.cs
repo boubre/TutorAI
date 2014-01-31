@@ -18,7 +18,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             problems.Add(new IPage123Example6(false));   // GTG
             problems.Add(new IPage128Problem01(false));  // GTG  // Good to analyze
             problems.Add(new IPage128Problem03(false));  // GTG
-            problems.Add(new IPage120Problem6(false));   // GTG  ONLY with Angle Addition Axiom
+            //problems.Add(new IPage120Problem6(false));   // GTG  ONLY with Angle Addition Axiom
             problems.Add(new IPage120Problem7(false));   // GTG
             problems.Add(new IPage120Problem8(false));   // GTG  Overlapping Right Triangles
             problems.Add(new JPage140Problem9(false));   // GTG

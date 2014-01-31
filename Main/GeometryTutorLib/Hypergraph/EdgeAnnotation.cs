@@ -16,7 +16,7 @@ namespace GeometryTutorLib.Hypergraph
         public string justification { get; private set; }
 
         // Has the user indicated that the use of this 
-        public bool active { get; private set; }
+        public bool active;
         
         public EdgeAnnotation()
         {
@@ -29,6 +29,8 @@ namespace GeometryTutorLib.Hypergraph
             justification = just;
             this.active = active;
         }
+
+        public bool IsActive() { return active; }
 
         public override string ToString()
         {

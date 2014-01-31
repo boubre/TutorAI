@@ -158,7 +158,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         // Construct a list of all partitions summarizing the number of problems with same goal type: <type, number of type>
         //
-        public Dictionary<int, int> GetDeductivePartitionSummary()
+        public Dictionary<int, int> GetDifficultyPartitionSummary()
         {
             Dictionary<int, int> partitionPairs = new Dictionary<int, int>();
 
@@ -167,6 +167,22 @@ namespace GeometryTutorLib.ProblemAnalyzer
             {
                 int upperBoundIndex = query.stepsPartitions.GetPartitionIndex(partitions[p].elements[0].GetNumDeductiveSteps());
                 int upperBoundValue = upperBoundIndex == query.stepsPartitions.Size() ? int.MaxValue : query.stepsPartitions.GetUpperBound(upperBoundIndex);
+
+                partitionPairs.Add(upperBoundValue, partitions[p].Size());
+            }
+
+            return partitionPairs;
+        }
+
+        public Dictionary<int, int> GetInterestingPartitionSummary()
+        {
+            Dictionary<int, int> partitionPairs = new Dictionary<int, int>();
+
+            // It is possible that there will be NO problems in an anticipated partition
+            for (int p = 0; p < partitions.Count; p++)
+            {
+                int upperBoundIndex = query.interestingPartitions.GetPartitionIndex(partitions[p].elements[0].interestingPercentage);
+                int upperBoundValue = upperBoundIndex == query.interestingPartitions.Size() ? int.MaxValue : query.interestingPartitions.GetUpperBound(upperBoundIndex);
 
                 partitionPairs.Add(upperBoundValue, partitions[p].Size());
             }

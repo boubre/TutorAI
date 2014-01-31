@@ -43,7 +43,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Midpoint(" + point.ToString() + ", " + segment.ToString() + "): " + justification;
+            return "Midpoint(" + point.ToString() + ", " + segment.ToString() + ") " + justification;
         }
 
         public override int GetHashCode()

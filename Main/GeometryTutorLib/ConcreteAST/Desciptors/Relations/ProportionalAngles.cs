@@ -111,14 +111,14 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Proportional(" + largerAngle.ToString() + " < " + dictatedProportion + " > " + smallerAngle.ToString() + "): " + justification;
+            return "Proportional(" + largerAngle.ToString() + " < " + dictatedProportion + " > " + smallerAngle.ToString() + ") " + justification;
         }
 
         //
         // Convert an equation to a proportion: 2AM = MC -> Proportional(Angle(A, M), Angle(M, C))        public static List<GenericInstantiator.EdgeAggregator>
         //
         private static readonly string ATOM_NAME = "Atomic Angle Equations are Proportional";
-        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause clause)
         {
@@ -151,7 +151,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string PROP_TRANS_NAME = "Angle Proportional / Congruence Transitivity";
-        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, JustificationSwitch.SIMILARITY);
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(ProportionalAngles pss, CongruentAngles conAngs)
         {
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
@@ -186,7 +186,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Convert a proportion to an equation: Proportional(Angle(A, M), Angle(M, C)) -> 2AM = MC
         //
         private static readonly string DEF_NAME = "Defintion of Proportional Angles";
-        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
         {

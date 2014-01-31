@@ -122,20 +122,8 @@ namespace GeometryTutorLib.Pebbler
             // Forward pebble: it acquires the valid list of forward edges 
             PebbleForward(figure, givens, axiomaticNodes);
 
-            //if (Utilities.PEBBLING_DEBUG)
-            //{
-            //    Debug.WriteLine("Before backward Pebbling: ");
-            //    DebugDumpClauses();
-            //}
-
             // Backward pebble: acquires the valid list of bakcward edges 
             PebbleBackward(figure, axiomaticNodes, reflexiveNodes);
-
-            //if (Utilities.PEBBLING_DEBUG)
-            //{
-            //    Debug.WriteLine("AFTER backward Pebbling: ");
-            //    DebugDumpClauses();
-            //}
         }
 
         //
@@ -322,19 +310,19 @@ namespace GeometryTutorLib.Pebbler
                 edgeStr.Append(v + ": ");
                 switch (vertices[v].pebble)
                 {
-                    case Pebbler.PebblerColorType.NO_PEBBLE:
+                    case PebblerColorType.NO_PEBBLE:
                         edgeStr.Append("NO PEBBLE");
                         numNonPebbledNodes++;
                         break;
-                    case Pebbler.PebblerColorType.RED_FORWARD:
+                    case PebblerColorType.RED_FORWARD:
                         edgeStr.Append("RED");
                         numRedNodes++;
                         break;
-                    case Pebbler.PebblerColorType.BLUE_BACKWARD:
+                    case PebblerColorType.BLUE_BACKWARD:
                         edgeStr.Append("BLUE");
                         numBlueNodes++;
                         break;
-                    //case Pebbler.PebblerColorType.PURPLE_BOTH:
+                    //case PebblerColorType.PURPLE_BOTH:
                     //    edgeStr.Append("PURPLE");
                     //    numPurpleNodes++;
                     //    break;
@@ -356,27 +344,27 @@ namespace GeometryTutorLib.Pebbler
 
                             if (edge.IsFullyPebbled()) edgeStr.Append("+ ");
                             else edgeStr.Append("- ");
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.NO_PEBBLE)
+                            if (edge.pebbleColor == PebblerColorType.NO_PEBBLE)
                             {
                                 edgeStr.Append("(N) ");
                                 numNonPebbledEdges++;
                             }
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.RED_FORWARD)
+                            if (edge.pebbleColor == PebblerColorType.RED_FORWARD)
                             {
                                 edgeStr.Append("(R) ");
                                 numRedEdges++;
                             }
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.BLUE_BACKWARD)
+                            if (edge.pebbleColor == PebblerColorType.BLUE_BACKWARD)
                             {
                                 edgeStr.Append("(BL) ");
                                 numBlueEdges++;
                             }
-                            //if (edge.pebbleColor == Pebbler.PebblerColorType.PURPLE_BOTH)
+                            //if (edge.pebbleColor == PebblerColorType.PURPLE_BOTH)
                             //{
                             //    edgeStr.Append("(P) ");
                             //    numPurpleEdges++;
                             //}
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.BLACK_EDGE)
+                            if (edge.pebbleColor == PebblerColorType.BLACK_EDGE)
                             {
                                 edgeStr.Append("(BK) ");
                                 numBlackEdges++;
@@ -401,7 +389,7 @@ namespace GeometryTutorLib.Pebbler
                     bool containsBlueEdge = false;
                     foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
-                        if (edge.pebbleColor == Pebbler.PebblerColorType.BLUE_BACKWARD && v == edge.sourceNodes.Min())
+                        if (edge.pebbleColor == PebblerColorType.BLUE_BACKWARD && v == edge.sourceNodes.Min())
                         {
                             containsBlueEdge = true;
                             break;
@@ -413,7 +401,7 @@ namespace GeometryTutorLib.Pebbler
                         edgeStr.Append(v + ": {");
                         foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.BLUE_BACKWARD)
+                            if (edge.pebbleColor == PebblerColorType.BLUE_BACKWARD)
                             {
                                 if (v == edge.sourceNodes.Min())
                                 {
@@ -468,7 +456,7 @@ namespace GeometryTutorLib.Pebbler
                     bool containsEdge = false;
                     foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
-                        if (edge.pebbleColor != Pebbler.PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
+                        if (edge.pebbleColor != PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
                         {
                             containsEdge = true;
                             break;
@@ -480,7 +468,7 @@ namespace GeometryTutorLib.Pebbler
                         edgeStr.Append(v + ": {");
                         foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
-                            if (edge.pebbleColor != Pebbler.PebblerColorType.RED_FORWARD)
+                            if (edge.pebbleColor != PebblerColorType.RED_FORWARD)
                             {
                                 if (v == edge.sourceNodes.Min())
                                 {
@@ -508,7 +496,7 @@ namespace GeometryTutorLib.Pebbler
                     bool containsEdge = false;
                     foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                     {
-                        if (edge.pebbleColor == Pebbler.PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
+                        if (edge.pebbleColor == PebblerColorType.RED_FORWARD && v == edge.sourceNodes.Min())
                         {
                             containsEdge = true;
                             break;
@@ -520,7 +508,7 @@ namespace GeometryTutorLib.Pebbler
                         edgeStr.Append(v + ": {");
                         foreach (PebblerHyperEdge<A> edge in vertices[v].edges)
                         {
-                            if (edge.pebbleColor == Pebbler.PebblerColorType.RED_FORWARD)
+                            if (edge.pebbleColor == PebblerColorType.RED_FORWARD)
                             {
                                 if (v == edge.sourceNodes.Min())
                                 {

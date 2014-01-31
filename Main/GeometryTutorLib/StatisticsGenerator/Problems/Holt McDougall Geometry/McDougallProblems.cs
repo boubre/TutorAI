@@ -22,7 +22,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             problems.Add(new Page284Example44(false));   // GTG
             problems.Add(new Page284Exameple45(false));  // GTG
             problems.Add(new Page284Example46(false));   // GTG
-            problems.Add(new Page285Problem21(false));   // GTG
+            problems.Add(new Page285Problem21(    true));   // GTG
             problems.Add(new Page285Problem22(false));   // GTG
             problems.Add(new Page285Problem23(false));   // GTG
             problems.Add(new Page286Problem8(false));    // GTG; multiple solutions possible
@@ -38,9 +38,9 @@ namespace GeometryTutorLib.StatisticsGenerator
 
 
 
-            problems.Add(new Page168Problem36(false));  // Endocing  
-            problems.Add(new Page168Problem37(false));  // Endocing  
-            problems.Add(new Page197Problem37(false));  // Quite algebraic
+            //problems.Add(new Page168Problem36(false));  // Endocing  
+            //problems.Add(new Page168Problem37(false));  // Endocing  
+            //problems.Add(new Page197Problem37(false));  // Quite algebraic
             //problems.Add(new Page160Problem43(false));  // Encoding; not for this implementation round
             // problems.Add(new Page301Problem42(false));  Can't deduce geometrically; coordinate-based needed
 

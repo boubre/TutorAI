@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransitiveCongruentTriangles : GenericRule
     {
         private static readonly string NAME = "Transitivity of Congruent Triangles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES);
 
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentTriangles> candidateGeoCongruentTriangles = new List<GeometricCongruentTriangles>();

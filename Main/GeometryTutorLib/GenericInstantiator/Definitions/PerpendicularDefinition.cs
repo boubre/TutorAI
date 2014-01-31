@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class PerpendicularDefinition : Definition
     {
         private readonly static string NAME = "Definition of Perpendicular";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PERPENDICULAR_DEFINITION);
 
         public static void Clear()
         {

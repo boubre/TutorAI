@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ParallelImplyAltIntCongruentAngles : Theorem
     {
         private readonly static string NAME = "Alternate Interior Angles"; //"Parallel Lines Imply Congruent Alternate Interior Angles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Parallel> candidateParallel = new List<Parallel>();

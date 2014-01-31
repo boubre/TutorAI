@@ -8,7 +8,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class StraightAngleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Straight Angle";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.STRAIGHT_ANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.STRAIGHT_ANGLE_DEFINITION);
 
         public StraightAngleDefinition() { }
 

@@ -26,7 +26,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             problems.Add(new Page273Problem40(false));  // GTG
 
 
-            problems.Add(new Page231Picture(false));  // Encoding of a point
+//            problems.Add(new Page231Picture(false));  // Encoding of a point
 
             return problems;
         }

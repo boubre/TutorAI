@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SASCongruence : CongruentTriangleAxiom
     {
         private readonly static string NAME = "SAS";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SAS_CONGRUENCE);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SAS_CONGRUENCE);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();

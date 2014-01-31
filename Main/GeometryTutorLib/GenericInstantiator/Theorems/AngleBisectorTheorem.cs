@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorTheorem : Theorem
     {
         private readonly static string NAME = "Angle Bisector Theorem";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ANGLE_BISECTOR_THEOREM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLE_BISECTOR_THEOREM);
 
         //
         // AngleBisector(SegmentA, D), Angle(C, A, B)) -> 2 m\angle CAD = m \angle CAB,

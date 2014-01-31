@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SegmentBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Segment Bisector";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SEGMENT_BISECTOR_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SEGMENT_BISECTOR_DEFINITION);
 
         private static List<Intersection> candidateIntersection = new List<Intersection>();
         private static List<CongruentSegments> candidateCongruent = new List<CongruentSegments>();

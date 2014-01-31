@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AAS: Theorem
     {
         private readonly static string NAME = "AAS";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.AAS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.AAS);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateAngles = new List<CongruentAngles>();

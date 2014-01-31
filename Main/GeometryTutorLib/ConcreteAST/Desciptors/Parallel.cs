@@ -88,11 +88,11 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Parallel(" + segment1.ToString() + ", " + segment2.ToString() + "): " + justification;
+            return "Parallel(" + segment1.ToString() + ", " + segment2.ToString() + ") " + justification;
         }
 
         private static readonly string NAME = "Transitivity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_PARALLEL);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_PARALLEL);
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveParallel(Parallel parallel1, Parallel parallel2)
         {

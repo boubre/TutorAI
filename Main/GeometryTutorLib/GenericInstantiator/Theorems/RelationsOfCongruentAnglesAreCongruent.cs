@@ -10,8 +10,8 @@ namespace GeometryTutorLib.GenericInstantiator
     {
         private readonly static string COMPLEMENT_NAME = "If two angles are complements of congruent angles (or of the same angle), then the two are congruent and the other combinations are complements.";
         private readonly static string SUPPLEMENT_NAME = "If two angles are supplements of congruent angles (or of the same angle), then the two are congruent and the other combinations are supplements.";
-        private static Hypergraph.EdgeAnnotation compAnnotation = new Hypergraph.EdgeAnnotation(COMPLEMENT_NAME, GenericInstantiator.JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
-        private static Hypergraph.EdgeAnnotation suppAnnotation = new Hypergraph.EdgeAnnotation(SUPPLEMENT_NAME, GenericInstantiator.JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation compAnnotation = new Hypergraph.EdgeAnnotation(COMPLEMENT_NAME, JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation suppAnnotation = new Hypergraph.EdgeAnnotation(SUPPLEMENT_NAME, JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT);
 
         private static List<AnglePairRelation> candRelation = new List<AnglePairRelation>();
         private static List<CongruentAngles> candCongruentAngles = new List<CongruentAngles>();

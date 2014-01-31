@@ -54,6 +54,8 @@ namespace GeometryTutorLib
             precomputer = new Precomputer.CoordinatePrecomputer(figure);
             instantiator = new GenericInstantiator.Instantiator();
             queryVector = new ProblemAnalyzer.QueryFeatureVector();
+
+            JustificationSwitch.SetAssumptions(Assumption.GetAssumptions());
         }
 
         // Returns: <number of interesting problems, number of original problems generated>

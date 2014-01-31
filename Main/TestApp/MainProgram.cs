@@ -46,6 +46,15 @@ namespace GeometryTestbed
             }
             header += ">=" + (difficultyPartitions[difficultyPartitions.Count - 1] + 1) + "\t";
 
+            header += "Interesting Partitions: ";
+            List<int> interestingPartitions = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds();
+            header += "0-" + interestingPartitions[0] + "\t";
+            for (int i = 0; i < interestingPartitions.Count - 1; i++)
+            {
+                header += interestingPartitions[i] + "-" + interestingPartitions[i + 1] + "\t";
+            }
+            header += ">=" + interestingPartitions[interestingPartitions.Count - 1] + "\t";
+
             Debug.WriteLine(header);
         }
 
@@ -98,6 +107,13 @@ namespace GeometryTestbed
 
             // Query: Difficulty Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalDifficulty)
+            {
+                output += numProbs + "\t";
+            }
+
+            output += "|\t";
+            // Query: Interesting Partitioning
+            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalInteresting)
             {
                 output += numProbs + "\t";
             }

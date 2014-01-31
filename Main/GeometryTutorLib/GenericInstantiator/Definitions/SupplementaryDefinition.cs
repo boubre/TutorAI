@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SupplementaryDefinition : Definition
     {
         private readonly static string NAME = "Definition of Supplementary";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SUPPLEMENTARY_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SUPPLEMENTARY_DEFINITION);
 
 
         private static List<Intersection> candidateIntersections = new List<Intersection>();

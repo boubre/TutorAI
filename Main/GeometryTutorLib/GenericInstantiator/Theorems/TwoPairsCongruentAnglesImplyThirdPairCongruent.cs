@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TwoPairsCongruentAnglesImplyThirdPairCongruent : Theorem
     {
         private readonly static string NAME = "Two pairs of Congruent Angles in two triangles imply third pair of triangles are congruent.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateCongruent = new List<CongruentAngles>();

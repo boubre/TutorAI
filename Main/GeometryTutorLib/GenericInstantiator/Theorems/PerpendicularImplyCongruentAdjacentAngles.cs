@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class PerpendicularImplyCongruentAdjacentAngles : Theorem
     {
         private readonly static string NAME = "Perpendicular Segments Imply Congruent Adjacent Angles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_IMPLY_CONGRUENT_ADJACENT_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PERPENDICULAR_IMPLY_CONGRUENT_ADJACENT_ANGLES);
 
         private static List<Perpendicular> candPerpendicular = new List<Perpendicular>();
         private static List<Angle> candAngles = new List<Angle>();

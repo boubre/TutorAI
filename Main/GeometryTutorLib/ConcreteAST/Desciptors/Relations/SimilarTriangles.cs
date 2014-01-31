@@ -78,8 +78,8 @@ namespace GeometryTutorLib.ConcreteAST
         private static readonly string ANGLES_NAME = "Angles of Similar Triangles are Congruent";
         private static readonly string SEGMENTS_NAME = "Segments of Similar Triangles are Proportional";
 
-        private static Hypergraph.EdgeAnnotation angleAnnotation = new Hypergraph.EdgeAnnotation(ANGLES_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
-        private static Hypergraph.EdgeAnnotation segmentAnnotation = new Hypergraph.EdgeAnnotation(SEGMENTS_NAME, GenericInstantiator.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation angleAnnotation = new Hypergraph.EdgeAnnotation(ANGLES_NAME, JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation segmentAnnotation = new Hypergraph.EdgeAnnotation(SEGMENTS_NAME, JustificationSwitch.SIMILARITY);
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
         //
@@ -158,7 +158,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string NAME = "Transitivity";
-        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_SIMILAR);
+        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_SIMILAR);
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveSimilarTriangles(SimilarTriangles simTris1, SimilarTriangles simTris2)
         {
@@ -183,6 +183,6 @@ namespace GeometryTutorLib.ConcreteAST
             return newGrounded;
         }
 
-        public override string ToString() { return "Similar(" + st1.ToString() + ", " + st2.ToString() + "): " + justification; }
+        public override string ToString() { return "Similar(" + st1.ToString() + ", " + st2.ToString() + ") " + justification; }
     }
 }

@@ -131,7 +131,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Congruent(" + ca1.ToString() + ", " + ca2.ToString() + "): " + justification;
+            return "Congruent(" + ca1.ToString() + ", " + ca2.ToString() + ") " + justification;
         }
     }
 }

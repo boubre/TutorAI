@@ -26,7 +26,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "GeometricCongruent(" + cs1.ToString() + ", " + cs2.ToString() + "): " + justification;
+            return "GeometricCongruent(" + cs1.ToString() + ", " + cs2.ToString() + ") " + justification;
         }
     }
 }

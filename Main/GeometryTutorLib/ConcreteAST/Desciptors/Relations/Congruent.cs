@@ -12,7 +12,7 @@ namespace GeometryTutorLib.ConcreteAST
         public virtual int SharesNumClauses(Congruent thatCC) { return 0; }
 
         private static string NAME = "Transitivity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.TRANSITIVE_SUBSTITUTION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_SUBSTITUTION);
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveCongruence(Congruent congruent1, Congruent congruent2)
         {

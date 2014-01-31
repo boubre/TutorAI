@@ -85,7 +85,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "InMiddle(" + point.ToString() + ", " + segment.ToString() + "): " + justification;
+            return "InMiddle(" + point.ToString() + ", " + segment.ToString() + ") " + justification;
         }
     }
 }

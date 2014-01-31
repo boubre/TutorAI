@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentCorrespondingAnglesImplyParallel : Axiom
     {
         private readonly static string NAME = "Corresponding Congruent Angles Imply Parallel Lines";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.CONGRUENT_CORRESPONDING_ANGLES_IMPLY_PARALLEL);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CONGRUENT_CORRESPONDING_ANGLES_IMPLY_PARALLEL);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<CongruentAngles> candAngles = new List<CongruentAngles>();

@@ -297,10 +297,10 @@ namespace GeometryTutorLib.StatisticsGenerator
             // Determine number of problems based on DIFFICULTY of the problems (easy, medium difficult, extreme) based on the number of deductions
             //
             // Construct the partitions:
-            // 0-2 Easy
-            // 3-5 Medium
-            // 6-10 Difficult
-            // 10+ Extreme
+            // 25% Easy
+            // 50% Medium
+            // 75% Difficult
+            // 100% Extreme
             //
             ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
 
@@ -308,7 +308,24 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             difficultyBasedPartitions.ConstructPartitions(problems);
 
-            figureStats.difficultyPartitionSummary = difficultyBasedPartitions.GetDeductivePartitionSummary();
+            figureStats.difficultyPartitionSummary = difficultyBasedPartitions.GetDifficultyPartitionSummary();
+
+            //
+            // Determine number of interesting problems based percentage of givens covered.
+            //
+            // Construct the partitions:
+            // 0-2 Easy
+            // 3-5 Medium
+            // 6-10 Difficult
+            // 10+ Extreme
+            //
+            ProblemAnalyzer.QueryFeatureVector interestingQuery = ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
+
+            ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
+
+            interestingBasedPartitions.ConstructPartitions(problems);
+
+            figureStats.interestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
     }
 }

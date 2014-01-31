@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AdjacentAnglesPerpendicularImplyComplementary : Theorem
     {
         private readonly static string NAME = "If the exterior sides of two adjacent angles are perpendicular, then the angles are complementary.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ADJACENT_ANGLES_PERPENDICULAR_IMPLY_COMPLEMENTARY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ADJACENT_ANGLES_PERPENDICULAR_IMPLY_COMPLEMENTARY);
 
         public static void Clear()
         {

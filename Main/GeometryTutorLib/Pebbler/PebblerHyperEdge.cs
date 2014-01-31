@@ -21,6 +21,9 @@ namespace GeometryTutorLib.Pebbler
         public List<int> sourcePebbles;
         public PebblerColorType pebbleColor;
 
+        // Whether the node has been pebbled or not.
+        public bool pebbled;
+
         public PebblerHyperEdge(List<int> src, int target, A annotation)
         {
             this.annotation = annotation;
@@ -28,6 +31,7 @@ namespace GeometryTutorLib.Pebbler
             sourcePebbles = new List<int>(); // If empty, we assume all false (not pebbled)
             targetNode = target;
             pebbleColor = PebblerColorType.NO_PEBBLE;
+            pebbled = false;
         }
 
         public bool IsFullyPebbled()
@@ -39,6 +43,20 @@ namespace GeometryTutorLib.Pebbler
 
             return sourceNodes.Count == sourcePebbles.Count;
         }
+
+        //public bool IsFullyPebbled()
+        //{
+        //    if (pebbled) return true;
+
+        //    foreach (int srcNode in sourceNodes)
+        //    {
+        //        if (!sourcePebbles.Contains(srcNode)) return false;
+        //    }
+
+        //    if (sourceNodes.Count == sourcePebbles.Count) pebbled = true;
+
+        //    return pebbled;
+        //}
 
         public void SetColor(PebblerColorType color)
         {

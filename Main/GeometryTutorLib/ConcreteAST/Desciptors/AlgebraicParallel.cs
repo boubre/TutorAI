@@ -27,7 +27,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "AlgebraicParallel(" + segment1.ToString() + ", " + segment2.ToString() + "): " + justification;
+            return "AlgebraicParallel(" + segment1.ToString() + ", " + segment2.ToString() + ") " + justification;
         }
     }
 }

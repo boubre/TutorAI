@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class EquilateralTriangleHasSixtyDegreeAngles : Theorem
     {
         private readonly static string NAME = "An equilateral triangle has three sixty degree angles.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.EQUILATERAL_TRIANGLE_HAS_SIXTY_DEGREE_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.EQUILATERAL_TRIANGLE_HAS_SIXTY_DEGREE_ANGLES);
 
         public EquilateralTriangleHasSixtyDegreeAngles() { }
 

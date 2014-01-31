@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SSSSimilarity : Theorem
     {
         private readonly static string NAME = "SSS Similarity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.SSS_SIMILARITY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SSS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<ProportionalSegments> candidateSegments = new List<ProportionalSegments>();
@@ -109,6 +109,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!pss1.ProportionallyEquals(pss2)) return newGrounded;
             if (!pss1.ProportionallyEquals(pss3)) return newGrounded;
             if (!pss2.ProportionallyEquals(pss3)) return newGrounded;
+
+            // The smaller segments must belong to one triangle, same for larger segments.
+            if (!(ct1.HasSegment(pss1.smallerSegment) && ct1.HasSegment(pss2.smallerSegment) && ct1.HasSegment(pss3.smallerSegment) &&
+                  ct2.HasSegment(pss1.largerSegment) && ct2.HasSegment(pss2.largerSegment) && ct2.HasSegment(pss3.largerSegment))  &&
+                !(ct1.HasSegment(pss1.largerSegment) && ct1.HasSegment(pss2.largerSegment) && ct1.HasSegment(pss3.largerSegment) &&
+                  ct2.HasSegment(pss1.smallerSegment) && ct2.HasSegment(pss2.smallerSegment) && ct2.HasSegment(pss3.smallerSegment)))
+                return newGrounded;
 
             //
             // Collect all of the applicable segments

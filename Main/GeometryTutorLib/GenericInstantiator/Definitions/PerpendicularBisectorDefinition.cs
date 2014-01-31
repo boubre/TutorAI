@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class PerpendicularBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Perpendicular Bisector";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION);
 
         //
         // PerpendicularBisector(Intersection(X, Segment(A, B), Segment(C, D)), Bisector(Segment(C, D))) ->

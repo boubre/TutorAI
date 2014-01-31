@@ -1013,7 +1013,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 str.Append("Right ");
             }
-            str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + "): " + justification);
+            str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") " + justification);
             return str.ToString();
         }
     }

@@ -180,7 +180,7 @@ namespace GeometryTutorLib.ConcreteAST
 
 
         private static readonly string CPCTC_NAME = "CPCTC";
-        private static Hypergraph.EdgeAnnotation cpctcAnnotation = new Hypergraph.EdgeAnnotation(CPCTC_NAME, GenericInstantiator.JustificationSwitch.TRIANGLE_CONGREUNCE);
+        private static Hypergraph.EdgeAnnotation cpctcAnnotation = new Hypergraph.EdgeAnnotation(CPCTC_NAME, JustificationSwitch.TRIANGLE_CONGREUNCE);
 
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
@@ -341,6 +341,6 @@ namespace GeometryTutorLib.ConcreteAST
             return true;
         }
 
-        public override string ToString() { return "Congruent(" + ct1.ToString() + ", " + ct2.ToString() + "): " + justification; }
+        public override string ToString() { return "Congruent(" + ct1.ToString() + ", " + ct2.ToString() + ") " + justification; }
     }
 }

@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class IsoscelesTriangleTheorem : Theorem
     {
         private readonly static string NAME = "Isosceles Triangle Theorem: Base Angles are Congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM);
 
         private IsoscelesTriangleTheorem() { }
         private static readonly IsoscelesTriangleTheorem thisDescriptor = new IsoscelesTriangleTheorem();

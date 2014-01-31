@@ -28,7 +28,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "GeometricProportional(" + largerAngle.ToString() + " < " + dictatedProportion + " > " + smallerAngle.ToString() + "): " + justification;
+            return "GeometricProportional(" + largerAngle.ToString() + " < " + dictatedProportion + " > " + smallerAngle.ToString() + ") " + justification;
         }
     }
 }

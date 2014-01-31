@@ -25,6 +25,6 @@ namespace GeometryTutorLib.ConcreteAST
             return base.GetHashCode();
         }
 
-        public override string ToString() { return "AlgebraicSimilar(" + st1.ToString() + ", " + st2.ToString() + "): " + justification; }
+        public override string ToString() { return "AlgebraicSimilar(" + st1.ToString() + ", " + st2.ToString() + ") " + justification; }
     }
 }

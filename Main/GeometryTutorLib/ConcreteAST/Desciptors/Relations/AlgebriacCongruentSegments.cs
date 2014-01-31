@@ -26,7 +26,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "AlgebraicCongruent(" + cs1.ToString() + ", " + cs2.ToString() + "): " + justification;
+            return "AlgebraicCongruent(" + cs1.ToString() + ", " + cs2.ToString() + ") " + justification;
         }
     }
 }

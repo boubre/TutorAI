@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ParallelImplySameSideInteriorSupplementary : Theorem
     {
         private readonly static string NAME = "Same-Side Supplementary"; // "If two parallel lines are cut by a transversal, then Same-Side Interior Angles are Supplementary.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.PARALLEL_IMPLY_SAME_SIDE_INTERIOR_SUPPLEMENTARY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PARALLEL_IMPLY_SAME_SIDE_INTERIOR_SUPPLEMENTARY);
 
         public ParallelImplySameSideInteriorSupplementary() { }
 

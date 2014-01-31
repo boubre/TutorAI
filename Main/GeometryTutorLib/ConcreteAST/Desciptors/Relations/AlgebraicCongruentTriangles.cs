@@ -23,6 +23,6 @@ namespace GeometryTutorLib.ConcreteAST
             return base.GetHashCode();
         }
 
-        public override string ToString() { return "AlgebraicCongruent(" + ct1.ToString() + ", " + ct2.ToString() + "): " + justification; }
+        public override string ToString() { return "AlgebraicCongruent(" + ct1.ToString() + ", " + ct2.ToString() + ") " + justification; }
     }
 }

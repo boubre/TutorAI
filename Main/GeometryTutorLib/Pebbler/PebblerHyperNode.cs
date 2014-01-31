@@ -17,6 +17,9 @@ namespace GeometryTutorLib.Pebbler
         // Coloration of the edge when pebbled
         public PebblerColorType pebble;
 
+        // Whether the node has been pebbled or not.
+        public bool pebbled;
+
         public PebblerHyperNode(T thatData, int thatId)
         {
             id = thatId;

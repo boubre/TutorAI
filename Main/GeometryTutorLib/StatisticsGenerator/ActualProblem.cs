@@ -22,6 +22,7 @@ namespace GeometryTutorLib.StatisticsGenerator
         public static int TotalGoalPartitions = 0;
         public static int TotalSourcePartitions = 0;
         public static int[] totalDifficulty = new int[ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds().Count + 1];
+        public static int[] totalInteresting = new int[ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds().Count + 1];
 
         // Hard-coded intrinsic problem characteristics
         protected List<GroundedClause> intrinsic;
@@ -64,6 +65,17 @@ namespace GeometryTutorLib.StatisticsGenerator
             ActualProblem.TotalGoals += goals.Count;
             ActualProblem.TotalProblemsGenerated += figureStats.totalProblemsGenerated;
             ActualProblem.TotalBackwardProblemsGenerated += figureStats.totalBackwardProblemsGenerated;
+
+            // Query: Interesting Partitioning
+            int numProblemsInPartition;
+            List<int> upperBounds = ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds();
+            for (int i = 0; i < upperBounds.Count; i++)
+            {
+                ActualProblem.totalInteresting[i] += figureStats.interestingPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
+            }
+            ActualProblem.totalInteresting[upperBounds.Count] += figureStats.interestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
+            
+            // Rest of Cumulative Stats
             ActualProblem.TotalInterestingProblems += figureStats.totalInterestingProblems;
             ActualProblem.TotalOriginalBookProblems += goals.Count;
 
@@ -77,8 +89,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             ActualProblem.TotalSourcePartitions += figureStats.sourcePartitionSummary.Count;
 
             // Query: Difficulty Partitioning
-            int numProblemsInPartition;
-            List<int> upperBounds = ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
+            upperBounds = ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
             for (int i = 0; i < upperBounds.Count; i++)
             {
                 ActualProblem.totalDifficulty[i] += figureStats.difficultyPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
@@ -127,6 +138,15 @@ namespace GeometryTutorLib.StatisticsGenerator
                 statsString += "\t";
             }
             statsString += figureStats.difficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
+            statsString += "\t|\t";
+
+            // Interesting Partitioning
+            foreach (int upperBound in ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds())
+            {
+                statsString += figureStats.interestingPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
+                statsString += "\t";
+            }
+            statsString += figureStats.interestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
             statsString += "\t";
 
             return statsString;

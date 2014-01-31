@@ -92,6 +92,14 @@ namespace GeometryTutorLib.ProblemAnalyzer
             //
 
             //
+            // Interestingness query (% of givens covered)
+            //
+            if (query.interestingPartitioning)
+            {
+                if (!AreRangedEqualInteresting(query, elements[0], newProblem)) return false;
+            }
+
+            //
             // SOURCE NODE 
             //
             if (query.sourceIsomorphism)
@@ -131,6 +139,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
         {
             return query.stepsPartitions.GetPartitionIndex(thisProblem.GetNumDeductiveSteps()) ==
                    query.stepsPartitions.GetPartitionIndex(thatProblem.GetNumDeductiveSteps());
+        }
+
+        private bool AreRangedEqualInteresting(QueryFeatureVector query, Problem<Hypergraph.EdgeAnnotation> thisProblem, Problem<Hypergraph.EdgeAnnotation> thatProblem)
+        {
+            return query.interestingPartitions.GetPartitionIndex(thisProblem.interestingPercentage) ==
+                   query.interestingPartitions.GetPartitionIndex(thatProblem.interestingPercentage);
         }
 
         //

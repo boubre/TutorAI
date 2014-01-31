@@ -46,7 +46,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Strengthened(" + original.ToString() + " -> " + strengthened.ToString() + "): " + justification;
+            return "Strengthened(" + original.ToString() + " -> " + strengthened.ToString() + ") " + justification;
         }
     }
 }

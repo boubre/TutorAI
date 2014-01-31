@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ExteriorAngleEqualSumRemoteAngles : Theorem
     {
         private readonly static string NAME = "Exterior Angle is Equal to the Sum of Remote Interior Angles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES);
 
         private static List<Triangle> unifyCandTris = new List<Triangle>();
         private static List<Angle> unifyCandAngles = new List<Angle>();

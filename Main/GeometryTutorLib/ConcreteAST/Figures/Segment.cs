@@ -304,7 +304,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Each segment is congruent to itself; only generate if it is a shared segment
         //
         private static readonly string REFLEXIVE_SEGMENT_NAME = "Reflexive Segments";
-        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, GenericInstantiator.JustificationSwitch.REFLEXIVE);
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, JustificationSwitch.REFLEXIVE);
 
         public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause gc)
         {

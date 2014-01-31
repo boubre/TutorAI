@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class VerticalAnglesTheorem : Theorem
     {
         private static readonly string NAME = "Vertical Angles Theorem";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, GenericInstantiator.JustificationSwitch.VERTICAL_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.VERTICAL_ANGLES);
 
         //
         // Intersect(X, Segment(A, B), Segment(C, D)) -> Congruent(Angle(A, X, C), Angle(B, X, D)),

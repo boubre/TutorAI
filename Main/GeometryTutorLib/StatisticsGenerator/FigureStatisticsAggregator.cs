@@ -22,6 +22,7 @@ namespace GeometryTutorLib.StatisticsGenerator
         public List<KeyValuePair<GeometryTutorLib.ConcreteAST.GroundedClause, int>> goalPartitionSummary;
         public List<int> sourcePartitionSummary;
         public Dictionary<int, int> difficultyPartitionSummary; // Pair is: <upperBound value, number of problems>
+        public Dictionary<int, int> interestingPartitionSummary; // Pair is: <upperBound value (% as int), number of problems>
 
         // For timing the processing of each figure
         public GeometryTutorLib.Stopwatch stopwatch;
@@ -40,6 +41,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             goalPartitionSummary = new List<KeyValuePair<ConcreteAST.GroundedClause, int>>();
             sourcePartitionSummary = new List<int>();
             difficultyPartitionSummary = new Dictionary<int, int>();
+            interestingPartitionSummary = new Dictionary<int, int>();
  
             stopwatch = new GeometryTutorLib.Stopwatch();
         }
