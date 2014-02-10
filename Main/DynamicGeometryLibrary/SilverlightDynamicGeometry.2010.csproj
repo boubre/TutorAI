@@ -313,7 +313,9 @@
     <Compile Include="UI\DrawingControl.Undo.cs" />
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
+    <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
     <Compile Include="UI\IconBuilder.cs" />
+    <Compile Include="UI\ManageGivensWindow.cs" />
     <Compile Include="UI\ParseDisambiguationWindow.cs" />
     <Compile Include="UI\ParseGroup.cs" />
     <Compile Include="UI\ParseGroupWindow.cs" />
@@ -334,6 +336,7 @@
       <Name>GeometryTutorLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
