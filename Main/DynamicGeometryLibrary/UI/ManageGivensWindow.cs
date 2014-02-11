@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using DynamicGeometry.UI.GivenWindow;
+using GeometryTutorLib.ConcreteAST;
+using LiveGeometry;
 
 namespace DynamicGeometry.UI
 {
     public class ManageGivensWindow : ChildWindow
     {
+        public DrawingHost drawingHost { get; set; }
+
         private Dictionary<string, AddGivenWindow> givenWindows;
-        private ListBox currentGivens;
+        private Dictionary<string, GroundedClause> currentGivens;
+        private ListBox givensList;
         private ComboBox addSelection;
 
         /// <summary>
@@ -28,6 +33,7 @@ namespace DynamicGeometry.UI
         private void Initialize()
         {
             this.Title = "Manage Givens";
+            currentGivens = new Dictionary<string, GroundedClause>();
             this.MaxHeight = 600;
             this.MaxWidth = 800;
         }
@@ -44,13 +50,14 @@ namespace DynamicGeometry.UI
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
             //Set up list of current givens
-            currentGivens = new ListBox();
-            currentGivens.SelectionMode = SelectionMode.Extended;
-            currentGivens.MinHeight = 600;
-            currentGivens.MaxHeight = 600;
-            currentGivens.MinWidth = 400;
-            currentGivens.MaxWidth = 400;
-            currentGivens.Margin = new Thickness(0, 0, 0, 10);
+            givensList = new ListBox();
+            givensList.SelectionMode = SelectionMode.Extended;
+            givensList.ItemsSource = currentGivens.Keys;
+            givensList.MinHeight = 600;
+            givensList.MaxHeight = 600;
+            givensList.MinWidth = 400;
+            givensList.MaxWidth = 400;
+            givensList.Margin = new Thickness(0, 0, 0, 10);
             
             //Set up add and remove panel
             StackPanel addRemPanel = new StackPanel() { Orientation = Orientation.Horizontal };
@@ -73,9 +80,9 @@ namespace DynamicGeometry.UI
             addRemPanel.Children.Add(remBtn);
 
             //Arrange items in the grid and add them to the grid.
-            Grid.SetColumn(currentGivens, 0);
-            Grid.SetRow(currentGivens, 0);
-            grid.Children.Add(currentGivens);
+            Grid.SetColumn(givensList, 0);
+            Grid.SetRow(givensList, 0);
+            grid.Children.Add(givensList);
             Grid.SetColumn(addRemPanel, 0);
             Grid.SetRow(addRemPanel, 1);
             grid.Children.Add(addRemPanel);
@@ -109,6 +116,15 @@ namespace DynamicGeometry.UI
         }
 
         /// <summary>
+        /// Get a list of the current user-defined givens.
+        /// </summary>
+        /// <returns>A list of the current user-defined givens.</returns>
+        public List<GroundedClause> GetGivens()
+        {
+            return new List<GroundedClause>(currentGivens.Values);
+        }
+
+        /// <summary>
         /// This event executes when the "+" button is clicked.
         /// Will pop up a window so that the user can add the currently selected given in the combo box.
         /// </summary>
@@ -116,7 +132,7 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void AddGivenBtn_Click(object sender, RoutedEventArgs e)
         {
-            givenWindows[addSelection.SelectedValue as string].Show();
+            givenWindows[addSelection.SelectedValue as string].Show(new DrawingParser(drawingHost.CurrentDrawing), new List<GroundedClause>(currentGivens.Values));
         }
 
         /// <summary>
@@ -127,6 +143,10 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void RemoveGivenBtn_Click(object sender, RoutedEventArgs e)
         {
+            foreach (string selected in givensList.SelectedItems)
+            {
+                currentGivens.Remove(selected);
+            }
         }
 
         /// <summary>
@@ -137,6 +157,12 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void AddGivenWindow_Close(object sender, EventArgs e)
         {
+            AddGivenWindow window = sender as AddGivenWindow;
+            if (window.WindowResult == AddGivenWindow.Result.Accept)
+            {
+                GroundedClause clause = window.Clause;
+                currentGivens.Add(clause.ToString(), clause);
+            }
         }
     }
 }

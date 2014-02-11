@@ -1,12 +1,17 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using GeometryTutorLib.ConcreteAST;
+using LiveGeometry;
 
 namespace DynamicGeometry.UI.GivenWindow
 {
     public abstract class AddGivenWindow : ChildWindow
     {
         protected string givenName;
+        protected List<GroundedClause> currentGivens;
+        protected DrawingParser parser;
+
         public Result WindowResult { get; private set; }
         public GroundedClause Clause { get; private set; }
 
@@ -80,6 +85,18 @@ namespace DynamicGeometry.UI.GivenWindow
 
             //Set the grid as the content of the window in order to display it.
             this.Content = grid;
+        }
+
+        /// <summary>
+        /// Give the window critical data and then display the window.
+        /// </summary>
+        /// <param name="parser">A Drawing Parser initialized with the current drawing.</param>
+        /// <param name="currentGivens">A list of all the current givens.</param>
+        public void Show(DrawingParser parser, List<GroundedClause> currentGivens)
+        {
+            this.parser = parser;
+            this.currentGivens = currentGivens;
+            Show();
         }
 
         /// <summary>

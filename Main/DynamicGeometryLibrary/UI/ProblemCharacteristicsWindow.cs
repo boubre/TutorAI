@@ -18,9 +18,14 @@ namespace DynamicGeometry.UI
         private Dictionary<Relationship, RadioButton> goalCheckboxes;
         private ProblemCharacteristics problemCharacteristics;
 
-        public ProblemCharacteristicsWindow()
+        /// <summary>
+        /// Create a new Problem Characteristics window.
+        /// </summary>
+        /// <param name="mgw">A ManageGivensWindow</param>
+        public ProblemCharacteristicsWindow(ManageGivensWindow mgw)
         {
             Initialize();
+            this.manageGivensWindow = mgw;
             LayoutDesign();
         }
 
@@ -29,7 +34,6 @@ namespace DynamicGeometry.UI
         /// </summary>
         private void Initialize()
         {
-            manageGivensWindow = new ManageGivensWindow();
             problemCharacteristics = ProblemCharacteristics.GetInstance();
             this.Title = "Desired Problem Characteristics";
             MakeCheckboxes();

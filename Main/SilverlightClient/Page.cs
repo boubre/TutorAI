@@ -88,7 +88,8 @@ namespace LiveGeometry
 
             parseOptionsWindow = new ParseOptionsWindow();
             parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);
-            problemCharacteristicsWindow = new ProblemCharacteristicsWindow();
+            manageGivensWindow = new ManageGivensWindow() { drawingHost = drawingHost };
+            problemCharacteristicsWindow = new ProblemCharacteristicsWindow(manageGivensWindow);
             problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
         }
 
