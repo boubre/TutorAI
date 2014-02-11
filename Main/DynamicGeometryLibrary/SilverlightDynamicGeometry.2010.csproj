@@ -96,6 +96,7 @@
     <None Include="Data\Demo\Wireframe.xml" />
     <None Include="Drawing.cd" />
     <Compile Include="Drawing.cs" />
+    <Compile Include="DrawingParser.cs" />
     <Compile Include="Expressions\Binder.cs" />
     <Compile Include="Expressions\CompileError.cs" />
     <Compile Include="Expressions\CompileResult.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Macros\ToolStorage.cs" />
     <Compile Include="Macros\UserDefinedTool.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="ParseController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyGrid\Attributes\ComplexTypeState.cs" />
     <Compile Include="PropertyGrid\Attributes\DomainAttribute.cs" />
@@ -313,6 +315,7 @@
     <Compile Include="UI\DrawingControl.Undo.cs" />
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentSegments.cs" />
     <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
     <Compile Include="UI\IconBuilder.cs" />
     <Compile Include="UI\ManageGivensWindow.cs" />

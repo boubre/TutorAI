@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using DynamicGeometry.UI.GivenWindow;
@@ -89,7 +90,7 @@ namespace DynamicGeometry.UI
         private void MakeGivens()
         {
             givenWindows = new Dictionary<string, AddGivenWindow>();
-            givenWindows.Add("Congruent Segments", null);
+            givenWindows.Add("Congruent Segments", new AddCongruentSegments());
             givenWindows.Add("Congruent Angles", null);
             givenWindows.Add("Segment Bisector", null);
             givenWindows.Add("Angle Bisector", null);
@@ -99,6 +100,12 @@ namespace DynamicGeometry.UI
             givenWindows.Add("Equilateral Triangle", null);
             givenWindows.Add("Congruent Triangles", null);
             givenWindows.Add("Similar Triangles", null);
+
+            foreach (AddGivenWindow w in givenWindows.Values)
+            {
+                if (w == null) { continue; } //Temporary line. TODO: Remove once all givens implemented
+                w.Closed += new EventHandler(AddGivenWindow_Close);
+            }
         }
 
         /// <summary>
@@ -109,6 +116,7 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void AddGivenBtn_Click(object sender, RoutedEventArgs e)
         {
+            givenWindows[addSelection.SelectedValue as string].Show();
         }
 
         /// <summary>
@@ -118,6 +126,16 @@ namespace DynamicGeometry.UI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void RemoveGivenBtn_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// This even executes when an add given window is closed.
+        /// Will add the given if the window was accepted, and remeber the associated clause.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddGivenWindow_Close(object sender, EventArgs e)
         {
         }
     }

@@ -24,7 +24,7 @@ namespace LiveGeometry
         private List<Collinear> collinear;
         private List<Triangle> triangles;
         private List<GeometricCongruentSegments> congSegs;
-        List<Intersection> intersections;
+        private List<Intersection> intersections;
         private List<Angle> angles;
         private List<GeometricCongruentAngles> congAngles;
         private List<RightAngle> rightAngles;

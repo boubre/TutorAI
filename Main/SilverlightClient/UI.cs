@@ -408,6 +408,10 @@ namespace LiveGeometry
             }
         }
 
+        /// <summary>
+        /// Executed when the parse button is clicked.
+        /// Sets up the parse chain and runs the background parse thread.
+        /// </summary>
         void ParseToAst()
         {
             if (!parseWorker.IsBusy)
@@ -427,11 +431,16 @@ namespace LiveGeometry
                 parseController.addParseAction(() => { parser.calculateRightAngles(); });
                 parseController.addParseAction(() => { parseResult = parser.getClauses(); });
 
-                // Do parse and back-end computation on background worker
+                //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
         }
 
+        /// <summary>
+        /// Runs the Parse and back-end computations.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
             //Execute Front-End Parse
@@ -447,6 +456,7 @@ namespace LiveGeometry
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
         }
+
         void DisplayParseOptions()
         {
             parseOptionsWindow.Show();
