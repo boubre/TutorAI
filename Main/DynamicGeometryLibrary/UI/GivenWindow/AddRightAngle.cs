@@ -46,6 +46,9 @@ namespace DynamicGeometry.UI.GivenWindow
             return grid;
         }
 
+        /// <summary>
+        /// Figure out which angles we can choose from before the window is shown.
+        /// </summary>
         protected override void OnShow()
         {
             List<Angle> angles = parser.Angles;
