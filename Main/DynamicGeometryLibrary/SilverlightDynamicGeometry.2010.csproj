@@ -314,9 +314,17 @@
     <Compile Include="UI\DrawingControl.Undo.cs" />
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
+    <Compile Include="UI\GivenWindow\AddAngleBisector.cs" />
     <Compile Include="UI\GivenWindow\AddCongruentSegments.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentTriangles.cs" />
+    <Compile Include="UI\GivenWindow\AddEquilateralTriangle.cs" />
     <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
+    <Compile Include="UI\GivenWindow\AddIsoscelesTriangle.cs" />
+    <Compile Include="UI\GivenWindow\AddParallelLines.cs" />
     <Compile Include="UI\GivenWindow\AddRightAngle.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentAngles.cs" />
+    <Compile Include="UI\GivenWindow\AddSegmentBisector.cs" />
+    <Compile Include="UI\GivenWindow\AddSimilarTriangles.cs" />
     <Compile Include="UI\IconBuilder.cs" />
     <Compile Include="UI\ManageGivensWindow.cs" />
     <Compile Include="UI\ParseDisambiguationWindow.cs" />

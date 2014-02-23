@@ -98,19 +98,18 @@ namespace DynamicGeometry.UI
         {
             givenWindows = new Dictionary<string, AddGivenWindow>();
             givenWindows.Add("Congruent Segments", new AddCongruentSegments());
-            givenWindows.Add("Congruent Angles", null);
-            givenWindows.Add("Segment Bisector", null);
-            givenWindows.Add("Angle Bisector", null);
+            givenWindows.Add("Congruent Angles", new AddCongruentAngles()); //Not Implemented
+            givenWindows.Add("Segment Bisector", new AddSegmentBisector()); //Not Implemented
+            givenWindows.Add("Angle Bisector", new AddAngleBisector()); //Not Implemented
             givenWindows.Add("Right Angle", new AddRightAngle());
-            givenWindows.Add("Parallel Lines", null);
-            givenWindows.Add("Isosceles Triangle", null);
-            givenWindows.Add("Equilateral Triangle", null);
-            givenWindows.Add("Congruent Triangles", null);
-            givenWindows.Add("Similar Triangles", null);
+            givenWindows.Add("Parallel Lines", new AddParallelLines()); //Not Implemented
+            givenWindows.Add("Isosceles Triangle", new AddIsoscelesTriangle()); //Not Implemented
+            givenWindows.Add("Equilateral Triangle", new AddEquilateralTriangle()); //Not Implemented
+            givenWindows.Add("Congruent Triangles", new AddCongruentTriangles()); //Not Implemented
+            givenWindows.Add("Similar Triangles", new AddSimilarTriangles()); //Not Implemented
 
             foreach (AddGivenWindow w in givenWindows.Values)
             {
-                if (w == null) { continue; } //Temporary line. TODO: Remove once all givens implemented
                 w.Closed += new EventHandler(AddGivenWindow_Close);
             }
         }
