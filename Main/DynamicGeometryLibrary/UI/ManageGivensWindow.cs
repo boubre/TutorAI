@@ -101,7 +101,7 @@ namespace DynamicGeometry.UI
             givenWindows.Add("Congruent Angles", null);
             givenWindows.Add("Segment Bisector", null);
             givenWindows.Add("Angle Bisector", null);
-            givenWindows.Add("Right Angle", null);
+            givenWindows.Add("Right Angle", new AddRightAngle());
             givenWindows.Add("Parallel Lines", null);
             givenWindows.Add("Isosceles Triangle", null);
             givenWindows.Add("Equilateral Triangle", null);
@@ -147,6 +147,10 @@ namespace DynamicGeometry.UI
             {
                 currentGivens.Remove(selected);
             }
+
+            //Graphically refresh the givens list.
+            givensList.ItemsSource = null;
+            givensList.ItemsSource = currentGivens.Keys;
         }
 
         /// <summary>
@@ -161,8 +165,15 @@ namespace DynamicGeometry.UI
             if (window.WindowResult == AddGivenWindow.Result.Accept)
             {
                 GroundedClause clause = window.Clause;
-                currentGivens.Add(clause.ToString(), clause);
+                if (clause != null)
+                {
+                    currentGivens.Add(clause.ToString(), clause);
+                }
             }
+
+            //Graphically refresh the givens list.
+            givensList.ItemsSource = null;
+            givensList.ItemsSource = currentGivens.Keys;
         }
     }
 }

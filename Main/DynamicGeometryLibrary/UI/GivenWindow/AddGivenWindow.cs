@@ -89,15 +89,25 @@ namespace DynamicGeometry.UI.GivenWindow
 
         /// <summary>
         /// Give the window critical data and then display the window.
+        /// Call this method instead of the inherited Show().
         /// </summary>
-        /// <param name="parser">A Drawing Parser initialized with the current drawing.</param>
+        /// <param name="parser">A Drawing Parser initialized with the current drawing. (This method will call Parse)</param>
         /// <param name="currentGivens">A list of all the current givens.</param>
         public void Show(DrawingParser parser, List<GroundedClause> currentGivens)
         {
             this.parser = parser;
             this.currentGivens = currentGivens;
+            parser.Parse();
+            OnShow();
             Show();
         }
+
+        /// <summary>
+        /// This method will be called before the window is shown.
+        /// Subclasses should override this method to include calculations that should happen
+        /// each time the window is displayed.
+        /// </summary>
+        protected abstract void OnShow();
 
         /// <summary>
         /// This method will be called when the accept button is clicked.

@@ -433,6 +433,7 @@ namespace LiveGeometry
             //Execute Front-End Parse
             parser.Parse();
             UIDebugPublisher.clearWindow();
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in manageGivensWindow.GetGivens()) UIDebugPublisher.publishString(gc.ToString()); //TEST: Delete this line when no longer needed
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.GetIntrinsics(), manageGivensWindow.GetGivens()); // <intrinsic, given>
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();

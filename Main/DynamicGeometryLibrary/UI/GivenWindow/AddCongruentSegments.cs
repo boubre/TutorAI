@@ -18,6 +18,11 @@ namespace DynamicGeometry.UI.GivenWindow
             return new Grid() { MinWidth = 400 };
         }
 
+        protected override void OnShow()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override GroundedClause MakeClause()
         {
             throw new NotImplementedException();

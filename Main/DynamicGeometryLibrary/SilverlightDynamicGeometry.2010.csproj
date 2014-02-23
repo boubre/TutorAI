@@ -316,6 +316,7 @@
     <Compile Include="UI\FigureExplorer.cs" />
     <Compile Include="UI\GivenWindow\AddCongruentSegments.cs" />
     <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
+    <Compile Include="UI\GivenWindow\AddRightAngle.cs" />
     <Compile Include="UI\IconBuilder.cs" />
     <Compile Include="UI\ManageGivensWindow.cs" />
     <Compile Include="UI\ParseDisambiguationWindow.cs" />
