@@ -1001,14 +1001,15 @@ namespace GeometryTutorLib.ConcreteAST
         {
             StringBuilder str = new StringBuilder();
 
-            if (provenIsosceles)
-            {
-                str.Append("Isosceles ");
-            }
-            else if (provenEquilateral)
+            if (provenEquilateral)
             {
                 str.Append("Equilateral ");
             }
+            else if (provenIsosceles)
+            {
+                str.Append("Isosceles ");
+            }
+            
             if (provenRight)
             {
                 str.Append("Right ");

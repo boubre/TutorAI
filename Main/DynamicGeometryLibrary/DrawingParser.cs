@@ -368,12 +368,18 @@ namespace LiveGeometry
 
                 //genereate sides
                 TempSegment[] sides = new TempSegment[3];
+                GeometryTutorLib.ConcreteAST.Segment[] csegs = new GeometryTutorLib.ConcreteAST.Segment[3];
                 for (int i = 0; i < 3; i++)
                 {
                     int j = (i + 1) % 3;
                     sides[i] = new TempSegment(parsed[iPts[i]] as GeometryTutorLib.ConcreteAST.Point, parsed[iPts[j]] as GeometryTutorLib.ConcreteAST.Point);
+                    csegs[i] = new GeometryTutorLib.ConcreteAST.Segment(sides[i].A, sides[i].B);
                 }
                 TempSegs.AddRange(sides);
+
+                Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2]);
+                parsed.Add(pgon, t);
+                Triangles.Add(t);
             }
         }
 
@@ -416,10 +422,11 @@ namespace LiveGeometry
                 {
                     int j = (i + 1) % 3;
                     sides[i] = new TempSegment(parsed[pts[i]] as GeometryTutorLib.ConcreteAST.Point, parsed[pts[j]] as GeometryTutorLib.ConcreteAST.Point);
+                    csegs[i] = new GeometryTutorLib.ConcreteAST.Segment(sides[i].A, sides[i].B);
                 }
                 TempSegs.AddRange(sides);
 
-                Triangle t = new GeometryTutorLib.ConcreteAST.EquilateralTriangle(csegs[0], csegs[1], csegs[2]);
+                EquilateralTriangle t = new GeometryTutorLib.ConcreteAST.EquilateralTriangle(csegs[0], csegs[1], csegs[2]);
                 parsed.Add(rgon, t);
                 Triangles.Add(t);
             }

@@ -103,8 +103,8 @@ namespace DynamicGeometry.UI
             //givenWindows.Add("Angle Bisector", new AddAngleBisector());
             givenWindows.Add("Right Angle", new AddRightAngle());
             //givenWindows.Add("Parallel Lines", new AddParallelLines());
-            //givenWindows.Add("Isosceles Triangle", new AddIsoscelesTriangle());
-            //givenWindows.Add("Equilateral Triangle", new AddEquilateralTriangle());
+            givenWindows.Add("Isosceles Triangle", new AddIsoscelesTriangle());
+            givenWindows.Add("Equilateral Triangle", new AddEquilateralTriangle());
             //givenWindows.Add("Congruent Triangles", new AddCongruentTriangles());
             //givenWindows.Add("Similar Triangles", new AddSimilarTriangles());
 
