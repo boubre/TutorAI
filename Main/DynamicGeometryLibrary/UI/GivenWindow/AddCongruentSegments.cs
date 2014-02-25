@@ -76,7 +76,7 @@ namespace DynamicGeometry.UI.GivenWindow
             options = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Segment>>();
 
             //Get a list of all congruent segment givens
-            List<CongruentSegments> csegs = new List<CongruentSegments>();
+            List<GroundedClause> csegs = new List<GroundedClause>();
             foreach (GroundedClause gc in currentGivens)
             {
                 CongruentSegments cseg = gc as CongruentSegments;
@@ -96,22 +96,14 @@ namespace DynamicGeometry.UI.GivenWindow
                 foreach (LiveGeometry.DrawingParser.TempSegment ts2 in parser.TempSegs)
                 {
                     GeometryTutorLib.ConcreteAST.Segment s2 = new GeometryTutorLib.ConcreteAST.Segment(ts2.A, ts2.B);
-                    CongruentSegments cseg = new CongruentSegments(s1, s2);
-
-                    //See if any of the given csegs is structurally equivalent to the current combination
-                    bool contains = false;
-                    foreach (CongruentSegments given in csegs)
+                    if (s1.Length == s2.Length)
                     {
-                        if (given.StructurallyEquals(cseg))
+                        CongruentSegments cseg = new CongruentSegments(s1, s2);
+
+                        if (!s1.StructurallyEquals(s2) && !StructurallyContains(csegs, cseg))
                         {
-                            contains = true;
-                            break;
+                            possible.Add(s2);
                         }
-                    }
-
-                    if (!s1.StructurallyEquals(s2) && !contains)
-                    {
-                        possible.Add(s2);
                     }
                 }
 

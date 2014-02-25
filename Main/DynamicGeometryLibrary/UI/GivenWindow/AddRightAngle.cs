@@ -51,19 +51,33 @@ namespace DynamicGeometry.UI.GivenWindow
         /// </summary>
         protected override void OnShow()
         {
-            List<Angle> angles = parser.Angles;
-            //Remove angles already declared as right
+            List<GroundedClause> givens = new List<GroundedClause>();
+            //Populate list with applicable givens
             foreach (GroundedClause gc in currentGivens)
             {
                 RightAngle ra = gc as RightAngle;
-                if (ra != null && angles.Contains(ra))
+                if (ra != null)
                 {
-                    angles.Remove(ra);
+                    givens.Add(ra);
+                }
+            }
+
+            List<Angle> rightAngles = new List<Angle>();
+            //Populate list with possible choices
+            foreach (Angle a in parser.Angles)
+            {
+                if (a.measure == 90)
+                {
+                    RightAngle ra = new RightAngle(a);
+                    if (!StructurallyContains(givens, ra))
+                    {
+                        rightAngles.Add(ra);
+                    }
                 }
             }
 
             options.ItemsSource = null; //Makes sure the box is graphically updated.
-            options.ItemsSource = angles;
+            options.ItemsSource = rightAngles;
         }
 
         protected override GroundedClause MakeClause()

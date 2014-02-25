@@ -141,5 +141,26 @@ namespace DynamicGeometry.UI.GivenWindow
             Clause = null;
             Close();
         }
+
+        /// <summary>
+        /// Iterate through a list of GroundedClauses and see if the supplied clause is
+        /// struturally equivilant to an item in the list.
+        /// </summary>
+        /// <param name="list">The list to iterate through</param>
+        /// <param name="toMatch">The GroundedClause being matched</param>
+        /// <returns>true if the list contains a structurally equal clause, false otherwise</returns>
+        protected bool StructurallyContains(List<GroundedClause> list, GroundedClause toMatch)
+        {
+            bool contains = false;
+            foreach (GroundedClause gc in list)
+            {
+                if (toMatch.StructurallyEquals(gc))
+                {
+                    contains = true;
+                    break;
+                }
+            }
+            return contains;
+        }
     }
 }
