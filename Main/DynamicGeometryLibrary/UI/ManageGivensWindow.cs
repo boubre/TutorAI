@@ -98,7 +98,7 @@ namespace DynamicGeometry.UI
         {
             givenWindows = new Dictionary<string, AddGivenWindow>();
             givenWindows.Add("Congruent Segments", new AddCongruentSegments());
-            //givenWindows.Add("Congruent Angles", new AddCongruentAngles());
+            givenWindows.Add("Congruent Angles", new AddCongruentAngles());
             //givenWindows.Add("Segment Bisector", new AddSegmentBisector());
             //givenWindows.Add("Angle Bisector", new AddAngleBisector());
             givenWindows.Add("Right Angle", new AddRightAngle());

@@ -66,7 +66,6 @@ namespace DynamicGeometry.UI.GivenWindow
             //Populate list with possible choices
             foreach (Triangle t in parser.Triangles)
             {
-                System.Diagnostics.Debug.WriteLine(t.ToString());
                 if (isEquilateral(t))
                 {
                     EquilateralTriangle et = new EquilateralTriangle(t);
@@ -101,9 +100,9 @@ namespace DynamicGeometry.UI.GivenWindow
         private bool isEquilateral(Triangle t)
         {
             return t is EquilateralTriangle || //If the tool was used, this will be true.
-                Math.Abs(t.AngleA.measure - 60) < EPSILON_ANGLE &&
+                (Math.Abs(t.AngleA.measure - 60) < EPSILON_ANGLE &&
                 Math.Abs(t.AngleB.measure - 60) < EPSILON_ANGLE &&
-                Math.Abs(t.AngleC.measure - 60) < EPSILON_ANGLE;
+                Math.Abs(t.AngleC.measure - 60) < EPSILON_ANGLE);
         }
     }
 }
