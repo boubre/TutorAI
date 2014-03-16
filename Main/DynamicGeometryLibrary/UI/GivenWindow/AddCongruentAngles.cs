@@ -85,12 +85,12 @@ namespace DynamicGeometry.UI.GivenWindow
                 }
             }
 
-            //Pick a first segment...
+            //Pick a first angle...
             foreach (Angle a1 in parser.Angles)
             {
                 List<Angle> possible = new List<Angle>();
 
-                //... and see what other segments are viable second options.
+                //... and see what other angles are viable second options.
                 foreach (Angle a2 in parser.Angles)
                 {
                     if (a1.measure == a2.measure)
@@ -111,23 +111,9 @@ namespace DynamicGeometry.UI.GivenWindow
                 }
             }
 
-            //Set the options of the segment1 combo box
+            //Set the options of the angle1 combo box
             angle1.ItemsSource = null; //Graphical refresh
             angle1.ItemsSource = options.Keys;
-        }
-
-        protected override GroundedClause MakeClause()
-        {
-            Angle a1 = angle1.SelectedValue as Angle;
-            Angle a2 = angle2.SelectedValue as Angle;
-            if (a1 != null && a2 != null)
-            {
-                return new CongruentAngles(a1, a2);
-            }
-            else
-            {
-                return null;
-            }
         }
 
         /// <summary>
@@ -143,6 +129,20 @@ namespace DynamicGeometry.UI.GivenWindow
             if (selection != null)
             {
                 angle2.ItemsSource = options[selection];
+            }
+        }
+
+        protected override GroundedClause MakeClause()
+        {
+            Angle a1 = angle1.SelectedValue as Angle;
+            Angle a2 = angle2.SelectedValue as Angle;
+            if (a1 != null && a2 != null)
+            {
+                return new GeometricCongruentAngles(a1, a2);
+            }
+            else
+            {
+                return null;
             }
         }
     }

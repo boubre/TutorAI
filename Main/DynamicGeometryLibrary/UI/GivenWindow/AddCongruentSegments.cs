@@ -141,7 +141,7 @@ namespace DynamicGeometry.UI.GivenWindow
             GeometryTutorLib.ConcreteAST.Segment s2 = segment2.SelectedValue as GeometryTutorLib.ConcreteAST.Segment;
             if (s1 != null && s2 != null)
             {
-                return new CongruentSegments(s1, s2);
+                return new GeometricCongruentSegments(s1, s2);
             }
             else
             {
