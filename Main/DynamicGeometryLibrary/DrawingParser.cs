@@ -11,6 +11,8 @@ namespace LiveGeometry
     /// </summary>
     public class DrawingParser
     {
+        private const double EPSILON_ANGLE = 0.01;
+
         private Drawing drawing;
 
         private Dictionary<IFigure, GroundedClause> parsed;
@@ -21,6 +23,8 @@ namespace LiveGeometry
         public List<Triangle> Triangles { get; private set; }
         public List<Intersection> Intersections { get; private set; }
         public List<Angle> Angles { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.SegmentBisector> SegmentBisectors { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.AngleBisector> AngleBisectors { get; private set; }
 
         /// <summary>
         /// Create a new Drawing Parser.
@@ -39,6 +43,8 @@ namespace LiveGeometry
             Triangles = new List<Triangle>();
             Intersections = new List<Intersection>();
             Angles = new List<Angle>();
+            SegmentBisectors = new List<GeometryTutorLib.ConcreteAST.SegmentBisector>();
+            AngleBisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
         }
 
         public void Parse()
@@ -49,6 +55,8 @@ namespace LiveGeometry
             calculateIntersections();
             calculateAngles();
             removeDuplicateAngles();
+            calculateSegmentBisectors();
+            calculateAngleBisectors();
         }
 
         /// <summary>
@@ -306,6 +314,61 @@ namespace LiveGeometry
                 if (!duplicates.Contains(i))
                 {
                     this.Angles.Add(angles[i]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate segment bisctors.
+        /// </summary>
+        private void calculateSegmentBisectors()
+        {
+            //Check each intersetion...
+            foreach (Intersection i in Intersections)
+            {
+                //... and create two new lines for each segment split by the point of intersection.
+                var lhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.lhs.Point1, i.intersect);
+                var lhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.lhs.Point2);
+                var rhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.rhs.Point1, i.intersect);
+                var rhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.rhs.Point2);
+
+                //Is the lhs bisected by rhs?
+                if (lhs1.Length == lhs2.Length)
+                {
+                    SegmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.rhs));
+                }
+
+                //Is the rhs bisected by lhs?
+                if (rhs1.Length == rhs2.Length)
+                {
+                    SegmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.lhs));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate angle bisectors.
+        /// </summary>
+        private void calculateAngleBisectors()
+        {
+            //Check each angle...
+            foreach (Angle a in Angles)
+            {
+                //... and see if a segment passes through point B of the angle.
+                foreach (TempSegment ts in TempSegs)
+                {
+                    GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.A, ts.B);
+                    if (s.PointIsOnAndBetweenEndpoints(a.B))
+                    {
+                        //Create new angles with this segment and see if they are the same measure
+                        Angle a1 = new Angle(a.A, a.B, ts.A);
+                        Angle a2 = new Angle(a.C, a.B, ts.A);
+                        if (System.Math.Abs(a1.measure - a2.measure) < EPSILON_ANGLE)
+                        {
+                            //We found an angle bisector!
+                            AngleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, s));
+                        }
+                    }
                 }
             }
         }
