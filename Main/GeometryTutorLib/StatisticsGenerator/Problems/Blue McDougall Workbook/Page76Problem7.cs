@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -24,13 +25,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             Segment bd = new Segment(b, d); intrinsic.Add(bd);
             Segment cd = new Segment(c, d); intrinsic.Add(cd);
 
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
             given.Add(new GeometricCongruentSegments(ab, cd));
             given.Add(new RightAngle(new Angle(a, d, b)));
             given.Add(new RightAngle(new Angle(d, b, c)));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(d, a, b)), GetProblemAngle(intrinsic, new Angle(b, c, d))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(d, a, b)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, c, d))));
         }
     }
 }

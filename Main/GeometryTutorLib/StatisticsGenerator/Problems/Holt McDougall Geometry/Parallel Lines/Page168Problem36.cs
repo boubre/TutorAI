@@ -1,6 +1,7 @@
 ﻿using System;
 using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -42,15 +43,15 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts3.Add(h);
             Collinear coll3 = new Collinear(pts3);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateSegmentClauses(coll3));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(g, e, f)),
-                                                   GetProblemAngle(intrinsic, new Angle(a, b, h))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(g, e, f)),
+                                                   ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, b, h))));
 
-            goals.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(d, f))));
+            goals.Add(new GeometricParallel(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, c)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(d, f))));
         }
     }
 }

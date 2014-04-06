@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -51,17 +52,17 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts5.Add(q);
 			Collinear coll5 = new Collinear(pts5);
 
-			intrinsic.AddRange(GenerateSegmentClauses(coll1));
-			intrinsic.AddRange(GenerateSegmentClauses(coll2));
-			intrinsic.AddRange(GenerateSegmentClauses(coll3));
-			intrinsic.AddRange(GenerateSegmentClauses(coll4));
-			intrinsic.AddRange(GenerateSegmentClauses(coll5));
-			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll4));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll5));
+			intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(s, x))));
-            given.Add(new SegmentBisector(GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), GetProblemSegment(intrinsic, new Segment(t, y))));
+            given.Add(new SegmentBisector(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(s, x))));
+            given.Add(new SegmentBisector(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(s, x), new Segment(t, y)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(t, y))));
 
-            InMiddle goalIm = GetProblemInMiddle(intrinsic, o, new Segment(p, q));
+            InMiddle goalIm = ClauseConstructor.GetProblemInMiddle(intrinsic, o, new Segment(p, q));
             goals.Add(new Strengthened(goalIm, new Midpoint(goalIm)));
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -56,31 +57,31 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(i);
             Collinear coll4 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateSegmentClauses(coll3));
-            intrinsic.AddRange(GenerateSegmentClauses(coll4));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll4));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, b)), GetProblemSegment(intrinsic, new Segment(c, d))));
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(a, c)), GetProblemSegment(intrinsic, new Segment(b, d))));
+            given.Add(new GeometricParallel(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, b)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(c, d))));
+            given.Add(new GeometricParallel(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, c)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(b, d))));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, a, f))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, e))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, a))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(a, c, d))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, i))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, k))));
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, d, j))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, a, f))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(c, a, e))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(d, b, a))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, c, d))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, d, i))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(l, c, k))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(c, d, j))));
 
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(f, a, e))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(g, b, a))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(c, a, b))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(d, b, h))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(l, c, a))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(b, d, c))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(k, c, d))));
-            goals.Add(new Supplementary(GetProblemAngle(intrinsic, new Angle(h, b, g)), GetProblemAngle(intrinsic, new Angle(j, d, i))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(f, a, e))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(g, b, a))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(c, a, b))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(d, b, h))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(l, c, a))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, d, c))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(k, c, d))));
+            goals.Add(new Supplementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(h, b, g)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(j, d, i))));
         }
     }
 }

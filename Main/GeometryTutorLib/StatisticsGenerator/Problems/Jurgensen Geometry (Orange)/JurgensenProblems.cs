@@ -42,11 +42,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             problems.Add(new Page146Problem15(false));                 // GTG
             problems.Add(new Page146Problem18(false));                 // GTG 1:20 execute
             problems.Add(new Page155Problem14(false));                 // GTG
-            problems.Add(new Page175ClassroomExercise12(false));       // GTG
+            problems.Add(new Page175ClassroomExercise12(false));        // GTG
             problems.Add(new Page223Problem22(false));                 // GTG
             problems.Add(new Page223Problem23(false));                 // GTG
             problems.Add(new Page242Problem17(false));                 // GTG
 
+
+            problems.Add(new CircleTester2(false));
 
 
             //problems.Add(new BackwardPage134Problem7(false)); 

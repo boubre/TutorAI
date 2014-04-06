@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -23,13 +24,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             Segment bd = new Segment(b, d); intrinsic.Add(bd);
             Segment cd = new Segment(c, d); intrinsic.Add(cd);
 
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, d, b)), GetProblemAngle(intrinsic, new Angle(d, b, c))));
-            given.Add(new Perpendicular(GetProblemIntersection(intrinsic, new Segment(a, d), new Segment(c, d))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, d, b)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(d, b, c))));
+            given.Add(new Perpendicular(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(a, d), new Segment(c, d))));
 
-            goals.Add(new Strengthened(GetProblemIntersection(intrinsic, new Segment(b, c), new Segment(c, d)),
-                      new Perpendicular(GetProblemIntersection(intrinsic, new Segment(b, c), new Segment(c, d)))));
+            goals.Add(new Strengthened(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(b, c), new Segment(c, d)),
+                      new Perpendicular(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(b, c), new Segment(c, d)))));
         }
     }
 }

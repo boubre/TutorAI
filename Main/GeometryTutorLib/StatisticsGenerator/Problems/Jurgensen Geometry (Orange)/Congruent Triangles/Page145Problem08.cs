@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -32,13 +33,13 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts.Add(a);
 			Collinear coll1 = new Collinear(pts);
 
-			intrinsic.AddRange(GenerateSegmentClauses(coll1));
-			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+			intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-			given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(l, f, k)), GetProblemSegment(intrinsic, new Segment(f, a))));
-            given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(l, a, k)), GetProblemSegment(intrinsic, new Segment(f, a))));
+			given.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(l, f, k)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(f, a))));
+            given.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(l, a, k)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(f, a))));
 
-            goals.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(l, j, k)), GetProblemSegment(intrinsic, new Segment(f, a))));
+            goals.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(l, j, k)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(f, a))));
 		}
 	}
 }

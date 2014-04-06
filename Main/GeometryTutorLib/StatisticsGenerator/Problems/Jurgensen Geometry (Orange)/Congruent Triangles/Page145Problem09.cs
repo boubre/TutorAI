@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -42,13 +43,13 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts2.Add(z);
 			Collinear coll2 = new Collinear(pts2);
 
-			intrinsic.AddRange(GenerateSegmentClauses(coll1));
-			intrinsic.AddRange(GenerateSegmentClauses(coll2));
-			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+			intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
             given.Add(new GeometricCongruentTriangles(new Triangle(r, s, t), new Triangle(x, y, z)));
-			given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(r, s, t)), ks));
-            given.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(x, y, z)), ly));
+			given.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(r, s, t)), ks));
+            given.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(x, y, z)), ly));
 
             goals.Add(new GeometricCongruentSegments(ly, ks));
 		}

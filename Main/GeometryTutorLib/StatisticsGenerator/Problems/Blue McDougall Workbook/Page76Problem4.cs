@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -46,17 +47,17 @@ namespace GeometryTutorLib.StatisticsGenerator
             Collinear coll3 = new Collinear(pts);
 
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateSegmentClauses(coll3));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(n, k, h)), GetProblemAngle(intrinsic, new Angle(t, m, g))));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(n, g)), GetProblemSegment(intrinsic, new Segment(h, t))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(n, k, h)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(t, m, g))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(n, g)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(h, t))));
             given.Add(new RightAngle(new Angle(k, n, t)));
             given.Add(new RightAngle(new Angle(m, t, n)));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(k, h, n)), GetProblemAngle(intrinsic, new Angle(m, g, t))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(k, h, n)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(m, g, t))));
         }
     }
 }

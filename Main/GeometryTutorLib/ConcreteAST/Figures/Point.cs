@@ -35,6 +35,29 @@ namespace GeometryTutorLib.ConcreteAST
             this.Y = y;
         }
 
+        //
+        // Maintain a public repository of all segment objects in the figure.
+        //
+        public static void Clear()
+        {
+            figurePoints.Clear();
+        }
+        public static List<Point> figurePoints = new List<Point>();
+        public static void Record(GroundedClause clause)
+        {
+            // Record uniquely? For right angles, etc?
+            if (clause is Point) figurePoints.Add(clause as Point);
+        }
+        public static Point GetFigurePoint(Point candPoint)
+        {
+            foreach (Point p in figurePoints)
+            {
+                if (p.StructurallyEquals(candPoint)) return p;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Find the distance between two points
         /// </summary>
@@ -57,6 +80,14 @@ namespace GeometryTutorLib.ConcreteAST
             sb.Append(Y);
             sb.Append(")]");
             sb.AppendLine();
+        }
+
+        public static bool Between(double val, double a, double b)
+        {
+            if (a >= val && val <= b) return true;
+            if (b >= val && val <= a) return true;
+
+            return false;
         }
 
         public override int GetHashCode()

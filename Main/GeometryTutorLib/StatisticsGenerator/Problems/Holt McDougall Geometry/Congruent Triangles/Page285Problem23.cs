@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -50,16 +51,16 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts4.Add(r);
             Collinear coll4 = new Collinear(pts4);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateSegmentClauses(coll3));
-            intrinsic.AddRange(GenerateSegmentClauses(coll4));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll4));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(s, v)), GetProblemSegment(intrinsic, new Segment(t, v))));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(s, q)), GetProblemSegment(intrinsic, new Segment(t, q))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(s, v)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(t, v))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(s, q)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(t, q))));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(p, s, u)), GetProblemAngle(intrinsic, new Angle(r, t, w))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(p, s, u)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(r, t, w))));
         }
     }
 }

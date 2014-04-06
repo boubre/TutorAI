@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -34,15 +35,15 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(c);
             Collinear coll1 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
             given.Add(new GeometricCongruentSegments(bf, bd));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(a, f)), GetProblemSegment(intrinsic, new Segment(d, c))));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(f, e)), GetProblemSegment(intrinsic, new Segment(e, d))));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(f, a, b)), GetProblemAngle(intrinsic, new Angle(a, c, b))));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, f, b)), GetProblemAngle(intrinsic, new Angle(e, d, b))));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, b, f)), GetProblemAngle(intrinsic, new Angle(c, b, d))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, f)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(d, c))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(f, e)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(e, d))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(f, a, b)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, c, b))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(e, f, b)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(e, d, b))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, b, f)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(c, b, d))));
 
             goals.Add(new GeometricCongruentTriangles(new Triangle(b, e, f), new Triangle(b, e, d)));
             goals.Add(new GeometricCongruentTriangles(new Triangle(a, d, b), new Triangle(c, f, b)));

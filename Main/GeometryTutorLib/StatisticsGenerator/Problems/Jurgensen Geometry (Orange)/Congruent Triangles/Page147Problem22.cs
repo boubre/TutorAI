@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -45,16 +46,16 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts3.Add(f);
 			Collinear coll3 = new Collinear(pts3);
 
-			intrinsic.AddRange(GenerateSegmentClauses(coll1));
-			intrinsic.AddRange(GenerateSegmentClauses(coll2));
-			intrinsic.AddRange(GenerateSegmentClauses(coll3));
-			intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+			intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+			intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 			
-			given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(b, m)), GetProblemSegment(intrinsic, new Segment(m, c))));
-			given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(e, d, a)), GetProblemAngle(intrinsic, new Angle(a, d, c))));		
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ab), GetProblemSegment(intrinsic, ae), GetProblemSegment(intrinsic, new Segment(b, e))));
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, am), GetProblemSegment(intrinsic, new Segment(m, c))));
-			given.Add(new RightTriangle(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, af), GetProblemSegment(intrinsic, new Segment(c, f))));
+			given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(b, m)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(m, c))));
+			given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(e, d, a)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, d, c))));		
+			given.Add(new RightTriangle(ClauseConstructor.GetProblemSegment(intrinsic, ab), ClauseConstructor.GetProblemSegment(intrinsic, ae), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(b, e))));
+			given.Add(new RightTriangle(ClauseConstructor.GetProblemSegment(intrinsic, ac), ClauseConstructor.GetProblemSegment(intrinsic, am), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(m, c))));
+			given.Add(new RightTriangle(ClauseConstructor.GetProblemSegment(intrinsic, ac), ClauseConstructor.GetProblemSegment(intrinsic, af), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(c, f))));
             
 		}
 	}

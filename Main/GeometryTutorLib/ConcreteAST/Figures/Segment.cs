@@ -31,6 +31,38 @@ namespace GeometryTutorLib.ConcreteAST
             Utilities.AddUniqueStructurally(Point2.getSuperFigures(), this);
         }
 
+        //
+        // Maintain a public repository of all segment objects in the figure.
+        //
+        public static void Clear()
+        {
+            figureSegments.Clear();
+        }
+        public static List<Segment> figureSegments = new List<Segment>();
+        public static void Record(GroundedClause clause)
+        {
+            // Record uniquely? For right angles, etc?
+            if (clause is Segment) figureSegments.Add(clause as Segment);
+        }
+        public static Segment GetFigureSegment(Point pt1, Point pt2)
+        {
+            Segment candSegment = new Segment(pt1, pt2);
+
+            // Search for exact segment first
+            foreach (Segment segment in figureSegments)
+            {
+                if (segment.StructurallyEquals(candSegment)) return segment;
+            }
+
+            // Otherwise, find a maximal segment.
+            foreach (Segment segment in figureSegments)
+            {
+                if (segment.HasSubSegment(candSegment)) return segment;
+            }
+
+            return null;
+        }
+
         internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);
@@ -245,6 +277,18 @@ namespace GeometryTutorLib.ConcreteAST
             if (IsHorizontal() && s.IsHorizontal()) return true;
 
             return Utilities.CompareValues(s.Slope, this.Slope);
+        }
+
+        //
+        // Parallel and not Coinciding
+        //
+        public bool IsPerpendicularTo(Segment thatSegment)
+        {
+            if (IsVertical() && thatSegment.IsHorizontal()) return true;
+
+            if (IsHorizontal() && thatSegment.IsVertical()) return true;
+
+            return Utilities.CompareValues(thatSegment.Slope * this.Slope, -1);
         }
 
         //
@@ -542,6 +586,58 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 return "(" + originX + ", " + originY + ") -> (" + otherX + ", " + otherY + ")";
             }
+        }
+
+        //
+        // Return the line passing through the given point which is perpendicular to this segment. 
+        //
+        public Point ProjectOnto(Point pt)
+        {
+            //
+            // Special Cases
+            //
+            if (this.IsVertical())
+            {
+                Point newPoint = Point.GetFigurePoint(new Point("", this.Point1.X, pt.Y));
+
+                return newPoint != null ? newPoint : new Point("", this.Point1.X, pt.Y);
+            }
+
+            if (this.IsHorizontal())
+            {
+                Point newPoint = Point.GetFigurePoint(new Point("", pt.X, this.Point1.Y));
+
+                return newPoint != null ? newPoint : new Point("", pt.X, this.Point1.Y);
+            }
+
+            //
+            // General Cases
+            //
+
+            // Find the line perpendicular; specifically, a point on that line
+            double perpSlope = -1 / Slope;
+
+            // We will choose a random value for x (to acquire y); we choose 1.
+            double newX = pt.X == 0 ? 1 : 0;
+
+            double newY = pt.Y + perpSlope * (newX - pt.X);
+
+            // The new perpendicular segment is defined by (newX, newY) and pt
+            return new Point("", newX, newY);
+        }
+
+        //
+        // Return the line passing through the given point which is perpendicular to this segment. 
+        //
+        public Segment GetPerpendicular(Point pt)
+        {
+            // If the given point is already on the line, projection does not create new information.
+            if (this.PointIsOnAndBetweenEndpoints(pt)) return this;
+
+            Point projection = ProjectOnto(pt);
+
+            // The new perpendicular segment is defined by the projection and the point
+            return new Segment(projection, pt);
         }
     }
 }

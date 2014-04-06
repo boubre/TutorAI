@@ -7,6 +7,7 @@ namespace GeometryTutorLib.Precomputer
 {
     public class CoordinatePrecomputer
     {
+        private List<Quadrilateral> quadrilaterals;
         private List<Triangle> triangles;
         private List<Segment> segments;
         private List<Angle> angles;
@@ -18,6 +19,7 @@ namespace GeometryTutorLib.Precomputer
 
         public CoordinatePrecomputer(List<GroundedClause> figure)
         {
+            quadrilaterals = new List<Quadrilateral>();
             triangles = new List<Triangle>();
             segments = new List<Segment>();
             angles = new List<Angle>();
@@ -37,6 +39,10 @@ namespace GeometryTutorLib.Precomputer
         {
             foreach (GroundedClause clause in figure)
             {
+                if (clause is Quadrilateral)
+                {
+                    quadrilaterals.Add(clause as Quadrilateral);
+                }
                 if (clause is Triangle)
                 {
                     triangles.Add(clause as Triangle);
@@ -277,6 +283,14 @@ namespace GeometryTutorLib.Precomputer
 
         public void CalculateStrengthening()
         {
+            //
+            // Can a quadrilateral be strenghtened? Quad -> trapezoid, Quad -> Parallelogram?, etc.
+            //
+            foreach (Quadrilateral quad in quadrilaterals)
+            {
+                strengthened.AddRange(Quadrilateral.CanBeStrengthened(quad));
+            }
+
             //
             // Can a triangle be strenghtened? Scalene -> Isosceles -> Equilateral?
             //

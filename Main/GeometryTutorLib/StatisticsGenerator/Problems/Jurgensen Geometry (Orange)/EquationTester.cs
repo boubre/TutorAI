@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -18,14 +19,14 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(b);
             Collinear coll1 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            Addition sum1 = new Addition(GetProblemSegment(intrinsic, new Segment(a, m)), GetProblemSegment(intrinsic, new Segment(m, b)));
-            GeometricSegmentEquation eq1 = new GeometricSegmentEquation(GetProblemSegment(intrinsic, new Segment(a, b)), sum1);
+            Addition sum1 = new Addition(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, m)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(m, b)));
+            GeometricSegmentEquation eq1 = new GeometricSegmentEquation(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, b)), sum1);
 
-            Addition sum2 = new Addition(GetProblemSegment(intrinsic, new Segment(m, b)), GetProblemSegment(intrinsic, new Segment(a, m)));
-            GeometricSegmentEquation eq2 = new GeometricSegmentEquation(sum2, GetProblemSegment(intrinsic, new Segment(a, b)));
+            Addition sum2 = new Addition(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(m, b)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, m)));
+            GeometricSegmentEquation eq2 = new GeometricSegmentEquation(sum2, ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, b)));
 
             System.Diagnostics.Debug.WriteLine(eq2.Equals(eq1));
         }

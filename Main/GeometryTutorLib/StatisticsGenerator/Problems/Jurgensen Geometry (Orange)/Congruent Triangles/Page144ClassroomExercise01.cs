@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -43,14 +44,14 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts2.Add(f);
             Collinear coll2 = new Collinear(pts2);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ab), GetProblemSegment(intrinsic, de)));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, ac), GetProblemSegment(intrinsic, df)));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(s, c)), GetProblemSegment(intrinsic, new Segment(t, f))));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(b, a, c)), GetProblemAngle(intrinsic, new Angle(e, d, f))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, ab), ClauseConstructor.GetProblemSegment(intrinsic, de)));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, ac), ClauseConstructor.GetProblemSegment(intrinsic, df)));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(s, c)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(t, f))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, a, c)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(e, d, f))));
 
             goals.Add(new GeometricCongruentSegments(a_s, dt));
         }

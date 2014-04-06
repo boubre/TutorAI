@@ -37,7 +37,7 @@ namespace GeometryTutorLib
             {
                 if (gc is ConcreteAST.Collinear)
                 {
-                    this.figure.AddRange(GenerateSegmentClauses(gc as ConcreteAST.Collinear));
+                    this.figure.AddRange(Precomputer.ClauseConstructor.GenerateSegmentClauses(gc as ConcreteAST.Collinear));
                 }
                 else
                 {
@@ -46,7 +46,7 @@ namespace GeometryTutorLib
             }
 
             // Complete the object population by calculating intersections, angles, and triangles
-            this.figure.AddRange(GenerateAngleIntersectionTriangleClauses(this.figure));
+            this.figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(this.figure, true));
             
             this.givens = gs;
 
@@ -265,311 +265,311 @@ namespace GeometryTutorLib
             return indices;
         }
 
-        //
-        // Given a series of points, generate all objects associated with segments and InMiddles
-        //
-        private List<ConcreteAST.GroundedClause> GenerateSegmentClauses(ConcreteAST.Collinear collinear)
-        {
-            List<ConcreteAST.GroundedClause> newClauses = new List<ConcreteAST.GroundedClause>();
+        ////
+        //// Given a series of points, generate all objects associated with segments and InMiddles
+        ////
+        //private List<ConcreteAST.GroundedClause> GenerateSegmentClauses(ConcreteAST.Collinear collinear)
+        //{
+        //    List<ConcreteAST.GroundedClause> newClauses = new List<ConcreteAST.GroundedClause>();
 
-            //
-            // Generate all ConcreteAST.Segment and ConcreteAST.InMiddle objects
-            //
-            for (int p1 = 0; p1 < collinear.points.Count - 1; p1++)
-            {
-                for (int p2 = p1 + 1; p2 < collinear.points.Count; p2++)
-                {
-                    ConcreteAST.Segment newSegment = new ConcreteAST.Segment(collinear.points[p1], collinear.points[p2]);
-                    newClauses.Add(newSegment);
-                    for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
-                    {
-                        newClauses.Add(new ConcreteAST.InMiddle(collinear.points[imIndex], newSegment));
-                    }
-                }
-            }
+        //    //
+        //    // Generate all ConcreteAST.Segment and ConcreteAST.InMiddle objects
+        //    //
+        //    for (int p1 = 0; p1 < collinear.points.Count - 1; p1++)
+        //    {
+        //        for (int p2 = p1 + 1; p2 < collinear.points.Count; p2++)
+        //        {
+        //            ConcreteAST.Segment newSegment = new ConcreteAST.Segment(collinear.points[p1], collinear.points[p2]);
+        //            newClauses.Add(newSegment);
+        //            for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
+        //            {
+        //                newClauses.Add(new ConcreteAST.InMiddle(collinear.points[imIndex], newSegment));
+        //            }
+        //        }
+        //    }
 
-            return newClauses;
-        }
+        //    return newClauses;
+        //}
 
-        //
-        // Given a series of points, generate all objects associated with segments and InMiddles
-        //
-        private List<ConcreteAST.GroundedClause> GenerateAngleIntersectionTriangleClauses(List<ConcreteAST.GroundedClause> clauses)
-        {
-            List<ConcreteAST.GroundedClause> newClauses = new List<ConcreteAST.GroundedClause>();
+        ////
+        //// Given a series of points, generate all objects associated with segments and InMiddles
+        ////
+        //private List<ConcreteAST.GroundedClause> GenerateAngleIntersectionPolygonClauses(List<ConcreteAST.GroundedClause> clauses)
+        //{
+        //    List<ConcreteAST.GroundedClause> newClauses = new List<ConcreteAST.GroundedClause>();
 
-            // Find all the ConcreteAST.Segment and ConcreteAST.Point objects
-            List<ConcreteAST.Segment> segments = new List<ConcreteAST.Segment>();
-            List<ConcreteAST.Point> points = new List<ConcreteAST.Point>();
-            foreach (ConcreteAST.GroundedClause clause in clauses)
-            {
-                if (clause is ConcreteAST.Segment) segments.Add(clause as ConcreteAST.Segment);
-                if (clause is ConcreteAST.Point) points.Add(clause as ConcreteAST.Point);
-            }
+        //    // Find all the ConcreteAST.Segment and ConcreteAST.Point objects
+        //    List<ConcreteAST.Segment> segments = new List<ConcreteAST.Segment>();
+        //    List<ConcreteAST.Point> points = new List<ConcreteAST.Point>();
+        //    foreach (ConcreteAST.GroundedClause clause in clauses)
+        //    {
+        //        if (clause is ConcreteAST.Segment) segments.Add(clause as ConcreteAST.Segment);
+        //        if (clause is ConcreteAST.Point) points.Add(clause as ConcreteAST.Point);
+        //    }
 
-            List<ConcreteAST.Triangle> newTriangles = GenerateTriangleClauses(clauses, segments);
-            List<ConcreteAST.Intersection> newIntersections = GenerateIntersectionClauses(newTriangles, segments, points);
-            List<ConcreteAST.Angle> newAngles = GenerateAngleClauses(newIntersections);
+        //    List<ConcreteAST.Triangle> newTriangles = GenerateTriangleClauses(clauses, segments);
+        //    List<ConcreteAST.Intersection> newIntersections = GenerateIntersectionClauses(newTriangles, segments, points);
+        //    List<ConcreteAST.Angle> newAngles = GenerateAngleClauses(newIntersections);
 
-            newAngles.ForEach(angle => newClauses.Add(angle));
-            newIntersections.ForEach(intersection => newClauses.Add(intersection));
-            newTriangles.ForEach(tri => newClauses.Add(tri));
+        //    newAngles.ForEach(angle => newClauses.Add(angle));
+        //    newIntersections.ForEach(intersection => newClauses.Add(intersection));
+        //    newTriangles.ForEach(tri => newClauses.Add(tri));
 
-            return newClauses;
-        }
+        //    return newClauses;
+        //}
 
-        //
-        // Generate all ConcreteAST.Triangle clauses based on segments
-        //
-        private List<ConcreteAST.Triangle> GenerateTriangleClauses(List<ConcreteAST.GroundedClause> clauses, List<ConcreteAST.Segment> segments)
-        {
-            List<ConcreteAST.Triangle> newTriangles = new List<ConcreteAST.Triangle>();
-            for (int s1 = 0; s1 < segments.Count - 2; s1++)
-            {
-                for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
-                {
-                    ConcreteAST.Point vertex1 = segments[s1].SharedVertex(segments[s2]);
-                    if (vertex1 != null)
-                    {
-                        for (int s3 = s2 + 1; s3 < segments.Count; s3++)
-                        {
-                            ConcreteAST.Point vertex2 = segments[s3].SharedVertex(segments[s1]);
-                            ConcreteAST.Point vertex3 = segments[s3].SharedVertex(segments[s2]);
-                            if (vertex2 != null && vertex3 != null)
-                            {
-                                // Vertices must be distinct
-                                if (!vertex1.Equals(vertex2) && !vertex1.Equals(vertex3) && !vertex2.Equals(vertex3))
-                                {
-                                    // Vertices must be non-collinear
-                                    ConcreteAST.Segment side1 = new ConcreteAST.Segment(vertex1, vertex2);
-                                    ConcreteAST.Segment side2 = new ConcreteAST.Segment(vertex2, vertex3);
-                                    ConcreteAST.Segment side3 = new ConcreteAST.Segment(vertex1, vertex3);
-                                    if (!side1.IsCollinearWith(side2))
-                                    {
-                                        // Construct the triangle based on the sides to ensure reflexivity clauses are generated
+        ////
+        //// Generate all ConcreteAST.Triangle clauses based on segments
+        ////
+        //private List<ConcreteAST.Triangle> GenerateTriangleClauses(List<ConcreteAST.GroundedClause> clauses, List<ConcreteAST.Segment> segments)
+        //{
+        //    List<ConcreteAST.Triangle> newTriangles = new List<ConcreteAST.Triangle>();
+        //    for (int s1 = 0; s1 < segments.Count - 2; s1++)
+        //    {
+        //        for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
+        //        {
+        //            ConcreteAST.Point vertex1 = segments[s1].SharedVertex(segments[s2]);
+        //            if (vertex1 != null)
+        //            {
+        //                for (int s3 = s2 + 1; s3 < segments.Count; s3++)
+        //                {
+        //                    ConcreteAST.Point vertex2 = segments[s3].SharedVertex(segments[s1]);
+        //                    ConcreteAST.Point vertex3 = segments[s3].SharedVertex(segments[s2]);
+        //                    if (vertex2 != null && vertex3 != null)
+        //                    {
+        //                        // Vertices must be distinct
+        //                        if (!vertex1.Equals(vertex2) && !vertex1.Equals(vertex3) && !vertex2.Equals(vertex3))
+        //                        {
+        //                            // Vertices must be non-collinear
+        //                            ConcreteAST.Segment side1 = new ConcreteAST.Segment(vertex1, vertex2);
+        //                            ConcreteAST.Segment side2 = new ConcreteAST.Segment(vertex2, vertex3);
+        //                            ConcreteAST.Segment side3 = new ConcreteAST.Segment(vertex1, vertex3);
+        //                            if (!side1.IsCollinearWith(side2))
+        //                            {
+        //                                // Construct the triangle based on the sides to ensure reflexivity clauses are generated
 
-                                        newTriangles.Add(new ConcreteAST.Triangle(GetProblemSegment(clauses, side1),
-                                                                                  GetProblemSegment(clauses, side2), GetProblemSegment(clauses, side3)));
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        //                                newTriangles.Add(new ConcreteAST.Triangle(Precomputer.ClauseConstructor.GetProblemSegment(clauses, side1),
+        //                                                                          Precomputer.ClauseConstructor.GetProblemSegment(clauses, side2), Precomputer.ClauseConstructor.GetProblemSegment(clauses, side3)));
+        //                                break;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return newTriangles;
-        }
+        //    return newTriangles;
+        //}
 
-        //
-        // Generate all covering intersection clauses; that is, generate maximal intersections (a subset of all intersections)
-        //
-        private List<ConcreteAST.Intersection> GenerateIntersectionClauses(List<ConcreteAST.Triangle> triangles, List<ConcreteAST.Segment> segments, List<ConcreteAST.Point> points)
-        {
-            List<ConcreteAST.Intersection> newIntersections = new List<ConcreteAST.Intersection>();
+        ////
+        //// Generate all covering intersection clauses; that is, generate maximal intersections (a subset of all intersections)
+        ////
+        //private List<ConcreteAST.Intersection> GenerateIntersectionClauses(List<ConcreteAST.Triangle> triangles, List<ConcreteAST.Segment> segments, List<ConcreteAST.Point> points)
+        //{
+        //    List<ConcreteAST.Intersection> newIntersections = new List<ConcreteAST.Intersection>();
 
-            //
-            // Each triangle has 3 valid intersections
-            //
-            foreach (ConcreteAST.Triangle triangle in triangles)
-            {
-                ConcreteAST.Point vertex = triangle.SegmentA.SharedVertex(triangle.SegmentB);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentB));
+        //    //
+        //    // Each triangle has 3 valid intersections
+        //    //
+        //    foreach (ConcreteAST.Triangle triangle in triangles)
+        //    {
+        //        ConcreteAST.Point vertex = triangle.SegmentA.SharedVertex(triangle.SegmentB);
+        //        AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentB));
 
-                vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentB, triangle.SegmentC));
+        //        vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
+        //        AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentB, triangle.SegmentC));
 
-                vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
-                AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentC));
-            }
+        //        vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
+        //        AddIntersection(newIntersections, new ConcreteAST.Intersection(vertex, triangle.SegmentA, triangle.SegmentC));
+        //    }
 
-            //
-            // Find the maximal segments (remove all sub-segments from the list)
-            //
-            List<ConcreteAST.Segment> maximalSegments = new List<ConcreteAST.Segment>();
-            for (int s1 = 0; s1 < segments.Count; s1++)
-            {
-                bool isSubsegment = false;
-                for (int s2 = 0; s2 < segments.Count; s2++)
-                {
-                    if (s1 != s2)
-                    {
-                        if (segments[s2].HasSubSegment(segments[s1]))
-                        {
-                            isSubsegment = true;
-                            break;
-                        }
-                    }
-                }
-                if (!isSubsegment) maximalSegments.Add(segments[s1]);
-            }
+        //    //
+        //    // Find the maximal segments (remove all sub-segments from the list)
+        //    //
+        //    List<ConcreteAST.Segment> maximalSegments = new List<ConcreteAST.Segment>();
+        //    for (int s1 = 0; s1 < segments.Count; s1++)
+        //    {
+        //        bool isSubsegment = false;
+        //        for (int s2 = 0; s2 < segments.Count; s2++)
+        //        {
+        //            if (s1 != s2)
+        //            {
+        //                if (segments[s2].HasSubSegment(segments[s1]))
+        //                {
+        //                    isSubsegment = true;
+        //                    break;
+        //                }
+        //            }
+        //        }
+        //        if (!isSubsegment) maximalSegments.Add(segments[s1]);
+        //    }
 
-            //
-            // Acquire all intersections from the maximal segment list
-            //
-            for (int s1 = 0; s1 < maximalSegments.Count - 1; s1++)
-            {
-                for (int s2 = s1 + 1; s2 < maximalSegments.Count; s2++)
-                {
-                    // An intersection should not be between collinear segments
-                    if (!maximalSegments[s1].IsCollinearWith(maximalSegments[s2]))
-                    {
-                        // The point must be 'between' both segment endpoints
-                        ConcreteAST.Point numericInter = maximalSegments[s1].FindIntersection(maximalSegments[s2]);
-                        if (maximalSegments[s1].PointIsOnAndBetweenEndpoints(numericInter) &&
-                            maximalSegments[s2].PointIsOnAndBetweenEndpoints(numericInter))
-                        {
-                            // Find the actual point for which there is an intersection between the segments
-                            ConcreteAST.Point actualInter = null;
-                            foreach (ConcreteAST.Point pt in points)
-                            {
-                                if (numericInter.StructurallyEquals(pt))
-                                {
-                                    actualInter = pt;
-                                    break;
-                                }
-                            }
+        //    //
+        //    // Acquire all intersections from the maximal segment list
+        //    //
+        //    for (int s1 = 0; s1 < maximalSegments.Count - 1; s1++)
+        //    {
+        //        for (int s2 = s1 + 1; s2 < maximalSegments.Count; s2++)
+        //        {
+        //            // An intersection should not be between collinear segments
+        //            if (!maximalSegments[s1].IsCollinearWith(maximalSegments[s2]))
+        //            {
+        //                // The point must be 'between' both segment endpoints
+        //                ConcreteAST.Point numericInter = maximalSegments[s1].FindIntersection(maximalSegments[s2]);
+        //                if (maximalSegments[s1].PointIsOnAndBetweenEndpoints(numericInter) &&
+        //                    maximalSegments[s2].PointIsOnAndBetweenEndpoints(numericInter))
+        //                {
+        //                    // Find the actual point for which there is an intersection between the segments
+        //                    ConcreteAST.Point actualInter = null;
+        //                    foreach (ConcreteAST.Point pt in points)
+        //                    {
+        //                        if (numericInter.StructurallyEquals(pt))
+        //                        {
+        //                            actualInter = pt;
+        //                            break;
+        //                        }
+        //                    }
 
-                            // Create the intersection
-                            if (actualInter != null)
-                            {
-                                AddIntersection(newIntersections, new ConcreteAST.Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
-                            }
-                        }
-                    }
-                }
-            }
+        //                    // Create the intersection
+        //                    if (actualInter != null)
+        //                    {
+        //                        AddIntersection(newIntersections, new ConcreteAST.Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
 
-            return newIntersections;
-        }
+        //    return newIntersections;
+        //}
 
-        //
-        // Generate all angles based on the intersections
-        //
-        private List<ConcreteAST.Angle> GenerateAngleClauses(List<ConcreteAST.Intersection> intersections)
-        {
-            List<ConcreteAST.Angle> newAngles = new List<ConcreteAST.Angle>();
+        ////
+        //// Generate all angles based on the intersections
+        ////
+        //private List<ConcreteAST.Angle> GenerateAngleClauses(List<ConcreteAST.Intersection> intersections)
+        //{
+        //    List<ConcreteAST.Angle> newAngles = new List<ConcreteAST.Angle>();
 
-            foreach (ConcreteAST.Intersection inter in intersections)
-            {
-                // 1 angle
-                if (inter.StandsOnEndpoint())
-                {
-                    AddAngle(newAngles, (new ConcreteAST.Angle(inter.lhs.OtherPoint(inter.intersect), inter.intersect, inter.rhs.OtherPoint(inter.intersect))));
-                }
-                // 2 angles
-                else if (inter.StandsOn())
-                {
-                    ConcreteAST.Point up = null;
-                    ConcreteAST.Point left = null;
-                    ConcreteAST.Point right = null;
-                    if (inter.lhs.HasPoint(inter.intersect))
-                    {
-                        up = inter.lhs.OtherPoint(inter.intersect);
-                        left = inter.rhs.Point1;
-                        right = inter.rhs.Point2;
-                    }
-                    else
-                    {
-                        up = inter.rhs.OtherPoint(inter.intersect);
-                        left = inter.lhs.Point1;
-                        right = inter.lhs.Point2;
-                    }
+        //    foreach (ConcreteAST.Intersection inter in intersections)
+        //    {
+        //        // 1 angle
+        //        if (inter.StandsOnEndpoint())
+        //        {
+        //            AddAngle(newAngles, (new ConcreteAST.Angle(inter.lhs.OtherPoint(inter.intersect), inter.intersect, inter.rhs.OtherPoint(inter.intersect))));
+        //        }
+        //        // 2 angles
+        //        else if (inter.StandsOn())
+        //        {
+        //            ConcreteAST.Point up = null;
+        //            ConcreteAST.Point left = null;
+        //            ConcreteAST.Point right = null;
+        //            if (inter.lhs.HasPoint(inter.intersect))
+        //            {
+        //                up = inter.lhs.OtherPoint(inter.intersect);
+        //                left = inter.rhs.Point1;
+        //                right = inter.rhs.Point2;
+        //            }
+        //            else
+        //            {
+        //                up = inter.rhs.OtherPoint(inter.intersect);
+        //                left = inter.lhs.Point1;
+        //                right = inter.lhs.Point2;
+        //            }
 
-                    AddAngle(newAngles, new ConcreteAST.Angle(left, inter.intersect, up));
-                    AddAngle(newAngles, new ConcreteAST.Angle(right, inter.intersect, up));
-                }
-                // 4 angles
-                else
-                {
-                    AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
-                    AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
-                    AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
-                    AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
-                }
-            }
+        //            AddAngle(newAngles, new ConcreteAST.Angle(left, inter.intersect, up));
+        //            AddAngle(newAngles, new ConcreteAST.Angle(right, inter.intersect, up));
+        //        }
+        //        // 4 angles
+        //        else
+        //        {
+        //            AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
+        //            AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
+        //            AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
+        //            AddAngle(newAngles, new ConcreteAST.Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
+        //        }
+        //    }
 
-            return newAngles;
-        }
+        //    return newAngles;
+        //}
 
-        // Add an angle to the list uniquely
-        private void AddAngle(List<ConcreteAST.Angle> angles, ConcreteAST.Angle thatAngle)
-        {
-            if (thatAngle.measure == 0 || thatAngle.measure == 180)
-            {
-                System.Diagnostics.Debug.WriteLine("");
-            }
+        //// Add an angle to the list uniquely
+        //private void AddAngle(List<ConcreteAST.Angle> angles, ConcreteAST.Angle thatAngle)
+        //{
+        //    if (thatAngle.measure == 0 || thatAngle.measure == 180)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("");
+        //    }
 
-            foreach (ConcreteAST.Angle thisAngle in angles)
-            {
-                if (thisAngle.Equates(thatAngle)) return;
-            }
+        //    foreach (ConcreteAST.Angle thisAngle in angles)
+        //    {
+        //        if (thisAngle.Equates(thatAngle)) return;
+        //    }
 
-            angles.Add(thatAngle);
-        }
+        //    angles.Add(thatAngle);
+        //}
 
-        // Add an intersection to the list uniquely
-        private void AddIntersection(List<ConcreteAST.Intersection> intersections, ConcreteAST.Intersection thatInter)
-        {
-            foreach (ConcreteAST.Intersection inter in intersections)
-            {
-                if (inter.StructurallyEquals(thatInter)) return;
-            }
+        //// Add an intersection to the list uniquely
+        //private void AddIntersection(List<ConcreteAST.Intersection> intersections, ConcreteAST.Intersection thatInter)
+        //{
+        //    foreach (ConcreteAST.Intersection inter in intersections)
+        //    {
+        //        if (inter.StructurallyEquals(thatInter)) return;
+        //    }
 
-            intersections.Add(thatInter);
-        }
+        //    intersections.Add(thatInter);
+        //}
 
 
-        // Add an angle to the list uniquely
-        private ConcreteAST.Segment GetProblemSegment(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Segment thatSegment)
-        {
-            foreach (ConcreteAST.GroundedClause clause in clauses)
-            {
-                if (clause.StructurallyEquals(thatSegment)) return clause as ConcreteAST.Segment;
-            }
+        //// Add an angle to the list uniquely
+        //private ConcreteAST.Segment GetProblemSegment(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Segment thatSegment)
+        //{
+        //    foreach (ConcreteAST.GroundedClause clause in clauses)
+        //    {
+        //        if (clause.StructurallyEquals(thatSegment)) return clause as ConcreteAST.Segment;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        // Acquire an established angle
-        private ConcreteAST.Angle GetProblemAngle(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Angle thatAngle)
-        {
-            foreach (ConcreteAST.GroundedClause clause in clauses)
-            {
-                if (clause is ConcreteAST.Angle)
-                {
-                    if (clause.StructurallyEquals(thatAngle)) return clause as ConcreteAST.Angle;
-                }
-            }
+        //// Acquire an established angle
+        //private ConcreteAST.Angle GetProblemAngle(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Angle thatAngle)
+        //{
+        //    foreach (ConcreteAST.GroundedClause clause in clauses)
+        //    {
+        //        if (clause is ConcreteAST.Angle)
+        //        {
+        //            if (clause.StructurallyEquals(thatAngle)) return clause as ConcreteAST.Angle;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        // Acquire an established triangle
-        private ConcreteAST.Triangle GetProblemTriangle(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Triangle thatTriangle)
-        {
-            foreach (ConcreteAST.GroundedClause clause in clauses)
-            {
-                if (clause.StructurallyEquals(thatTriangle)) return clause as ConcreteAST.Triangle;
-            }
+        //// Acquire an established triangle
+        //private ConcreteAST.Triangle GetProblemTriangle(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Triangle thatTriangle)
+        //{
+        //    foreach (ConcreteAST.GroundedClause clause in clauses)
+        //    {
+        //        if (clause.StructurallyEquals(thatTriangle)) return clause as ConcreteAST.Triangle;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        // Acquire an established intersection
-        private ConcreteAST.Intersection GetProblemIntersection(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Segment segment1, ConcreteAST.Segment segment2)
-        {
-            foreach (ConcreteAST.GroundedClause clause in clauses)
-            {
-                ConcreteAST.Intersection inter = clause as ConcreteAST.Intersection;
-                if (inter != null)
-                {
-                    if (inter.HasSegment(segment1) && inter.HasSegment(segment2)) return inter;
-                }
-            }
+        //// Acquire an established intersection
+        //private ConcreteAST.Intersection GetProblemIntersection(List<ConcreteAST.GroundedClause> clauses, ConcreteAST.Segment segment1, ConcreteAST.Segment segment2)
+        //{
+        //    foreach (ConcreteAST.GroundedClause clause in clauses)
+        //    {
+        //        ConcreteAST.Intersection inter = clause as ConcreteAST.Intersection;
+        //        if (inter != null)
+        //        {
+        //            if (inter.HasSegment(segment1) && inter.HasSegment(segment2)) return inter;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -30,16 +31,16 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(f);
             Collinear coll1 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(f, a, b)),
-                                                   GetProblemAngle(intrinsic, new Angle(c, a, d))));
-            given.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(d, a, b)),
-                                                   GetProblemAngle(intrinsic, new Angle(e, a, c))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(f, a, b)),
+                                                   ClauseConstructor.GetProblemAngle(intrinsic, new Angle(c, a, d))));
+            given.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(d, a, b)),
+                                                   ClauseConstructor.GetProblemAngle(intrinsic, new Angle(e, a, c))));
 
-            goals.Add(new Strengthened(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)),
-                                       new Perpendicular(GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)))));
+            goals.Add(new Strengthened(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)),
+                                       new Perpendicular(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(a, b), new Segment(a, c)))));
         }
     }
 }

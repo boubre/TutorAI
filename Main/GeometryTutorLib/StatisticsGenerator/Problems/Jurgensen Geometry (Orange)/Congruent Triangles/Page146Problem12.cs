@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -42,16 +43,16 @@ namespace GeometryTutorLib.StatisticsGenerator
 			pts2.Add(t);
 			Collinear coll2 = new Collinear(pts2);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
             Triangle tOne = new Triangle(l, m, n);
             Triangle tTwo = new Triangle(r, s, t);
 
-            given.Add(new GeometricCongruentTriangles(GetProblemTriangle(intrinsic, tOne), GetProblemTriangle(intrinsic, tTwo)));
-            given.Add(new Altitude(GetProblemTriangle(intrinsic, tOne), lx));
-            given.Add(new Altitude(GetProblemTriangle(intrinsic, tTwo), ry));
+            given.Add(new GeometricCongruentTriangles(ClauseConstructor.GetProblemTriangle(intrinsic, tOne), ClauseConstructor.GetProblemTriangle(intrinsic, tTwo)));
+            given.Add(new Altitude(ClauseConstructor.GetProblemTriangle(intrinsic, tOne), lx));
+            given.Add(new Altitude(ClauseConstructor.GetProblemTriangle(intrinsic, tTwo), ry));
 
             goals.Add(new GeometricCongruentSegments(lx, ry));
 		}

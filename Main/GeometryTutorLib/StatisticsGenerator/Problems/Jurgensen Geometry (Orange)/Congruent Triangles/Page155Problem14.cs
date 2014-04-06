@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -45,17 +46,17 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(s);
             Collinear coll4 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateSegmentClauses(coll3));
-            intrinsic.AddRange(GenerateSegmentClauses(coll4));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll4));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, z)),
-                                                     GetProblemSegment(intrinsic, new Segment(r, t))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(r, z)),
+                                                     ClauseConstructor.GetProblemSegment(intrinsic, new Segment(r, t))));
 
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(z, s)),
-                                                     GetProblemSegment(intrinsic, new Segment(t, w))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(z, s)),
+                                                     ClauseConstructor.GetProblemSegment(intrinsic, new Segment(t, w))));
 
             goals.Add(new GeometricCongruentTriangles(new Triangle(r, s, t), new Triangle(r, w, z)));
         }

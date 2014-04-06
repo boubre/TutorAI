@@ -260,6 +260,16 @@ namespace GeometryTutorLib.StatisticsGenerator
         {
             GenerateAverages(problems, figureStats);
             GenerateIsomorphicStatistics(problems, figureStats);
+
+            // First, find the strictly interesting problems
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            {
+                if (problem.interestingPercentage >= 100) strictlyInteresting.Add(problem);
+            }
+
+            GenerateStrictAverages(strictlyInteresting, figureStats);
+            GenerateStrictIsomorphicStatistics(strictlyInteresting, figureStats);
         }
 
         private void GenerateAverages(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
@@ -278,6 +288,26 @@ namespace GeometryTutorLib.StatisticsGenerator
             figureStats.averageProblemWidth = ((double)(totalWidth)) / problems.Count;
             figureStats.averageProblemLength =((double)(totalLength)) / problems.Count;
             figureStats.averageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
+        }
+
+        private void GenerateStrictAverages(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        {
+            figureStats.totalStrictInterestingProblems = problems.Count;
+
+            int totalWidth = 0;
+            int totalLength = 0;
+            int totalDeductiveSteps = 0;
+
+            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            {
+                totalWidth += problem.GetWidth();
+                totalLength += problem.GetLength();
+                totalDeductiveSteps += problem.GetNumDeductiveSteps();
+            }
+
+            figureStats.strictAverageProblemWidth = ((double)(totalWidth)) / problems.Count;
+            figureStats.strictAverageProblemLength = ((double)(totalLength)) / problems.Count;
+            figureStats.strictAverageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
         }
 
         private void GenerateIsomorphicStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
@@ -326,6 +356,43 @@ namespace GeometryTutorLib.StatisticsGenerator
             interestingBasedPartitions.ConstructPartitions(problems);
 
             figureStats.interestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
+        }
+
+        private void GenerateStrictIsomorphicStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        {
+            //
+            // Determine number of problems based on DIFFICULTY of the problems (easy, medium difficult, extreme) based on the number of deductions
+            //
+            // Construct the partitions:
+            // 25% Easy
+            // 50% Medium
+            // 75% Difficult
+            // 100% Extreme
+            //
+            ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
+
+            ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
+
+            difficultyBasedPartitions.ConstructPartitions(problems);
+
+            figureStats.strictDifficultyPartitionSummary = difficultyBasedPartitions.GetDifficultyPartitionSummary();
+
+            //
+            // Determine number of interesting problems based percentage of givens covered.
+            //
+            // Construct the partitions:
+            // 0-2 Easy
+            // 3-5 Medium
+            // 6-10 Difficult
+            // 10+ Extreme
+            //
+            ProblemAnalyzer.QueryFeatureVector interestingQuery = ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
+
+            ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
+
+            interestingBasedPartitions.ConstructPartitions(problems);
+
+            figureStats.strictInterestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
     }
 }

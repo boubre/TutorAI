@@ -127,6 +127,32 @@ namespace GeometryTutorLib.ConcreteAST
             return segments;
         }
 
+        //
+        // Maintain a public repository of all triangles objects in the figure.
+        //
+        public static void Clear()
+        {
+            figureTriangles.Clear();
+        }
+        public static List<Triangle> figureTriangles = new List<Triangle>();
+        public static void Record(GroundedClause clause)
+        {
+            // Record uniquely? For right angles, etc?
+            if (clause is Triangle) figureTriangles.Add(clause as Triangle);
+        }
+        public static Triangle GetFigureTriangle(Point pt1, Point pt2, Point pt3)
+        {
+            Triangle candTriangle = new Triangle(pt1, pt2, pt3);
+
+            // Search for exact segment first
+            foreach (Triangle tri in figureTriangles)
+            {
+                if (tri.StructurallyEquals(candTriangle)) return tri;
+            }
+
+            return null;
+        }
+
         internal void BuildUnparse(StringBuilder sb, int tabDepth)
         {
             Indent(sb, tabDepth);

@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -35,19 +36,19 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(t);
             Collinear coll2 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new GeometricParallel(GetProblemSegment(intrinsic, new Segment(s, t)),
-                                            GetProblemSegment(intrinsic, new Segment(r, a))));
-            given.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(o, a)),
-                                                     GetProblemSegment(intrinsic, new Segment(o, r))));
+            given.Add(new GeometricParallel(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(s, t)),
+                                            ClauseConstructor.GetProblemSegment(intrinsic, new Segment(r, a))));
+            given.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(o, a)),
+                                                     ClauseConstructor.GetProblemSegment(intrinsic, new Segment(o, r))));
 
-            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, s)),
-                                                     GetProblemSegment(intrinsic, new Segment(a, t))));
-            goals.Add(new GeometricCongruentSegments(GetProblemSegment(intrinsic, new Segment(r, t)),
-                                                     GetProblemSegment(intrinsic, new Segment(a, s))));
+            goals.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(r, s)),
+                                                     ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, t))));
+            goals.Add(new GeometricCongruentSegments(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(r, t)),
+                                                     ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, s))));
         }
     }
 }

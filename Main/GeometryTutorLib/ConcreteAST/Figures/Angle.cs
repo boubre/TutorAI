@@ -46,6 +46,20 @@ namespace GeometryTutorLib.ConcreteAST
             this.measure = toDegrees(findAngle(A, B, C));
         }
 
+        public Angle(Segment ray1, Segment ray2) : base()
+        {
+            Point vertex = ray1.SharedVertex(ray2);
+
+            if (vertex == null) throw new ArgumentException("Rays do not share a vertex: " + ray1 + " " + ray2);
+
+            this.A = ray1.OtherPoint(vertex);
+            this.B = vertex;
+            this.C = ray2.OtherPoint(vertex);
+            this.ray1 = ray1;
+            this.ray2 = ray2;
+            this.measure = toDegrees(findAngle(A, B, C));
+        }
+
         public Angle(List<Point> pts) : base()
         {
             if (pts.Count != 3)

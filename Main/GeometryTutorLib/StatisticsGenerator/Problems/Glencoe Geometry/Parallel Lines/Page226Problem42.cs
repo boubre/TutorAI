@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -33,14 +34,14 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts2.Add(n);
             Collinear coll2 = new Collinear(pts2);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new IsoscelesTriangle(GetProblemSegment(intrinsic, new Segment(k, n)), GetProblemSegment(intrinsic, new Segment(j, n)), jk));
+            given.Add(new IsoscelesTriangle(ClauseConstructor.GetProblemSegment(intrinsic, new Segment(k, n)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(j, n)), jk));
             given.Add(new GeometricParallel(jk, lm));
 
-            goals.Add(new Strengthened(GetProblemTriangle(intrinsic, new Triangle(n, m, l)),  new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(n, m, l)))));
+            goals.Add(new Strengthened(ClauseConstructor.GetProblemTriangle(intrinsic, new Triangle(n, m, l)),  new IsoscelesTriangle(ClauseConstructor.GetProblemTriangle(intrinsic, new Triangle(n, m, l)))));
         }
     }
 }

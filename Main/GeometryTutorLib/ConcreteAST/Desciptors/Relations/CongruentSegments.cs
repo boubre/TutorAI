@@ -96,6 +96,14 @@ namespace GeometryTutorLib.ConcreteAST
                    ccs.cs2.SharedVertex(cs1) != null || ccs.cs2.SharedVertex(cs2) != null;
         }
 
+        public Segment SharedSegment(CongruentSegments ccs)
+        {
+            if (ccs.cs1.StructurallyEquals(this.cs1) || ccs.cs2.StructurallyEquals(this.cs1)) return this.cs1;
+            if (ccs.cs1.StructurallyEquals(this.cs2) || ccs.cs2.StructurallyEquals(this.cs2)) return this.cs2;
+
+            return null;
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             CongruentSegments ccs = obj as CongruentSegments;

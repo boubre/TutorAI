@@ -72,7 +72,45 @@ namespace GeometryTutorLib
             TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT,
             VERTICAL_ANGLES,
 
+            //
+            // Quadrilaterals
+            //
+            QUADRILATERAL_DEFINITION,
+            KITE_DEFINITION,
+            PARALLELOGRAM_DEFINITION,
+            RHOMBUS_DEFINITION,
+            RECTANGLE_DEFINITION,
+            SQUARE_DEFINITION,
+            TRAPEZOID_DEFINITION,
+            ISOSCELES_TRAPEZOID_DEFINITION,
+
+            OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT,
+            OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT,
+            DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER,
+            OPPOSITE_SIDES_CONGRUENT_IMPLIES_PARALLELOGRAM,
+            ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM,
+            OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM,
+            DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM,
+            DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT,
+            DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR,
+            DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS,
+            TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS,
+            BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT,
+            MEDIAN_TRAPEZOID_PARALLEL_TO_BASE,
+            MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES,
+
+            // Circles
+            TANGENT_IS_PERPENDICULAR_TO_RADIUS,
+            PERPENDICULAR_TO_RADIUS_IS_TANGENT,
+            TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT,
+            CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS,
+            CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS,
+            DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC,
+            MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC,
+
             // General Switches
+            CIRCLES,
+            QUADRILATERALS,
             SIMILARITY,
             TRIANGLE_CONGREUNCE,
             REFLEXIVE,
@@ -129,6 +167,17 @@ namespace GeometryTutorLib
             justMap.Add(DeductionJustType.SUPPLEMENTARY_DEFINITION, new Assumption("Supplementary", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.STRAIGHT_ANGLE_DEFINITION, new Assumption("Straight Angle", Assumption.AssumptionType.Definition));
 
+            // Quadrilateral Defs
+            justMap.Add(DeductionJustType.QUADRILATERAL_DEFINITION, new Assumption("Quadrilateral", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.KITE_DEFINITION, new Assumption("Kite", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.PARALLELOGRAM_DEFINITION, new Assumption("Parallelogram", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.RHOMBUS_DEFINITION, new Assumption("Rhombus", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.SQUARE_DEFINITION, new Assumption("Square", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.RECTANGLE_DEFINITION, new Assumption("Rectangle", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.TRAPEZOID_DEFINITION, new Assumption("Trapezoid", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.ISOSCELES_TRAPEZOID_DEFINITION, new Assumption("Isosceles Trapezoid", Assumption.AssumptionType.Definition));
+
+
             // Theorems
             justMap.Add(DeductionJustType.AAS, new Assumption("AAS", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY, new Assumption("Acute Angles in Right Triangle are Complementary", Assumption.AssumptionType.Theorem));
@@ -160,6 +209,31 @@ namespace GeometryTutorLib
             justMap.Add(DeductionJustType.TRIANGLE_PROPORTIONALITY, new Assumption("Proportionality of Triangles", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT, new Assumption("Two pairs of Congruent Angles in Triangle Imply Third Pair Congruent", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.VERTICAL_ANGLES, new Assumption("Vertical Angles", Assumption.AssumptionType.Theorem));
+
+            // Quadrilateral Theorems
+            justMap.Add(DeductionJustType.OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT, new Assumption("Opp. Sides in Parallelogram Are Congruent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT, new Assumption("Opp. Angles in Parallelogram Are Congruent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER, new Assumption("Diagonals in Parallelogram Bisect Each Other", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.OPPOSITE_SIDES_CONGRUENT_IMPLIES_PARALLELOGRAM, new Assumption("Opp. Sides Congruent in Quad Implies Parallelogram", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM, new Assumption("Opp. Sides Congruent in Quad Implies Parallelogram", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM, new Assumption("Opp. Sides Congruent in Quad Implies Parallelogram", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM, new Assumption("Diagonals Bisect Each Other Imply Parallelogram", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT, new Assumption("Diagonals of a Rectangle are Congruent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR, new Assumption("Diagonals of a Rhombus are Perpendicular", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS, new Assumption("Diagonals of a Rhmbus Bisect the Angles of a Rhombus", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
+
+            // Circles
+            justMap.Add(DeductionJustType.TANGENT_IS_PERPENDICULAR_TO_RADIUS, new Assumption("A Tangent Is Perpendicular to a Radius", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.PERPENDICULAR_TO_RADIUS_IS_TANGENT, new Assumption("Perpendicular to Radius is Tangent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT, new Assumption("Central Angle Congruence Implies Arc Minor Congruence", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS, new Assumption("Congruent Chords have Congruent Arcs", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS, new Assumption("Congruent Arcs have Congruent Chords", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC, new Assumption("Diameter Perpendicular to Chord Bisects the Chord and Arc", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC, new Assumption("Measure of Inscribed Angle is Half Intercepted Arc", Assumption.AssumptionType.Theorem));
         }
 
         public static bool RELATION_TRANSITIVE_SUBSTITUTION = true;
@@ -198,6 +272,16 @@ namespace GeometryTutorLib
         public static bool SUPPLEMENTARY_DEFINITION = true;
         public static bool STRAIGHT_ANGLE_DEFINITION = true;
 
+        // Quadrilateral Defs
+        public static bool QUADRILATERAL_DEFINITION = true;
+        public static bool KITE_DEFINITION = true;
+        public static bool PARALLELOGRAM_DEFINITION = true;
+        public static bool RHOMBUS_DEFINITION = true;
+        public static bool SQUARE_DEFINITION = true;
+        public static bool RECTANGLE_DEFINITION = true;
+        public static bool TRAPEZOID_DEFINITION = true;
+        public static bool ISOSCELES_TRAPEZOID_DEFINITION = true;
+
         //
         // Theorems
         //
@@ -232,9 +316,34 @@ namespace GeometryTutorLib
         public static bool TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT = true;
         public static bool VERTICAL_ANGLES = true;
 
+        // Quadrilateral
+        public static bool OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT = true;
+        public static bool OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT = true;
+        public static bool DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER = true;
+        public static bool OPPOSITE_SIDES_CONGRUENT_IMPLIES_PARALLELOGRAM = true;
+        public static bool ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM = true;
+        public static bool OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM = true;
+        public static bool DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM = true;
+        public static bool DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT = true;
+        public static bool DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR = true;
+        public static bool DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS = true;
+        public static bool TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS = true;
+        public static bool BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT = true;
+        public static bool MEDIAN_TRAPEZOID_PARALLEL_TO_BASE = true;
+        public static bool MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES = true;
+
+        // Circles
+        public static bool TANGENT_IS_PERPENDICULAR_TO_RADIUS = true;
+        public static bool PERPENDICULAR_TO_RADIUS_IS_TANGENT = true;
+        public static bool TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = true;
+        public static bool CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS = true;
+        public static bool CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS = true;
+        public static bool DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = true;
+        public static bool MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = true;
         //
         // General Switches
         //
+        public static bool QUADRILATERALS = true;
         public static bool SIMILARITY = true;
         public static bool TRIANGLE_CONGREUNCE = true;
         public static bool REFLEXIVE = true;
@@ -252,6 +361,43 @@ namespace GeometryTutorLib
                     //
                     // Handle general switches first
                     //
+                    if (assumption.Key == DeductionJustType.CIRCLES)
+                    {
+                        JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS = false;
+                        JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT = false;
+                        JustificationSwitch.TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = false;
+                        JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS = false;
+                        JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS = false;
+                        JustificationSwitch.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = false;
+                        JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = false;
+                    }
+                    if (assumption.Key == DeductionJustType.QUADRILATERALS)
+                    {
+                        JustificationSwitch.QUADRILATERAL_DEFINITION = false;
+                        JustificationSwitch.KITE_DEFINITION = false;
+                        JustificationSwitch.PARALLELOGRAM_DEFINITION = false;
+                        JustificationSwitch.RHOMBUS_DEFINITION = false;
+                        JustificationSwitch.SQUARE_DEFINITION = false;
+                        JustificationSwitch.RECTANGLE_DEFINITION = false;
+                        JustificationSwitch.TRAPEZOID_DEFINITION = false;
+                        JustificationSwitch.ISOSCELES_TRAPEZOID_DEFINITION = false;
+
+                        // Theorems
+                        JustificationSwitch.OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT = false;
+                        JustificationSwitch.OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT = false;
+                        JustificationSwitch.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER = false;
+                        JustificationSwitch.OPPOSITE_SIDES_CONGRUENT_IMPLIES_PARALLELOGRAM = false;
+                        JustificationSwitch.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM = false;
+                        JustificationSwitch.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM = false;
+                        JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM = false;
+                        JustificationSwitch.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT = false;
+                        JustificationSwitch.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR = false;
+                        JustificationSwitch.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS = false;
+                        JustificationSwitch.TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS = false;
+                        JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT = false;
+                        JustificationSwitch.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE = false;
+                        JustificationSwitch.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES = false;
+                    }
                     if (assumption.Key == DeductionJustType.TRIANGLE_CONGREUNCE)
                     {
                         JustificationSwitch.AAS = false;

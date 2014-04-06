@@ -126,7 +126,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 }
             }
 
-            problem.interestingPercentage = (int)((double)(numGivensInProblem) / givenIndices.Count * 100); 
+            problem.interestingPercentage = (int)((double)(numGivensInProblem) / givenIndices.Count * 100);
 
             bool problemContainsOtherGivens = problem.givens.Count - numGivensInProblem > 0;
             bool interesting = !problemContainsOtherGivens && numGivensInProblem > 0;

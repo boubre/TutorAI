@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -28,13 +29,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             Segment yz = new Segment(y, z); intrinsic.Add(yz);
             Segment yp = new Segment(y, p); intrinsic.Add(yp);
 
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new Complementary(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(x, y, p))));
-            Addition sum = new Addition(GetProblemAngle(intrinsic, new Angle(p, y, z)), GetProblemAngle(intrinsic, new Angle(x, y, p)));
+            given.Add(new Complementary(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, b, c)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(x, y, p))));
+            Addition sum = new Addition(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(p, y, z)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(x, y, p)));
             given.Add(new GeometricAngleEquation(sum, new NumericValue(90)));
 
-            goals.Add(new GeometricCongruentAngles(GetProblemAngle(intrinsic, new Angle(a, b, c)), GetProblemAngle(intrinsic, new Angle(p, y, z))));
+            goals.Add(new GeometricCongruentAngles(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(a, b, c)), ClauseConstructor.GetProblemAngle(intrinsic, new Angle(p, y, z))));
         }
     }
 }

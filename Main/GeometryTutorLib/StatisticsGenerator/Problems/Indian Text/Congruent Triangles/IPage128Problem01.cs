@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.StatisticsGenerator
 {
@@ -35,19 +36,19 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(p);
             Collinear coll2 = new Collinear(pts);
 
-            intrinsic.AddRange(GenerateSegmentClauses(coll1));
-            intrinsic.AddRange(GenerateSegmentClauses(coll2));
-            intrinsic.AddRange(GenerateAngleIntersectionTriangleClauses(intrinsic));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
+            intrinsic.AddRange(ClauseConstructor.GenerateAngleIntersectionPolygonClauses(intrinsic, onoff));
 
-            given.Add(new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(a, b, c))));
-            given.Add(new IsoscelesTriangle(GetProblemTriangle(intrinsic, new Triangle(d, b, c))));
+            given.Add(new IsoscelesTriangle(ClauseConstructor.GetProblemTriangle(intrinsic, new Triangle(a, b, c))));
+            given.Add(new IsoscelesTriangle(ClauseConstructor.GetProblemTriangle(intrinsic, new Triangle(d, b, c))));
 
             goals.Add(new GeometricCongruentTriangles(new Triangle(a, b, d), new Triangle(a, c, d)));
             goals.Add(new GeometricCongruentTriangles(new Triangle(a, b, p), new Triangle(a, c, p)));
-            goals.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(b, a, c)), GetProblemSegment(intrinsic, new Segment(a, p))));
-            goals.Add(new AngleBisector(GetProblemAngle(intrinsic, new Angle(b, d, c)), GetProblemSegment(intrinsic, new Segment(a, p))));
-            goals.Add(new PerpendicularBisector(GetProblemIntersection(intrinsic, new Segment(a, p), new Segment(b, c)),
-                                                GetProblemSegment(intrinsic, new Segment(a, p))));
+            goals.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, a, c)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, p))));
+            goals.Add(new AngleBisector(ClauseConstructor.GetProblemAngle(intrinsic, new Angle(b, d, c)), ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, p))));
+            goals.Add(new PerpendicularBisector(ClauseConstructor.GetProblemIntersection(intrinsic, new Segment(a, p), new Segment(b, c)),
+                                                ClauseConstructor.GetProblemSegment(intrinsic, new Segment(a, p))));
         }
     }
 }
