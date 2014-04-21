@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assumption.cs" />
+    <Compile Include="ConcreteAST\Desciptors\CircleSegmentIntersection.cs" />
+    <Compile Include="ConcreteAST\Figures\Circle.cs" />
     <Compile Include="JustificationSwitch.cs" />
     <Compile Include="GenericInstantiator\Definitions\SupplementaryDefinition.cs" />
     <Compile Include="GenericInstantiator\EdgeAggregator.cs" />

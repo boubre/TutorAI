@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
+using GeometryTutorLib.ConcreteAST.Desciptors;
 
 namespace LiveGeometry
 {
@@ -23,6 +24,8 @@ namespace LiveGeometry
         public List<Triangle> Triangles { get; private set; }
         public List<Intersection> Intersections { get; private set; }
         public List<Angle> Angles { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.Figures.Circle> Circles { get; private set; }
+        public List<CircleSegmentIntersection> CircleSegmentIntersections { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.SegmentBisector> SegmentBisectors { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.AngleBisector> AngleBisectors { get; private set; }
 
@@ -43,6 +46,8 @@ namespace LiveGeometry
             Triangles = new List<Triangle>();
             Intersections = new List<Intersection>();
             Angles = new List<Angle>();
+            Circles = new List<GeometryTutorLib.ConcreteAST.Figures.Circle>();
+            CircleSegmentIntersections = new List<CircleSegmentIntersection>();
             SegmentBisectors = new List<GeometryTutorLib.ConcreteAST.SegmentBisector>();
             AngleBisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
         }
@@ -57,6 +62,7 @@ namespace LiveGeometry
             removeDuplicateAngles();
             calculateSegmentBisectors();
             calculateAngleBisectors();
+            calculateCircleSegmentIntersections();
         }
 
         /// <summary>
@@ -373,6 +379,63 @@ namespace LiveGeometry
             }
         }
 
+        public int csiPointName = 0;
+        /// <summary>
+        /// Calculate when a circle intersects a segment.
+        /// </summary>
+        private void calculateCircleSegmentIntersections()
+        {
+            //Check each circle...
+            foreach (GeometryTutorLib.ConcreteAST.Figures.Circle circ in Circles)
+            {
+                //... with each segment and see if they intersect.
+                foreach (TempSegment ts in TempSegs)
+                {
+                    GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.A, ts.B);
+
+                    //SEE: http://stackoverflow.com/questions/1073336/circle-line-collision-detection
+
+                    //We have line AB, cicle center C, and radius R.
+                    double lengthAB = s.Length;
+                    double[] D = { (ts.B.X - ts.A.X) / lengthAB, (ts.B.Y - ts.A.Y) / lengthAB }; //Direction vector from A to B
+
+                    //Now the line equation is x = D[0]*t + A.X, y = D[1]*t + A.Y with 0 <= t <= 1.
+                    double t = D[0] * (circ.Center.X - ts.A.X) + D[1] * (circ.Center.Y - ts.A.Y); //Closest point to circle center
+                    double[] E = { t * D[0] + ts.A.X, t * D[1] + ts.A.Y }; //The point described by t.
+
+                    double lengthEC = System.Math.Sqrt(System.Math.Pow(E[0] - circ.Center.X, 2) + System.Math.Pow(E[1] - circ.Center.Y, 2));
+
+                    if (lengthEC < circ.Radius) //Possible Intersection?
+                    {
+                        //Compute distance from t to circle intersection point
+                        double dt = System.Math.Sqrt(System.Math.Pow(circ.Radius, 2) - System.Math.Pow(lengthEC, 2));
+
+                        //First intersection
+                        GeometryTutorLib.ConcreteAST.Point p1 = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, (t - dt) * D[0] + ts.A.X, (t - dt) * D[1] + ts.A.Y);
+                        if (s.PointIsOnAndBetweenEndpoints(p1))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p1, circ, s));
+                        }
+
+                        //Second intersection
+                        GeometryTutorLib.ConcreteAST.Point p2 = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, (t + dt) * D[0] + ts.A.X, (t + dt) * D[1] + ts.A.Y);
+                        if (s.PointIsOnAndBetweenEndpoints(p2))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p2, circ, s));
+                        }
+                    }
+                    else if (lengthEC == circ.Radius) //E is tangent point
+                    {
+                        GeometryTutorLib.ConcreteAST.Point p = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, E[0], E[1]);
+                        if (s.PointIsOnAndBetweenEndpoints(p))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p, circ, s));
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Parse the given figure.
         /// </summary>
@@ -384,6 +447,7 @@ namespace LiveGeometry
             else if (figure is ILine) parse(figure as ILine);
             else if (figure is Polygon) parse(figure as PolygonBase);
             else if (figure is RegularPolygon) parse(figure as RegularPolygon);
+            else if (figure is CircleBase) parse(figure as CircleBase);
         }
 
         /// <summary>
@@ -493,6 +557,22 @@ namespace LiveGeometry
                 parsed.Add(rgon, t);
                 Triangles.Add(t);
             }
+        }
+
+        /// <summary>
+        /// Parse a CircleBase.
+        /// </summary>
+        /// <param name="c"> The circle to parse.</param>
+        private void parse(CircleBase cb)
+        {
+            IPoint center = cb.Dependencies.FindPoint(cb.Center, 0);
+            double radius = cb.Radius;
+
+            parse(center as IFigure);
+            GeometryTutorLib.ConcreteAST.Figures.Circle c = new GeometryTutorLib.ConcreteAST.Figures.Circle(parsed[center] as GeometryTutorLib.ConcreteAST.Point, radius);
+
+            parsed.Add(cb, c);
+            Circles.Add(c);
         }
 
         /// <summary>
