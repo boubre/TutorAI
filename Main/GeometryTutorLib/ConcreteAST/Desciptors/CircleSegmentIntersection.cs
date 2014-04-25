@@ -26,11 +26,11 @@ namespace GeometryTutorLib.ConcreteAST.Desciptors
         /// Tests if the two intersections are structurally equal.
         /// </summary>
         /// <param name="obj">The other object to test.</param>
-        /// <returns>True if the parameter is structurally equal to this circle.</returns>
+        /// <returns>True if the parameter is structurally equal to this intersection.</returns>
         public override bool StructurallyEquals(object obj)
         {
             CircleSegmentIntersection csi = obj as CircleSegmentIntersection;
-            if (obj == null) return false;
+            if (csi == null) return false;
 
             return intersect.StructurallyEquals(csi.intersect) &&
                 circle.StructurallyEquals(csi.circle) &&

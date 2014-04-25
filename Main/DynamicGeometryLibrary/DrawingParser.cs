@@ -26,6 +26,7 @@ namespace LiveGeometry
         public List<Angle> Angles { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.Figures.Circle> Circles { get; private set; }
         public List<CircleSegmentIntersection> CircleSegmentIntersections { get; private set; }
+        public List<CircleIntersection> CircleIntersections { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.SegmentBisector> SegmentBisectors { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.AngleBisector> AngleBisectors { get; private set; }
 
@@ -48,6 +49,7 @@ namespace LiveGeometry
             Angles = new List<Angle>();
             Circles = new List<GeometryTutorLib.ConcreteAST.Figures.Circle>();
             CircleSegmentIntersections = new List<CircleSegmentIntersection>();
+            CircleIntersections = new List<CircleIntersection>();
             SegmentBisectors = new List<GeometryTutorLib.ConcreteAST.SegmentBisector>();
             AngleBisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
         }
@@ -63,6 +65,7 @@ namespace LiveGeometry
             calculateSegmentBisectors();
             calculateAngleBisectors();
             calculateCircleSegmentIntersections();
+            calculateCircleIntersections();
         }
 
         /// <summary>
@@ -431,6 +434,54 @@ namespace LiveGeometry
                         {
                             CircleSegmentIntersections.Add(new CircleSegmentIntersection(p, circ, s));
                         }
+                    }
+                }
+            }
+        }
+
+        public int ciPointName = 0;
+        /// <summary>
+        /// Calculate when a circle intersects a segment.
+        /// </summary>
+        private void calculateCircleIntersections()
+        {
+            GeometryTutorLib.ConcreteAST.Figures.Circle[] CircleArray = Circles.ToArray();
+            //Check each circle...
+            for (int c1 = 0; c1 < CircleArray.Length - 1; c1++)
+            {
+                GeometryTutorLib.ConcreteAST.Figures.Circle circ1 = CircleArray[c1];
+                //... with previously uncompared circles and see if they intersect.
+                for (int c2 = c1 + 1; c2 < CircleArray.Length; c2++)
+                {
+                    GeometryTutorLib.ConcreteAST.Figures.Circle circ2 = CircleArray[c2];
+
+                    //SEE: http://stackoverflow.com/questions/3349125/circle-circle-intersection-points
+
+                    double d = System.Math.Sqrt(System.Math.Pow(circ2.Center.X - circ1.Center.X, 2) + System.Math.Pow(circ2.Center.Y - circ1.Center.Y, 2)); //Distance between centers
+
+                    if (d > circ1.Radius + circ2.Radius) { } //Separate circles
+                    else if (d < System.Math.Abs(circ1.Radius - circ2.Radius)) { } //One circle contained in the other
+                    else if (d == 0 && circ1.Radius == circ2.Radius) { } //Coinciding circles
+                    else //We have intersection(s)!
+                    {
+                        double a = (System.Math.Pow(circ1.Radius, 2) - System.Math.Pow(circ2.Radius, 2) + System.Math.Pow(d, 2)) / (2 * d); //Distance from center of circ1 to midpt of intersections
+                        double[] midpt = { circ1.Center.X + a * (circ2.Center.X - circ1.Center.X) / d, circ1.Center.Y + a * (circ2.Center.Y - circ1.Center.Y) / d }; //midpt of the intersections
+                        double h = System.Math.Sqrt(System.Math.Pow(circ1.Radius, 2) - System.Math.Pow(a, 2)); //Distance from midpt to intersections
+
+                        if (h == 0) //Only one intersection
+                        {
+                            GeometryTutorLib.ConcreteAST.Point p = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++, midpt[0], midpt[1]);
+                            CircleIntersections.Add(new CircleIntersection(p, circ1, circ2));
+                        }
+                        else //Two intersections
+                        {
+                            GeometryTutorLib.ConcreteAST.Point p1 = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++,
+                                midpt[0] + h * (circ2.Center.Y - circ1.Center.Y) / d, midpt[1] - h * (circ2.Center.X - circ1.Center.X) / d);
+                            GeometryTutorLib.ConcreteAST.Point p2 = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++,
+                                midpt[0] - h * (circ2.Center.Y - circ1.Center.Y) / d, midpt[1] + h * (circ2.Center.X - circ1.Center.X) / d);
+                            CircleIntersections.Add(new CircleIntersection(p1, circ1, circ2));
+                            CircleIntersections.Add(new CircleIntersection(p2, circ1, circ2));
+                        }               
                     }
                 }
             }
