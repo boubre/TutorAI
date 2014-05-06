@@ -96,6 +96,7 @@
     <None Include="Data\Demo\Wireframe.xml" />
     <None Include="Drawing.cd" />
     <Compile Include="Drawing.cs" />
+    <Compile Include="DrawingParser.cs" />
     <Compile Include="Expressions\Binder.cs" />
     <Compile Include="Expressions\CompileError.cs" />
     <Compile Include="Expressions\CompileResult.cs" />
@@ -313,7 +314,19 @@
     <Compile Include="UI\DrawingControl.Undo.cs" />
     <Compile Include="UI\DrawingHost.cs" />
     <Compile Include="UI\FigureExplorer.cs" />
+    <Compile Include="UI\GivenWindow\AddAngleBisector.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentSegments.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentTriangles.cs" />
+    <Compile Include="UI\GivenWindow\AddEquilateralTriangle.cs" />
+    <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
+    <Compile Include="UI\GivenWindow\AddIsoscelesTriangle.cs" />
+    <Compile Include="UI\GivenWindow\AddParallelLines.cs" />
+    <Compile Include="UI\GivenWindow\AddRightAngle.cs" />
+    <Compile Include="UI\GivenWindow\AddCongruentAngles.cs" />
+    <Compile Include="UI\GivenWindow\AddSegmentBisector.cs" />
+    <Compile Include="UI\GivenWindow\AddSimilarTriangles.cs" />
     <Compile Include="UI\IconBuilder.cs" />
+    <Compile Include="UI\ManageGivensWindow.cs" />
     <Compile Include="UI\ParseDisambiguationWindow.cs" />
     <Compile Include="UI\ParseGroup.cs" />
     <Compile Include="UI\ParseGroupWindow.cs" />
@@ -334,6 +347,7 @@
       <Name>GeometryTutorLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

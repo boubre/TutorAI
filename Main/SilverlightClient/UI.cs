@@ -17,12 +17,12 @@ namespace LiveGeometry
 {
     public partial class Page
     {
+        private DrawingParser parser;
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private ParseOptionsWindow parseOptionsWindow;
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
-        private KeyValuePair<List<GeometryTutorLib.ConcreteAST.GroundedClause>, List<GeometryTutorLib.ConcreteAST.GroundedClause>> parseResult;
+        private ManageGivensWindow manageGivensWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
-        private ParseController parseController;
 
         private void initParseWorker()
         {
@@ -408,37 +408,33 @@ namespace LiveGeometry
             }
         }
 
+        /// <summary>
+        /// Executed when the parse button is clicked.
+        /// Runs the background parse thread.
+        /// </summary>
         void ParseToAst()
         {
             if (!parseWorker.IsBusy)
             {
-                parseController = new ParseController();
-                DrawingParser parser = new DrawingParser(drawingHost.CurrentDrawing, parseController);
+                parser = new DrawingParser(drawingHost.CurrentDrawing);
 
-                //Set up parse chain
-                parseController.addParseAction(() => { parser.ParseDrawing(); });
-                parseController.addParseAction(() => { parser.removeDuplicateSegments(); });
-                parseController.addParseAction(() => { parser.calculateCollinear(); });
-                parseController.addParseAction(() => { parser.calculateCongruentSegments(); });
-                parseController.addParseAction(() => { parser.calculateIntersections(); });
-                parseController.addParseAction(() => { parser.calculateAngles(); });
-                parseController.addParseAction(() => { parser.removeDuplicateAngles(); });
-                parseController.addParseAction(() => { parser.calculateCongruentAngles(); });
-                parseController.addParseAction(() => { parser.calculateRightAngles(); });
-                parseController.addParseAction(() => { parseResult = parser.getClauses(); });
-
-                // Do parse and back-end computation on background worker
+                //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
         }
 
+        /// <summary>
+        /// Runs the Parse and back-end computations.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
             //Execute Front-End Parse
-            parseController.executeParse();
+            parser.Parse();
             UIDebugPublisher.clearWindow();
 
-            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parseResult.Key, parseResult.Value); // <intrinsic, given>
+            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.GetIntrinsics(), manageGivensWindow.GetGivens()); // <intrinsic, given>
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 
             //Example of UI Output to AI Window
@@ -447,6 +443,7 @@ namespace LiveGeometry
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
         }
+
         void DisplayParseOptions()
         {
             parseOptionsWindow.Show();

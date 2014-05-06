@@ -12,14 +12,20 @@ namespace DynamicGeometry.UI
     /// </summary>
     public class ProblemCharacteristicsWindow : ChildWindow
     {
+        private ManageGivensWindow manageGivensWindow;
         private TextBox minWidth, maxWidth, minLength, maxLength;
         private Dictionary<Relationship, CheckBox> givenCheckboxes;
         private Dictionary<Relationship, RadioButton> goalCheckboxes;
         private ProblemCharacteristics problemCharacteristics;
 
-        public ProblemCharacteristicsWindow()
+        /// <summary>
+        /// Create a new Problem Characteristics window.
+        /// </summary>
+        /// <param name="mgw">A ManageGivensWindow</param>
+        public ProblemCharacteristicsWindow(ManageGivensWindow mgw)
         {
             Initialize();
+            this.manageGivensWindow = mgw;
             LayoutDesign();
         }
 
@@ -45,6 +51,7 @@ namespace DynamicGeometry.UI
             Grid grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
@@ -114,6 +121,13 @@ namespace DynamicGeometry.UI
             goalList.ItemsSource = goalCheckboxes.Values;
             goalPanel.Children.Add(goalList);
 
+            //Create button to manage givens
+            Button openGivensWindow = new Button();
+            openGivensWindow.Content = "Manage Problem Givens";
+            openGivensWindow.HorizontalAlignment = HorizontalAlignment.Center;
+            openGivensWindow.Margin = new Thickness(0, 10, 0, 0);
+            openGivensWindow.Click += new RoutedEventHandler(ManageGivens_Open);
+
             //Arrange items in the grid and add them to the grid.
             Grid.SetColumn(widthPanel, 0);
             Grid.SetRow(widthPanel, 0);
@@ -129,6 +143,10 @@ namespace DynamicGeometry.UI
             Grid.SetColumn(goalPanel, 1);
             Grid.SetRow(goalPanel, 2);
             grid.Children.Add(goalPanel);
+            Grid.SetColumn(openGivensWindow, 0);
+            Grid.SetRow(openGivensWindow, 3);
+            Grid.SetColumnSpan(openGivensWindow, 2);
+            grid.Children.Add(openGivensWindow);
 
             //Set the grid as the content of the window in order to display it.
             this.Content = grid;
@@ -201,6 +219,16 @@ namespace DynamicGeometry.UI
             {
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Open the manage givens window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ManageGivens_Open(object sender, RoutedEventArgs e)
+        {
+            manageGivensWindow.Show();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
+using GeometryTutorLib.ConcreteAST.Desciptors;
 
 namespace LiveGeometry
 {
@@ -11,51 +12,66 @@ namespace LiveGeometry
     /// </summary>
     public class DrawingParser
     {
-        private const double EPSILON_SEGMENT_LENGTH = 0.001;
-        private const double EPSILON_ANGLE_DEGREES = 0.01;
+        private const double EPSILON_ANGLE = 0.01;
 
         private Drawing drawing;
-        private ParseController parseController;
 
         private Dictionary<IFigure, GroundedClause> parsed;
 
-        private List<Point> points;
-        private List<TempSegment> tempSegs;
-        private List<Collinear> collinear;
-        private List<Triangle> triangles;
-        private List<GeometricCongruentSegments> congSegs;
-        List<Intersection> intersections;
-        private List<Angle> angles;
-        private List<GeometricCongruentAngles> congAngles;
-        private List<RightAngle> rightAngles;
+        public List<Point> Points { get; private set; }
+        public List<TempSegment> TempSegs { get; private set; }
+        public List<Collinear> Collinear { get; private set; }
+        public List<Triangle> Triangles { get; private set; }
+        public List<Intersection> Intersections { get; private set; }
+        public List<Angle> Angles { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.Figures.Circle> Circles { get; private set; }
+        public List<CircleSegmentIntersection> CircleSegmentIntersections { get; private set; }
+        public List<CircleIntersection> CircleIntersections { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.SegmentBisector> SegmentBisectors { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.AngleBisector> AngleBisectors { get; private set; }
 
         /// <summary>
         /// Create a new Drawing Parser.
         /// </summary>
         /// <param name="drawing">The drawing to parse.</param>
         /// <param name="parseController">The parseController, used to add disambiguation dialogs.</param>
-        public DrawingParser(Drawing drawing, ParseController parseController)
+        public DrawingParser(Drawing drawing)
         {
             this.drawing = drawing;
-            this.parseController = parseController;
 
             parsed = new Dictionary<IFigure, GroundedClause>();
 
-            points = new List<Point>();
-            tempSegs = new List<TempSegment>();
-            collinear = new List<Collinear>();
-            triangles = new List<Triangle>();
-            congSegs = new List<GeometricCongruentSegments>();
-            intersections = new List<Intersection>();
-            angles = new List<Angle>();
-            congAngles = new List<GeometricCongruentAngles>();
-            rightAngles = new List<RightAngle>();
+            Points = new List<Point>();
+            TempSegs = new List<TempSegment>();
+            Collinear = new List<Collinear>();
+            Triangles = new List<Triangle>();
+            Intersections = new List<Intersection>();
+            Angles = new List<Angle>();
+            Circles = new List<GeometryTutorLib.ConcreteAST.Figures.Circle>();
+            CircleSegmentIntersections = new List<CircleSegmentIntersection>();
+            CircleIntersections = new List<CircleIntersection>();
+            SegmentBisectors = new List<GeometryTutorLib.ConcreteAST.SegmentBisector>();
+            AngleBisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
+        }
+
+        public void Parse()
+        {
+            ParseDrawing();
+            removeDuplicateSegments();
+            calculateCollinear();
+            calculateIntersections();
+            calculateAngles();
+            removeDuplicateAngles();
+            calculateSegmentBisectors();
+            calculateAngleBisectors();
+            calculateCircleSegmentIntersections();
+            calculateCircleIntersections();
         }
 
         /// <summary>
         /// Parse the basic figures in the drawing.
         /// </summary>
-        public void ParseDrawing()
+        private void ParseDrawing()
         {
             foreach (IFigure figure in drawing.Figures)
                 parse(figure);
@@ -65,27 +81,22 @@ namespace LiveGeometry
         /// Return clauses that should be passed to the back-end.
         /// </summary>
         /// <returns>Back-end input.</returns>
-        public KeyValuePair<List<GroundedClause>, List<GroundedClause>> getClauses()
+        public List<GroundedClause> GetIntrinsics()
         {
             List<GroundedClause> intrinsic = new List<GroundedClause>();
-            points.ForEach((Point p) => intrinsic.Add(p));
-            collinear.ForEach((Collinear c) => intrinsic.Add(c));
-            triangles.ForEach((Triangle t) => intrinsic.Add(t));
+            Points.ForEach((Point p) => intrinsic.Add(p));
+            Collinear.ForEach((Collinear c) => intrinsic.Add(c));
+            Triangles.ForEach((Triangle t) => intrinsic.Add(t));
 
-            List<GroundedClause> givens = new List<GroundedClause>();
-            congSegs.ForEach((GeometricCongruentSegments gcs) => givens.Add(gcs));
-            congAngles.ForEach((GeometricCongruentAngles cga) => givens.Add(cga));
-            rightAngles.ForEach((RightAngle r) => givens.Add(r));
-
-            return new KeyValuePair<List<GroundedClause>,List<GroundedClause>>(intrinsic, givens);
+            return intrinsic;
         }
 
         /// <summary>
         /// Remove duplicate instances of segments.
         /// </summary>
-        public void removeDuplicateSegments()
+        private void removeDuplicateSegments()
         {
-            TempSegment[] segs = tempSegs.ToArray();
+            TempSegment[] segs = TempSegs.ToArray();
             List<int> duplicates = new List<int>();
 
             //Search through the segments and mark duplicate indicies.
@@ -105,12 +116,12 @@ namespace LiveGeometry
             }
 
             //Recreate the segements list, adding only unique instances.
-            tempSegs = new List<TempSegment>();
+            TempSegs = new List<TempSegment>();
             for (int i = 0; i < segs.Length; i++)
             {
                 if (!duplicates.Contains(i))
                 {
-                    tempSegs.Add(segs[i]);
+                    TempSegs.Add(segs[i]);
                 }
             }
         }
@@ -118,12 +129,12 @@ namespace LiveGeometry
         /// <summary>
         /// Calculate collinear points.
         /// </summary>
-        public void calculateCollinear()
+        private void calculateCollinear()
         {
             //See if points lie in the middle of existing segments.
-            foreach (Point p in points)
+            foreach (Point p in Points)
             {
-                foreach (TempSegment s in tempSegs)
+                foreach (TempSegment s in TempSegs)
                 {
                     if (s.A == p || s.B == p) { } //next iteration
                     else if (isInMiddle(s.A, p, s.B))
@@ -134,9 +145,9 @@ namespace LiveGeometry
             }
 
             //Create the actual collinear statements.
-            foreach (TempSegment s in tempSegs)
+            foreach (TempSegment s in TempSegs)
             {
-                collinear.Add(new Collinear(s.GetCollinear()));
+                Collinear.Add(new Collinear(s.GetCollinear()));
             }
         }
 
@@ -162,61 +173,27 @@ namespace LiveGeometry
         }
 
         /// <summary>
-        /// Calculate which segments have the same length and create a disambiguation prompt for them.
-        /// </summary>
-        public void calculateCongruentSegments()
-        {
-            TempSegment[] segs = tempSegs.ToArray();
-            //Search through all segments...
-            for (int i = 0; i < (segs.Length - 1); i++)
-            {
-                //... and compare to other segments to see if their length macthes.
-                for (int j = i + 1; j < segs.Length; j++)
-                {
-                    if (System.Math.Abs(segs[i].Length() - segs[j].Length()) < EPSILON_SEGMENT_LENGTH)
-                    {
-                        //Generate disambiguation prompt and action
-                        object[] param = new object[2];
-                        param[0] = segs[i];
-                        param[1] = segs[j];
-                        parseController.addDialog("Are segments " + segs[i].ToString() + " and " + segs[j].ToString() + " congruent?",
-                            "Disambiguate Congruent Segments", param,
-                             (object[] args) =>
-                             {
-                                 TempSegment s1 = args[0] as TempSegment, s2 = args[1] as TempSegment;
-                                 GeometryTutorLib.ConcreteAST.Segment a = new GeometryTutorLib.ConcreteAST.Segment(s1.A, s1.B);
-                                 GeometryTutorLib.ConcreteAST.Segment b = new GeometryTutorLib.ConcreteAST.Segment(s2.A, s2.B);
-                                 congSegs.Add(new GeometricCongruentSegments(a, b));
-                             },
-                             (object[] args) => { }
-                        );
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Calculate intersections in order to find angles.
         /// </summary>
-        public void calculateIntersections()
+        private void calculateIntersections()
         {
             //Each triangle has 3 intersections, 1 at each vertex.
-            foreach (Triangle t in triangles)
+            foreach (Triangle t in Triangles)
             {
                 Point vertex = t.SegmentA.SharedVertex(t.SegmentB);
-                intersections.Add(new Intersection(vertex, t.SegmentA, t.SegmentB));
+                Intersections.Add(new Intersection(vertex, t.SegmentA, t.SegmentB));
 
                 vertex = t.SegmentB.SharedVertex(t.SegmentC);
-                intersections.Add(new Intersection(vertex, t.SegmentB, t.SegmentC));
+                Intersections.Add(new Intersection(vertex, t.SegmentB, t.SegmentC));
 
                 vertex = t.SegmentA.SharedVertex(t.SegmentC);
-                intersections.Add(new Intersection(vertex, t.SegmentA, t.SegmentC));
+                Intersections.Add(new Intersection(vertex, t.SegmentA, t.SegmentC));
             }
 
             //Find the maximal segments.
             List<GeometryTutorLib.ConcreteAST.Segment> maximalSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
             List<GeometryTutorLib.ConcreteAST.Segment> segments = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            tempSegs.ForEach((TempSegment s) => segments.Add(new GeometryTutorLib.ConcreteAST.Segment(s.A, s.B)));
+            TempSegs.ForEach((TempSegment s) => segments.Add(new GeometryTutorLib.ConcreteAST.Segment(s.A, s.B)));
             for (int s1 = 0; s1 < segments.Count; s1++)
             {
                 bool isSubsegment = false;
@@ -249,7 +226,7 @@ namespace LiveGeometry
                         {
                             // Find the actual point for which there is an intersection between the segments
                             Point actualInter = null;
-                            foreach (Point pt in points)
+                            foreach (Point pt in Points)
                             {
                                 if (numericInter.StructurallyEquals(pt))
                                 {
@@ -261,7 +238,7 @@ namespace LiveGeometry
                             // Create the intersection
                             if (actualInter != null)
                             {
-                                intersections.Add(new Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
+                                Intersections.Add(new Intersection(actualInter, maximalSegments[s1], maximalSegments[s2]));
                             }
                         }
                     }
@@ -272,14 +249,14 @@ namespace LiveGeometry
         /// <summary>
         /// Calculate all angles in the drawing.
         /// </summary>
-        public void calculateAngles()
+        private void calculateAngles()
         {
-            foreach (Intersection inter in intersections)
+            foreach (Intersection inter in Intersections)
             {
                 // 1 angle
                 if (inter.StandsOnEndpoint())
                 {
-                    angles.Add(new Angle(inter.lhs.OtherPoint(inter.intersect), inter.intersect, inter.rhs.OtherPoint(inter.intersect)));
+                    Angles.Add(new Angle(inter.lhs.OtherPoint(inter.intersect), inter.intersect, inter.rhs.OtherPoint(inter.intersect)));
                 }
                 // 2 angles
                 else if (inter.StandsOn())
@@ -300,16 +277,16 @@ namespace LiveGeometry
                         right = inter.lhs.Point2;
                     }
 
-                    angles.Add(new Angle(left, inter.intersect, up));
-                    angles.Add(new Angle(right, inter.intersect, up));
+                    Angles.Add(new Angle(left, inter.intersect, up));
+                    Angles.Add(new Angle(right, inter.intersect, up));
                 }
                 // 4 angles
                 else
                 {
-                    angles.Add(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
-                    angles.Add(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
-                    angles.Add(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
-                    angles.Add(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
+                    Angles.Add(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point1));
+                    Angles.Add(new Angle(inter.lhs.Point1, inter.intersect, inter.rhs.Point2));
+                    Angles.Add(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point1));
+                    Angles.Add(new Angle(inter.lhs.Point2, inter.intersect, inter.rhs.Point2));
                 }
             }
         }
@@ -317,9 +294,9 @@ namespace LiveGeometry
         /// <summary>
         /// Remove duplicate instances of angles.
         /// </summary>
-        public void removeDuplicateAngles()
+        private void removeDuplicateAngles()
         {
-            Angle[] angles = this.angles.ToArray();
+            Angle[] angles = this.Angles.ToArray();
             List<int> duplicates = new List<int>();
 
             //Search through the angles...
@@ -340,68 +317,172 @@ namespace LiveGeometry
             }
 
             //Recreate the angles list, ignoring duplicate entries.
-            this.angles = new List<Angle>();
+            this.Angles = new List<Angle>();
             for (int i = 0; i < angles.Length; i++)
             {
                 if (!duplicates.Contains(i))
                 {
-                    this.angles.Add(angles[i]);
+                    this.Angles.Add(angles[i]);
                 }
             }
         }
 
         /// <summary>
-        /// Calculate which angles have the same measure.
+        /// Calculate segment bisctors.
         /// </summary>
-        public void calculateCongruentAngles()
+        private void calculateSegmentBisectors()
         {
-            //Search through the angles...
-            for (int i = 0; i < (angles.Count - 1); i++)
+            //Check each intersetion...
+            foreach (Intersection i in Intersections)
             {
-                //... and compare them to the other angles.
-                for (int j = i + 1; j < angles.Count; j++)
+                //... and create two new lines for each segment split by the point of intersection.
+                var lhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.lhs.Point1, i.intersect);
+                var lhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.lhs.Point2);
+                var rhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.rhs.Point1, i.intersect);
+                var rhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.rhs.Point2);
+
+                //Is the lhs bisected by rhs?
+                if (lhs1.Length == lhs2.Length)
                 {
-                    if (System.Math.Abs(angles[i].measure - angles[j].measure) < EPSILON_ANGLE_DEGREES)
+                    SegmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.rhs));
+                }
+
+                //Is the rhs bisected by lhs?
+                if (rhs1.Length == rhs2.Length)
+                {
+                    SegmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.lhs));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate angle bisectors.
+        /// </summary>
+        private void calculateAngleBisectors()
+        {
+            //Check each angle...
+            foreach (Angle a in Angles)
+            {
+                //... and see if a segment passes through point B of the angle.
+                foreach (TempSegment ts in TempSegs)
+                {
+                    GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.A, ts.B);
+                    if (s.PointIsOnAndBetweenEndpoints(a.B))
                     {
-                        //Generate disambiguation dialog and action.
-                        object[] param = new object[2];
-                        param[0] = angles[i];
-                        param[1] = angles[j];
-                        parseController.addDialog("Are angles " + angles[i].ToString() + " and " + angles[j].ToString() + " congruent?",
-                            "Disambiguate Congruent Angles", param,
-                             (object[] args) =>
-                             {
-                                 Angle a1 = args[0] as Angle, a2 = args[1] as Angle;
-                                 congAngles.Add(new GeometricCongruentAngles(a1, a2));
-                             },
-                             (object[] args) => { }
-                        );
+                        //Create new angles with this segment and see if they are the same measure
+                        Angle a1 = new Angle(a.A, a.B, ts.A);
+                        Angle a2 = new Angle(a.C, a.B, ts.A);
+                        if (System.Math.Abs(a1.measure - a2.measure) < EPSILON_ANGLE)
+                        {
+                            //We found an angle bisector!
+                            AngleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, s));
+                        }
                     }
                 }
             }
         }
 
+        public int csiPointName = 0;
         /// <summary>
-        /// Calculate which angles measure 90 degrees.
+        /// Calculate when a circle intersects a segment.
         /// </summary>
-        public void calculateRightAngles()
+        private void calculateCircleSegmentIntersections()
         {
-            foreach (Angle a in angles)
+            //Check each circle...
+            foreach (GeometryTutorLib.ConcreteAST.Figures.Circle circ in Circles)
             {
-                if (System.Math.Abs(90 - a.measure) <= EPSILON_ANGLE_DEGREES)
+                //... with each segment and see if they intersect.
+                foreach (TempSegment ts in TempSegs)
                 {
-                    //Generate disambiguation dialog and action.
-                    object[] param = new object[1];
-                    param[0] = a;
-                    parseController.addDialog("Is angle " + a.ToString() + " a right angle?",
-                        "Disambiguate Right Angle", param,
-                         (object[] args) =>
-                         {
-                             Angle angle = args[0] as Angle;
-                             rightAngles.Add(new RightAngle(angle));
-                         },
-                         (object[] args) => { }
-                    );
+                    GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.A, ts.B);
+
+                    //SEE: http://stackoverflow.com/questions/1073336/circle-line-collision-detection
+
+                    //We have line AB, cicle center C, and radius R.
+                    double lengthAB = s.Length;
+                    double[] D = { (ts.B.X - ts.A.X) / lengthAB, (ts.B.Y - ts.A.Y) / lengthAB }; //Direction vector from A to B
+
+                    //Now the line equation is x = D[0]*t + A.X, y = D[1]*t + A.Y with 0 <= t <= 1.
+                    double t = D[0] * (circ.Center.X - ts.A.X) + D[1] * (circ.Center.Y - ts.A.Y); //Closest point to circle center
+                    double[] E = { t * D[0] + ts.A.X, t * D[1] + ts.A.Y }; //The point described by t.
+
+                    double lengthEC = System.Math.Sqrt(System.Math.Pow(E[0] - circ.Center.X, 2) + System.Math.Pow(E[1] - circ.Center.Y, 2));
+
+                    if (lengthEC < circ.Radius) //Possible Intersection?
+                    {
+                        //Compute distance from t to circle intersection point
+                        double dt = System.Math.Sqrt(System.Math.Pow(circ.Radius, 2) - System.Math.Pow(lengthEC, 2));
+
+                        //First intersection
+                        GeometryTutorLib.ConcreteAST.Point p1 = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, (t - dt) * D[0] + ts.A.X, (t - dt) * D[1] + ts.A.Y);
+                        if (s.PointIsOnAndBetweenEndpoints(p1))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p1, circ, s));
+                        }
+
+                        //Second intersection
+                        GeometryTutorLib.ConcreteAST.Point p2 = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, (t + dt) * D[0] + ts.A.X, (t + dt) * D[1] + ts.A.Y);
+                        if (s.PointIsOnAndBetweenEndpoints(p2))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p2, circ, s));
+                        }
+                    }
+                    else if (lengthEC == circ.Radius) //E is tangent point
+                    {
+                        GeometryTutorLib.ConcreteAST.Point p = new GeometryTutorLib.ConcreteAST.Point("csiPt" + csiPointName++, E[0], E[1]);
+                        if (s.PointIsOnAndBetweenEndpoints(p))
+                        {
+                            CircleSegmentIntersections.Add(new CircleSegmentIntersection(p, circ, s));
+                        }
+                    }
+                }
+            }
+        }
+
+        public int ciPointName = 0;
+        /// <summary>
+        /// Calculate when a circle intersects a segment.
+        /// </summary>
+        private void calculateCircleIntersections()
+        {
+            GeometryTutorLib.ConcreteAST.Figures.Circle[] CircleArray = Circles.ToArray();
+            //Check each circle...
+            for (int c1 = 0; c1 < CircleArray.Length - 1; c1++)
+            {
+                GeometryTutorLib.ConcreteAST.Figures.Circle circ1 = CircleArray[c1];
+                //... with previously uncompared circles and see if they intersect.
+                for (int c2 = c1 + 1; c2 < CircleArray.Length; c2++)
+                {
+                    GeometryTutorLib.ConcreteAST.Figures.Circle circ2 = CircleArray[c2];
+
+                    //SEE: http://stackoverflow.com/questions/3349125/circle-circle-intersection-points
+
+                    double d = System.Math.Sqrt(System.Math.Pow(circ2.Center.X - circ1.Center.X, 2) + System.Math.Pow(circ2.Center.Y - circ1.Center.Y, 2)); //Distance between centers
+
+                    if (d > circ1.Radius + circ2.Radius) { } //Separate circles
+                    else if (d < System.Math.Abs(circ1.Radius - circ2.Radius)) { } //One circle contained in the other
+                    else if (d == 0 && circ1.Radius == circ2.Radius) { } //Coinciding circles
+                    else //We have intersection(s)!
+                    {
+                        double a = (System.Math.Pow(circ1.Radius, 2) - System.Math.Pow(circ2.Radius, 2) + System.Math.Pow(d, 2)) / (2 * d); //Distance from center of circ1 to midpt of intersections
+                        double[] midpt = { circ1.Center.X + a * (circ2.Center.X - circ1.Center.X) / d, circ1.Center.Y + a * (circ2.Center.Y - circ1.Center.Y) / d }; //midpt of the intersections
+                        double h = System.Math.Sqrt(System.Math.Pow(circ1.Radius, 2) - System.Math.Pow(a, 2)); //Distance from midpt to intersections
+
+                        if (h == 0) //Only one intersection
+                        {
+                            GeometryTutorLib.ConcreteAST.Point p = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++, midpt[0], midpt[1]);
+                            CircleIntersections.Add(new CircleIntersection(p, circ1, circ2));
+                        }
+                        else //Two intersections
+                        {
+                            GeometryTutorLib.ConcreteAST.Point p1 = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++,
+                                midpt[0] + h * (circ2.Center.Y - circ1.Center.Y) / d, midpt[1] - h * (circ2.Center.X - circ1.Center.X) / d);
+                            GeometryTutorLib.ConcreteAST.Point p2 = new GeometryTutorLib.ConcreteAST.Point("ciPt" + ciPointName++,
+                                midpt[0] - h * (circ2.Center.Y - circ1.Center.Y) / d, midpt[1] + h * (circ2.Center.X - circ1.Center.X) / d);
+                            CircleIntersections.Add(new CircleIntersection(p1, circ1, circ2));
+                            CircleIntersections.Add(new CircleIntersection(p2, circ1, circ2));
+                        }               
+                    }
                 }
             }
         }
@@ -417,6 +498,7 @@ namespace LiveGeometry
             else if (figure is ILine) parse(figure as ILine);
             else if (figure is Polygon) parse(figure as PolygonBase);
             else if (figure is RegularPolygon) parse(figure as RegularPolygon);
+            else if (figure is CircleBase) parse(figure as CircleBase);
         }
 
         /// <summary>
@@ -426,7 +508,7 @@ namespace LiveGeometry
         private void parse(IPoint pt)
         {
             Point p = new GeometryTutorLib.ConcreteAST.Point(pt.Name, pt.Coordinates.X, pt.Coordinates.Y);
-            points.Add(p);
+            Points.Add(p);
             parsed.Add(pt, p);
         }
 
@@ -441,7 +523,7 @@ namespace LiveGeometry
             parse(p1 as IFigure);
             parse(p2 as IFigure);
             GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(parsed[p1] as GeometryTutorLib.ConcreteAST.Point, parsed[p2] as GeometryTutorLib.ConcreteAST.Point);
-            tempSegs.Add(new TempSegment(s.Point1, s.Point2));
+            TempSegs.Add(new TempSegment(s.Point1, s.Point2));
             parsed.Add(line, s);
         }
 
@@ -464,50 +546,18 @@ namespace LiveGeometry
 
                 //genereate sides
                 TempSegment[] sides = new TempSegment[3];
+                GeometryTutorLib.ConcreteAST.Segment[] csegs = new GeometryTutorLib.ConcreteAST.Segment[3];
                 for (int i = 0; i < 3; i++)
                 {
                     int j = (i + 1) % 3;
                     sides[i] = new TempSegment(parsed[iPts[i]] as GeometryTutorLib.ConcreteAST.Point, parsed[iPts[j]] as GeometryTutorLib.ConcreteAST.Point);
+                    csegs[i] = new GeometryTutorLib.ConcreteAST.Segment(sides[i].A, sides[i].B);
                 }
-                tempSegs.AddRange(sides);
+                TempSegs.AddRange(sides);
 
-                //is it isosceles?
-                bool isosceles = false;
-                for (int i = 0; i < 3; i++)
-                    isosceles = isosceles || (System.Math.Abs(sides[i].Length() - sides[(i + 1) % 3].Length()) <= EPSILON_SEGMENT_LENGTH);
-
-                if (isosceles)
-                {
-                    //Generate disambiguation dialog and actions.
-                    object[] param = sides;
-                    parseController.addDialog("Is triangle " + iPts[0] + ", " + iPts[1] + ", " + iPts[2] + " isosceles?",
-                        "Disambiguate Isosceles", param,
-                        (object[] args) =>
-                        {
-                            TempSegment[] s = args as TempSegment[];
-                            GeometryTutorLib.ConcreteAST.Segment[] segs = new GeometryTutorLib.ConcreteAST.Segment[3];
-                            for (int i = 0; i < 3; i++)
-                            {
-                                segs[i] = new GeometryTutorLib.ConcreteAST.Segment(s[i].A, s[i].B);
-                            }
-                            GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.IsoscelesTriangle(segs[0], segs[1], segs[2]);
-                            parsed.Add(pgon, t);
-                            triangles.Add(t);
-                        },
-                        (object[] args) =>
-                        {
-                            TempSegment[] s = args as TempSegment[];
-                            GeometryTutorLib.ConcreteAST.Segment[] segs = new GeometryTutorLib.ConcreteAST.Segment[3];
-                            for (int i = 0; i < 3; i++)
-                            {
-                                segs[i] = new GeometryTutorLib.ConcreteAST.Segment(s[i].A, s[i].B);
-                            }
-                            GeometryTutorLib.ConcreteAST.Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(segs[0], segs[1], segs[2]);
-                            parsed.Add(pgon, t);
-                            triangles.Add(t);
-                        }
-                    );
-                }
+                Triangle t = new GeometryTutorLib.ConcreteAST.Triangle(csegs[0], csegs[1], csegs[2]);
+                parsed.Add(pgon, t);
+                Triangles.Add(t);
             }
         }
 
@@ -550,19 +600,36 @@ namespace LiveGeometry
                 {
                     int j = (i + 1) % 3;
                     sides[i] = new TempSegment(parsed[pts[i]] as GeometryTutorLib.ConcreteAST.Point, parsed[pts[j]] as GeometryTutorLib.ConcreteAST.Point);
+                    csegs[i] = new GeometryTutorLib.ConcreteAST.Segment(sides[i].A, sides[i].B);
                 }
-                tempSegs.AddRange(sides);
+                TempSegs.AddRange(sides);
 
-                Triangle t = new GeometryTutorLib.ConcreteAST.EquilateralTriangle(csegs[0], csegs[1], csegs[2]);
+                EquilateralTriangle t = new GeometryTutorLib.ConcreteAST.EquilateralTriangle(csegs[0], csegs[1], csegs[2]);
                 parsed.Add(rgon, t);
-                triangles.Add(t);
+                Triangles.Add(t);
             }
+        }
+
+        /// <summary>
+        /// Parse a CircleBase.
+        /// </summary>
+        /// <param name="c"> The circle to parse.</param>
+        private void parse(CircleBase cb)
+        {
+            IPoint center = cb.Dependencies.FindPoint(cb.Center, 0);
+            double radius = cb.Radius;
+
+            parse(center as IFigure);
+            GeometryTutorLib.ConcreteAST.Figures.Circle c = new GeometryTutorLib.ConcreteAST.Figures.Circle(parsed[center] as GeometryTutorLib.ConcreteAST.Point, radius);
+
+            parsed.Add(cb, c);
+            Circles.Add(c);
         }
 
         /// <summary>
         /// A lightweight class to represent segments that are used in other computations.
         /// </summary>
-        private class TempSegment
+        public class TempSegment
         {
             public Point A { get; set; }
             public Point B { get; set; }
