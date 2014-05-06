@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 	//
 	public class Page147Problem21 : CongruentTrianglesProblem
 	{
-        public Page147Problem21(bool onoff) : base(onoff)
+        public Page147Problem21(bool onoff, bool complete) : base(onoff, complete)
 		{
 			Point d = new Point("D", 6, 6); intrinsic.Add(d);
 			Point b = new Point("B", 9, 0); intrinsic.Add(b);

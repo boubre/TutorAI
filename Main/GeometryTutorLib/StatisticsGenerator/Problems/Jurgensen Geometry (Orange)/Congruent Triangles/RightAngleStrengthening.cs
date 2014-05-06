@@ -9,8 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class RightAngleStrengthening : CongruentTrianglesProblem
     {
-        public RightAngleStrengthening(bool onoff)
-            : base(onoff)
+        public RightAngleStrengthening(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); intrinsic.Add(a);
             Point b = new Point("B", 0, 4); intrinsic.Add(b);

@@ -15,7 +15,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class Page124Figure31 : CongruentTrianglesProblem
     {
-        public Page124Figure31(bool onoff) : base(onoff)
+        public Page124Figure31(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 2, 6); intrinsic.Add(a);
             Point m = new Point("M", 2, 0); intrinsic.Add(m);

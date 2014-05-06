@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class SegmentBisectorTester: TransversalsProblem
     {
-        public SegmentBisectorTester(bool onoff) : base(onoff)
+        public SegmentBisectorTester(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", -3, 0);   intrinsic.Add(a);
             Point m = new Point("M", 0, 0);  intrinsic.Add(m);

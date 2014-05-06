@@ -44,11 +44,6 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private List<Problem<Hypergraph.EdgeAnnotation>> GenerateAllMaximalProblemsFrom(ProblemHashMap<Hypergraph.EdgeAnnotation> memoizedProblems,
                                                                                         HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> edgeDatabase, int node)
         {
-            if (node == 118)
-            {
-                //Debug.WriteLine("NO-OP");
-            }
-
             // If we have already generated problems, no need to regenerate
             if (memoizedProblems.HasNodeBeenGenerated(node)) return memoizedProblems.Get(node);
 

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 	//
 	public class Page145Problem07 : CongruentTrianglesProblem
 	{
-        public Page145Problem07(bool onoff) : base(onoff)
+        public Page145Problem07(bool onoff, bool complete) : base(onoff, complete)
 		{
             problemName = "Page 145 Problem 7";
 

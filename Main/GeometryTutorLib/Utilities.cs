@@ -9,12 +9,12 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool OVERRIDE_DEBUG = true;
+        public static readonly bool OVERRIDE_DEBUG = false;
 
-        public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
+        public static readonly bool DEBUG              = OVERRIDE_DEBUG && false;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
-        public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && true;   // Hypergraph edges and pebbled nodes
-        public static readonly bool PROBLEM_GEN_DEBUG  = OVERRIDE_DEBUG && true;   // Generating the actual problems
+        public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && false;   // Hypergraph edges and pebbled nodes
+        public static readonly bool PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating the actual problems
         public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && false;   // Generating backward problems
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
@@ -204,6 +204,19 @@ namespace GeometryTutorLib
             return Subset<T>(set1, set2); // redundant since we checked same size && Subset<T>(set2, set1);
         }
 
+        // set1 \cap set2
+        public static List<T> Intersection<T>(List<T> set1, List<T> set2)
+        {
+            List<T> inter = new List<T>();
+
+            foreach (T t in set1)
+            {
+                if (set2.Contains(t)) inter.Add(t);
+            }
+
+            return inter;
+        }
+
         public static int GCD(int a, int b)
         {
             return b == 0 ? a : GCD(b, a % b);
@@ -298,6 +311,12 @@ namespace GeometryTutorLib
         public static List<List<int>> ConstructPowerSetWithNoEmpty(int n, int maxCardinality)
         {
             ConstructPowerSetWithNoEmptyHelper(n, maxCardinality);
+
+            return memoized[n];
+        }
+        public static List<List<int>> ConstructPowerSetWithNoEmpty(int n)
+        {
+            ConstructPowerSetWithNoEmptyHelper(n, n);
 
             return memoized[n];
         }

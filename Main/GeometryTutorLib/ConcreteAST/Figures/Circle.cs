@@ -348,148 +348,237 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Find the points of intersection of two circles; may be 0, 1, or 2.
         //
-        public void Intersection(Segment thatSegment, out Point inter1, out Point inter2)
+        public void FindIntersection(Segment ts, out Point inter1, out Point inter2)
         {
             inter1 = null;
             inter2 = null;
 
+            GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.Point1, ts.Point2);
+
+            // SEE: http://stackoverflow.com/questions/1073336/circle-line-collision-detection
+
+            // We have line AB, cicle center C, and radius R.
+            double lengthAB = s.Length;
+            double[] D = { (ts.Point2.X - ts.Point1.X) / lengthAB, (ts.Point2.Y - ts.Point1.Y) / lengthAB }; //Direction vector from A to B
+
+            // Now the line equation is x = D[0]*t + A.X, y = D[1]*t + A.Y with 0 <= t <= 1.
+            double t = D[0] * (this.center.X - ts.Point1.X) + D[1] * (this.center.Y - ts.Point1.Y); //Closest point to circle center
+            double[] E = { t * D[0] + ts.Point1.X, t * D[1] + ts.Point1.Y }; //The point described by t.
+
+            double lengthEC = System.Math.Sqrt(System.Math.Pow(E[0] - this.center.X, 2) + System.Math.Pow(E[1] - this.center.Y, 2));
+
+            // Possible Intersection?
+            if (Utilities.LessThan(lengthEC, this.radius))
+            {
+                // Compute distance from t to circle intersection point
+                double dt = System.Math.Sqrt(System.Math.Pow(this.radius, 2) - System.Math.Pow(lengthEC, 2));
+
+                // First intersection
+                inter1 = Point.GetFigurePointOrCreate(new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y));
+
+                // Second intersection
+                inter2 = Point.GetFigurePointOrCreate(new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y));
+            }
             //
-            // 1 point of intersection: tangent
+            // Tangent point (E)
             //
-            Segment radius = IsTangent(thatSegment);
-
-            if (radius != null)
+            else if (Utilities.CompareValues(lengthEC, this.radius))
             {
-                inter1 = radius.OtherPoint(this.center);
-                return;
+                // First intersection
+                inter1 = Point.GetFigurePointOrCreate(new Point("", E[0], E[1]));
             }
-
-            //
-            // 2 points of intersection: secant / chord
-            //
-            Segment chord;
-            if (IsSecant(thatSegment, out chord))
-            {
-                inter1 = chord.Point1;
-                inter2 = chord.Point2;
-                return;
-            }
-
-            //
-            // Is it a weird segment intersection?
-            // That is, where an endpoint lies in the circle and one outside. (Pacman smoking a cigarette).
-            //
-            Point interiorPt = null;
-            Point exteriorPt = null;
-            if (PointIsInterior(thatSegment.Point1) && PointIsExterior(thatSegment.Point2))
-            {
-                interiorPt = thatSegment.Point1;
-                exteriorPt = thatSegment.Point2;
-            }
-            else if (PointIsInterior(thatSegment.Point2) && PointIsExterior(thatSegment.Point1))
-            {
-                interiorPt = thatSegment.Point2;
-                exteriorPt = thatSegment.Point1;
-            }
-
-            // 0 intersection points
-            if (interiorPt == null && exteriorPt == null) return;
-
-            // Extend the segment to create a secant segment to acquire a chord
-            // and the point of intersection (so we can leverage previous code).                
-            // Take a point on the line which is guaranteed to be greater than the length of the diameter of the circle.
-
-            // Use the slope and the orientation of the interior / exterior point to find the new point.
-            double deltaX = 0;
-            double deltaY = 0;
-            if (thatSegment.IsVertical())
-            {
-                deltaX = 0;
-                deltaY = this.radius * 2;
-            }
-            else if (thatSegment.IsHorizontal())
-            {
-                deltaX = this.radius * 2;
-                deltaY = 0;
-            }
-            else
-            {
-                deltaX = Math.Sqrt(Math.Pow(this.radius * 2, 2) / (1 + Math.Pow(thatSegment.Slope, 2)));
-                deltaY = thatSegment.Slope * deltaX;
-            }
-
-            Point option1 = Point.GetFigurePoint(new Point("", interiorPt.X + deltaX, interiorPt.Y + deltaY));
-
-            // intersection is the midpoint of circPt1 and pt2.
-            Point option2 = Point.GetFigurePoint(new Point("", 2 * interiorPt.X - option1.X, 2 * interiorPt.Y - option1.Y));
-
-            // We want the point which is on the 'other' side of the interior point.
-
-            Segment secant = null;
-            if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(option1))
-            {
-                secant = new Segment(option1, exteriorPt);
-            }
-            else if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(option2))
-            {
-                secant = new Segment(option2, exteriorPt);
-            }
-            else throw new Exception("Unexpected result with secant calculation: " + this + " " + thatSegment);
-
-            Segment genChord = null;
-            if (IsSecant(thatSegment, out genChord))
-            {
-                // find the point on the chord to return (between interior and exterior
-                if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(genChord.Point1))
-                {
-                    inter1 = genChord.Point1;
-                }
-                else if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(genChord.Point2))
-                {
-                    inter1 = genChord.Point2;
-                }
-                else throw new Exception("Unexpected result with secant / chord calculation: " + this + " " + thatSegment);
-            }
-
-            return;
         }
+
+        //public void FindIntersection(Segment thatSegment, out Point inter1, out Point inter2)
+        //{
+        //    inter1 = null;
+        //    inter2 = null;
+
+        //    //
+        //    // 1 point of intersection: tangent
+        //    //
+        //    Segment radius = IsTangent(thatSegment);
+
+        //    if (radius != null)
+        //    {
+        //        inter1 = radius.OtherPoint(this.center);
+        //        return;
+        //    }
+
+        //    //
+        //    // 2 points of intersection: secant / chord
+        //    //
+        //    Segment chord;
+        //    if (IsSecant(thatSegment, out chord))
+        //    {
+        //        inter1 = chord.Point1;
+        //        inter2 = chord.Point2;
+        //        return;
+        //    }
+
+        //    //
+        //    // Is it a weird segment intersection?
+        //    // That is, where an endpoint lies in the circle and one outside. (Pacman smoking a cigarette).
+        //    //
+        //    Point interiorPt = null;
+        //    Point exteriorPt = null;
+        //    if (PointIsInterior(thatSegment.Point1) && PointIsExterior(thatSegment.Point2))
+        //    {
+        //        interiorPt = thatSegment.Point1;
+        //        exteriorPt = thatSegment.Point2;
+        //    }
+        //    else if (PointIsInterior(thatSegment.Point2) && PointIsExterior(thatSegment.Point1))
+        //    {
+        //        interiorPt = thatSegment.Point2;
+        //        exteriorPt = thatSegment.Point1;
+        //    }
+
+        //    // 0 intersection points
+        //    if (interiorPt == null && exteriorPt == null) return;
+
+        //    // Extend the segment to create a secant segment to acquire a chord
+        //    // and the point of intersection (so we can leverage previous code).                
+        //    // Take a point on the line which is guaranteed to be greater than the length of the diameter of the circle.
+
+        //    // Use the slope and the orientation of the interior / exterior point to find the new point.
+        //    double deltaX = 0;
+        //    double deltaY = 0;
+        //    if (thatSegment.IsVertical())
+        //    {
+        //        deltaX = 0;
+        //        deltaY = this.radius * 2;
+        //    }
+        //    else if (thatSegment.IsHorizontal())
+        //    {
+        //        deltaX = this.radius * 2;
+        //        deltaY = 0;
+        //    }
+        //    else
+        //    {
+        //        deltaX = Math.Sqrt(Math.Pow(this.radius * 2, 2) / (1 + Math.Pow(thatSegment.Slope, 2)));
+        //        deltaY = thatSegment.Slope * deltaX;
+        //    }
+
+        //    Point option1 = Point.GetFigurePoint(new Point("", interiorPt.X + deltaX, interiorPt.Y + deltaY));
+
+        //    // intersection is the midpoint of circPt1 and pt2.
+        //    Point option2 = Point.GetFigurePoint(new Point("", 2 * interiorPt.X - option1.X, 2 * interiorPt.Y - option1.Y));
+
+        //    // We want the point which is on the 'other' side of the interior point.
+
+        //    Segment secant = null;
+        //    if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(option1))
+        //    {
+        //        secant = new Segment(option1, exteriorPt);
+        //    }
+        //    else if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(option2))
+        //    {
+        //        secant = new Segment(option2, exteriorPt);
+        //    }
+        //    else throw new Exception("Unexpected result with secant calculation: " + this + " " + thatSegment);
+
+        //    Segment genChord = null;
+        //    if (IsSecant(thatSegment, out genChord))
+        //    {
+        //        // find the point on the chord to return (between interior and exterior
+        //        if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(genChord.Point1))
+        //        {
+        //            inter1 = genChord.Point1;
+        //        }
+        //        else if (thatSegment.PointIsOnAndExactlyBetweenEndpoints(genChord.Point2))
+        //        {
+        //            inter1 = genChord.Point2;
+        //        }
+        //        else throw new Exception("Unexpected result with secant / chord calculation: " + this + " " + thatSegment);
+        //    }
+
+        //    return;
+        //}
 
         //
         // Find the points of intersection of two circles; may be 0, 1, or 2.
         // Uses the technique found here: http://mathworld.wolfram.com/Circle-CircleIntersection.html
         //
-        public void Intersection(Circle thatCircle, out Point inter1, out Point inter2)
+        public void FindIntersection(Circle thatCircle, out Point inter1, out Point inter2)
         {
             inter1 = null;
             inter2 = null;
-            double R = this.radius;
-            double r = thatCircle.radius;
-            double d = Point.calcDistance(this.center, thatCircle.center);
 
-            // 0 points of intersection
-            if (d > R + r) return;
+            // SEE: http://stackoverflow.com/questions/3349125/circle-circle-intersection-points
 
-            // Tangent: 1 point of intersection
-            if (Utilities.CompareValues(d, R + r))
+            // Distance between centers
+            double d = System.Math.Sqrt(System.Math.Pow(thatCircle.center.X - this.center.X, 2) +
+                                        System.Math.Pow(thatCircle.center.Y - this.center.Y, 2));
+
+            // Separate circles
+            if (d > this.radius + thatCircle.radius) { }
+
+            // One circle contained in the other
+            else if (d < System.Math.Abs(this.radius - thatCircle.radius)) { }
+
+            // Coinciding circles
+            else if (d == 0 && this.radius == thatCircle.radius) { }
+
+            // We have intersection(s)!
+            else
             {
-                Segment thisRadius = this.IsRadius(new Segment(this.center, thatCircle.center));
-                inter1 = thisRadius.OtherPoint(this.center);
-                return;
+                // Distance from center of this to midpt of intersections
+                double a = (System.Math.Pow(this.radius, 2) - System.Math.Pow(thatCircle.radius, 2) + System.Math.Pow(d, 2)) / (2 * d);
+
+                // Midpoint of the intersections
+                double[] midpt = { this.center.X + a * (thatCircle.center.X - this.center.X) / d, this.center.Y + a * (thatCircle.center.Y - this.center.Y) / d };
+
+                // Distance from midpoint to intersections
+                double h = System.Math.Sqrt(System.Math.Pow(this.radius, 2) - System.Math.Pow(a, 2));
+
+                // Only one intersection
+                if (h == 0)
+                {
+                    inter1 = Point.GetFigurePointOrCreate(new Point("", midpt[0], midpt[1]));
+                }
+                // Two intersections
+                else
+                {
+                    inter1 = Point.GetFigurePointOrCreate(new Point("",
+                        midpt[0] + h * (thatCircle.center.Y - this.center.Y) / d, midpt[1] - h * (thatCircle.center.X - this.center.X) / d));
+
+                    inter2 = Point.GetFigurePointOrCreate(new Point("",
+                        midpt[0] - h * (thatCircle.center.Y - this.center.Y) / d, midpt[1] + h * (thatCircle.center.X - this.center.X) / d));
+                }
             }
-
-            //
-            // Two points of intersection.
-            //
-            double x = (Math.Pow(d, 2) - Math.Pow(r, 2) + Math.Pow(R, 2)) / (2 * d);
-            double y = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(x, 2));
-
-            // The calculation assumes we have centers on the y-axis (and this Circle at the origin).
-            inter1 = new Point("", x - this.center.X, y - this.center.Y);
-            inter1 = Point.GetFigurePoint(inter1);
-
-            inter2 = new Point("", x - this.center.X, -y - this.center.Y);
-            inter2 = Point.GetFigurePoint(inter2);
         }
+        //public void FindIntersection(Circle thatCircle, out Point inter1, out Point inter2)
+        //{
+        //    inter1 = null;
+        //    inter2 = null;
+        //    double R = this.radius;
+        //    double r = thatCircle.radius;
+        //    double d = Point.calcDistance(this.center, thatCircle.center);
+
+        //    // 0 points of intersection
+        //    if (d > R + r) return;
+
+        //    // Tangent: 1 point of intersection
+        //    if (Utilities.CompareValues(d, R + r))
+        //    {
+        //        Segment thisRadius = this.IsRadius(new Segment(this.center, thatCircle.center));
+        //        inter1 = thisRadius.OtherPoint(this.center);
+        //        return;
+        //    }
+
+        //    //
+        //    // Two points of intersection.
+        //    //
+        //    double x = (Math.Pow(d, 2) - Math.Pow(r, 2) + Math.Pow(R, 2)) / (2 * d);
+        //    double y = Math.Sqrt(Math.Pow(R, 2) - Math.Pow(x, 2));
+
+        //    // The calculation assumes we have centers on the y-axis (and this Circle at the origin).
+        //    inter1 = new Point("", x - this.center.X, y - this.center.Y);
+        //    inter1 = Point.GetFigurePoint(inter1);
+
+        //    inter2 = new Point("", x - this.center.X, -y - this.center.Y);
+        //    inter2 = Point.GetFigurePoint(inter2);
+        //}
 
         //
         // Are the segment endpoints directly on the circle? 
@@ -535,7 +624,7 @@ namespace GeometryTutorLib.ConcreteAST
             // Find the intersection points
             Point inter1;
             Point inter2;
-            Intersection(thatCircle, out inter1, out inter2);
+            FindIntersection(thatCircle, out inter1, out inter2);
 
             // If the circles intersect at 0 points.
             if (inter1 == null) return false;
@@ -558,10 +647,40 @@ namespace GeometryTutorLib.ConcreteAST
             // Find the intersection points
             Point inter1;
             Point inter2;
-            Intersection(thatCircle, out inter1, out inter2);
+            FindIntersection(thatCircle, out inter1, out inter2);
 
             // If the circles have one valid point of intersection.
             if (inter1 != null && inter2 == null) return inter1;
+
+            return null;
+        }
+
+        //
+        // Does the given segment contain a radius of this circle?
+        //
+        public bool ContainsRadiusWithin(Segment thatSegment)
+        {
+            foreach (Segment radius in radii)
+            {
+                if (thatSegment.HasSubSegment(radius)) return true;
+            }
+
+            return false;
+        }
+
+        //
+        // Does the given segment contain a chord? Return the chord.
+        //
+        public Segment ContainsChord(Segment thatSegment)
+        {
+            foreach (KeyValuePair<Segment, Segment> pair in secants)
+            {
+                // Does the secant contain that segment? If so, is the chord contained in that Segment?
+                if (pair.Key.HasSubSegment(thatSegment))
+                {
+                    if (thatSegment.HasSubSegment(pair.Value)) return pair.Value;
+                }
+            }
 
             return null;
         }
@@ -592,11 +711,114 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        public override int GetHashCode()
+        public static List<Circle> GetFigureCirclesByRadius(Segment radius)
         {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
+            List<Circle> circles = new List<Circle>();
+
+            foreach (Circle circle in figureCircles)
+            {
+                if (circle.radii.Contains(radius))
+                {
+                    circles.Add(circle);
+                }
+            }
+
+            return circles;
         }
+
+        public bool IsCentral(Angle angle)
+        {
+            if (this.center.StructurallyEquals(angle.GetVertex()))
+            {
+                // The rays need to contain radii of the circle.
+                if (this.ContainsRadiusWithin(angle.ray1) && this.ContainsRadiusWithin(angle.ray2))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static List<Circle> IsCentralAngle(Angle angle)
+        {
+            List<Circle> circles = new List<Circle>();
+
+            foreach (Circle circle in figureCircles)
+            {
+                if (circle.IsCentral(angle))
+                {
+                    circles.Add(circle);
+                }
+            }
+
+            return circles;
+        }
+
+        public bool IsInscribed(Angle angle)
+        {
+            // If the angle has vertex on the circle
+            if (!this.PointIsOn(angle.GetVertex())) return false;
+
+            // Do the rays contain chords?
+            Segment chord1 = this.ContainsChord(angle.ray1);
+            Segment chord2 = this.ContainsChord(angle.ray2);
+
+            return chord1 != null && chord2 != null;
+        }
+
+        public static List<Circle> IsInscribedAngle(Angle angle)
+        {
+            List<Circle> circles = new List<Circle>();
+
+            foreach (Circle circle in figureCircles)
+            {
+                if (circle.IsInscribed(angle)) circles.Add(circle);
+            }
+
+            return circles;
+        }
+
+        public static List<Circle> GetChordCircles(Segment segment)
+        {
+            List<Circle> circles = new List<Circle>();
+
+            foreach (Circle circle in figureCircles)
+            {
+                if (circle.chords.Contains(segment)) circles.Add(circle);
+            }
+
+            return circles;
+        }
+
+        public static List<Circle> GetSecantCircles(Segment segment)
+        {
+            List<Circle> secCircles = new List<Circle>();
+
+            foreach (Circle circle in figureCircles)
+            {
+                if (circle.secants.ContainsKey(segment)) secCircles.Add(circle);
+                if (circle.chords.Contains(segment)) secCircles.Add(circle);
+            }
+
+            return secCircles;
+        }
+
+        // A lookup of a chord based on the given secant.
+        public Segment GetChord(Segment thatSegment)
+        {
+            Segment chord = null;
+
+            secants.TryGetValue(thatSegment, out chord);
+
+            return chord;
+        }
+
+        public bool HasArc(Arc arc)
+        {
+            return this.StructurallyEquals(arc.theCircle);
+        }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         // Checking for structural equality (is it the same segment) excluding the multiplier
         public override bool StructurallyEquals(object obj)

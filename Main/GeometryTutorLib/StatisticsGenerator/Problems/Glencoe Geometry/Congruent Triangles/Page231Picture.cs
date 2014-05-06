@@ -10,7 +10,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class Page231Picture : ParallelLinesProblem
     {
-        public Page231Picture(bool onoff) : base(onoff)
+        public Page231Picture(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Page 231 Picture";
 

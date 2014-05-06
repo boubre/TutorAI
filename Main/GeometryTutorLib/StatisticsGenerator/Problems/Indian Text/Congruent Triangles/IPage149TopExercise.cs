@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class IPage149TopExercise : ActualProblem
     {
-        public IPage149TopExercise(bool onoff) : base(onoff)
+        public IPage149TopExercise(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Book I Page 149 Exercise at Top of Page";
 

@@ -13,7 +13,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             //   /________\
             //
             //
-        public JPage140Problem6(bool onoff) : base(onoff)
+        public JPage140Problem6(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Book J Page 140 Problem 6";
 

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class IPage120Problem8 : ActualProblem
     {
-        public IPage120Problem8(bool onoff) : base(onoff)
+        public IPage120Problem8(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Overlapping Right Triangles";
 

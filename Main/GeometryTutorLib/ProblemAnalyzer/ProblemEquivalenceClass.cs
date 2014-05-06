@@ -181,7 +181,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                 if (!foundThisS1Node) return false;
             }
 
-            return !marked.Contains(false);
+            return !marked.Contains(true);
 
 
             //// Acquire the set of possible isomorpshisms for each node in list 1

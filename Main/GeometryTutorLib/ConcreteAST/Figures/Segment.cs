@@ -639,5 +639,16 @@ namespace GeometryTutorLib.ConcreteAST
             // The new perpendicular segment is defined by the projection and the point
             return new Segment(projection, pt);
         }
+
+        //
+        // Is the given segment a secant THROUGH this circle? (2 intersection points)
+        //
+        public bool IsSecant(Circle circle)
+        {
+            Point pt1 = null;
+            Point pt2 = null;
+            circle.FindIntersection(this, out pt1, out pt2);
+            return pt1 != null && pt2 != null;
+        }
     }
 }

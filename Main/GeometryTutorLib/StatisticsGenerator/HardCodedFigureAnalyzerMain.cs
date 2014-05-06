@@ -31,6 +31,11 @@ namespace GeometryTutorLib.StatisticsGenerator
             this.givens = gs;
             this.goals = gls;
 
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\givensCount.txt", true))
+            {
+                file.WriteLine(this.givens.Count);
+            }
+
             // Create the precomputer object for coordinate-based pre-comutation analysis
             precomputer = new Precomputer.CoordinatePrecomputer(figure);
             instantiator = new GenericInstantiator.Instantiator();
@@ -41,6 +46,9 @@ namespace GeometryTutorLib.StatisticsGenerator
         public StatisticsGenerator.FigureStatisticsAggregator AnalyzeFigure()
         {
             StatisticsGenerator.FigureStatisticsAggregator figureStats = new StatisticsGenerator.FigureStatisticsAggregator();
+
+            // For statistical analysis, count the number of each particular type of implicit facts.
+            CountIntrisicProperties(figureStats);
 
             // Start timing
             figureStats.stopwatch.Start();
@@ -67,7 +75,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             // Combine the problems together into one list
             List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> candidateProbs = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
             candidateProbs.AddRange(problems.Key);
-            candidateProbs.AddRange(problems.Value);
+            //candidateProbs.AddRange(problems.Value); // converse
 
             figureStats.totalBackwardProblemsGenerated = problems.Value.Count;
             figureStats.totalProblemsGenerated = candidateProbs.Count;
@@ -77,16 +85,174 @@ namespace GeometryTutorLib.StatisticsGenerator
             List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
             figureStats.totalInterestingProblems = interestingProblems.Count;
 
+            // Explicit number of facts: hypergraph size - figure facts
+            figureStats.totalExplicitFacts = graph.vertices.Count - figure.Count;
+
             // Validate that the original book problems were generated.
             Validate(interestingProblems, figureStats);
 
             // Stop timing before we generate all of the statistics
             figureStats.stopwatch.Stop();
 
+
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = GetStrictlyInteresting(interestingProblems);
+
             // Construct partitions based on different queries
-            GenerateStatistics(interestingProblems, figureStats);
+            // GenerateStatistics(interestingProblems, figureStats, strictlyInteresting);
+
+            //
+            // Is this figure complete? That is, do the assumptions define the figure completely?
+            //
+            figureStats.isComplete = templateProblemGenerator.DefinesFigure(precomputer.GetPrecomputedRelations(), precomputer.GetStrengthenedClauses());
+
+            // Debug.WriteLine("Explicit Complete: " + figureStats.isComplete);
+
+            // Construct the K-goal problems
+            // CalculateKnonStrictCardinalities(interestingCalculator, interestingProblems, figureStats);
 
             return figureStats;
+        }
+
+        //
+        // Given the problems with at least one assumption, construct ALL such combinations to form (I, G).
+        //
+        private void CalculateKnonStrictCardinalities(ProblemAnalyzer.InterestingProblemCalculator interestingCalculator,
+                                                      List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems,
+                                                      StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        {
+            // K-G  container: index 0 is 1-G, index 1 is 2-G, etc.
+            List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> KmgProblems = new List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>>();
+
+            //
+            // Create the new set of multigoal problems each with 1 goal: 1-G
+            //
+            List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> mgProblems = new List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>();
+            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            {
+                ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> new1GProblem = new ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>();
+                new1GProblem.AddProblem(problem);
+                mgProblems.Add(new1GProblem);
+            }
+
+            // Add the 1-G problems to the K-G problem set.
+            KmgProblems.Add(mgProblems);
+
+
+            // Construct all of the remaining 
+            CalculateKnonStrictCardinalities(KmgProblems, problems, FigureStatisticsAggregator.MAX_K);
+
+            //
+            // Now that we have 1, 2, ..., MAX_K -G multigoal problems, we must filter them.
+            // That is, are the problems strictly interesting?
+            //
+            // Filtered K-G  container: index 0 is 1-G, index 1 is 2-G, etc.
+            List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> filteredKmgProblems = new List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>>();
+
+            foreach (List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> originalKgProblems in KmgProblems)
+            {
+                filteredKmgProblems.Add(interestingCalculator.DetermineStrictlyInterestingMultiGoalProblems(originalKgProblems));
+            }
+
+            // Calculate the final numbers: counts of the k-G Strictly interesting problems.
+            StringBuilder str = new StringBuilder();
+            for (int k = 1; k <= FigureStatisticsAggregator.MAX_K; k++)
+            {
+                figureStats.kGcardinalities[k] = filteredKmgProblems[k - 1].Count;
+
+                str.AppendLine(k + "-G: " + figureStats.kGcardinalities[k]);
+            }
+
+            Debug.WriteLine(str);
+
+            if (Utilities.PROBLEM_GEN_DEBUG)
+            {
+                Debug.WriteLine(str);
+            }
+        }
+
+        // Calculate k-G; a set of goals with k propositions
+        private void CalculateKnonStrictCardinalities(List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> kgProblems,
+                                                      List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> interesting, int MAX_K)
+        {
+            for (int k = 2; k <= MAX_K; k++)
+            {
+                // (k-1)-G list: 
+                List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> kMinus1Problems = kgProblems[k-2];
+                List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> kProblems = new List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>();
+
+                // For each (k-1)-G problem, add each interesting problem, in turn.
+                foreach(ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> kMinus1Problem in kMinus1Problems)
+                {
+                    if (kMinus1Problem.givens.Count < givens.Count)
+                    {
+                        // For each k-G, make a copy of the (k-1)-G problem and add the interesting problem to it.
+                        foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> sgProblem in interesting)
+                        {
+                            // Make a copy
+                            ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> newKGproblem = new ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>(kMinus1Problem);
+
+                            // Add the interesting problem to it; if the add is successful, the k-G problem is added to 
+                            if (newKGproblem.AddProblem(sgProblem))
+                            {
+                                // Debug.WriteLine(kMinus1Problem.ToString() + " + " + sgProblem.ToString() + " = " + newKGproblem.ToString());
+
+                                // Is this problem, based on (Givens, Goals) in this list already?
+                                bool alreadyExists = false;
+                                foreach (ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> kProblem in kProblems)
+                                {
+                                    if (kProblem.HasSameGivensGoals(newKGproblem))
+                                    {
+                                        alreadyExists = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!alreadyExists) kProblems.Add(newKGproblem);
+                            }
+                        }
+                    }
+                }
+
+                // Add the complete set of k-G problems to the list
+                kgProblems.Add(kProblems);
+            }
+        }
+
+
+        private List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> GetStrictlyInteresting(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems)
+        {
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+
+            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            {
+                if (problem.interestingPercentage >= 100) strictlyInteresting.Add(problem);
+            }
+
+            return strictlyInteresting;
+        }
+
+        //
+        // For statistical analysis only count the number of occurrences of each intrisic property.
+        //
+        private void CountIntrisicProperties(StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        {
+            foreach (ConcreteAST.GroundedClause clause in figure)
+            {
+                figureStats.totalProperties++;
+                if (clause is ConcreteAST.Point) figureStats.numPoints++;
+                else if (clause is ConcreteAST.InMiddle) figureStats.numInMiddle++;
+                else if (clause is ConcreteAST.Segment) figureStats.numSegments++;
+                else if (clause is ConcreteAST.Intersection) figureStats.numIntersections++;
+                else if (clause is ConcreteAST.Triangle) figureStats.numTriangles++;
+                else if (clause is ConcreteAST.Angle) figureStats.numAngles++;
+                else if (clause is ConcreteAST.Quadrilateral) figureStats.numQuadrilaterals++;
+                else if (clause is ConcreteAST.Circle) figureStats.numCircles++;
+                else
+                {
+                    Debug.WriteLine("Did not count " + clause);
+                    figureStats.totalProperties--;
+                }
+            }
         }
 
         //
@@ -256,20 +422,17 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         // We may analyze the interesting problems constructing various partitions and queries
         //
-        private void GenerateStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems,
+            StatisticsGenerator.FigureStatisticsAggregator figureStats,
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting)
         {
             GenerateAverages(problems, figureStats);
             GenerateIsomorphicStatistics(problems, figureStats);
 
-            // First, find the strictly interesting problems
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
-            {
-                if (problem.interestingPercentage >= 100) strictlyInteresting.Add(problem);
-            }
-
             GenerateStrictAverages(strictlyInteresting, figureStats);
             GenerateStrictIsomorphicStatistics(strictlyInteresting, figureStats);
+
+            GeneratePaperQuery(strictlyInteresting, figureStats);
         }
 
         private void GenerateAverages(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
@@ -393,6 +556,79 @@ namespace GeometryTutorLib.StatisticsGenerator
             interestingBasedPartitions.ConstructPartitions(problems);
 
             figureStats.strictInterestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
+        }
+
+        private void GeneratePaperQuery(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        {
+            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> sat = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+            int query = 0;
+            int query2 = 0;
+            int query3 = 0;
+            int query4 = 0;
+
+            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            {
+                bool WRITE_PROBLEMS = true;
+                int width = problem.GetWidth();
+                int steps = problem.GetNumDeductiveSteps();
+                int depth = problem.GetLength();
+
+                if (6 <= steps && steps <= 10 && 4 <= width && width <= 8)
+                {
+                    query++;
+                    if (WRITE_PROBLEMS)
+                    {
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\singleProblemQuery.txt", true))
+                        {
+                            file.WriteLine(problem.ConstructProblemAndSolution(graph));
+                        }
+                    }
+                }
+
+
+
+                //if (3 <= steps && steps <= 7 && graph.vertices[problem.goal].data is ConcreteAST.CongruentTriangles)
+                //{
+                //    query2++;
+
+                //    if (WRITE_PROBLEMS)
+                //    {
+                //        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\queryProblems.txt", true))
+                //        {
+                //            file.WriteLine(problem.ConstructProblemAndSolution(graph));
+                //        }
+                //    }
+                //}
+                //if (steps >= 10 && graph.vertices[problem.goal].data is ConcreteAST.CongruentTriangles)
+                //{
+                //    query4++;
+                //}
+
+                //if (steps == 6 && depth == 4 && width == 5 && graph.vertices[problem.goal].data is ConcreteAST.CongruentTriangles)
+                //{
+                //    query3++;
+                //}
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\teacherQuery.txt", true))
+            {
+                file.WriteLine(query);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\queryStudent2.txt", true))
+            {
+                file.WriteLine(query2);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\queryStudent3.txt", true))
+            {
+                file.WriteLine(query3);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\queryStudent4.txt", true))
+            {
+                file.WriteLine(query4);
+            }
         }
     }
 }

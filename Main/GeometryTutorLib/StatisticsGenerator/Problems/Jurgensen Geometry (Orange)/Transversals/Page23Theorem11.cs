@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class Page23Theorem11 : TransversalsProblem
     {
-        public Page23Theorem11(bool onoff) : base(onoff)
+        public Page23Theorem11(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Midpoint Theorem";
 

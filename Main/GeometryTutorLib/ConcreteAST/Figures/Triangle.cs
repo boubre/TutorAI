@@ -1042,5 +1042,13 @@ namespace GeometryTutorLib.ConcreteAST
             str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") " + justification);
             return str.ToString();
         }
+
+        /// <summary>
+        /// Can we calculate the area of this triangle from the known information?
+        /// </summary>
+        public void AreaLogic()
+        {
+
+        }
     }
 }

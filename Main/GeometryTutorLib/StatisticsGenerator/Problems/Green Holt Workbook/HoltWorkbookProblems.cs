@@ -11,12 +11,12 @@ namespace GeometryTutorLib.StatisticsGenerator
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            problems.Add(new Page13Problem10(false));  // GTG
-            problems.Add(new Page23Problem9(false));   // GTG
-            problems.Add(new Page24Problem7(false));   // GTG
-            problems.Add(new Page25Problem8(false));   // GTG
-            problems.Add(new Page26Problem2(false));   // GTG
-            problems.Add(new Page17Problem9(false));   // GTG
+            problems.Add(new Page13Problem10(true, false));  // GTG
+            problems.Add(new Page23Problem9(true, true));   // GTG
+            problems.Add(new Page24Problem7(true, true));   // GTG
+            problems.Add(new Page25Problem8(true, false));   // GTG
+            problems.Add(new Page26Problem2(true, true));   // GTG
+            problems.Add(new Page17Problem9(true, false));   // GTG
 
             return problems;
         }

@@ -6,67 +6,109 @@ using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
-    public class DiagonalsParallelogramBisectEachOther : Theorem
+    public class PerpendicularToRadiusIsTangent : Theorem
     {
-        private readonly static string NAME = "Diagonals of a Parallelogram Bisect Each Other";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER);
+        private readonly static string NAME = "Radii perpendicular to a segment is a tangent";
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT);
 
-        //     A _________________ B
-        //      /                /
-        //     /                /
-        //    /                /
-        // D /________________/ C
-        //
-        // Parallelogram(A, B, C, D) -> SegmentBisector(Segment(A, C), Segment(B, D)), SegmentBisector(Segment(B, D), Segment(A, C)),
+        public static void Clear()
+        {
+            candidateIntersections.Clear();
+            candidatePerpendicular.Clear();
+            candidateStrengthened.Clear();
+        }
+
+        private static List<ArcSegmentIntersection> candidateIntersections = new List<ArcSegmentIntersection>();
+        private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
+        private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
+
+        //        )  | B
+        //         ) |
+        // O        )| S
+        //         ) |
+        //        )  |
+        //       )   | A
+        // Tangent(Circle(O, R), Segment(A, B)), Intersection(OS, AB) -> Perpendicular(Segment(A,B), Segment(O, S))
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            if (clause is Parallelogram)
+            if (clause is ArcSegmentIntersection)
             {
-                Parallelogram newPara = clause as Parallelogram;
+                ArcSegmentIntersection newInter = clause as ArcSegmentIntersection;
 
-                newGrounded.AddRange(InstantiateTheorem(newPara, newPara));
+                foreach (Perpendicular oldPerp in candidatePerpendicular)
+                {
+                    newGrounded.AddRange(InstantiateTheorem(newInter, oldPerp, oldPerp));
+                }
+
+                foreach (Strengthened oldStreng in candidateStrengthened)
+                {
+                    newGrounded.AddRange(InstantiateTheorem(newInter, oldStreng.strengthened as Perpendicular, oldStreng));
+                }
+
+                candidateIntersections.Add(newInter);
+            }
+            else if (clause is Perpendicular)
+            {
+                Perpendicular newPerp = clause as Perpendicular;
+
+                foreach (ArcSegmentIntersection oldInter in candidateIntersections)
+                {
+                    newGrounded.AddRange(InstantiateTheorem(oldInter, newPerp, newPerp));
+                }
+
+                candidatePerpendicular.Add(newPerp);
             }
             else if (clause is Strengthened)
             {
-                Strengthened streng = clause as Strengthened;
+                Strengthened newStreng = clause as Strengthened;
 
-                if (!(streng.strengthened is Parallelogram)) return newGrounded;
+                if (!(newStreng.strengthened is Perpendicular)) return newGrounded;
 
-                newGrounded.AddRange(InstantiateTheorem(streng.strengthened as Parallelogram, streng));
+                foreach (ArcSegmentIntersection oldInter in candidateIntersections)
+                {
+                    newGrounded.AddRange(InstantiateTheorem(oldInter, newStreng.strengthened as Perpendicular, newStreng));
+                }
+
+                candidateStrengthened.Add(newStreng);
             }
 
             return newGrounded;
         }
 
-        //     A _________________ B
-        //      /                /
-        //     /     \/         /
-        //    /      /\        /
-        // D /________________/ C
+        //        )  | B
+        //         ) |
+        // O        )| S
+        //         ) |
+        //        )  |
+        //       )   | A
+        // Tangent(Circle(O, R), Segment(A, B)), Intersection(OS, AB) -> Perpendicular(Segment(A,B), Segment(O, S))
         //
-        // Parallelogram(A, B, C, D) -> SegmentBisector(Segment(A, C), Segment(B, D)), SegmentBisector(Segment(B, D), Segment(A, C)),
-        //
-        private static List<EdgeAggregator> InstantiateTheorem(Parallelogram parallelogram, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateTheorem(ArcSegmentIntersection inter, Perpendicular perp, GroundedClause original)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            // Generate only if the diagonals are a part of the original figure.
-            if (parallelogram.diagonalIntersection == null) return newGrounded;
+            // Get the radius
+            Segment radius = null;
+            Segment garbage = null;
+            inter.GetRadii(out radius, out garbage);
 
-            // Determine the CongruentSegments opposing sides and output that.
-            Intersection diagInter = parallelogram.diagonalIntersection;
-            Strengthened sb1 = new Strengthened(diagInter, new SegmentBisector(diagInter, diagInter.lhs));
-            Strengthened sb2 = new Strengthened(diagInter, new SegmentBisector(diagInter, diagInter.rhs));
-            
+            // Two intersections, not a tangent situation.
+            if (garbage != null) return newGrounded;
+
+            // Does this perpendicular apply to this Arc intersection?
+            if (!perp.HasSegment(radius) || !perp.HasSegment(inter.segment)) return newGrounded;
+
+            Strengthened newTangent = new Strengthened(inter, new Tangent(inter));
+
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
+            antecedent.Add(inter);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, sb1, annotation));
-            newGrounded.Add(new EdgeAggregator(antecedent, sb2, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, newTangent, annotation));
 
             return newGrounded;
         }

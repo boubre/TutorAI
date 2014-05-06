@@ -135,6 +135,26 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         //
+        // Given a set of problems, determine which partition of problems meets the 'interesting' criteria: 100% of givens covered.
+        //
+        public List<MultiGoalProblem<Hypergraph.EdgeAnnotation>> DetermineStrictlyInterestingMultiGoalProblems(List<MultiGoalProblem<Hypergraph.EdgeAnnotation>> problems)
+        {
+            List<MultiGoalProblem<Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<MultiGoalProblem<Hypergraph.EdgeAnnotation>>();
+
+            foreach (MultiGoalProblem<Hypergraph.EdgeAnnotation> mgProblem in problems)
+            {
+                if (Utilities.EqualSets<int>(mgProblem.givens, this.givenIndices))
+                {
+                    strictlyInteresting.Add(mgProblem);
+                }
+
+            }
+
+            return strictlyInteresting;
+        }
+
+
+        //
         // For intrinsic property-based coverage
         //
         private readonly int POINTS = 0;

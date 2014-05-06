@@ -9,8 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 	//
 	public class Page175WrittenExercise1to4 : CongruentTrianglesProblem
 	{
-        public Page175WrittenExercise1to4(bool onoff)
-            : base(onoff)
+        public Page175WrittenExercise1to4(bool onoff, bool complete) : base(onoff, complete)
 		{
 			Point a = new Point("A", 0, 2); intrinsic.Add(a);
 			Point b = new Point("B", 1, 3); intrinsic.Add(b);

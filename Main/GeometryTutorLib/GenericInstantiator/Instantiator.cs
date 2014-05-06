@@ -83,6 +83,10 @@ namespace GeometryTutorLib.GenericInstantiator
 
                     HandleDeducedClauses(worklist, PerpendicularImplyCongruentAdjacentAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, AdjacentAnglesPerpendicularImplyComplementary.Instantiate(clause));
+
+                    // Circle
+                    HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
+                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
                 }
                 else if (clause is Arc)
                 {
@@ -115,6 +119,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, AdjacentAnglesPerpendicularImplyComplementary.Instantiate(clause));
                         HandleDeducedClauses(worklist, TransversalPerpendicularToParallelImplyBothPerpendicular.Instantiate(clause));
                         HandleDeducedClauses(worklist, PerpendicularDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
                     }
                     else
                     {
@@ -137,6 +142,13 @@ namespace GeometryTutorLib.GenericInstantiator
                         // Quad Theorems
                         HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
 
+                        // Circles
+                        HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
+                        HandleDeducedClauses(worklist, DiameterPerpendicularToChordBisectsChordAndArc.Instantiate(clause));
+                        HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                        HandleDeducedClauses(worklist, TangentPerpendicularToRadius.Instantiate(clause));
+                        HandleDeducedClauses(worklist, TangentsToCircleFromPointAreCongruent.Instantiate(clause));
+                        HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     }
                 }
                 else if (clause is Complementary)
@@ -244,6 +256,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
                     // Quadrilaterals
                     HandleDeducedClauses(worklist, BothPairsOppAnglesCongruentImpliesParallelogram.Instantiate(clause));
+
+                    // Circles
+                    HandleDeducedClauses(worklist, MinorArcsCongruentIfCentralAnglesCongruent.Instantiate(clause));
                 }
                 else if (clause is CongruentSegments)
                 {
@@ -265,6 +280,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, BothPairsOppSidesCongruentImpliesParallelogram.Instantiate(clause));
                     HandleDeducedClauses(worklist, OnePairOppSidesCongruentParallelImpliesParallelogram.Instantiate(clause));
+
+                    // Circles
+                    HandleDeducedClauses(worklist, CongruentCircleDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CongruentArcsHaveCongruentChords.Instantiate(clause));     
                 }
                 else if (clause is Triangle)
                 {
@@ -306,75 +325,75 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, EquilateralTriangleHasSixtyDegreeAngles.Instantiate(clause));
                     }
                 }
-                else if (clause is Quadrilateral)
-                {
-                    Quadrilateral.Record(clause);
+                //else if (clause is Quadrilateral)
+                //{
+                //    Quadrilateral.Record(clause);
 
-                    if (clause is Quadrilateral)
-                    {
-                        if ((clause as Quadrilateral).IsStrictQuadrilateral())
-                        {
-                            HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
-                            HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));                           
-                            HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
-                            HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
-                            HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
+                //    if (clause is Quadrilateral)
+                //    {
+                //        if ((clause as Quadrilateral).IsStrictQuadrilateral())
+                //        {
+                //            HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));                           
+                //            HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
 
-                            HandleDeducedClauses(worklist, BothPairsOppSidesCongruentImpliesParallelogram.Instantiate(clause));
-                            HandleDeducedClauses(worklist, OnePairOppSidesCongruentParallelImpliesParallelogram.Instantiate(clause));
-                            HandleDeducedClauses(worklist, BothPairsOppAnglesCongruentImpliesParallelogram.Instantiate(clause));
-                            HandleDeducedClauses(worklist, DiagonalsBisectEachOtherImplyParallelogram.Instantiate(clause));
-                        }
-                    }
+                //            HandleDeducedClauses(worklist, BothPairsOppSidesCongruentImpliesParallelogram.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, OnePairOppSidesCongruentParallelImpliesParallelogram.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, BothPairsOppAnglesCongruentImpliesParallelogram.Instantiate(clause));
+                //            HandleDeducedClauses(worklist, DiagonalsBisectEachOtherImplyParallelogram.Instantiate(clause));
+                //        }
+                //    }
 
-                    if (clause is Parallelogram)
-                    {
-                        HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
+                //    if (clause is Parallelogram)
+                //    {
+                //        HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
 
-                        // Quad Theorems
-                        HandleDeducedClauses(worklist, OppositeSidesOfParallelogramAreCongruent.Instantiate(clause));
-                        HandleDeducedClauses(worklist, OppositeAnglesOfParallelogramAreCongruent.Instantiate(clause));
-                        HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
+                //        // Quad Theorems
+                //        HandleDeducedClauses(worklist, OppositeSidesOfParallelogramAreCongruent.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, OppositeAnglesOfParallelogramAreCongruent.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
 
-                    }
+                //    }
 
-                    if (clause is Trapezoid)
-                    {
-                        HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
-                    }
+                //    if (clause is Trapezoid)
+                //    {
+                //        HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
+                //    }
 
-                    if (clause is IsoscelesTrapezoid)
-                    {
-                        HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
-                    }
+                //    if (clause is IsoscelesTrapezoid)
+                //    {
+                //        HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
+                //    }
 
-                    if (clause is Rhombus)
-                    {
-                        HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
-                        HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
-                    }
+                //    if (clause is Rhombus)
+                //    {
+                //        HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
+                //    }
 
-                    if (clause is Square)
-                    {
-                        HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
-                    }
+                //    if (clause is Square)
+                //    {
+                //        HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
+                //    }
 
-                    if (clause is Rectangle)
-                    {
-                        HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
-                        HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
-                    }
+                //    if (clause is Rectangle)
+                //    {
+                //        HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
+                //        HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
+                //    }
 
-                    if (clause is Kite)
-                    {
-                        HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
-                    }
-                }
+                //    if (clause is Kite)
+                //    {
+                //        HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
+                //    }
+                //}
                 else if (clause is Strengthened)
                 {
                     HandleDeducedClauses(worklist, IsoscelesTriangleTheorem.Instantiate(clause));
@@ -406,21 +425,52 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
 
                     // For quadrilateral definitions
-                    HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, ParallelogramDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, RectangleDefinition.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, RhombusDefinition.Instantiate(clause));
 
-                    // Quad Theorems
-                    HandleDeducedClauses(worklist, OppositeSidesOfParallelogramAreCongruent.Instantiate(clause));
-                    HandleDeducedClauses(worklist, OppositeAnglesOfParallelogramAreCongruent.Instantiate(clause));
-                    HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
-                    HandleDeducedClauses(worklist, DiagonalsBisectEachOtherImplyParallelogram.Instantiate(clause));
-                    HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
-                    HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
-                    HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
+                    //// Quad Theorems
+                    //HandleDeducedClauses(worklist, OppositeSidesOfParallelogramAreCongruent.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, OppositeAnglesOfParallelogramAreCongruent.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiagonalsBisectEachOtherImplyParallelogram.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
+
+                    //// Circle
+                    //HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, DiameterPerpendicularToChordBisectsChordAndArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, TangentPerpendicularToRadius.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, TangentsToCircleFromPointAreCongruent.Instantiate(clause));
+                }
+                else if (clause is ArcIntersection)
+                {
+                    HandleDeducedClauses(worklist, DiameterPerpendicularToChordBisectsChordAndArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
+                }
+                else if (clause is Semicircle)
+                {
+                    HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
+                }
+                else if (clause is Tangent)
+                {
+                    HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TangentPerpendicularToRadius.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TangentsToCircleFromPointAreCongruent.Instantiate(clause));
+                }
+                else if (clause is CongruentArcs)
+                {
+                    HandleDeducedClauses(worklist, CongruentArcsHaveCongruentChords.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MinorArcsCongruentIfCentralAnglesCongruent.Instantiate(clause));
                 }
                 else if (clause is Circle)
                 {
@@ -429,6 +479,16 @@ namespace GeometryTutorLib.GenericInstantiator
                     // Determine all applicable secants, tangent, and chords for this circle
                     (clause as Circle).AnalyzeSegments();
                     (clause as Circle).AnalyzePolygons();
+
+                    HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
+                }
+                else if (clause is CongruentCircles)
+                {
+                    HandleDeducedClauses(worklist, CongruentCircleDefinition.Instantiate(clause));
                 }
             }
 
@@ -652,6 +712,21 @@ namespace GeometryTutorLib.GenericInstantiator
             BothPairsOppSidesCongruentImpliesParallelogram.Clear();
             DiagonalsBisectEachOtherImplyParallelogram.Clear();
             OnePairOppSidesCongruentParallelImpliesParallelogram.Clear();
+
+            // Circles
+            AngleInscribedSemiCircleIsRight.Clear();
+            CentralAngleEqualInterceptedArc.Clear();
+            ChordTangentAngleHalfInterceptedArc.Clear();
+            CongruentArcsHaveCongruentChords.Clear();
+            DiameterPerpendicularToChordBisectsChordAndArc.Clear();
+            ExteriorAngleHalfDifferenceInterceptedArcs.Clear();
+            InscribedAngleHalfInterceptedArc.Clear();
+            MinorArcsCongruentIfCentralAnglesCongruent.Clear();
+            PerpendicularToRadiusIsTangent.Clear();
+            TangentPerpendicularToRadius.Clear();
+            TangentsToCircleFromPointAreCongruent.Clear();
+            TwoChordsAnglesHalfSumInterceptedArc.Clear();
+            //TwoInterceptedArcsHaveCongruentAngles.Clear();
         }
     }
 }

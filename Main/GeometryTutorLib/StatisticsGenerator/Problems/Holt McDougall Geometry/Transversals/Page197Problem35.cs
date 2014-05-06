@@ -9,7 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class Page197Problem35 : TransversalsProblem
     {
-        public Page197Problem35(bool onoff) : base(onoff)
+        public Page197Problem35(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Page 197 Problem 35";
 

@@ -99,14 +99,25 @@ namespace GeometryTutorLib
             MEDIAN_TRAPEZOID_PARALLEL_TO_BASE,
             MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES,
 
+            //
             // Circles
+            //
             TANGENT_IS_PERPENDICULAR_TO_RADIUS,
+            TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT,
             PERPENDICULAR_TO_RADIUS_IS_TANGENT,
-            TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT,
+            MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT,
+            CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT,
             CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS,
             CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS,
             DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC,
             MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC,
+            CIRCLE_CONGRUENCE_DEFINITION,
+            ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT,
+            CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC,
+            CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC,
+            EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS,
+            TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS,
+            TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES,
 
             // General Switches
             CIRCLES,
@@ -227,13 +238,24 @@ namespace GeometryTutorLib
             justMap.Add(DeductionJustType.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
 
             // Circles
+            justMap.Add(DeductionJustType.CIRCLE_CONGRUENCE_DEFINITION, new Assumption("Circles of Equal Radii Congruent", Assumption.AssumptionType.Axiom));
+
             justMap.Add(DeductionJustType.TANGENT_IS_PERPENDICULAR_TO_RADIUS, new Assumption("A Tangent Is Perpendicular to a Radius", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.PERPENDICULAR_TO_RADIUS_IS_TANGENT, new Assumption("Perpendicular to Radius is Tangent", Assumption.AssumptionType.Theorem));
-            justMap.Add(DeductionJustType.TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT, new Assumption("Central Angle Congruence Implies Arc Minor Congruence", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT, new Assumption("Tangents to Circle from Same Point Congruent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT, new Assumption("Central Angle Congruence Implies Arc Minor Congruence", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT, new Assumption("Arc Minor Congruence Congruence Implies Central Angle", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS, new Assumption("Congruent Chords have Congruent Arcs", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS, new Assumption("Congruent Arcs have Congruent Chords", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC, new Assumption("Diameter Perpendicular to Chord Bisects the Chord and Arc", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC, new Assumption("Measure of Inscribed Angle is Half Intercepted Arc", Assumption.AssumptionType.Theorem));
+
+            justMap.Add(DeductionJustType.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT, new Assumption("Inscribed Angle In Semicircle is Right", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC, new Assumption("Measure Central Angle Equals Measure Intercepted Arc", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC, new Assumption("Angle Created by Tangent and Chord is Half Intercepted Arc", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS, new Assumption("Angle Measure of Exterior Angle is Half Difference of Intercepted Arcs", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS, new Assumption("Intersecting Chords Inside a Circle Create Angle Measure Half Sum of Intercepted Arc", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES, new Assumption("Two Insribed Angles have Equal Measure if they Intercept Same Arc", Assumption.AssumptionType.Theorem));
         }
 
         public static bool RELATION_TRANSITIVE_SUBSTITUTION = true;
@@ -335,11 +357,21 @@ namespace GeometryTutorLib
         // Circles
         public static bool TANGENT_IS_PERPENDICULAR_TO_RADIUS = true;
         public static bool PERPENDICULAR_TO_RADIUS_IS_TANGENT = true;
-        public static bool TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = true;
+        public static bool TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT = true;
+        public static bool MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = true;
+        public static bool CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT = true;
         public static bool CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS = true;
         public static bool CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS = true;
         public static bool DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = true;
         public static bool MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = true;
+        public static bool CIRCLE_CONGRUENCE_DEFINITION = true;
+        public static bool ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT = true;
+        public static bool CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC = true;
+        public static bool CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC = true;
+        public static bool EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS = true;
+        public static bool TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS = true;
+        public static bool TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES = true;
+
         //
         // General Switches
         //
@@ -365,11 +397,20 @@ namespace GeometryTutorLib
                     {
                         JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS = false;
                         JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT = false;
-                        JustificationSwitch.TWO_MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = false;
+                        JustificationSwitch.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT = false;
+                        JustificationSwitch.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = false;
+                        JustificationSwitch.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT = false;
                         JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS = false;
                         JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS = false;
                         JustificationSwitch.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = false;
                         JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = false;
+                        JustificationSwitch.CIRCLE_CONGRUENCE_DEFINITION = false;
+                        JustificationSwitch.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT = false;
+                        JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC = false;
+                        JustificationSwitch.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC = false;
+                        JustificationSwitch.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS = false;
+                        JustificationSwitch.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS = false;
+                        JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES = false;
                     }
                     if (assumption.Key == DeductionJustType.QUADRILATERALS)
                     {

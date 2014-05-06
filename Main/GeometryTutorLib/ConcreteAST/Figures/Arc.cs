@@ -5,15 +5,15 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Arc : Figure
+    public abstract class Arc : Figure
     {
-        public Circle theCircle { get; private set; }
-        public Point endpoint1 { get; private set; }
-        public Point endpoint2 { get; private set; }
-        public List<Point> arcMinorPoints { get; private set; }
-        public List<Point> arcMajorPoints { get; private set; }
-        public double minorMeasure { get; private set; }
-        public double length { get; private set; }
+        public Circle theCircle { get; protected set; }
+        public Point endpoint1 { get; protected set; }
+        public Point endpoint2 { get; protected set; }
+        public List<Point> arcMinorPoints { get; protected set; }
+        public List<Point> arcMajorPoints { get; protected set; }
+        public double minorMeasure { get; protected set; }
+        public double length { get; protected set; }
 
         public Arc(Circle circle, Point e1, Point e2) : this(circle, e1, e2, new List<Point>(), new List<Point>()) { }
 
@@ -60,24 +60,171 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static void Clear()
         {
-            figureArcs.Clear();
+            figureMinorArcs.Clear();
+            figureMajorArcs.Clear();
         }
-        public static List<Arc> figureArcs = new List<Arc>();
+        public static List<MinorArc> figureMinorArcs = new List<MinorArc>();
+        public static List<MajorArc> figureMajorArcs = new List<MajorArc>();
         public static void Record(GroundedClause clause)
         {
-            if (clause is Arc) figureArcs.Add(clause as Arc);
+            if (clause is MinorArc) figureMinorArcs.Add(clause as MinorArc);
+            if (clause is MajorArc) figureMajorArcs.Add(clause as MajorArc);
         }
-        public static Arc GetFigureArc(Circle circle, Point pt1, Point pt2)
+        public static Arc GetFigureMinorArc(Circle circle, Point pt1, Point pt2)
         {
-            Arc candArc = new Arc(circle, pt1, pt2);
+            MinorArc candArc = new MinorArc(circle, pt1, pt2);
 
             // Search for exact segment first
-            foreach (Arc arc in figureArcs)
+            foreach (MinorArc arc in figureMinorArcs)
             {
                 if (arc.StructurallyEquals(candArc)) return arc;
             }
 
             return null;
+        }
+        public static Arc GetFigureMajorArc(Circle circle, Point pt1, Point pt2)
+        {
+            MajorArc candArc = new MajorArc(circle, pt1, pt2);
+
+            // Search for exact segment first
+            foreach (MajorArc arc in figureMajorArcs)
+            {
+                if (arc.StructurallyEquals(candArc)) return arc;
+            }
+
+            return null;
+        }
+
+        private static Arc GetInscribedInterceptedArc(Circle circle, Angle angle)
+        {
+            Point endpt1, endpt2;
+
+            Point pt1, pt2;
+            circle.FindIntersection(angle.ray1, out pt1, out pt2);
+            endpt1 = pt1.StructurallyEquals(angle.GetVertex()) ? pt2 : pt1;
+
+            circle.FindIntersection(angle.ray2, out pt1, out pt2);
+            endpt2 = pt1.StructurallyEquals(angle.GetVertex()) ? pt2 : pt1;
+
+            return Arc.GetFigureMinorArc(circle, endpt1, endpt2);
+        }
+
+        //
+        // Returns the single (closest) intercepted arc for an angle.
+        //
+        public static Arc GetInterceptedArc(Circle circle, Angle angle)
+        {
+            if (circle.IsInscribed(angle)) return GetInscribedInterceptedArc(circle, angle);
+
+            KeyValuePair<Arc, Arc> intercepted = Arc.GetInterceptedArcs(circle, angle);
+
+            return intercepted.Key;
+        }
+
+        //
+        // Acquires one or two intercepted arcs from an exterior or interior angle vertex.
+        //
+        public static KeyValuePair<Arc, Arc> GetInterceptedArcs(Circle circle, Angle angle)
+        {
+            KeyValuePair<Arc, Arc> nullPair = new KeyValuePair<Arc, Arc>(null, null);
+
+            //
+            // Get the intersection points of the rays of the angle.
+            //
+            Point interRay11 = null;
+            Point interRay12 = null;
+            circle.FindIntersection(angle.ray1, out interRay11, out interRay12);
+
+            // non-intersection
+            if (interRay11 == null && interRay12 == null) return nullPair;
+
+            Point interRay21 = null;
+            Point interRay22 = null;
+            circle.FindIntersection(angle.ray1, out interRay21, out interRay22);
+
+            // non-intersection
+            if (interRay21 == null && interRay22 == null) return nullPair;
+
+            //
+            // Split the rays into cases based on if they are secants or not.
+            //
+            bool isSecRay1 = angle.ray1.IsSecant(circle);
+            bool isSecRay2 = angle.ray2.IsSecant(circle);
+
+            //
+            // One Arc: No secants
+            //
+            if (!isSecRay1 && !isSecRay2)
+            {
+                // This means the endpoints of the ray were on the circle directly for each.
+                return new KeyValuePair<Arc,Arc>(Arc.GetFigureMinorArc(circle, interRay11, interRay21), null);
+            }
+            //
+            // One Arc; with one secant and one not.
+            //
+            else if (!isSecRay1 || !isSecRay2)
+            {
+                Segment secant = null;
+                Segment nonSecant = null;
+                Point endPtNonSecant = null;
+
+                if (isSecRay1)
+                {
+                    secant = angle.ray1;
+                    nonSecant = angle.ray2;
+                    endPtNonSecant = interRay21;
+                }
+                else
+                {
+                    secant = angle.ray2;
+                    nonSecant = angle.ray1;
+                    endPtNonSecant = interRay11;
+                }
+
+                Segment chordOfSecant = circle.ContainsChord(secant);
+
+                Point endptSecant = Segment.Between(chordOfSecant.Point1, angle.GetVertex(), chordOfSecant.Point2) ?
+                                                                        chordOfSecant.Point1 : chordOfSecant.Point2;
+
+                return new KeyValuePair<Arc,Arc>(Arc.GetFigureMinorArc(circle, endPtNonSecant, endptSecant), null);
+            }
+
+            //
+            // Two arcs
+            //
+            else
+            {
+                //
+                // Ensure proper ordering of points
+                //
+                Point closeRay1, farRay1;
+                Point closeRay2, farRay2;
+
+                if (Segment.Between(interRay11, angle.GetVertex(), interRay12))
+                {
+                    closeRay1 = interRay11;
+                    farRay1 = interRay12;
+                }
+                else
+                {
+                    closeRay1 = interRay12;
+                    farRay1 = interRay11;
+                }
+
+                if (Segment.Between(interRay21, angle.GetVertex(), interRay22))
+                {
+                    closeRay2 = interRay21;
+                    farRay2 = interRay22;
+                }
+                else
+                {
+                    closeRay2 = interRay22;
+                    farRay2 = interRay21;
+                }
+
+                return new KeyValuePair<Arc, Arc>(Arc.GetFigureMinorArc(circle, closeRay1, closeRay2),
+                                                  Arc.GetFigureMinorArc(circle, farRay1, farRay2));
+            }
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
@@ -138,8 +285,8 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Create two arcs from this new point to the endpoints; just like with segments,
             // the sum of the arc measures must equate to the overall arc measure.
-            Arc arc1 = new Arc(originalArc.theCircle, m, originalArc.endpoint1);
-            Arc arc2 = new Arc(originalArc.theCircle, m, originalArc.endpoint2);
+            MinorArc arc1 = new MinorArc(originalArc.theCircle, m, originalArc.endpoint1);
+            MinorArc arc2 = new MinorArc(originalArc.theCircle, m, originalArc.endpoint2);
  
             return Utilities.CompareValues(arc1.minorMeasure + arc2.minorMeasure, originalArc.minorMeasure);
         }
@@ -215,7 +362,7 @@ namespace GeometryTutorLib.ConcreteAST
             // Find the intersection points
             Point inter1;
             Point inter2;
-            this.theCircle.Intersection(thatArc.theCircle, out inter1, out inter2);
+            this.theCircle.FindIntersection(thatArc.theCircle, out inter1, out inter2);
 
             // Is the intersection between the endpoints of both arcs? Check both.
             if (Arc.BetweenMinor(inter1, this) && Arc.BetweenMinor(inter1, thatArc)) return true;
@@ -238,316 +385,16 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        public void GetRadii(out Segment radius1, out Segment radius2)
+        {
+            radius1 = this.theCircle.GetRadius(new Segment(this.theCircle.center, this.endpoint1));
+            radius2 = this.theCircle.GetRadius(new Segment(this.theCircle.center, this.endpoint2));
 
-
-        //
-        // Is thatArc a bisector of this segment in terms of the coordinatization from the UI?
-        //
-        //public Point CoordinateBisector(Segment thatSegment)
-        //{
-        //    return Utilities.CompareValues()
-        //    // Do these segments intersect within both sets of stated endpoints?
-        //    Point intersection = this.FindIntersection(thatSegment);
-
-        //    if (!this.PointIsOnAndExactlyBetweenEndpoints(intersection)) return null;
-        //    if (!thatSegment.PointIsOnAndBetweenEndpoints(intersection)) return null;
-
-        //    // Do they intersect in the middle of this segment
-        //    return Utilities.CompareValues(Point.calcDistance(this.Point1, intersection), Point.calcDistance(this.Point2, intersection)) ? intersection : null;
-        //}
-
-        ////
-        //// Each segment is congruent to itself; only generate if it is a shared segment
-        ////
-        //private static readonly string REFLEXIVE_SEGMENT_NAME = "Reflexive Segments";
-        //private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, JustificationSwitch.REFLEXIVE);
-
-        //public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause gc)
-        //{
-        //    List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
-
-        //    Segment segment = gc as Segment;
-        //    if (segment == null) return newGrounded;
-
-        //    // Only generate reflexive if this segment is shared
-        //    if (!segment.isShared()) return newGrounded;
-
-        //    GeometricCongruentSegments ccss = new GeometricCongruentSegments(segment, segment);
-        //    ccss.MakeIntrinsic(); // This is an 'obvious' notion so it should be intrinsic to any figure
-
-        //    List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(segment);
-        //    newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, ccss, reflexAnnotation));
-
-        //    return newGrounded;
-        //}
-
-        ////
-        ////     PointA
-        ////     |
-        ////     |             X (pt)
-        ////     |_____________________ otherSegment
-        ////     |
-        ////     |
-        ////     PointB
-        ////
-        //public Point SameSidePoint(Segment otherSegment, Point pt)
-        //{
-        //    // Is the given point on other? If so, we cannot make a determination.
-        //    if (otherSegment.PointIsOn(pt)) return null;
-
-        //    // Make a vector out of this vector as well as the vector connecting one of the points to the given pt
-        //    Vector thisVector = new Vector(Point1, Point2);
-        //    Vector thatVector = new Vector(Point1, pt);
-
-        //    Vector projectionOfOtherOntoThis = thisVector.Projection(thatVector);
-
-        //    // We are interested most in the endpoint of the projection (which is not the 
-        //    Point projectedEndpoint = projectionOfOtherOntoThis.NonOriginEndpoint();
-
-        //    // Find the intersection between the two lines
-        //    Point intersection = FindIntersection(otherSegment);
-
-        //    if (this.PointIsOn(projectedEndpoint))
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("Unexpected: Projection does not lie on this line. " + this + " " + projectedEndpoint);
-        //    }
-
-        //    // The endpoint of the projection is on this vector. Therefore, we can judge which side of the given segment the given pt lies on.
-        //    if (Segment.Between(projectedEndpoint, Point1, intersection)) return Point1;
-        //    if (Segment.Between(projectedEndpoint, Point2, intersection)) return Point2;
-
-        //    return null;
-        //}
-
-        //public Point Midpoint()
-        //{
-        //    return new Point(null, (Point1.X + Point2.X) / 2, (Point1.Y + Point2.Y) / 2);
-        //}
-
-        ////
-        //// Do these angles share this segment overlay this angle?
-        ////
-        //public bool IsIncludedSegment(Angle ang1, Angle ang2)
-        //{
-        //    return this.Equals(ang1.SharedRay(ang2));
-        //}
-
-        //// Is the given clause an intrinsic component of this Segment?
-        //public override bool Covers(GroundedClause gc)
-        //{
-        //    // immeidate hierarchy: a segment covers a point
-        //    if (gc is Point) return this.PointIsOnAndBetweenEndpoints(gc as Point);
-
-        //    // A triangle is covered if at least one of the sides is covered
-        //    if (gc is Triangle) return (gc as Triangle).HasSegment(this);
-
-        //    // If the segments are coinciding and have a point in between this segment, we say this segment is covered.
-        //    Segment thatSegment = gc as Segment;
-        //    if (thatSegment == null) return false;
-
-        //    if (!this.IsCollinearWith(thatSegment)) return false;
-
-        //    return this.PointIsOnAndBetweenEndpoints(thatSegment.Point1) || this.PointIsOnAndBetweenEndpoints(thatSegment.Point2);
-        //}
-
-        ////
-        //// Determine the intersection point of the two segments
-        ////
-        ////
-        //// | a b |
-        //// | c d |
-        ////
-        //private double determinant(double a, double b, double c, double d)
-        //{
-        //    return a * d - b * c;
-        //}
-        //private void MakeLine(double x_1, double y_1, double x_2, double y_2, out double a, out double b, out double c)
-        //{
-        //    double slope = (y_2 - y_1) / (x_2 - x_1);
-        //    a = - slope;
-        //    b = 1;
-        //    c = y_2 - slope * x_2;
-        //}
-        //private double EvaluateYGivenX(double a, double b, double e, double x)
-        //{
-        //    // ax + by = e
-        //    return (e - a * x) / b;
-        //}
-        //private double EvaluateXGivenY(double a, double b, double e, double y)
-        //{
-        //    // ax + by = e
-        //    return (e - b * y) / a;
-        //}
-        //public Point FindIntersection(Segment thatSegment)
-        //{
-        //    double a, b, c, d, e, f;
-
-        //    if (this.IsVertical() && thatSegment.IsHorizontal()) return new Point(null, this.Point1.X, thatSegment.Point1.Y);
-
-        //    if (thatSegment.IsVertical() && this.IsHorizontal()) return new Point(null, thatSegment.Point1.X, this.Point1.Y);
-
-        //    if (this.IsVertical())
-        //    {
-        //        MakeLine(thatSegment.Point1.X, thatSegment.Point1.Y, thatSegment.Point2.X, thatSegment.Point2.Y, out a, out b, out e);
-        //        return new Point(null, this.Point1.X, EvaluateYGivenX(a, b, e, this.Point1.X));
-        //    }
-        //    if (thatSegment.IsVertical())
-        //    {
-        //        MakeLine(this.Point1.X, this.Point1.Y, this.Point2.X, this.Point2.Y, out a, out b, out e);
-        //        return new Point(null, thatSegment.Point1.X, EvaluateYGivenX(a, b, e, thatSegment.Point1.X));
-        //    }
-        //    if (this.IsHorizontal())
-        //    {
-        //        MakeLine(thatSegment.Point1.X, thatSegment.Point1.Y, thatSegment.Point2.X, thatSegment.Point2.Y, out a, out b, out e);
-        //        return new Point(null, EvaluateXGivenY(a, b, e, this.Point1.Y), this.Point1.Y);
-        //    }
-        //    if (thatSegment.IsHorizontal())
-        //    {
-        //        MakeLine(this.Point1.X, this.Point1.Y, this.Point2.X, this.Point2.Y, out a, out b, out e);
-        //        return new Point(null, EvaluateXGivenY(a, b, e, thatSegment.Point1.Y), thatSegment.Point1.Y);
-        //    }
-
-        //    //
-        //    // ax + by = e
-        //    // cx + dy = f
-        //    // 
-
-        //    MakeLine(Point1.X, Point1.Y, Point2.X, Point2.Y, out a, out b, out e);
-        //    MakeLine(thatSegment.Point1.X, thatSegment.Point1.Y, thatSegment.Point2.X, thatSegment.Point2.Y, out c, out d, out f);
-
-        //    double overallDeterminant = a * d - b * c;
-        //    double x = determinant(e, b, f, d) / overallDeterminant;
-        //    double y = determinant(a, e, c, f) / overallDeterminant;
-
-        //    return new Point("Intersection", x, y);
-        //}
-
-        //private class Vector
-        //{
-        //    private double originX;
-        //    private double originY;
-        //    private double otherX;
-        //    private double otherY;
-
-        //    public Vector(Point origin, Point other)
-        //    {
-        //        originX = origin.X;
-        //        originY = origin.Y;
-        //        otherX = other.X;
-        //        otherY = other.Y;
-        //    }
-
-        //    public Vector(double x1, double y1, double x2, double y2)
-        //    {
-        //        originX = x1;
-        //        originY = y1;
-        //        otherX = x2;
-        //        otherY = y2;
-        //    }
-
-        //    public Point NonOriginEndpoint() { return new Point("ProjectedEndpoint", otherX, otherY); }
-
-        //    private double DotProduct() { return originX * otherX + originY * otherY; }
-        //    private static double EuclideanDistance(double x1, double y1, double x2, double y2)
-        //    {
-        //        return System.Math.Sqrt(System.Math.Pow(x1 - x2, 2) + System.Math.Pow(y1 - y2, 2));
-        //    }
-
-        //    //
-        //    // Projects the given vector onto this vector using standard vector projection
-        //    //
-        //    public Vector Projection(Vector thatVector)
-        //    {
-        //        double magnitude = EuclideanDistance(thatVector.originX, thatVector.originY, thatVector.otherX, thatVector.otherY);
-        //        double cosIncluded = CosineOfIncludedAngle(thatVector);
-
-        //        double projectionDistance = magnitude * cosIncluded;
-
-        //        return new Vector(originX, originY, otherX / projectionDistance, otherY / projectionDistance);
-        //    }
-
-        //    //
-        //    // Use Law of Cosines to determine cos(\theta)
-        //    //      ^
-        //    //      / \
-        //    //   a /   \ c
-        //    //    /\    \
-        //    //   /__\____\__>
-        //    //       b 
-        //    //
-        //    private double CosineOfIncludedAngle(Vector thatVector)
-        //    {
-        //        if (HasSameOriginPoint(thatVector)) return -2;
-
-        //        double a = EuclideanDistance(originX, originY, otherX, otherY);
-        //        double b = EuclideanDistance(originX, originY, thatVector.otherX, thatVector.otherY);
-        //        double c = EuclideanDistance(otherX, otherY, thatVector.otherX, thatVector.otherY);
-
-        //        // Law of Cosines
-        //        return (Math.Pow(a, 2) + Math.Pow(b, 2) - Math.Pow(c, 2)) / (2 * a * b);
-        //    }
-
-        //    private bool HasSameOriginPoint(Vector thatVector)
-        //    {
-        //        return Utilities.CompareValues(originX, thatVector.originX) && Utilities.CompareValues(originY, thatVector.originY);
-        //    }
-
-        //    public override string ToString()
-        //    {
-        //        return "(" + originX + ", " + originY + ") -> (" + otherX + ", " + otherY + ")";
-        //    }
-        //}
-
-        ////
-        //// Return the line passing through the given point which is perpendicular to this segment. 
-        ////
-        //public Point ProjectOnto(Point pt)
-        //{
-        //    //
-        //    // Special Cases
-        //    //
-        //    if (this.IsVertical())
-        //    {
-        //        Point newPoint = Point.GetFigurePoint(new Point("", this.Point1.X, pt.Y));
-
-        //        return newPoint != null ? newPoint : new Point("", this.Point1.X, pt.Y);
-        //    }
-
-        //    if (this.IsHorizontal())
-        //    {
-        //        Point newPoint = Point.GetFigurePoint(new Point("", pt.X, this.Point1.Y));
-
-        //        return newPoint != null ? newPoint : new Point("", pt.X, this.Point1.Y);
-        //    }
-
-        //    //
-        //    // General Cases
-        //    //
-
-        //    // Find the line perpendicular; specifically, a point on that line
-        //    double perpSlope = -1 / Slope;
-
-        //    // We will choose a random value for x (to acquire y); we choose 1.
-        //    double newX = pt.X == 0 ? 1 : 0;
-
-        //    double newY = pt.Y + perpSlope * (newX - pt.X);
-
-        //    // The new perpendicular segment is defined by (newX, newY) and pt
-        //    return new Point("", newX, newY);
-        //}
-
-        ////
-        //// Return the line passing through the given point which is perpendicular to this segment. 
-        ////
-        //public Segment GetPerpendicular(Point pt)
-        //{
-        //    // If the given point is already on the line, projection does not create new information.
-        //    if (this.PointIsOnAndBetweenEndpoints(pt)) return this;
-
-        //    Point projection = ProjectOnto(pt);
-
-        //    // The new perpendicular segment is defined by the projection and the point
-        //    return new Segment(projection, pt);
-        //}
+            if (radius1 == null && radius2 != null)
+            {
+                radius1 = radius2;
+                radius2 = null;
+            }
+        }
     }
 }

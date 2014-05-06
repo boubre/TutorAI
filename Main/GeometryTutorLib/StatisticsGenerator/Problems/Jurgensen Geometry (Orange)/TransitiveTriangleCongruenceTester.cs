@@ -6,7 +6,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 {
     public class TranstiveTriangleCongruenceTester : TransversalsProblem
     {
-        public TranstiveTriangleCongruenceTester(bool onoff) : base(onoff)
+        public TranstiveTriangleCongruenceTester(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); intrinsic.Add(a);
             Point b = new Point("B", 0, 4);  intrinsic.Add(b);

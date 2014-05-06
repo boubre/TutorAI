@@ -101,10 +101,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             return graph.ContainsCycle();
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         //
         // Just a simple hashing mechanism

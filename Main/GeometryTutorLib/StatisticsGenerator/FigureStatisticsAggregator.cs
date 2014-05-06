@@ -8,6 +8,28 @@ namespace GeometryTutorLib.StatisticsGenerator
 {
     public class FigureStatisticsAggregator
     {
+        // k-G Counts
+        public const int MAX_K = 2;
+        public int[] kGcardinalities = new int[MAX_K + 1];
+
+        public bool isComplete;
+
+        // Figure Properties (implicit facts)
+        public int totalProperties;
+        public int numInMiddle;
+        public int numPoints;
+        public int numSegments;
+        public int numIntersections;
+        public int numTriangles;
+        public int numAngles;
+
+        // Later
+        public int numQuadrilaterals;
+        public int numCircles;
+
+        public int totalExplicitFacts;
+
+        //
         public int totalProblemsGenerated;
         public int totalBackwardProblemsGenerated;
         public int totalBookProblemsGenerated;
@@ -37,6 +59,18 @@ namespace GeometryTutorLib.StatisticsGenerator
 
         public FigureStatisticsAggregator()
         {
+            totalProperties = 0;
+            numInMiddle = 0;
+            numPoints = 0;
+            numSegments = 0;
+            numIntersections = 0;
+            numTriangles = 0;
+            numAngles = 0;
+            numQuadrilaterals = 0;
+            numCircles = 0;
+
+            totalExplicitFacts = 0;
+
             totalProblemsGenerated = -1;
             totalBackwardProblemsGenerated = -1;
             totalBookProblemsGenerated = -1;

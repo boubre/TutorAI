@@ -9,23 +9,23 @@ namespace GeometryTutorLib.StatisticsGenerator
 	//
 	public class Page175ClassroomExercise12 : CongruentTrianglesProblem
 	{
-        public Page175ClassroomExercise12(bool onoff) : base(onoff)
+        public Page175ClassroomExercise12(bool onoff, bool complete) : base(onoff, complete)
 		{
             problemName = "Page 175 CLassroom Ex 12";
 
-            Point z = new Point("Z", 0, 12); intrinsic.Add(z);
-			Point y = new Point("Y", 12, 0); intrinsic.Add(y);
-			Point x = new Point("X", 0, 0); intrinsic.Add(x);
-			Point m = new Point("M", 6, 0); intrinsic.Add(m);
-			Point n = new Point("N", 6, 6); intrinsic.Add(n);
-			Point t = new Point("T", 0, 6); intrinsic.Add(t);
-
-            //Point z = new Point("Z", 0, 6); intrinsic.Add(z);
-            //Point y = new Point("Y", 8, 0); intrinsic.Add(y);
-            //Point x = new Point("X", 4, 0); intrinsic.Add(x);
+            //Point z = new Point("Z", 0, 12); intrinsic.Add(z);
+            //Point y = new Point("Y", 12, 0); intrinsic.Add(y);
+            //Point x = new Point("X", 0, 0); intrinsic.Add(x);
             //Point m = new Point("M", 6, 0); intrinsic.Add(m);
-            //Point n = new Point("N", 4, 3); intrinsic.Add(n);
-            //Point t = new Point("T", 2, 3); intrinsic.Add(t);
+            //Point n = new Point("N", 6, 6); intrinsic.Add(n);
+            //Point t = new Point("T", 0, 6); intrinsic.Add(t);
+
+            Point z = new Point("Z", 0, 6); intrinsic.Add(z);
+            Point y = new Point("Y", 8, 0); intrinsic.Add(y);
+            Point x = new Point("X", 4, 0); intrinsic.Add(x);
+            Point m = new Point("M", 6, 0); intrinsic.Add(m);
+            Point n = new Point("N", 4, 3); intrinsic.Add(n);
+            Point t = new Point("T", 2, 3); intrinsic.Add(t);
 
 			Segment mt = new Segment(m, t); intrinsic.Add(mt);
 			Segment mn = new Segment(m, n); intrinsic.Add(mn);

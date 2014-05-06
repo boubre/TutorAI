@@ -15,7 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Find the intersection points
             Point pt1, pt2;
-            arc.theCircle.Intersection(otherArc.theCircle, out pt1, out pt2);
+            arc.theCircle.FindIntersection(otherArc.theCircle, out pt1, out pt2);
             intersection1 = pt1;
             intersection2 = pt2;
         }

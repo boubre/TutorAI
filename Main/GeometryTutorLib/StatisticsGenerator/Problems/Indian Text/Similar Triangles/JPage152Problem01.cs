@@ -9,8 +9,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class JPage152Problem01 : SimilarTrianglesProblem
     {
-        public JPage152Problem01(bool onoff)
-            : base(onoff)
+        public JPage152Problem01(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Book J Page 152 Problem 1";
 

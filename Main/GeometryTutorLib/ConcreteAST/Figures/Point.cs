@@ -57,6 +57,16 @@ namespace GeometryTutorLib.ConcreteAST
 
             return null;
         }
+        public static Point GetFigurePointOrCreate(Point candPoint)
+        {
+            // Get the existent point
+            Point p = GetFigurePoint(candPoint);
+            
+            if (p != null) return p;
+
+            // Create a new point
+            return Precomputer.PointFactory.GeneratePoint(candPoint.X, candPoint.Y);
+        }
 
         /// <summary>
         /// Find the distance between two points

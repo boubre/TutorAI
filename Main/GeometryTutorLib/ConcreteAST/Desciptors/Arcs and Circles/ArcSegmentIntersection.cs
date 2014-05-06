@@ -17,7 +17,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Find the intersection points
             Point pt1, pt2;
-            arc.theCircle.Intersection(segment, out pt1, out pt2);
+            arc.theCircle.FindIntersection(segment, out pt1, out pt2);
             intersection1 = pt1;
             intersection2 = pt2;
         }
@@ -78,6 +78,11 @@ namespace GeometryTutorLib.ConcreteAST
         {
             // Both endpoints are not on the arc.
             return !Arc.BetweenMinor(segment.Point1, arc) && !Arc.BetweenMinor(segment.Point2, arc);
+        }
+
+        public bool HasSegment(Segment thatSegment)
+        {
+            return segment.HasSubSegment(thatSegment) && thatSegment.PointIsOnAndBetweenEndpoints(intersect);
         }
 
         public override bool StructurallyEquals(Object obj)

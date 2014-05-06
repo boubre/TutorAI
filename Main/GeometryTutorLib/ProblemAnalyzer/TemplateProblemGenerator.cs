@@ -23,6 +23,45 @@ namespace GeometryTutorLib.ProblemAnalyzer
         }
 
         //
+        // Do the assumptions of the problem define the entire figure?
+        //
+        public bool DefinesFigure(List<Descriptor> descriptors, List<Strengthened> strengthened)
+        {
+            // Combine the precomputed descriptors and strengthened clauses together into one list
+            List<GroundedClause> goals = new List<GroundedClause>();
+            descriptors.ForEach(r => goals.Add(r));
+            strengthened.ForEach(r => goals.Add(r));
+
+            bool allGoalsCovered = true;
+
+            foreach (GroundedClause goal in goals)
+            {
+                // We need to restrict problems generated based on goal nodes; don't want an obvious notion as a goal
+                if (goal.IsAbleToBeAGoalNode())
+                {
+                    // Find the integer clause ID representation in the standard hypergraph
+                    int nodeIndex = Utilities.StructuralIndex(graph, goal);
+
+                    if (nodeIndex == -1)
+                    {
+                        if (!(goal is ProportionalAngles) && !(goal is ProportionalSegments))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Did not find precomputed node in the hypergraph: " + goal.ToString());
+                            allGoalsCovered = false;
+                        }
+
+                        if (Utilities.PROBLEM_GEN_DEBUG)
+                        {
+                            System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + goal.ToString());
+                        }
+                    }
+                }
+            }
+
+            return allGoalsCovered;
+        }
+
+        //
         // Generate all forward and backward problems based on the template nodes in the input list
         //
         public KeyValuePair<List<Problem<Hypergraph.EdgeAnnotation>>, List<Problem<Hypergraph.EdgeAnnotation>>> Generate(List<Descriptor> descriptors,
@@ -57,7 +96,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                                                                                  Pebbler.HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> edgeDatabase,
                                                                                  int numGivens)
         {
-            System.Diagnostics.Debug.WriteLine("Forward");
+//            System.Diagnostics.Debug.WriteLine("Forward");
 
             List<int> clauseIndices = AcquireGoalIndices(goalClauses);
 
@@ -81,7 +120,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         private List<Problem<Hypergraph.EdgeAnnotation>> GenerateBackwardProblems(List<GroundedClause> goalClauses,
                                                                                   Pebbler.HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> edgeDatabase)
         {
-            System.Diagnostics.Debug.WriteLine("Backward");
+//            System.Diagnostics.Debug.WriteLine("Backward");
 
             List<int> clauseIndices = AcquireGoalIndices(goalClauses);
 
@@ -139,7 +178,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                     {
                         if (Utilities.PROBLEM_GEN_DEBUG)
                         {
-                            System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
+                            // System.Diagnostics.Debug.WriteLine("ERROR: Did not find precomputed node in the hypergraph: " + clause.ToString());
                         }
                     }
                     else

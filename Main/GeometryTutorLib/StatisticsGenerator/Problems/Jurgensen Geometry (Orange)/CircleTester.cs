@@ -16,7 +16,7 @@ namespace GeometryTutorLib.StatisticsGenerator
         //   |                |
         //D  |________________| C
         //
-        public CircleTester(bool onoff) : base(onoff)
+        public CircleTester(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 4); intrinsic.Add(a);
             Point m = new Point("M", 2, 4);  intrinsic.Add(m);

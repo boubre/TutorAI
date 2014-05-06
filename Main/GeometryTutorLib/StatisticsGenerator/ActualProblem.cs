@@ -8,6 +8,17 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         // Aggregation variables for all <figure, given, goal> pairings.
         //
+        public static int TotalPoints = 0;
+        public static int TotalSegments = 0;
+        public static int TotalInMiddle = 0;
+        public static int TotalIntersections = 0;
+        public static int TotalAngles = 0;
+        public static int TotalTriangles = 0;
+        public static int TotalQuadrilaterals = 0;
+        public static int TotalCircles = 0;
+        public static int TotalTotalProperties = 0;
+        public static int TotalExplicitFacts = 0;
+
         public static System.TimeSpan TotalTime = new System.TimeSpan();
         public static int TotalGoals = 0;
         public static int TotalProblemsGenerated = 0;
@@ -49,7 +60,11 @@ namespace GeometryTutorLib.StatisticsGenerator
 
         public bool problemIsOn { get; private set; }
 
-        public ActualProblem(bool runOrNot)
+        public const bool INCOMPLETE = false;
+        public const bool COMPLETE = true;
+        public bool isComplete;
+
+        public ActualProblem(bool runOrNot, bool comp)
         {
             intrinsic = new List<GroundedClause>();
             given = new List<GroundedClause>();
@@ -57,6 +72,8 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             problemName = "TODO: NAME ME" + this.GetType();
             problemIsOn = runOrNot;
+
+            isComplete = comp;
         }
 
         public void Run()
@@ -67,8 +84,58 @@ namespace GeometryTutorLib.StatisticsGenerator
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();
 
+            //
+            // If we know it's complete, keep that overridden completeness.
+            // Otherwise, determine completeness through analysis of the nodes in the hypergraph.
+            //
+            if (!this.isComplete) this.isComplete = figureStats.isComplete;
+
+            System.Diagnostics.Debug.WriteLine("Resultant Complete: " + this.isComplete +"\n");
+
+
+            // Calculate the final numbers: counts of the k-G Strictly interesting problems.
+            System.Text.StringBuilder str = new System.Text.StringBuilder();
+            for (int k = 1; k <= FigureStatisticsAggregator.MAX_K; k++)
+            {
+                str.Append(figureStats.kGcardinalities[k] + "\t");
+            }
+
+            if (this.isComplete)
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\complete.txt", true))
+                {
+                    file.WriteLine(str);
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\completeTime.txt", true))
+                {
+                    file.WriteLine(figureStats.stopwatch.Elapsed);
+                }
+            }
+            else
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\interesting.txt", true))
+                {
+                    file.WriteLine(str);
+                }
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\interestingTime.txt", true))
+                {
+                    file.WriteLine(figureStats.stopwatch.Elapsed);
+                }
+            }
+
             // Add to the cumulative statistics
             ActualProblem.TotalTime = ActualProblem.TotalTime.Add(figureStats.stopwatch.Elapsed);
+
+            ActualProblem.TotalPoints += figureStats.numPoints;
+            ActualProblem.TotalSegments += figureStats.numPoints;
+            ActualProblem.TotalInMiddle += figureStats.numInMiddle;
+            ActualProblem.TotalAngles += figureStats.numAngles;
+            ActualProblem.TotalTriangles += figureStats.numTriangles;
+            ActualProblem.TotalIntersections += figureStats.numIntersections;
+            ActualProblem.TotalTotalProperties += figureStats.totalProperties;
+
+            ActualProblem.TotalExplicitFacts += figureStats.totalExplicitFacts;
+
             ActualProblem.TotalGoals += goals.Count;
             ActualProblem.TotalProblemsGenerated += figureStats.totalProblemsGenerated;
             ActualProblem.TotalBackwardProblemsGenerated += figureStats.totalBackwardProblemsGenerated;
@@ -131,6 +198,17 @@ namespace GeometryTutorLib.StatisticsGenerator
             // Totals and Averages
             //
             statsString += this.problemName + ":\t";
+
+            statsString += figureStats.numPoints + "\t";
+            statsString += figureStats.numSegments + "\t";
+            statsString += figureStats.numInMiddle + "\t";
+            statsString += figureStats.numIntersections + "\t";
+            statsString += figureStats.numAngles + "\t";
+            statsString += figureStats.numTriangles + "\t";
+            statsString += figureStats.totalProperties + "\t";
+
+            statsString += figureStats.totalExplicitFacts + "\t";
+
             statsString += this.goals.Count + "\t";
             statsString += figureStats.totalBookProblemsGenerated + "\t";
             statsString += figureStats.totalProblemsGenerated + "\t";

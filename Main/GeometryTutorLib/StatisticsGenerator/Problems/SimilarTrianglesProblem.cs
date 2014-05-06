@@ -2,6 +2,6 @@
 {
     public abstract class SimilarTrianglesProblem : ActualProblem
     {
-        public SimilarTrianglesProblem(bool onoff) : base(onoff) { }
+        public SimilarTrianglesProblem(bool onoff, bool complete) : base(onoff, complete) { }
     }
 }

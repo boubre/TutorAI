@@ -11,8 +11,7 @@ namespace GeometryTutorLib.StatisticsGenerator
     //
     public class Page60Theorem22Extended : ParallelLinesProblem
     {
-        public Page60Theorem22Extended(bool onoff)
-            : base(onoff)
+        public Page60Theorem22Extended(bool onoff, bool complete) : base(onoff, complete)
         {
             problemName = "Page 60 Theorem 22 Extended";
 

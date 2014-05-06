@@ -27,11 +27,22 @@ namespace GeometryTestbed
             string header = "";
             header += "Problem #\t";
             header += "Name\t\t\t";
+            header += "Points\t";
+            header += "Segments\t";
+            header += "InMiddle\t";
+            header += "Intersections\t";
+            header += "Angles\t";
+            header += "Triangles\t";
+            header += "TotalProperties\t";
+
+            header += "Tot Explicit Facts\t";
+
             header += "# Book Probs\t";
             header += "# Probs\t";
             header += "# of Int Probs\t";
             header += "# of Strict Int Probs\t";
             header += "# Backward Probs\t";
+
             header += "Ave Width\t";
             header += "Ave Length\t";
             header += "Ave Deductive\t";
@@ -39,6 +50,7 @@ namespace GeometryTestbed
             header += "Ave Strict Length\t";
             header += "Ave Strict Deductive\t";
             header += "Time To Generate\t";
+
             header += "# Goal Partitions\t";
             header += "# Src Partitions\t\t";
             header += "Difficulty Partitions: ";
@@ -106,6 +118,20 @@ namespace GeometryTestbed
             output += "----------------------------------------- Summary -----------------------------------------\n";
 
             output += numFigures + "\t\t\t\t\t\t\t";
+
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalPoints + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSegments + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInMiddle + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalIntersections + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalAngles + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTriangles + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTotalProperties + "\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalPoints + "\t || ";
+            //output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalCircles + "\t";
+            //output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalQuadrilaterals + "\t";
+
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalExplicitFacts + "\t || ";
+
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalOriginalBookProblems + "\t";
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoals + "\t";
             output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemsGenerated + "\t";
@@ -129,7 +155,7 @@ namespace GeometryTestbed
 
             // Queries
             output += "\t" + GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoalPartitions + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t|\t";
+            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t||\t";
 
             // Query: Difficulty Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalDifficulty)
@@ -137,21 +163,21 @@ namespace GeometryTestbed
                 output += numProbs + "\t";
             }
 
-            output += "|\t";
+            output += "||\t";
             // Query: Strict Difficulty Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalStrictDifficulty)
             {
                 output += numProbs + "\t";
             }
 
-            output += "|\t";
+            output += "||\t";
             // Query: Interesting Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalInteresting)
             {
                 output += numProbs + "\t";
             }
 
-            output += "|\t";
+            output += "||\t";
             // Query: Strict Interesting Partitioning
             foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalStrictInteresting)
             {

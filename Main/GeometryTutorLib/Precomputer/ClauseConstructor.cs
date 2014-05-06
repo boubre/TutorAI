@@ -48,7 +48,13 @@ namespace GeometryTutorLib.Precomputer
                 if (clause is Point) points.Add(clause as Point);
             }
 
-            List<Quadrilateral> newQuadrilaterals = GenerateQuadrilateralClauses(clauses, segments);
+            // If points are unnamed, find them and add them to the list
+            //points.AddRange(GenerateAllImpliedSegmentSegmentIntersectionPoints(segments, points));
+
+            //
+            // Generate all polygons, angles, and intersections created by segments
+            //
+            List<Quadrilateral> newQuadrilaterals = new List<Quadrilateral>(); // GenerateQuadrilateralClauses(clauses, segments);
             List<Triangle> newTriangles = GenerateTriangleClauses(clauses, segments);
             List<Intersection> newIntersections = GenerateIntersectionClauses(newQuadrilaterals, newTriangles, segments, points);
             List<Angle> newAngles = GenerateAngleClauses(newIntersections);
@@ -66,6 +72,177 @@ namespace GeometryTutorLib.Precomputer
                     System.Diagnostics.Debug.WriteLine(gc.ToString());
                 }
             }
+
+            return newClauses;
+        }
+
+        //
+        // Add a point (uniquely) to the given list
+        //
+        private static Point AddImpliedPoint(List<Point> implied, Point p)
+        {
+            Point figPoint = Point.GetFigurePoint(p);
+
+            // If we have the point, don't generate it.
+            if (figPoint != null) return figPoint;
+
+            Point newPoint = PointFactory.GeneratePoint(p.X, p.Y);
+
+            // Add to this uniquely (based on structural equivalence)
+            bool found = false;
+            foreach (Point impPt in implied)
+            {
+                if (impPt.StructurallyEquals(newPoint))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) implied.Add(newPoint);
+
+            return newPoint;
+        }
+
+        //
+        // We need to know all points of intersections of all segments; if points are unnamed, add them to the list
+        //
+        private static List<Point> GenerateAllImpliedSegmentSegmentIntersectionPoints(List<Segment> segments, List<Point> points)
+        {
+            List<Point> impliedPoints = new List<Point>();
+
+            //
+            // Check all combinations of segments.
+            //
+            for (int s1 = 0; s1 < segments.Count - 1; s1++)
+            {
+                for (int s2 = s1 + 1; s2 < segments.Count; s2++)
+                {
+                    // Get the intersection and see if we have that point.
+                    Point intersection = segments[s1].FindIntersection(segments[s2]);
+
+                    if (intersection != null) AddImpliedPoint(impliedPoints, intersection);
+                }
+            }
+
+            return impliedPoints;
+        }
+
+        //
+        // We need to know all points of intersections between circles and segments; if points are unnamed, add them to the list.
+        //
+        private static List<GroundedClause> GenerateAllCircleSegmentIntersectionAndPoints(List<Segment> segments, List<Circle> circles, List<Point> points)
+        {
+            List<Point> impliedPoints = new List<Point>();
+            List<GroundedClause> newClauses = new List<GroundedClause>();
+
+            //
+            // Check all combinations of circles / segments.
+            //
+            foreach (Circle circle in circles)
+            {
+                foreach (Segment segment in segments)
+                {
+                    // Get the intersection and see if we have an actual intersection
+                    Point pt1 = null;
+                    Point pt2 = null;
+
+                    circle.FindIntersection(segment, out pt1, out pt2);
+
+                    if (pt1 != null) pt1 = AddImpliedPoint(impliedPoints, pt1);
+                    if (pt2 != null) pt2 = AddImpliedPoint(impliedPoints, pt2);
+
+                    // Check tangent
+                    if (pt1 != null && pt2 == null)
+                    {
+                        if (pt2 != null) newClauses.Add(new ArcSegmentIntersection(pt2, newArc, segment));
+                    }
+                    else
+                    {
+                        // Generate the arc
+                        MinorArc newArc = new MinorArc(circle, pt1, pt2);
+                        newClauses.Add(newArc);
+
+                        // There may be two new intersections between segment and circle
+                        if (pt1 != null) newClauses.Add(new ArcSegmentIntersection(pt1, newArc, segment));
+                        if (pt2 != null) newClauses.Add(new ArcSegmentIntersection(pt2, newArc, segment));
+                    }
+                }
+            }
+
+            impliedPoints.ForEach(point => newClauses.Add(point));
+
+            return newClauses;
+        }
+
+        //
+        // We need to know all points of intersections between circles and segments; if points are unnamed, add them to the list.
+        //
+        private static List<Point> GenerateAllImpliedCircleCircleIntersectionPoints(List<Circle> circles, List<Point> points)
+        {
+            List<Point> impliedPoints = new List<Point>();
+
+            //
+            // Check all combinations of segments.
+            //
+            for (int c1 = 0; c1 < circles.Count - 1; c1++)
+            {
+                for (int c2 = c1 + 1; c2 < circles.Count; c2++)
+                {
+                    // Get the intersection and see if we have an actual intersection
+                    Point pt1 = null;
+                    Point pt2 = null;
+
+                    circles[c1].FindIntersection(circles[c2], out pt1, out pt2);
+
+                    if (pt1 != null) pt1 = AddImpliedPoint(impliedPoints, pt1);
+                    if (pt2 != null) pt2 = AddImpliedPoint(impliedPoints, pt2);
+
+                    // Check tangent
+                    if (pt1 != null && pt2 == null)
+                    {
+                    }
+                    else
+                    {
+                        // Generate the arc
+                        MinorArc newArc1 = new MinorArc(circles[c1], pt1, pt2);
+                        MinorArc newArc2 = new MinorArc(circles[c2], pt1, pt2);
+                        newClauses.Add(newArc1);
+                        newClauses.Add(newArc2);
+
+                        // There may be two new intersections between segment and circle
+                        if (pt1 != null) newClauses.Add(new ArcSegmentIntersection(pt1, newArc, segment));
+                        if (pt2 != null) newClauses.Add(new ArcSegmentIntersection(pt2, newArc, segment));
+                    }
+                }
+            }
+
+            return impliedPoints;
+        }
+
+        public List<GroundedClause> GenerateAllImpliedCircleClauses(List<GroundedClause> clauses, bool problemIsOn)
+        {
+            List<GroundedClause> newClauses = new List<GroundedClause>();
+
+            //
+            // Find all the Segment, Circle, and Point objects
+            //
+            List<Segment> segments = new List<Segment>();
+            List<Point> points = new List<Point>();
+            List<Circle> circles = new List<Circle>();
+            foreach (GroundedClause clause in clauses)
+            {
+                if (clause is Segment) segments.Add(clause as Segment);
+                else if (clause is Point) points.Add(clause as Point);
+                else if (clause is Circle) circles.Add(clause as Circle);
+            }
+
+            //
+            // Find all the implied points due to intersectons as well as 
+            //
+
+
+            // Generate all clauses among a circle and a segment
+
 
             return newClauses;
         }
@@ -113,7 +290,7 @@ namespace GeometryTutorLib.Precomputer
         }
 
         //
-        // Generate all Triangle clauses based on segments
+        // Generate all Quadrilateral clauses based on segments
         //
         public static List<Quadrilateral> GenerateQuadrilateralClauses(List<GroundedClause> clauses, List<Segment> segments)
         {
@@ -179,7 +356,7 @@ namespace GeometryTutorLib.Precomputer
 
             // The left / right cannot cross; bowtie or hourglass shape
             intersection = left.FindIntersection(right);
-            
+
             // Check for parallel lines, then in-betweenness
             if (intersection != null && !double.IsNaN(intersection.X) && !double.IsNaN(intersection.Y))
             {
@@ -301,7 +478,7 @@ namespace GeometryTutorLib.Precomputer
 
                 vertex = triangle.SegmentB.SharedVertex(triangle.SegmentC);
                 AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentB, triangle.SegmentC));
-                
+
                 vertex = triangle.SegmentA.SharedVertex(triangle.SegmentC);
                 AddIntersection(newIntersections, new Intersection(vertex, triangle.SegmentA, triangle.SegmentC));
             }
@@ -471,7 +648,7 @@ namespace GeometryTutorLib.Precomputer
                     List<Point> majorArcPoints;
                     PartitionArcPoints(ordered, p1, p2, out minorArcPoints, out majorArcPoints);
 
-                    Arc newArc = new Arc(circle, ordered[p1], ordered[p2], minorArcPoints, majorArcPoints);
+                    MinorArc newArc = new MinorArc(circle, ordered[p1], ordered[p2], minorArcPoints, majorArcPoints);
                     newClauses.Add(newArc);
 
                     // Generate ArcInMiddle clauses.
@@ -497,8 +674,8 @@ namespace GeometryTutorLib.Precomputer
             // Traverse list and add to the appropriate list
             for (int i = 0; i < points.Count; i++)
             {
-                if (endpt1 < i && i < endpt2)  minorArcPoints.Add(points[i]);
-                else if (i < endpt1 || i > endpt2)  majorArcPoints.Add(points[i]);
+                if (endpt1 < i && i < endpt2) minorArcPoints.Add(points[i]);
+                else if (i < endpt1 || i > endpt2) majorArcPoints.Add(points[i]);
                 // else i == enpt1 || i == endpt2
             }
         }
@@ -536,7 +713,7 @@ namespace GeometryTutorLib.Precomputer
                 {
                     if (radianAngle > pointAngleMap[index].Key) break;
                 }
-                pointAngleMap.Insert(index, new KeyValuePair<double,Point>(radianAngle, point));
+                pointAngleMap.Insert(index, new KeyValuePair<double, Point>(radianAngle, point));
             }
 
             // Put all the points in the ordered list

@@ -7,60 +7,37 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Tangent : Descriptor
     {
-        public Circle circle { get; protected set; }
-        public Segment segment { get; protected set; }
+        public ArcIntersection intersection { get; protected set; }
 
-        // These may be null
-        public Intersection intersection { get; protected set; }
-        public Segment radius { get; protected set; }
-
-        public Tangent() : base() { }
-        public Tangent(Circle c, Segment tangent) : base()
+        public Tangent(ArcIntersection that) : base()
         {
-            circle = c;
-            segment = tangent;
+            if (!that.IsTangent())
+            {
+                throw new ArgumentException(that + " deduced tangent; it is NOT numerically.");
+            }
 
-        }
-
-        //public Tangent(Circle c, Segment tangent) : base()
-        //{
-        //    circle = c;
-        //    segment = tangent;
-        //    intersection = null;
-        //    radius = null;
-        //}
-
-        //
-        // If a radius exists from the point of tangency to the center, then an intersection is defined.
-        //
-        public bool DefinesIntersection()
-        {
-            return intersection == null || radius == null;
+            intersection = that;
         }
 
         public override bool StructurallyEquals(Object obj)
         {
             Tangent tangent = obj as Tangent;
             if (tangent == null) return false;
-            return this.circle.StructurallyEquals(tangent.circle) && this.segment.StructurallyEquals(tangent.segment);
+            return this.intersection.StructurallyEquals(tangent);
         }
 
         public override bool Equals(Object obj)
         {
             Tangent tangent = obj as Tangent;
             if (tangent == null) return false;
-            return this.circle.Equals(tangent.circle) && this.segment.Equals(tangent.segment) && base.Equals(obj);
+            return this.intersection.Equals(tangent);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {
-            return "Tangent(" + circle.ToString() + ", " + segment.ToString() + ") " + justification;
+            return "Tangent(" + intersection.ToString() + ") " + justification;
         }
     }
 }
