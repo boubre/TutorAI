@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
 {
     public class Simplification : GenericRule
     {
-        private static readonly string NAME = "Simplification";
+        //private static readonly string NAME = "Simplification";
 
         //
         // Given an equation, simplify algebraically using the following notions:

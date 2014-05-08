@@ -21,8 +21,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
-            if (obj is ArcArcIntersection) return (obj as ArcArcIntersection).StructurallyEquals(this);
-            if (obj is ArcSegmentIntersection) return (obj as ArcSegmentIntersection).StructurallyEquals(this);
+            if (obj is CircleCircleIntersection) return (obj as CircleCircleIntersection).StructurallyEquals(this);
+            if (obj is CircleSegmentIntersection) return (obj as CircleSegmentIntersection).StructurallyEquals(this);
 
             ArcIntersection inter = obj as ArcIntersection;
             if (inter == null) return false;
@@ -31,8 +31,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            if (obj is ArcArcIntersection) return (obj as ArcArcIntersection).Equals(this);
-            if (obj is ArcSegmentIntersection) return (obj as ArcSegmentIntersection).Equals(this);
+            if (obj is CircleCircleIntersection) return (obj as CircleCircleIntersection).Equals(this);
+            if (obj is CircleSegmentIntersection) return (obj as CircleSegmentIntersection).Equals(this);
 
             ArcIntersection inter = obj as ArcIntersection;
             if (inter == null) return false;

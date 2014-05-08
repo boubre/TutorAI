@@ -18,7 +18,7 @@ namespace GeometryTutorLib.GenericInstantiator
             candidateStrengthened.Clear();
         }
 
-        private static List<ArcSegmentIntersection> candidateIntersections = new List<ArcSegmentIntersection>();
+        private static List<CircleSegmentIntersection> candidateIntersections = new List<CircleSegmentIntersection>();
         private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
 
@@ -34,9 +34,9 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            if (clause is ArcSegmentIntersection)
+            if (clause is CircleSegmentIntersection)
             {
-                ArcSegmentIntersection newInter = clause as ArcSegmentIntersection;
+                CircleSegmentIntersection newInter = clause as CircleSegmentIntersection;
 
                 foreach (Perpendicular oldPerp in candidatePerpendicular)
                 {
@@ -54,7 +54,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Perpendicular newPerp = clause as Perpendicular;
 
-                foreach (ArcSegmentIntersection oldInter in candidateIntersections)
+                foreach (CircleSegmentIntersection oldInter in candidateIntersections)
                 {
                     newGrounded.AddRange(InstantiateTheorem(oldInter, newPerp, newPerp));
                 }
@@ -67,7 +67,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 if (!(newStreng.strengthened is Perpendicular)) return newGrounded;
 
-                foreach (ArcSegmentIntersection oldInter in candidateIntersections)
+                foreach (CircleSegmentIntersection oldInter in candidateIntersections)
                 {
                     newGrounded.AddRange(InstantiateTheorem(oldInter, newStreng.strengthened as Perpendicular, newStreng));
                 }
@@ -86,7 +86,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //       )   | A
         // Tangent(Circle(O, R), Segment(A, B)), Intersection(OS, AB) -> Perpendicular(Segment(A,B), Segment(O, S))
         //
-        private static List<EdgeAggregator> InstantiateTheorem(ArcSegmentIntersection inter, Perpendicular perp, GroundedClause original)
+        private static List<EdgeAggregator> InstantiateTheorem(CircleSegmentIntersection inter, Perpendicular perp, GroundedClause original)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 

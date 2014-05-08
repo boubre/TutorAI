@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
 {
     public class RelationTransitiveSubstitution : GenericRule
     {
-        private static readonly string NAME = "Relation Transitive Substitution";
+        //private static readonly string NAME = "Relation Transitive Substitution";
 
         // Transitivity of Parallel Lines
         private static List<GeometricParallel> geoParallel = new List<GeometricParallel>();

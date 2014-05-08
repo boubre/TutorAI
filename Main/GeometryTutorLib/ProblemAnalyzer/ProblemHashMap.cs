@@ -19,7 +19,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
         public int size { get; private set; }
         private Pebbler.HyperEdgeMultiMap<A> edgeDatabase;
         private readonly int MAX_GIVENS;
-        private readonly bool FORWARD_GENERATION;
+        // private readonly bool FORWARD_GENERATION;
         private readonly int DEFAULT_MAX_BACKWARD_GIVENS = 2;
 
         // If the user specifies the size, we will never have to rehash
@@ -33,7 +33,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             edgeDatabase = edges;
             MAX_GIVENS = maxGivens;
-            FORWARD_GENERATION = true;
+            // FORWARD_GENERATION = true;
         }
 
         public ProblemHashMap(Pebbler.HyperEdgeMultiMap<A> edges, int sz)
@@ -46,7 +46,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
             edgeDatabase = edges;
             MAX_GIVENS = DEFAULT_MAX_BACKWARD_GIVENS;
-            FORWARD_GENERATION = false;
+            // FORWARD_GENERATION = false;
         }
 
         public bool HasNodeBeenGenerated(int node) { return generated[node]; }

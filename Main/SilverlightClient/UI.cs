@@ -430,12 +430,17 @@ namespace LiveGeometry
         /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
-            //Execute Front-End Parse
+            // Execute Front-End Parse
             parser.Parse();
             UIDebugPublisher.clearWindow();
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.GetIntrinsics(), manageGivensWindow.GetGivens()); // <intrinsic, given>
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
+
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in manageGivensWindow.GetGivens())
+            {
+                UIDebugPublisher.publishString("Given: " + gc.ToString());
+            }
 
             //Example of UI Output to AI Window
             foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)

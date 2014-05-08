@@ -72,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Tangent newTangent = clause as Tangent;
 
-                if (!(newTangent.intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!(newTangent.intersection is CircleSegmentIntersection)) return newGrounded;
 
                 // 1 secant / 1 tangent
                 foreach (Intersection oldInter in candidateIntersection)
@@ -100,7 +100,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 Strengthened newStreng = clause as Strengthened;
 
                 if (!(newStreng.strengthened is Tangent)) return newGrounded;
-                if (!((newStreng.strengthened as Tangent).intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!((newStreng.strengthened as Tangent).intersection is CircleSegmentIntersection)) return newGrounded;
 
                 // 1 secant / 1 tangent
                 foreach (Intersection oldInter in candidateIntersection)
@@ -224,7 +224,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            ArcSegmentIntersection tan = tangent.intersection as ArcSegmentIntersection;
+            CircleSegmentIntersection tan = tangent.intersection as CircleSegmentIntersection;
 
             // Is the tangent segment part of the intersection?
             if (!inter.HasSegment(tan.segment)) return newGrounded;
@@ -302,8 +302,8 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            ArcSegmentIntersection tan1 = tangent1.intersection as ArcSegmentIntersection;
-            ArcSegmentIntersection tan2 = tangent2.intersection as ArcSegmentIntersection;
+            CircleSegmentIntersection tan1 = tangent1.intersection as CircleSegmentIntersection;
+            CircleSegmentIntersection tan2 = tangent2.intersection as CircleSegmentIntersection;
 
             // Do the tangents apply to the same circle?
             if (!tan1.arc.theCircle.StructurallyEquals(tan2.arc.theCircle)) return newGrounded;

@@ -38,7 +38,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Tangent newTangent = clause as Tangent;
 
-                if (!(newTangent.intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!(newTangent.intersection is CircleSegmentIntersection)) return newGrounded;
 
                 foreach (Intersection inter in candidateIntersections)
                 {
@@ -53,7 +53,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 if ((newStreng.strengthened is Tangent)) return newGrounded;
 
-                if (!((newStreng.strengthened as Tangent).intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!((newStreng.strengthened as Tangent).intersection is CircleSegmentIntersection)) return newGrounded;
 
                 foreach (Intersection inter in candidateIntersections)
                 {
@@ -94,7 +94,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            ArcSegmentIntersection tanInter = tangent.intersection as ArcSegmentIntersection;
+            CircleSegmentIntersection tanInter = tangent.intersection as CircleSegmentIntersection;
 
             // Does this tangent segment apply to this intersection?
             if (!inter.HasSegment(tanInter.segment)) return newGrounded;

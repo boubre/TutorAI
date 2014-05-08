@@ -96,7 +96,7 @@ namespace GeometryTutorLib
             // Validate that we have generated all of the original problems from the text.     NO GOALS; no validation
             // List<ProblemAnalyzer.Problem> generatedBookProblems = problemSpacePartitions.ValidateOriginalProblems(givens, goals);
 
-            if (Utilities.DEBUG) problemSpacePartitions.DumpPartitions();
+            if (Utilities.PROBLEM_GEN_DEBUG) problemSpacePartitions.DumpPartitions();
 
             //if (Utilities.DEBUG)
             //{

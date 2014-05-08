@@ -5,11 +5,11 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class ArcArcIntersection : ArcIntersection
+    public class CircleCircleIntersection : ArcIntersection
     {
         public Arc otherArc { get; protected set; }
 
-        public ArcArcIntersection(Point p, Arc a, Arc thatArc) : base(p, a)
+        public CircleCircleIntersection(Point p, Arc a, Arc thatArc) : base(p, a)
         {
             otherArc = thatArc;
 
@@ -45,7 +45,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
-            ArcArcIntersection inter = obj as ArcArcIntersection;
+            CircleCircleIntersection inter = obj as CircleCircleIntersection;
             if (inter == null) return false;
             return this.otherArc.StructurallyEquals(inter.otherArc) &&
                    this.intersect.StructurallyEquals(inter.intersect) &&
@@ -54,7 +54,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            ArcArcIntersection inter = obj as ArcArcIntersection;
+            CircleCircleIntersection inter = obj as CircleCircleIntersection;
             if (inter == null) return false;
             return this.otherArc.Equals(inter.otherArc) &&
                    this.intersect.Equals(inter.intersect) &&
@@ -65,7 +65,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "ArcArcIntersection(" + intersect.ToString() + ", " + arc.ToString() + ", " + otherArc.ToString() + ") " + justification;
+            return "CircleCircleIntersection(" + intersect.ToString() + ", " + arc.ToString() + ", " + otherArc.ToString() + ") " + justification;
         }
     }
 }

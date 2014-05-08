@@ -74,8 +74,8 @@
     <Compile Include="Area-Based Analyses\Region.cs" />
     <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcInMiddle.cs" />
     <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcIntersection.cs" />
-    <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcArcIntersection.cs" />
-    <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcSegmentIntersection.cs" />
+    <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\CircleCircleIntersection.cs" />
+    <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\CircleSegmentIntersection.cs" />
     <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcBisector.cs" />
     <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcSegmentBisector.cs" />
     <Compile Include="ConcreteAST\Desciptors\Arcs and Circles\ArcArcBisector.cs" />

@@ -174,7 +174,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
                                                  };
 
         private double[] COVERAGE_WEIGHTS; // Init in constructor based on the coverage factors stated in the array above
-        private readonly double MINIMUM_WEIGHTED_COVERAGE_FACTOR = 1; // Weighted %: [0, 1]
+        //private readonly double MINIMUM_WEIGHTED_COVERAGE_FACTOR = 1; // Weighted %: [0, 1]
 
         //
         // A problem is defined as interesting if:

@@ -41,7 +41,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Tangent newTangent = clause as Tangent;
 
-                if (!(newTangent.intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!(newTangent.intersection is CircleSegmentIntersection)) return newGrounded;
 
                 foreach (Intersection oldInter in candidateIntersections)
                 {
@@ -64,7 +64,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 if (newStreng.strengthened is Tangent) return newGrounded;
 
-                if (!((newStreng.strengthened as Tangent).intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!((newStreng.strengthened as Tangent).intersection is CircleSegmentIntersection)) return newGrounded;
 
                 foreach (Intersection oldInter in candidateIntersections)
                 {
@@ -112,8 +112,8 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!tangent1.intersection.arc.theCircle.StructurallyEquals(tangent2.intersection.arc.theCircle)) return newGrounded;
 
             // Do the tangents have components the are part of the third intersection
-            if (!inter.HasSegment((tangent1.intersection as ArcSegmentIntersection).segment)) return newGrounded;
-            if (!inter.HasSegment((tangent2.intersection as ArcSegmentIntersection).segment)) return newGrounded;
+            if (!inter.HasSegment((tangent1.intersection as CircleSegmentIntersection).segment)) return newGrounded;
+            if (!inter.HasSegment((tangent2.intersection as CircleSegmentIntersection).segment)) return newGrounded;
 
             Segment segment1 = Segment.GetFigureSegment(inter.intersect, tangent1.intersection.intersect);
             Segment segment2 = Segment.GetFigureSegment(inter.intersect, tangent2.intersection.intersect);

@@ -7,9 +7,9 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class ArcSegmentBisector : Bisector
     {
-        public ArcSegmentIntersection bisected { get; private set; }
+        public CircleSegmentIntersection bisected { get; private set; }
 
-        public ArcSegmentBisector(ArcSegmentIntersection b) : base()
+        public ArcSegmentBisector(CircleSegmentIntersection b) : base()
         {
             bisected = b;
         }

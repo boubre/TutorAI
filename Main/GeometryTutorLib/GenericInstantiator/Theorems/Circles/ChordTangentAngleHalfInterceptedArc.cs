@@ -56,7 +56,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Tangent tangent = clause as Tangent;
 
-                if (!(tangent.intersection is ArcSegmentIntersection)) return newGrounded;
+                if (!(tangent.intersection is CircleSegmentIntersection)) return newGrounded;
 
                 foreach (Intersection oldInter in candidateIntersection)
                 {
@@ -97,7 +97,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            ArcSegmentIntersection tan = tangent.intersection as ArcSegmentIntersection;
+            CircleSegmentIntersection tan = tangent.intersection as CircleSegmentIntersection;
 
             //
             // Does this tangent apply to this intersection?

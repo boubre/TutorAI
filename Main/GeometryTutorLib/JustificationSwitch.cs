@@ -118,6 +118,7 @@ namespace GeometryTutorLib
             EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS,
             TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS,
             TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES,
+            INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY,
 
             // General Switches
             CIRCLES,
@@ -256,6 +257,7 @@ namespace GeometryTutorLib
             justMap.Add(DeductionJustType.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS, new Assumption("Angle Measure of Exterior Angle is Half Difference of Intercepted Arcs", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS, new Assumption("Intersecting Chords Inside a Circle Create Angle Measure Half Sum of Intercepted Arc", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES, new Assumption("Two Insribed Angles have Equal Measure if they Intercept Same Arc", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY, new Assumption("Inscribed Quadrilateral has Supplementary Opposite Angles", Assumption.AssumptionType.Theorem));
         }
 
         public static bool RELATION_TRANSITIVE_SUBSTITUTION = true;
@@ -371,6 +373,7 @@ namespace GeometryTutorLib
         public static bool EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS = true;
         public static bool TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS = true;
         public static bool TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES = true;
+        public static bool INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY = true;
 
         //
         // General Switches
@@ -411,6 +414,7 @@ namespace GeometryTutorLib
                         JustificationSwitch.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS = false;
                         JustificationSwitch.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS = false;
                         JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES = false;
+                        JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY = false;
                     }
                     if (assumption.Key == DeductionJustType.QUADRILATERALS)
                     {
@@ -438,6 +442,7 @@ namespace GeometryTutorLib
                         JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT = false;
                         JustificationSwitch.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE = false;
                         JustificationSwitch.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES = false;
+                        JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY = false;
                     }
                     if (assumption.Key == DeductionJustType.TRIANGLE_CONGREUNCE)
                     {

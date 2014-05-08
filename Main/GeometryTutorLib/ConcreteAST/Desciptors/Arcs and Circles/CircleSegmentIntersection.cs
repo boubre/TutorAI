@@ -5,12 +5,12 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class ArcSegmentIntersection : ArcIntersection
+    public class CircleSegmentIntersection : ArcIntersection
     {
         public Segment segment { get; protected set; }
         private bool isTangent;
 
-        public ArcSegmentIntersection(Point p, Arc a, Segment thatSegment) : base(p, a)
+        public CircleSegmentIntersection(Point p, Arc a, Segment thatSegment) : base(p, a)
         {
             segment = thatSegment;
             isTangent = CalcTangency();
@@ -87,7 +87,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
-            ArcSegmentIntersection inter = obj as ArcSegmentIntersection;
+            CircleSegmentIntersection inter = obj as CircleSegmentIntersection;
             if (inter == null) return false;
             return this.segment.StructurallyEquals(inter.segment) &&
                    this.intersect.StructurallyEquals(inter.intersect) &&
@@ -96,7 +96,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            ArcSegmentIntersection inter = obj as ArcSegmentIntersection;
+            CircleSegmentIntersection inter = obj as CircleSegmentIntersection;
             if (inter == null) return false;
             return this.segment.Equals(inter.segment) &&
                    this.intersect.StructurallyEquals(inter.intersect) &&
@@ -107,7 +107,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "ArcSegmentIntersection(" + intersect.ToString() + ", " + arc.ToString() + ", " + segment.ToString() + ") " + justification;
+            return "CircleSegmentIntersection(" + intersect.ToString() + ", " + arc.ToString() + ", " + segment.ToString() + ") " + justification;
         }
     }
 }
