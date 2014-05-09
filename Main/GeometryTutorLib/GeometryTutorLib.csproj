@@ -143,6 +143,7 @@
     <Compile Include="Precomputer\ClauseConstructor.cs" />
     <Compile Include="Precomputer\PointFactory.cs" />
     <Compile Include="ProblemAnalyzer\MultiGoalProblem.cs" />
+    <Compile Include="ProblemDescription.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
     <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
     <Compile Include="StatisticsGenerator\ActualProblem.cs" />

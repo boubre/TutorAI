@@ -25,30 +25,20 @@ namespace GeometryTutorLib
         private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
         // private List<ConcreteAST.GroundedClause> goals;
 
-        public UIFigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs)
+        public UIFigureAnalyzerMain(ProblemDescription pdesc)
         {
+            //TEMPORARY: Convert pdesc into old intrinsic format
             figure = new List<ConcreteAST.GroundedClause>();
-
-            //
-            // Calculate all objects describing the figure
-            //
-            // Acquire all segments
-            foreach (ConcreteAST.GroundedClause gc in fs)
-            {
-                if (gc is ConcreteAST.Collinear)
-                {
-                    this.figure.AddRange(Precomputer.ClauseConstructor.GenerateSegmentClauses(gc as ConcreteAST.Collinear));
-                }
-                else
-                {
-                    this.figure.Add(gc);
-                }            
-            }
+            pdesc.points.ForEach((ConcreteAST.Point p) => figure.Add(p));
+            pdesc.inMiddles.ForEach((ConcreteAST.InMiddle im) => figure.Add(im));
+            pdesc.segments.ForEach((ConcreteAST.Segment s) => figure.Add(s));
+            pdesc.triangles.ForEach((ConcreteAST.Triangle t) => figure.Add(t));
+            //END TEMPORARY
 
             // Complete the object population by calculating intersections, angles, and triangles
-            this.figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(this.figure, true));
+            figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(figure, true));
             
-            this.givens = gs;
+            givens = pdesc.givens;
 
             // Create the precomputer object for coordinate-based pre-comutation analysis
             precomputer = new Precomputer.CoordinatePrecomputer(figure);

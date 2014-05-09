@@ -416,10 +416,16 @@ namespace LiveGeometry
         {
             if (!parseWorker.IsBusy)
             {
+                UIDebugPublisher.publishString("Starting Parse Process...");
+
                 parser = new DrawingParser(drawingHost.CurrentDrawing);
 
                 //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
+            }
+            else
+            {
+                UIDebugPublisher.publishString("Process Busy: Please wait for completion before starting a new parse.");
             }
         }
 
@@ -434,7 +440,7 @@ namespace LiveGeometry
             parser.Parse();
             UIDebugPublisher.clearWindow();
 
-            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.GetIntrinsics(), manageGivensWindow.GetGivens()); // <intrinsic, given>
+            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in manageGivensWindow.GetGivens())
@@ -447,6 +453,8 @@ namespace LiveGeometry
             {
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
+
+            UIDebugPublisher.publishString("Parse Complete.");
         }
 
         void DisplayParseOptions()
