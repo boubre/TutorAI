@@ -416,8 +416,6 @@ namespace LiveGeometry
         {
             if (!parseWorker.IsBusy)
             {
-                UIDebugPublisher.publishString("Starting Parse Process...");
-
                 parser = new DrawingParser(drawingHost.CurrentDrawing);
 
                 //Do parse and back-end computation on background worker
@@ -436,6 +434,8 @@ namespace LiveGeometry
         /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            UIDebugPublisher.publishString("Starting Parse Process...");
+
             // Execute Front-End Parse
             parser.Parse();
             UIDebugPublisher.clearWindow();

@@ -74,6 +74,7 @@ namespace LiveGeometry
             //calculateCircleIntersections();
 
             GenerateSegmentClauses();
+            GenerateAngleIntersectionPolygonClauses();
         }
 
         /// <summary>
@@ -748,6 +749,70 @@ namespace LiveGeometry
                     }
                 }
             }
+        }
+        
+        /// <summary>
+        /// Given a series of points, generate all objects associated with segments and InMiddles
+        /// </summary>
+        private void GenerateAngleIntersectionPolygonClauses()
+        {
+            List<GroundedClause> clauses = new List<GroundedClause>();
+            Points.ForEach((GeometryTutorLib.ConcreteAST.Point p) => clauses.Add(p));
+            InMiddles.ForEach((GeometryTutorLib.ConcreteAST.InMiddle im) => clauses.Add(im));
+            Segments.ForEach((GeometryTutorLib.ConcreteAST.Segment s) => clauses.Add(s));
+            Triangles.ForEach((GeometryTutorLib.ConcreteAST.Triangle t) => clauses.Add(t));
+
+            //Invoke clause constructor for now
+            List<GroundedClause> results = GeometryTutorLib.Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(clauses, true);
+
+            foreach (GroundedClause gc in results)
+            {
+                if (gc is Triangle)
+                {
+                    Triangles.Add(gc as Triangle);
+                }
+                else if (gc is Intersection)
+                {
+                    Intersections.Add(gc as Intersection);
+                }
+                else if (gc is Angle)
+                {
+                    Angles.Add(gc as Angle);
+                }
+            }
+
+            Triangles = RemoveDuplicates(Triangles);
+            Intersections = RemoveDuplicates(Intersections);
+            Angles = RemoveDuplicates(Angles);
+        }
+
+        private List<T> RemoveDuplicates<T>(List<T> list) where T : GroundedClause
+        {
+            List<T> cleanList = new List<T>();
+
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                if (list[i] != null)
+                {
+                    for (int j = i + 1; j < list.Count; j++)
+                    {
+                        if (list[j] != null && list[i].StructurallyEquals(list[j]))
+                        {
+                            list[j] = null;
+                        }
+                    }
+                }
+            }
+
+            foreach (T t in list)
+            {
+                if (t != null)
+                {
+                    cleanList.Add(t);
+                }
+            }
+
+            return cleanList;
         }
     }
 }
