@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiagonalsParallelogramBisectEachOther : Theorem
     {
         private readonly static string NAME = "Diagonals of a Parallelogram Bisect Each Other";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER);
 
         //     A _________________ B
         //      /                /

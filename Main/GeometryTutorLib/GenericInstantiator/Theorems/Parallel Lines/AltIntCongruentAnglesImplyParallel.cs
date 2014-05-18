@@ -12,7 +12,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AltIntCongruentAnglesImplyParallel : Theorem
     {
         private readonly static string ALT_INT_NAME = "Alternate Interior Angles Formed by a Transversal Imply Parallel Lines";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(ALT_INT_NAME, JustificationSwitch.ALT_INT_CONGRUENT_ANGLES_IMPLY_PARALLEL);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(ALT_INT_NAME, EngineUIBridge.JustificationSwitch.ALT_INT_CONGRUENT_ANGLES_IMPLY_PARALLEL);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<CongruentAngles> candAngles = new List<CongruentAngles>();

@@ -5,19 +5,19 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class CircleSegmentIntersection : ArcIntersection
+    public class CircleSegmentIntersection : CircleIntersection
     {
         public Segment segment { get; protected set; }
         private bool isTangent;
 
-        public CircleSegmentIntersection(Point p, Arc a, Segment thatSegment) : base(p, a)
+        public CircleSegmentIntersection(Point p, Circle circ, Segment thatSegment) : base(p, circ)
         {
             segment = thatSegment;
             isTangent = CalcTangency();
 
             // Find the intersection points
             Point pt1, pt2;
-            arc.theCircle.FindIntersection(segment, out pt1, out pt2);
+            theCircle.FindIntersection(segment, out pt1, out pt2);
             intersection1 = pt1;
             intersection2 = pt2;
         }
@@ -28,16 +28,16 @@ namespace GeometryTutorLib.ConcreteAST
         private bool CalcTangency()
         {
             // Is the segment tangent to the circle?
-            Segment radius = arc.theCircle.IsTangent(segment);
+            Segment radius = theCircle.IsTangent(segment);
 
             if (radius == null) return false;
 
             //
             // Is the radius inside the minor arc? That is, is the radius applicable to this arc or not?
             //
-            Point ptOnCircle = radius.OtherPoint(arc.theCircle.center);
+            Point ptOnCircle = radius.OtherPoint(theCircle.center);
 
-            return Arc.BetweenMinor(ptOnCircle, arc);
+            return Arc.BetweenMinor(ptOnCircle, new MinorArc(theCircle, intersection1, intersection2));
         }
 
         //
@@ -53,8 +53,8 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public void GetRadii(out Segment radius1, out Segment radius2)
         {
-            radius1 = arc.theCircle.GetRadius(new Segment(arc.theCircle.center, intersection1));
-            radius2 = arc.theCircle.GetRadius(new Segment(arc.theCircle.center, intersection1));
+            radius1 = theCircle.GetRadius(new Segment(theCircle.center, intersection1));
+            radius2 = theCircle.GetRadius(new Segment(theCircle.center, intersection2));
 
             // Make sure the first arg is non-null.
             if (radius1 == null && radius2 != null)
@@ -69,15 +69,23 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public override bool StandsOn()
         {
-            // Is one endpoint of the segment on the arc?
-            return Arc.BetweenMinor(segment.Point1, arc) || Arc.BetweenMinor(segment.Point2, arc);
+            // Is one endpoint of the segment on the circle?
+            return theCircle.PointIsOn(segment.Point1) || theCircle.PointIsOn(segment.Point2);
+        }
+
+        // Is Chord?
+        public bool IsChord()
+        {
+            // Are both endpoints of the segment on the circle?
+            return theCircle.PointIsOn(segment.Point1) && theCircle.PointIsOn(segment.Point2);
         }
 
         // If the segment / arc passes through this arc and extends outward.
         public override bool Crossing()
         {
             // Both endpoints are not on the arc.
-            return !Arc.BetweenMinor(segment.Point1, arc) && !Arc.BetweenMinor(segment.Point2, arc);
+            return (theCircle.PointIsExterior(segment.Point1) && theCircle.PointIsInterior(segment.Point2)) ||
+                   (theCircle.PointIsExterior(segment.Point2) && theCircle.PointIsInterior(segment.Point1));
         }
 
         public bool HasSegment(Segment thatSegment)
@@ -91,7 +99,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (inter == null) return false;
             return this.segment.StructurallyEquals(inter.segment) &&
                    this.intersect.StructurallyEquals(inter.intersect) &&
-                   this.arc.StructurallyEquals(inter.arc);
+                   this.theCircle.StructurallyEquals(inter.theCircle);
         }
 
         public override bool Equals(Object obj)
@@ -100,14 +108,14 @@ namespace GeometryTutorLib.ConcreteAST
             if (inter == null) return false;
             return this.segment.Equals(inter.segment) &&
                    this.intersect.StructurallyEquals(inter.intersect) &&
-                   this.arc.StructurallyEquals(inter.arc);
+                   this.theCircle.StructurallyEquals(inter.theCircle);
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {
-            return "CircleSegmentIntersection(" + intersect.ToString() + ", " + arc.ToString() + ", " + segment.ToString() + ") " + justification;
+            return "CircleSegmentIntersection(" + intersect.ToString() + ", " + theCircle.ToString() + ", " + segment.ToString() + ") " + justification;
         }
     }
 }

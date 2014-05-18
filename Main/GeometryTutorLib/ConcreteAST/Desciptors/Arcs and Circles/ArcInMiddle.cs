@@ -37,19 +37,6 @@ namespace GeometryTutorLib.ConcreteAST
         //    return this.point.StructurallyEquals(midpoint.point) && this.Arc.StructurallyEquals(midpoint.Arc);
         //}
 
-        //public override bool Covers(GroundedClause gc)
-        //{
-        //    return point.Covers(gc) || Arc.Covers(gc);
-        //}
-
-        //internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        //{
-        //    Indent(sb, tabDepth);
-        //    sb.Append("InMiddle");
-        //    sb.AppendLine();
-        //    point.BuildUnparse(sb, tabDepth + 1);
-        //    Arc.BuildUnparse(sb, tabDepth + 1);
-        //}
 
         public override int GetHashCode() { return base.GetHashCode(); }
 

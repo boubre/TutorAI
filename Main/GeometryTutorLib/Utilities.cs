@@ -11,7 +11,7 @@ namespace GeometryTutorLib
     {
         public static readonly bool OVERRIDE_DEBUG = true;
 
-        public static readonly bool DEBUG              = OVERRIDE_DEBUG && false;
+        public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
         public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && false;   // Hypergraph edges and pebbled nodes
         public static readonly bool PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating the actual problems
@@ -19,6 +19,74 @@ namespace GeometryTutorLib
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
+
+        //
+        // Given a list, remove duplicates
+        //
+        public static List<T> RemoveDuplicates<T>(List<T> list) where T : ConcreteAST.GroundedClause
+        {
+            List<T> cleanList = new List<T>();
+
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                if (list[i] != null)
+                {
+                    for (int j = i + 1; j < list.Count; j++)
+                    {
+                        if (list[j] != null && list[i].StructurallyEquals(list[j]))
+                        {
+                            list[j] = null;
+                        }
+                    }
+                }
+            }
+
+            foreach (T t in list)
+            {
+                if (t != null)
+                {
+                    cleanList.Add(t);
+                }
+            }
+
+            return cleanList;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static bool HasStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            foreach (T oldT in list)
+            {
+                if (oldT.StructurallyEquals(t)) return true;
+            }
+
+            return false;
+        }
+
+        //
+        // Given a list of grounded clauses, get the structurally unique.
+        //
+        public static T GetStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            foreach (T oldT in list)
+            {
+                if (oldT.StructurallyEquals(t)) return oldT;
+            }
+
+            return null;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static void AddStructurallyUnique<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            if (HasStructurally<T>(list, t)) return;
+
+            list.Add(t);
+        }
 
         // Given a sorted list, insert the element from the front to the back.
         public static void InsertAscendingOrdered(List<int> list, int value)
@@ -194,6 +262,18 @@ namespace GeometryTutorLib
             }
 
             return true;
+        }
+
+        // Is the list a subset of any of the sets in the list of lists?
+        public static bool ListHasSubsetOfSet<T>(List<List<T>> sets, List<T> theSet)
+        {
+            // Do not consider a new subset which contains an existent polygon.
+            foreach (List<T> set in sets)
+            {
+                if (Subset<T>(theSet, set)) return true;
+            }
+
+            return false;
         }
 
         // Is set1 \equals set2

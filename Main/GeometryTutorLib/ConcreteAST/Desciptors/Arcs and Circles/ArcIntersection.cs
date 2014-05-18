@@ -5,18 +5,22 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public abstract class ArcIntersection : Descriptor
+    public abstract class CircleIntersection : Descriptor
     {
+        // The actual point of intersection
         public Point intersect { get; protected set; }
-        public Arc arc { get; protected set; }
 
+        // The circle involved in the intersection
+        public Circle theCircle { get; protected set; }
+
+        // If applicable, the specific point(s) of intersections.
         public Point intersection1 { get; protected set; }
         public Point intersection2 { get; protected set; }
 
-        public ArcIntersection(Point p, Arc a) : base()
+        public CircleIntersection(Point p, Circle c) : base()
         {
             intersect = p;
-            arc = a;
+            theCircle = c;
         }
 
         public override bool StructurallyEquals(Object obj)
@@ -24,9 +28,9 @@ namespace GeometryTutorLib.ConcreteAST
             if (obj is CircleCircleIntersection) return (obj as CircleCircleIntersection).StructurallyEquals(this);
             if (obj is CircleSegmentIntersection) return (obj as CircleSegmentIntersection).StructurallyEquals(this);
 
-            ArcIntersection inter = obj as ArcIntersection;
+            CircleIntersection inter = obj as CircleIntersection;
             if (inter == null) return false;
-            return this.intersect.StructurallyEquals(inter.intersect) && this.arc.StructurallyEquals(inter.arc);
+            return this.intersect.StructurallyEquals(inter.intersect) && this.theCircle.StructurallyEquals(inter.theCircle);
         }
 
         public override bool Equals(Object obj)
@@ -34,16 +38,16 @@ namespace GeometryTutorLib.ConcreteAST
             if (obj is CircleCircleIntersection) return (obj as CircleCircleIntersection).Equals(this);
             if (obj is CircleSegmentIntersection) return (obj as CircleSegmentIntersection).Equals(this);
 
-            ArcIntersection inter = obj as ArcIntersection;
+            CircleIntersection inter = obj as CircleIntersection;
             if (inter == null) return false;
-            return this.intersect.Equals(inter.intersect) && this.arc.Equals(inter.arc);
+            return this.intersect.Equals(inter.intersect) && this.theCircle.Equals(inter.theCircle);
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {
-            return "GenericArcIntersection(" + intersect.ToString() + ", " + arc.ToString() + ") " + justification;
+            return "GenericCircleIntersection(" + intersect.ToString() + ", " + theCircle.ToString() + ") " + justification;
         }
 
         // If the other shape intersects at a single point and does not pass through the arc.
@@ -1062,19 +1066,6 @@ namespace GeometryTutorLib.ConcreteAST
     //        if (perp == null) return false;
     //        return intersect.Equals(perp.intersect) && ((lhs.StructurallyEquals(perp.lhs) && rhs.StructurallyEquals(perp.rhs)) ||
     //                                                    (lhs.StructurallyEquals(perp.rhs) && rhs.StructurallyEquals(perp.lhs)));
-    //    }
-
-    //    public override bool Covers(GroundedClause gc)
-    //    {
-    //        if (gc is Point) return intersect.Equals(gc as Point) || lhs.Covers(gc) || rhs.Covers(gc);
-    //        else if (gc is Segment) return lhs.Covers(gc) || rhs.Covers(gc);
-    //        // An intersection covers a triangle if a triangle covers the intersection (the intersection
-    //        // point is a vertex and a segment is a side of the triangle)
-    //        else if (gc is Triangle) return (gc as Triangle).Covers(this);
-
-    //        InMiddle im = gc as InMiddle;
-    //        if (im == null) return false;
-    //        return intersect.Covers(im.point) && (lhs.Covers(im.segment) || rhs.Covers(im.segment));
     //    }
 
     //    //

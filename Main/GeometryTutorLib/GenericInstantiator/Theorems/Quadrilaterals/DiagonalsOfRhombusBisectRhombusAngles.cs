@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiagonalsOfRhombusBisectRhombusAngles : Theorem
     {
         private readonly static string NAME = "Diagonals Of Rhombi Bisect Rhombus Angles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS);
 
         //  A __________  B
         //   |          |

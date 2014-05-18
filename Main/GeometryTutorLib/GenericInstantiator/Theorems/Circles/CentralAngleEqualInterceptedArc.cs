@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CentralAngleEqualInterceptedArc : Theorem
     {
         private readonly static string NAME = "The measure of a central angle is equal to the measure of its intercepted arc.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC);
 
         public static void Clear()
         {

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorIsPerpendicularBisectorInIsosceles : Theorem
     {
         private readonly static string NAME = "The bisector of the vertex angle of an isosceles triangle is perpendicular to the base at its midpoint.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES);
 
         private static List<IsoscelesTriangle> candidateIsosceles = new List<IsoscelesTriangle>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();

@@ -42,13 +42,6 @@ namespace GeometryTutorLib.ConcreteAST
             return shared;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Triangle) return st1.StructurallyEquals(gc) || st2.StructurallyEquals(gc);
-
-            return st1.Covers(gc) || st2.Covers(gc);
-        }
-
         public override bool StructurallyEquals(Object c)
         {
             SimilarTriangles sts = c as SimilarTriangles;
@@ -64,22 +57,15 @@ namespace GeometryTutorLib.ConcreteAST
             return (st1.Equals(sts.st1) && st2.Equals(sts.st2)) || (st1.Equals(sts.st2) && st2.Equals(sts.st1));
         }
 
-        public void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            //Console.WriteLine("To Be Implemented");
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
-        public override int GetHashCode()
-        {
-            //Change this if the objest is no longer immutable!!!
-            return base.GetHashCode();
-        }
+
 
         private static readonly string ANGLES_NAME = "Angles of Similar Triangles are Congruent";
         private static readonly string SEGMENTS_NAME = "Segments of Similar Triangles are Proportional";
 
-        private static Hypergraph.EdgeAnnotation angleAnnotation = new Hypergraph.EdgeAnnotation(ANGLES_NAME, JustificationSwitch.SIMILARITY);
-        private static Hypergraph.EdgeAnnotation segmentAnnotation = new Hypergraph.EdgeAnnotation(SEGMENTS_NAME, JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation angleAnnotation = new Hypergraph.EdgeAnnotation(ANGLES_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation segmentAnnotation = new Hypergraph.EdgeAnnotation(SEGMENTS_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
         //
@@ -158,7 +144,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string NAME = "Transitivity";
-        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_SIMILAR);
+        private static Hypergraph.EdgeAnnotation transAnnotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRANSITIVE_SIMILAR);
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveSimilarTriangles(SimilarTriangles simTris1, SimilarTriangles simTris2)
         {

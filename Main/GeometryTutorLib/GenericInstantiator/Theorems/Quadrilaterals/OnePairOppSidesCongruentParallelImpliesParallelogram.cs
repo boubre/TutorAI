@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class OnePairOppSidesCongruentParallelImpliesParallelogram : Theorem
     {
         private readonly static string NAME = "If One Pair of Opposite Sides of a Quadrilateral are Congruent and Parallel, then the quadrilateral is a Parallelogram";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM);
 
         // Reset saved data for another problem
         public static void Clear()

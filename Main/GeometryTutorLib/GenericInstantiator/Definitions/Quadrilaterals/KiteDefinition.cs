@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class KiteDefinition : Definition
     {
         private readonly static string NAME = "Definition of Kite";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.KITE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.KITE_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

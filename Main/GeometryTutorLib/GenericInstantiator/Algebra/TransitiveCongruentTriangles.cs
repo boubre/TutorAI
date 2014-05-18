@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransitiveCongruentTriangles : GenericRule
     {
         private static readonly string NAME = "Transitivity of Congruent Triangles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES);
 
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentTriangles> candidateGeoCongruentTriangles = new List<GeometricCongruentTriangles>();
@@ -85,7 +85,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Acquiring the triangle that links the congruences
             Triangle linkTriangle = firstTriangleCorrespondence != null ? cts2.ct1 : cts2.ct2;
-            List<Point> linkPts = linkTriangle.GetPoints();
+            List<Point> linkPts = linkTriangle.points;
 
             Dictionary<Point, Point> otherCorrGCTSpts = cts1.OtherTriangle(linkTriangle);
             Dictionary<Point, Point> otherCorrCTSpts = cts2.OtherTriangle(linkTriangle);

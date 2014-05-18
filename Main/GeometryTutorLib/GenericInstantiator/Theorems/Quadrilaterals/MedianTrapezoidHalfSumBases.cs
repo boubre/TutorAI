@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MedianTrapezoidHalfSumBases : Theorem
     {
         private readonly static string NAME = "The Median of a Trapezoid is Half the Length of the Sum of the Bases";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES);
 
         //  A    _______  B
         //      /       \

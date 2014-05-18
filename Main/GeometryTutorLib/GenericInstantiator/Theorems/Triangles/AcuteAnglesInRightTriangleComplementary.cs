@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AcuteAnglesInRightTriangleComplementary : Theorem
     {
         private readonly static string NAME = "The two acute angles in a right triangle are complementary.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY);
 
         //
         // In order for two triangles to be congruent, we require the following:

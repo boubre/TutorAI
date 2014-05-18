@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class OppositeAnglesOfParallelogramAreCongruent : Theorem
     {
         private readonly static string NAME = "Opposite Angles of a Parallelogram are Congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT);
 
         //     A _________________ B
         //      /                /

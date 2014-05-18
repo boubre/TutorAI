@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SASSimilarity : Theorem
     {
         private readonly static string NAME = "SAS Similarity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SAS_SIMILARITY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SAS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentAngles> candidateCongruentAngles = new List<CongruentAngles>();

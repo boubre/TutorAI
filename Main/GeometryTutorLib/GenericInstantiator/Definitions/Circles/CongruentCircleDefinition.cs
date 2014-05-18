@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentCircleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Congruent Circles";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CIRCLE_CONGRUENCE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CIRCLE_CONGRUENCE_DEFINITION);
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {

@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SSSSimilarity : Theorem
     {
         private readonly static string NAME = "SSS Similarity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SSS_SIMILARITY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SSS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<ProportionalSegments> candidateSegments = new List<ProportionalSegments>();

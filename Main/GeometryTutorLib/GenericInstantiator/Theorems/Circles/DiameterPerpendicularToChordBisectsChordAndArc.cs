@@ -9,16 +9,16 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiameterPerpendicularToChordBisectsChordAndArc : Theorem
     {
         private readonly static string NAME = "A Diameter perpendicular to a chord bisects the Chord and Arc";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS);
 
         public static void Clear()
         {
             candidateIntersections.Clear();
-            candidateArcIntersections.Clear();
+            candidateCircleIntersections.Clear();
         }
 
         private static List<Intersection> candidateIntersections = new List<Intersection>();
-        private static List<CircleSegmentIntersection> candidateArcIntersections = new List<CircleSegmentIntersection>();
+        private static List<CircleSegmentIntersection> candidateCircleIntersections = new List<CircleSegmentIntersection>();
 
         //               A
         //              |)
@@ -42,13 +42,13 @@ namespace GeometryTutorLib.GenericInstantiator
             }
             else if (clause is CircleSegmentIntersection)
             {
-                candidateArcIntersections.Add(clause as CircleSegmentIntersection);
+                candidateCircleIntersections.Add(clause as CircleSegmentIntersection);
             }
             else if (clause is Perpendicular)
             {
                 foreach (Intersection oldInter in candidateIntersections)
                 {
-                    foreach (CircleSegmentIntersection oldArcInter in candidateArcIntersections)
+                    foreach (CircleSegmentIntersection oldArcInter in candidateCircleIntersections)
                     {
                         newGrounded.AddRange(InstantiateTheorem(oldInter, oldArcInter, clause as Perpendicular, clause));
                     }
@@ -62,7 +62,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 
                 foreach (Intersection oldInter in candidateIntersections)
                 {
-                    foreach (CircleSegmentIntersection oldArcInter in candidateArcIntersections)
+                    foreach (CircleSegmentIntersection oldArcInter in candidateCircleIntersections)
                     {
                         newGrounded.AddRange(InstantiateTheorem(oldInter, oldArcInter, streng.strengthened as Perpendicular, clause));
                     }
@@ -132,7 +132,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Does the arc intersection apply?
             //
             if (!arcInter.HasSegment(diameter)) return newGrounded;
-            if (!theCircle.HasArc(arcInter.arc)) return newGrounded;
+            if (!theCircle.StructurallyEquals(arcInter.theCircle)) return newGrounded;
 
             //
             // Create the bisector

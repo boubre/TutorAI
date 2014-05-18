@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiagonalsOfRectangleAreCongruent : Theorem
     {
         private readonly static string NAME = "Diagonals Of Rectangles are Congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT);
 
         //  A ________________  B
         //   |                |

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AltitudeDefinition : Definition
     {
         private readonly static string NAME = "Definition of Altitude";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ALTITUDE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ALTITUDE_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

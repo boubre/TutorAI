@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MedianDefinition : Definition
     {
         private readonly static string NAME = "Definition of Median";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MEDIAN_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.MEDIAN_DEFINITION);
 
         private static List<Triangle> candidateTriangle = new List<Triangle>();
         private static List<SegmentBisector> candidateBisector = new List<SegmentBisector>();

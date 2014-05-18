@@ -57,16 +57,16 @@ namespace GeometryTutorLib.ConcreteAST
 
             return null;
         }
-        public static Point GetFigurePointOrCreate(Point candPoint)
-        {
-            // Get the existent point
-            Point p = GetFigurePoint(candPoint);
+        //public static Point GetFigurePointOrCreate(Point candPoint)
+        //{
+        //    // Get the existent point
+        //    Point p = GetFigurePoint(candPoint);
             
-            if (p != null) return p;
+        //    if (p != null) return p;
 
-            // Create a new point
-            return Precomputer.PointFactory.GeneratePoint(candPoint.X, candPoint.Y);
-        }
+        //    // Create a new point
+        //    return EngineUIBridge.PointFactory.GeneratePoint(candPoint.X, candPoint.Y);
+        //}
 
         /// <summary>
         /// Find the distance between two points
@@ -79,31 +79,15 @@ namespace GeometryTutorLib.ConcreteAST
             return System.Math.Sqrt(System.Math.Pow(p2.X - p1.X, 2) + System.Math.Pow(p2.Y - p1.Y, 2));
         }
 
-        internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("ConcretePoint [");
-            sb.Append(name);
-            sb.Append(": (");
-            sb.Append(X);
-            sb.Append(", ");
-            sb.Append(Y);
-            sb.Append(")]");
-            sb.AppendLine();
-        }
-
+        //
+        // One-dimensional betweeness
+        //
         public static bool Between(double val, double a, double b)
         {
             if (a >= val && val <= b) return true;
             if (b >= val && val <= a) return true;
 
             return false;
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
         }
 
         public override bool StructurallyEquals(Object obj)
@@ -123,19 +107,35 @@ namespace GeometryTutorLib.ConcreteAST
             return StructurallyEquals(obj); // && name.Equals(pt.name);
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Point) return this.Equals(gc as Point);
-
-            return false;
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         // Make a deep copy of this object; this is actually shallow, but is all that is required.
-        public override GroundedClause DeepCopy()
-        {
-            return (Point)(this.MemberwiseClone());
-        }
+        public override GroundedClause DeepCopy() { return (Point)(this.MemberwiseClone()); }
 
         public override string ToString() { return name + "(" + X + ", " + Y + ")"; }
+
+        /// <summary>
+        /// p1 < p2 : -1
+        /// p1 == p2 : 0
+        /// p1 > p2 : 1
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static int LexicographicOrdering(Point p1, Point p2)
+        {
+            // X's first
+            if (p1.X < p2.X) return -1;
+
+            if (p1.X > p2.X) return 1;
+
+            // Y's second
+            if (p1.Y < p2.Y) return -1;
+
+            if (p1.Y > p2.Y) return 1;
+
+            // Equal points
+            return 0;
+        }
     }
 }

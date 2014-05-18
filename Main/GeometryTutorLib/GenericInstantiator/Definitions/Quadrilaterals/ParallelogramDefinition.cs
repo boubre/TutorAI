@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ParallelogramDefinition : Definition
     {
         private readonly static string NAME = "Definition of Parallelogram";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.PARALLELOGRAM_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.PARALLELOGRAM_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

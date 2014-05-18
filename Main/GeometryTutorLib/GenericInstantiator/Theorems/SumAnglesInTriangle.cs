@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SumAnglesInTriangle : Theorem
     {
         private readonly static string NAME = "Sum of Measure of Three Angles in Triangle is 180";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SUM_ANGLES_IN_TRIANGLE_180);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SUM_ANGLES_IN_TRIANGLE_180);
 
         // 
         // Triangle(A, B, C) -> m\angle ABC + m\angle CAB + m\angle BCA = 180^o

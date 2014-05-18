@@ -26,16 +26,7 @@ namespace GeometryTutorLib.ConcreteAST
             return new KeyValuePair<Angle, Angle>(new Angle(interiorPt, vertex, exterioirPt1), new Angle(interiorPt, vertex, exterioirPt2));
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return angle.Covers(gc) || bisector.Covers(gc);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool StructurallyEquals(Object obj)
         {

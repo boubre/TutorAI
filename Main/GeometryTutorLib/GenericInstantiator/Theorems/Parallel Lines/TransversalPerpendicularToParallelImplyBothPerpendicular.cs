@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransversalPerpendicularToParallelImplyBothPerpendicular : Theorem
     {
         private readonly static string NAME = "If a transversal is perpendicular to one of two parallel lines, then it is perpendicular to the other one also.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSVERSAL_PERPENDICULAR_TO_PARALLEL_IMPLY_BOTH_PERPENDICULAR);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRANSVERSAL_PERPENDICULAR_TO_PARALLEL_IMPLY_BOTH_PERPENDICULAR);
 
         private static List<Perpendicular> candidatePerpendicular = new List<Perpendicular>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();

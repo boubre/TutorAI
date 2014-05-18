@@ -46,11 +46,6 @@ namespace GeometryTutorLib.ConcreteAST
             largerSegment.multiplier = 1;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return largerSegment.Covers(gc) || smallerSegment.Covers(gc);
-        }
-
         // Return the number of shared segments in both congruences
         public int SharesNumClauses(CongruentSegments thatCS)
         {
@@ -97,11 +92,7 @@ namespace GeometryTutorLib.ConcreteAST
             return smallerSegment.Equals(p.smallerSegment) && largerSegment.Equals(p.largerSegment) && base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public bool IsDistinctFrom(ProportionalSegments thatProp)
         {
@@ -138,7 +129,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         //
         private static readonly string ATOM_NAME = "Atomic Segment Equations are Proportional";
-        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation atomAnnotation = new Hypergraph.EdgeAnnotation(ATOM_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> InstantiateEquation(GroundedClause clause)
         {
@@ -171,7 +162,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string PROP_TRANS_NAME = "Segment Proportional / Congruence Transitivity";
-        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(ProportionalSegments pss, CongruentSegments conSegs)
         {
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
@@ -206,7 +197,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Convert a proportion to an equation: Proportional(Segment(A, M), Segment(M, C)) -> 2AM = MC
         //
         private static readonly string DEF_NAME = "Defintion of Proportional Segments";
-        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, JustificationSwitch.SIMILARITY);
+        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
 
         public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
         {

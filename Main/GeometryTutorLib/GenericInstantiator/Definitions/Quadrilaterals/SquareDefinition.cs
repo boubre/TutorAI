@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SquareDefinition : Definition
     {
         private readonly static string NAME = "Definition of Square";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SQUARE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SQUARE_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

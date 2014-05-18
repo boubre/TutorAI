@@ -27,16 +27,7 @@ namespace GeometryTutorLib.ConcreteAST
             cs2 = s2;
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
-
-        public override bool Covers(GroundedClause gc)
-        {
-            return cs1.Covers(gc) || cs2.Covers(gc);
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public Boolean HasSegment(Segment cs)
         {
@@ -83,11 +74,6 @@ namespace GeometryTutorLib.ConcreteAST
         public bool LinksTriangles(Triangle ct1, Triangle ct2)
         {
             return ct1.HasSegment(cs1) && ct2.HasSegment(cs2) || ct1.HasSegment(cs2) && ct2.HasSegment(cs1);
-        }
-
-        public void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            //Console.WriteLine("To Be Implemented");
         }
 
         public bool SharedVertex(CongruentSegments ccs)

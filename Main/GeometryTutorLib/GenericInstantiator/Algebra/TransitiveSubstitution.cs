@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TransitiveSubstitution : GenericRule
     {
         private static readonly string NAME = "Transitive Substitution";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_SUBSTITUTION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRANSITIVE_SUBSTITUTION);
 
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentSegments> geoCongSegments = new List<GeometricCongruentSegments>();

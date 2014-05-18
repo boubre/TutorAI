@@ -8,28 +8,22 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a quadrilateral (defined by 4 segments)
     /// </summary>
-    public class Quadrilateral : Figure
+    public class Quadrilateral : Polygon
     {
         public Point topLeft { get; private set; }
         public Point topRight { get; private set; }
         public Point bottomLeft { get; private set; }
         public Point bottomRight { get; private set; }
 
-        protected List<Point> points;
-
         public Segment left { get; private set; }
         public Segment right { get; private set; }
         public Segment top { get; private set; }
         public Segment bottom { get; private set; }
 
-        public List<Segment> segments { get; private set; }
-
         public Angle topLeftAngle { get; private set; }
         public Angle topRightAngle { get; private set; }
         public Angle bottomLeftAngle { get; private set; }
         public Angle bottomRightAngle { get; private set; }
-
-        public List<Angle> angles { get; private set; }
 
         //
         // Diagonals
@@ -57,11 +51,11 @@ namespace GeometryTutorLib.ConcreteAST
             this.top = top;
             this.bottom = bottom;
 
-            segments = new List<Segment>();
-            segments.Add(left);
-            segments.Add(right);
-            segments.Add(top);
-            segments.Add(bottom);
+            orderedSides = new List<Segment>();
+            orderedSides.Add(left);
+            orderedSides.Add(right);
+            orderedSides.Add(top);
+            orderedSides.Add(bottom);
 
             //
             // Points
@@ -120,6 +114,11 @@ namespace GeometryTutorLib.ConcreteAST
             addSuperFigureToDependencies();
         }
 
+        public Quadrilateral(List<Segment> segs) : this(segs[0], segs[1], segs[2], segs[3])
+        {
+            if (segs.Count != 4) throw new ArgumentException("Quadrilateral constructed with " + segs.Count + " segments.");
+        }
+
         protected void addSuperFigureToDependencies()
         {
             Utilities.AddUniqueStructurally(topLeft.getSuperFigures(), this);
@@ -176,7 +175,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool HasSide(Segment segment)
         {
-            foreach(Segment side in segments)
+            foreach(Segment side in orderedSides)
             {
                 if (side.StructurallyEquals(segment)) return true;
             }
@@ -286,7 +285,7 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Traverse given segments partitioning this quad into in / out.
             //
-            foreach (Segment side in segments)
+            foreach (Segment side in orderedSides)
             {
                 if (!inSegments.Contains(side))
                 {
@@ -532,7 +531,116 @@ namespace GeometryTutorLib.ConcreteAST
         public override int GetHashCode() { return base.GetHashCode(); }
 
 
+        //
+        // generate a Quadrilateral object, if the 4 segments construct a valid quadrilateral.
+        //
+        public static Quadrilateral GenerateQuadrilateral(List<Segment> segments)
+        {
+            if (segments.Count < 4) return null;
 
+            return GenerateQuadrilateral(segments[0], segments[1], segments[2], segments[3]);
+        }
+        public static Quadrilateral GenerateQuadrilateral(Segment s1, Segment s2, Segment s3, Segment s4)
+        {
+            //    ____
+            //   |
+            //   |____
+            // Check a C shape of 3 segments; the 4th needs to be opposite 
+            Segment top;
+            Segment bottom;
+            Segment left = AcquireMiddleSegment(s1, s2, s3, out top, out bottom);
+
+            // Check C for the top, bottom, and right sides
+            if (left == null) return null;
+
+            Segment right = s4;
+
+            Segment tempOut1, tempOut2;
+            Segment rightMid = AcquireMiddleSegment(top, bottom, right, out tempOut1, out tempOut2);
+
+            // The middle segment we acquired must match the 4th segment
+            if (!right.StructurallyEquals(rightMid)) return null;
+
+            //
+            // The top / bottom cannot cross; bowtie or hourglass shape
+            // A valid quadrilateral will have the intersections outside of the quad, that is defined
+            // by the order of the three points: intersection and two endpts of the side
+            //
+            Point intersection = top.FindIntersection(bottom);
+
+            // Check for parallel lines, then in-betweenness
+            if (intersection != null && !double.IsNaN(intersection.X) && !double.IsNaN(intersection.Y))
+            {
+                if (Segment.Between(intersection, top.Point1, top.Point2)) return null;
+                if (Segment.Between(intersection, bottom.Point1, bottom.Point2)) return null;
+            }
+
+            // The left / right cannot cross; bowtie or hourglass shape
+            intersection = left.FindIntersection(right);
+
+            // Check for parallel lines, then in-betweenness
+            if (intersection != null && !double.IsNaN(intersection.X) && !double.IsNaN(intersection.Y))
+            {
+                if (Segment.Between(intersection, left.Point1, left.Point2)) return null;
+                if (Segment.Between(intersection, right.Point1, right.Point2)) return null;
+            }
+
+            //
+            // Verify that we have 4 unique points; And not different shapes (like a star, or triangle with another segment)
+            //
+            List<Point> pts = new List<Point>();
+            pts.Add(left.SharedVertex(top));
+            pts.Add(left.SharedVertex(bottom));
+            pts.Add(right.SharedVertex(top));
+            pts.Add(right.SharedVertex(bottom));
+            for (int i = 0; i < pts.Count - 1; i++)
+            {
+                for (int j = i + 1; j < pts.Count; j++)
+                {
+                    if (pts[i].StructurallyEquals(pts[j]))
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return new Quadrilateral(left, right, top, bottom);
+        }
+
+        //            top
+        // shared1  _______   off1
+        //         |
+        //   mid   |
+        //         |_________   off2
+        //            bottom
+        private static Segment AcquireMiddleSegment(Segment seg1, Segment seg2, Segment seg3, out Segment top, out Segment bottom)
+        {
+            if (seg1.SharedVertex(seg2) != null && seg1.SharedVertex(seg3) != null)
+            {
+                top = seg2;
+                bottom = seg3;
+                return seg1;
+            }
+
+            if (seg2.SharedVertex(seg1) != null && seg2.SharedVertex(seg3) != null)
+            {
+                top = seg1;
+                bottom = seg3;
+                return seg2;
+            }
+
+            if (seg3.SharedVertex(seg1) != null && seg3.SharedVertex(seg2) != null)
+            {
+                top = seg1;
+                bottom = seg2;
+                return seg3;
+            }
+
+            top = null;
+            bottom = null;
+
+            return null;
+        }
 
 
         //public bool HasSegment(Segment segment)
@@ -631,18 +739,6 @@ namespace GeometryTutorLib.ConcreteAST
         //    segments.Add(SegmentB);
         //    segments.Add(SegmentC);
         //    return segments;
-        //}
-
-        //internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        //{
-        //    Indent(sb, tabDepth);
-        //    sb.Append("ConcreteTriangle [right=");
-        //    sb.Append(isRight);
-        //    sb.Append(']');
-        //    sb.AppendLine();
-        //    SegmentA.BuildUnparse(sb, tabDepth + 1);
-        //    SegmentB.BuildUnparse(sb, tabDepth + 1);
-        //    SegmentC.BuildUnparse(sb, tabDepth + 1);
         //}
 
         ///// <summary>
@@ -1302,8 +1398,8 @@ namespace GeometryTutorLib.ConcreteAST
         //{
         //    if (!this.StructurallyEquals(thatTriangle)) return null;
 
-        //    List<Point> thatTrianglePts = thatTriangle.GetPoints();
-        //    List<Point> thisTrianglePts = this.GetPoints();
+        //    List<Point> thatTrianglePts = thatTriangle.points;
+        //    List<Point> thisTrianglePts = this.points;
 
         //    // Find the index of the first point (in this Quadrilateral) 
         //    int i = 0;

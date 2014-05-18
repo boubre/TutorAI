@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GeometryTutorLib.ConcreteAST;
 using LiveGeometry;
+using LiveGeometry.TutorParser;
 
 namespace DynamicGeometry.UI.GivenWindow
 {
@@ -10,7 +11,7 @@ namespace DynamicGeometry.UI.GivenWindow
     {
         protected string givenName;
         protected List<GroundedClause> currentGivens;
-        protected DrawingParser parser;
+        protected DrawingParserMain parser;
 
         public Result WindowResult { get; private set; }
         public GroundedClause Clause { get; private set; }
@@ -93,7 +94,7 @@ namespace DynamicGeometry.UI.GivenWindow
         /// </summary>
         /// <param name="parser">A Drawing Parser initialized with the current drawing. (This method will call Parse)</param>
         /// <param name="currentGivens">A list of all the current givens.</param>
-        public void Show(DrawingParser parser, List<GroundedClause> currentGivens)
+        public void Show(DrawingParserMain parser, List<GroundedClause> currentGivens)
         {
             this.parser = parser;
             this.currentGivens = currentGivens;

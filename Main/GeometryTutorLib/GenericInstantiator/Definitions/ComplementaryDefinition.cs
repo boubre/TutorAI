@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ComplementaryDefinition : Definition
     {
         private readonly static string NAME = "Definition of Complementary";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.COMPLEMENTARY_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.COMPLEMENTARY_DEFINITION);
 
         //
         // This implements forward and Backward instantiation

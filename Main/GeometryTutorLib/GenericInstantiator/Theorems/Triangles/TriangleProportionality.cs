@@ -12,7 +12,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TriangleProportionality : Theorem
     {
         private readonly static string NAME = "A Line Parallel to One Side of a Triangle and Intersects the Other Two Sides, then it Divides the Sides Proportionally";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRIANGLE_PROPORTIONALITY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRIANGLE_PROPORTIONALITY);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Triangle> candTriangle = new List<Triangle>();

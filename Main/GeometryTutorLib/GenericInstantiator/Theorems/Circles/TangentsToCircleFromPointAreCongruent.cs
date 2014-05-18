@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TangentsToCircleFromPointAreCongruent : Theorem
     {
         private readonly static string NAME = "Tangents to a circle from a point are congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT);
 
         public static void Clear()
         {
@@ -109,7 +109,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do the tangents apply to the same circle?
-            if (!tangent1.intersection.arc.theCircle.StructurallyEquals(tangent2.intersection.arc.theCircle)) return newGrounded;
+            if (!tangent1.intersection.theCircle.StructurallyEquals(tangent2.intersection.theCircle)) return newGrounded;
 
             // Do the tangents have components the are part of the third intersection
             if (!inter.HasSegment((tangent1.intersection as CircleSegmentIntersection).segment)) return newGrounded;

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiagonalsBisectEachOtherImplyParallelogram : Theorem
     {
         private readonly static string NAME = "If Diagonals of a Quadrilateral Bisect Each Other, then the Quadrilateral is a Parallelogram ";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM);
 
         public static void Clear()
         {

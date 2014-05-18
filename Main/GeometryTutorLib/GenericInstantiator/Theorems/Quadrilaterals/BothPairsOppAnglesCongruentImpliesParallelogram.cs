@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class BothPairsOppAnglesCongruentImpliesParallelogram : Theorem
     {
         private readonly static string NAME = "If Both Pairs of Opposite Angles of a Quadrilateral are Congruent, then the quadrilateral is a Parallelogram";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM);
 
         // Reset saved data for another problem
         public static void Clear()

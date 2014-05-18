@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ExteriorAngleHalfDifferenceInterceptedArcs : Theorem
     {
         private readonly static string NAME = "The measure of an angle formed by two secants, two tangents, or a secant and a tangent drawm from a point outside a circle is equal to half the difference of the measure of the intercepted arcs.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS);
 
         public static void Clear()
         {
@@ -232,7 +232,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Acquire the chord that the intersection creates.
             Segment secant = inter.OtherSegment(tan.segment);
 
-            Circle circle = tan.arc.theCircle;
+            Circle circle = tan.theCircle;
             Segment chord = circle.ContainsChord(secant);
 
             //
@@ -306,9 +306,9 @@ namespace GeometryTutorLib.GenericInstantiator
             CircleSegmentIntersection tan2 = tangent2.intersection as CircleSegmentIntersection;
 
             // Do the tangents apply to the same circle?
-            if (!tan1.arc.theCircle.StructurallyEquals(tan2.arc.theCircle)) return newGrounded;
+            if (!tan1.theCircle.StructurallyEquals(tan2.theCircle)) return newGrounded;
 
-            Circle circle = tan1.arc.theCircle;
+            Circle circle = tan1.theCircle;
 
             // Do these tangents work with this intersection?
             if (!inter.HasSegment(tan1.segment) || !inter.HasSegment(tan2.segment)) return newGrounded;

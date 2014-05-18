@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleAdditionAxiom : Axiom
     {
         private readonly static string NAME = "Angle Addition Axiom";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLE_ADDITION_AXIOM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ANGLE_ADDITION_AXIOM);
 
         // Candidate angles
         private static List<Angle> unifyCandAngles = new List<Angle>();

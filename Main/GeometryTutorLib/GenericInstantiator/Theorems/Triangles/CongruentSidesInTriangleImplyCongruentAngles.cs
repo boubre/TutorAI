@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentSidesInTriangleImplyCongruentAngles : Theorem
     {
         private readonly static string NAME = "If two segments of a triangle are congruent, then the angles opposite those segments are congruent.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES);
 
         private static List<CongruentSegments> candSegs = new List<CongruentSegments>();
         private static List<Triangle> candTris = new List<Triangle>();

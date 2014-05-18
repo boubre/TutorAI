@@ -19,11 +19,6 @@ namespace GeometryTutorLib.ConcreteAST
             angle2 = ang2;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return angle1.Covers(gc) || angle2.Covers(gc);
-        }
-
         // Return the shared angle in both congruences
         public Angle AngleShared(AnglePairRelation relation)
         {
@@ -57,11 +52,7 @@ namespace GeometryTutorLib.ConcreteAST
             return angle1.Equates(thatAngle) || angle2.Equates(thatAngle);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool StructurallyEquals(Object obj)
         {

@@ -9,10 +9,10 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MinorArcsCongruentIfCentralAnglesCongruent : Theorem
     {
         private readonly static string FORWARD_NAME = "If Central Angles are Congruent then Minor Arcs are Congruent";
-        private static Hypergraph.EdgeAnnotation forwardAnnotation = new Hypergraph.EdgeAnnotation(FORWARD_NAME, JustificationSwitch.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation forwardAnnotation = new Hypergraph.EdgeAnnotation(FORWARD_NAME, EngineUIBridge.JustificationSwitch.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT);
 
         private readonly static string CONVERSE_NAME = "If Minor Arcs are Congruent then Central Angles are Congruent";
-        private static Hypergraph.EdgeAnnotation converseAnnotation = new Hypergraph.EdgeAnnotation(CONVERSE_NAME, JustificationSwitch.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation converseAnnotation = new Hypergraph.EdgeAnnotation(CONVERSE_NAME, EngineUIBridge.JustificationSwitch.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT);
 
         public static void Clear()
         {

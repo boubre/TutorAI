@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AnglesOfEqualMeasureAreCongruent : Axiom
     {
         private readonly static string NAME = "Angles of Equal Measure Are Congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT);
 
         private static List<AngleEquation> candiateAngleEquations = new List<AngleEquation>();
 

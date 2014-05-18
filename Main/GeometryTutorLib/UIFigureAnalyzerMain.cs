@@ -25,7 +25,7 @@ namespace GeometryTutorLib
         private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
         // private List<ConcreteAST.GroundedClause> goals;
 
-        public UIFigureAnalyzerMain(ProblemDescription pdesc)
+        public UIFigureAnalyzerMain(EngineUIBridge.ProblemDescription pdesc)
         {
             //TEMPORARY: Convert pdesc into old intrinsic format
             figure = new List<ConcreteAST.GroundedClause>();
@@ -36,7 +36,7 @@ namespace GeometryTutorLib
             //END TEMPORARY
 
             // Complete the object population by calculating intersections, angles, and triangles
-            figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(figure, true));
+            //figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(figure, true));
             
             givens = pdesc.givens;
 
@@ -45,7 +45,7 @@ namespace GeometryTutorLib
             instantiator = new GenericInstantiator.Instantiator();
             queryVector = new ProblemAnalyzer.QueryFeatureVector();
 
-            JustificationSwitch.SetAssumptions(Assumption.GetAssumptions());
+            EngineUIBridge.JustificationSwitch.SetAssumptions(EngineUIBridge.Assumption.GetAssumptions());
         }
 
         // Returns: <number of interesting problems, number of original problems generated>

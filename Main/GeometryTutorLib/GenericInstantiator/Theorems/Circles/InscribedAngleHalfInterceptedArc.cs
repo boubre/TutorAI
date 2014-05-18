@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class InscribedAngleHalfInterceptedArc : Theorem
     {
         private readonly static string NAME = "The measure of an inscribed angle is equal to half the measure of its intercepted arc.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC);
 
         public static void Clear()
         {

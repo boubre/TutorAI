@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class DiagonalsOfRhombusArePerpendicular : Theorem
     {
         private readonly static string NAME = "Diagonals Of Rhombi are Perpendicular";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR);
 
         //  A __________  B
         //   |          |

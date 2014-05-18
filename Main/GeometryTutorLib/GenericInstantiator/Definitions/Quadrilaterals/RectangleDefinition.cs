@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class RectangleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Rectangle";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.RECTANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.RECTANGLE_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

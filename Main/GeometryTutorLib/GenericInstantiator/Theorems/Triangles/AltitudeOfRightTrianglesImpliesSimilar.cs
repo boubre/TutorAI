@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AltitudeOfRightTrianglesImpliesSimilar : Theorem
     {
         private readonly static string NAME = "If the altitude is drawn to the hypotenuse of a right triangle, then the two triangles formed are similar to the original triangle and to each other.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR);
 
         private static List<Altitude> candidateAltitudes = new List<Altitude>();
         private static List<RightTriangle> candRightTriangles = new List<RightTriangle>();

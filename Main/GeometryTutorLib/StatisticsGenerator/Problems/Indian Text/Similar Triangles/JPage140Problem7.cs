@@ -10,6 +10,8 @@ namespace GeometryTutorLib.StatisticsGenerator
         {
             problemName = "Book J Page 140 Problem 7";
 
+            List<Point> points = new List<Point>();
+            List<Collinear> collinear = new List<Collinear>();
 
             Point a = new Point("A", 0, 0);    intrinsic.Add(a);
             Point b = new Point("B", 18, 0);   intrinsic.Add(b);
@@ -44,7 +46,10 @@ namespace GeometryTutorLib.StatisticsGenerator
             pts.Add(b);
             Collinear coll4 = new Collinear(pts);
 
-            intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll1));
+            using Li
+            LiveGeometry.TutorParser.
+
+            intrinsic.AddRange( ClauseConstructor.GenerateSegmentClauses(coll1));
             intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll2));
             intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll3));
             intrinsic.AddRange(ClauseConstructor.GenerateSegmentClauses(coll4));

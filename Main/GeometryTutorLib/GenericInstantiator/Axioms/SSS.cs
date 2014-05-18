@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SSS : CongruentTriangleAxiom
     {
         private readonly static string NAME = "SSS";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SSS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SSS);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentSegments> candidateSegments = new List<CongruentSegments>();

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class BaseAnglesIsoscelesTrapezoidCongruent : Theorem
     {
         private readonly static string NAME = "Base Angles of Isosceles Trapezoid are Congruent";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT);
 
         //  A    _______  B
         //      /       \

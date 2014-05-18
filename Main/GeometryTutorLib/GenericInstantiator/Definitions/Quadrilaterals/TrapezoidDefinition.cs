@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TrapezoidDefinition : Definition
     {
         private readonly static string NAME = "Definition of Trapezoid";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRAPEZOID_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRAPEZOID_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

@@ -16,13 +16,6 @@ namespace GeometryTutorLib.ConcreteAST
             ct2 = t2;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Triangle) return ct1.StructurallyEquals(gc) || ct2.StructurallyEquals(gc);
-
-            return ct1.Covers(gc) || ct2.Covers(gc);
-        }
-
         public override bool StructurallyEquals(Object c)
         {
             CongruentTriangles cts = c as CongruentTriangles;
@@ -80,8 +73,8 @@ namespace GeometryTutorLib.ConcreteAST
         private bool VerifyMappingOrder(KeyValuePair<Triangle, Triangle> pair1, KeyValuePair<Triangle, Triangle> pair2)
         {
             // Determine how the points are mapped from thisTriangle to thatTriangle
-            List<Point> triangle11Pts = pair1.Key.GetPoints();
-            List<Point> triangle12Pts = pair1.Value.GetPoints();
+            List<Point> triangle11Pts = pair1.Key.points;
+            List<Point> triangle12Pts = pair1.Value.points;
 
             int[] indexMap = new int[3];
             for (int p11 = 0; p11 < triangle11Pts.Count; p11++)
@@ -97,8 +90,8 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             // Verify that the second pairing maps the exact same way as the first pairing
-            List<Point> triangle21Pts = pair2.Key.GetPoints();
-            List<Point> triangle22Pts = pair2.Value.GetPoints();
+            List<Point> triangle21Pts = pair2.Key.points;
+            List<Point> triangle22Pts = pair2.Value.points;
             for (int i = 0; i < indexMap.Length; i++)
             {
                 if (!triangle21Pts[i].StructurallyEquals(triangle22Pts[indexMap[i]])) return false;
@@ -114,8 +107,8 @@ namespace GeometryTutorLib.ConcreteAST
             Dictionary<Point, Point> correspondence = this.ct1.PointsCorrespond(thatTriangle);
             Dictionary<Point, Point> otherCorrespondence = new Dictionary<Point, Point>();
 
-            List<Point> ct1Pts = this.ct1.GetPoints();
-            List<Point> ct2Pts = this.ct2.GetPoints();
+            List<Point> ct1Pts = this.ct1.points;
+            List<Point> ct2Pts = this.ct2.points;
 
             // Acquire correspondence between thatTriangle and the other triangle (ct2)
             if (correspondence != null)
@@ -157,11 +150,6 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        public void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            //Console.WriteLine("To Be Implemented");
-        }
-
         public override int GetHashCode()
         {
             //Change this if the object is no longer immutable!!!
@@ -180,7 +168,7 @@ namespace GeometryTutorLib.ConcreteAST
 
 
         private static readonly string CPCTC_NAME = "CPCTC";
-        private static Hypergraph.EdgeAnnotation cpctcAnnotation = new Hypergraph.EdgeAnnotation(CPCTC_NAME, JustificationSwitch.TRIANGLE_CONGREUNCE);
+        private static Hypergraph.EdgeAnnotation cpctcAnnotation = new Hypergraph.EdgeAnnotation(CPCTC_NAME, EngineUIBridge.JustificationSwitch.TRIANGLE_CONGREUNCE);
 
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
@@ -291,8 +279,8 @@ namespace GeometryTutorLib.ConcreteAST
             // Ensure the points are ordered appropriately.
             // CongruentTriangle ensures points are mapped.
 
-            List<Angle> triOneAngles = ct1.GetAngles();
-            List<Angle> triTwoAngles = ct2.GetAngles();
+            List<Angle> triOneAngles = ct1.angles;
+            List<Angle> triTwoAngles = ct2.angles;
 
             orderedTriOnePts = new List<Point>();
             orderedTriTwoPts = new List<Point>();

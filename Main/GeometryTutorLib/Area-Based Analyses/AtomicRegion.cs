@@ -39,9 +39,10 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             str.Append("AtomicRegion: {");
 
-            foreach (GeometryTutorLib.ConcreteAST.Figure shape in constituentShapes)
+            for (int s = 0; s < constituentShapes.Count; s++)
             {
-                str.Append(shape + ", ");
+                str.Append(constituentShapes[s].ToString());
+                if (s == constituentShapes.Count-1) str.Append(", ");
             }
 
             str.AppendLine(" }");

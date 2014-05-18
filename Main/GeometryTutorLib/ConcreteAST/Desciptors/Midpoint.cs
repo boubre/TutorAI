@@ -10,10 +10,6 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public class Midpoint : InMiddle
     {
-        //public Point midpoint { get; private set; }
-        //public Segment segment { get; private set; }
-
-        //public Midpoint(Point mid, Segment seg) : base(mid, seg, just) { }
         public Midpoint(InMiddle im) : base(im.point, im.segment) { }
 
         public override bool StructurallyEquals(Object obj)
@@ -24,16 +20,6 @@ namespace GeometryTutorLib.ConcreteAST
             return point.StructurallyEquals(midptObj.point) && segment.StructurallyEquals(midptObj.segment);
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Point) return point.Equals(gc as Point) || segment.Covers(gc);
-            else if (gc is Segment) return segment.Covers(gc);
-
-            InMiddle im = gc as InMiddle;
-            if (im == null) return false;
-            return point.Covers(im.point) && segment.Covers(im.segment);
-        }
-
         public override bool Equals(Object obj)
         {
             Midpoint midptObj = obj as Midpoint;
@@ -41,15 +27,11 @@ namespace GeometryTutorLib.ConcreteAST
             return point.Equals(midptObj.point) && segment.Equals(midptObj.segment) && base.Equals(obj);
         }
 
+        public override int GetHashCode() { return base.GetHashCode(); }
+
         public override string ToString()
         {
             return "Midpoint(" + point.ToString() + ", " + segment.ToString() + ") " + justification;
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
         }
     }
 }

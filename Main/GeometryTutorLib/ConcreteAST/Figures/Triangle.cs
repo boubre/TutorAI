@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a triangle, which consists of 3 segments
     /// </summary>
-    public class Triangle : Figure
+    public class Triangle : Polygon
     {
         public Point Point1 { get; private set; }
         public Point Point2 { get; private set; }
@@ -41,7 +41,7 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="a">The segment opposite point a</param>
         /// <param name="b">The segment opposite point b</param>
         /// <param name="c">The segment opposite point c</param>
-        public Triangle(Segment a, Segment b, Segment c) : base()
+        public Triangle(Segment a, Segment b, Segment c) : base(a, b, c)
         {
             SegmentA = a;
             SegmentB = b;
@@ -71,6 +71,10 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Triangle(Point a, Point b, Point c) : this(new Segment(a, b), new Segment(b, c), new Segment(a, c)) { }
         public Triangle(List<Point> pts) : this(pts[0], pts[1], pts[2]) { }
+        public Triangle(List<Segment> segs) : this(segs[0], segs[1], segs[2])
+        {
+            if (segs.Count != 3) throw new ArgumentException("Triangle constructed with " + segs.Count + " segments.");
+        }
 
         protected void addSuperFigureToDependencies()
         {
@@ -85,47 +89,9 @@ namespace GeometryTutorLib.ConcreteAST
             Utilities.AddUniqueStructurally(AngleC.getSuperFigures(), this);
         }
 
-        public void SetProvenToBeRight()
-        {
-            provenRight = true;
-        }
-
-        public void SetProvenToBeIsosceles()
-        {
-            provenIsosceles = true;
-        }
-
-        public void SetProvenToBeEquilateral()
-        {
-            provenEquilateral = true;
-        }
-
-        public List<Angle> GetAngles()
-        {
-            List<Angle> angles = new List<Angle>();
-            angles.Add(AngleA);
-            angles.Add(AngleB);
-            angles.Add(AngleC);
-            return angles;
-        }
-
-        public List<Point> GetPoints()
-        {
-            List<Point> pts = new List<Point>();
-            pts.Add(Point1);
-            pts.Add(Point2);
-            pts.Add(Point3);
-            return pts;
-        }
-
-        public List<Segment> GetSegments()
-        {
-            List<Segment> segments = new List<Segment>();
-            segments.Add(SegmentA);
-            segments.Add(SegmentB);
-            segments.Add(SegmentC);
-            return segments;
-        }
+        public void SetProvenToBeRight() { provenRight = true; }
+        public void SetProvenToBeIsosceles() { provenIsosceles = true; } 
+        public void SetProvenToBeEquilateral() { provenEquilateral = true; }
 
         //
         // Maintain a public repository of all triangles objects in the figure.
@@ -153,18 +119,6 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("ConcreteTriangle [right=");
-            sb.Append(isRight);
-            sb.Append(']');
-            sb.AppendLine();
-            SegmentA.BuildUnparse(sb, tabDepth + 1);
-            SegmentB.BuildUnparse(sb, tabDepth + 1);
-            SegmentC.BuildUnparse(sb, tabDepth + 1);
-        }
-
         /// <summary>
         /// Determines if this is a right traingle.
         /// </summary>
@@ -174,32 +128,6 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.CompareValues(AngleA.measure, 90) ||
                    Utilities.CompareValues(AngleB.measure, 90) ||
                    Utilities.CompareValues(AngleC.measure, 90);
-
-            //bool right = false;
-            //Segment[] segments = new Segment[3];
-            //segments[0] = SegmentA;
-            //segments[1] = SegmentB;
-            //segments[2] = SegmentC;
-
-            ////Compare vector representations of lines to see if dot product is 0.
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    int j = (i + 1) % 3;
-            //    double v1x = segments[i].Point1.X - segments[i].Point2.X;
-            //    double v1y = segments[i].Point1.Y - segments[i].Point2.Y;
-            //    double v2x = segments[j].Point1.X - segments[j].Point2.X;
-            //    double v2y = segments[j].Point1.Y - segments[j].Point2.Y;
-            //    right = right || (v1x * v2x + v1y * v2y) == 0;
-            //    if ((v1x * v2x + v1y * v2y) < EPSILON) // == 0
-            //    {
-            //        Point vertex = segments[i].SharedVertex(segments[j]);
-            //        Point other1 = segments[i].OtherPoint(vertex);
-            //        Point other2 = segments[j].OtherPoint(vertex);
-            //        rightAngle = new Angle(other1, vertex, other2);
-            //        return true;
-            //    }
-            //}
-            //return false;
         }
 
         /// <summary>
@@ -696,8 +624,8 @@ namespace GeometryTutorLib.ConcreteAST
         public KeyValuePair<Triangle, Triangle> CoordinateCongruent(Triangle thatTriangle)
         {
             bool[] marked = new bool[3];
-            List<Segment> thisSegments = GetSegments();
-            List<Segment> thatSegments = thatTriangle.GetSegments();
+            List<Segment> thisSegments = this.orderedSides;
+            List<Segment> thatSegments = thatTriangle.orderedSides;
 
             List<Segment> corrSegmentsThis = new List<Segment>();
             List<Segment> corrSegmentsThat = new List<Segment>();
@@ -743,8 +671,8 @@ namespace GeometryTutorLib.ConcreteAST
         public bool CoordinateSimilar(Triangle thatTriangle)
         {
             bool[] congruentAngle = new bool[3];
-            List<Angle> thisAngles = GetAngles();
-            List<Angle> thatAngles = thatTriangle.GetAngles();
+            List<Angle> thisAngles = this.angles;
+            List<Angle> thatAngles = thatTriangle.angles;
 
             for (int thisS = 0; thisS < thisAngles.Count; thisS++)
             {
@@ -952,8 +880,8 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (!this.StructurallyEquals(thatTriangle)) return null;
 
-            List<Point> thatTrianglePts = thatTriangle.GetPoints();
-            List<Point> thisTrianglePts = this.GetPoints();
+            List<Point> thatTrianglePts = thatTriangle.points;
+            List<Point> thisTrianglePts = this.points;
 
             // Find the index of the first point (in this Triangle) 
             int i = 0;
@@ -1005,22 +933,6 @@ namespace GeometryTutorLib.ConcreteAST
             if (triangle.provenRight != this.provenRight) return false;
 
             return StructurallyEquals(obj) && base.Equals(obj);
-        }
-
-        //
-        // Is the given clause an intrinsic component of this triangle?
-        //
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Angle) return this.HasAngle(gc as Angle);
-            else if (gc is Point) return this.HasPoint(gc as Point);
-            else if (gc is Segment) return this.HasSegment(gc as Segment);
-            else if (gc is Triangle) return this.StructurallyEquals(gc);
-
-            // A triangle covers an intersection if one vertex covers the intersection and one segment is part of the triangle
-            Intersection inter = gc as Intersection;
-            if (inter == null) return false;
-            return this.HasPoint(inter.intersect) && (this.HasSegment(inter.lhs) || this.HasSegment(inter.rhs));
         }
 
         public override string ToString()

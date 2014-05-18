@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MedianTrapezoidParallelToBases : Theorem
     {
         private readonly static string NAME = "The Median of a Trapezoid is Parallel to the Bases";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE);
 
         //  A    _______  B
         //      /       \

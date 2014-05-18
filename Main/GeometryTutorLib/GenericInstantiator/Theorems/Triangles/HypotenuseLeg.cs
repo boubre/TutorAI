@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     {
 
         private readonly static string NAME = "Hypotenuse Leg";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.HYPOTENUSE_LEG);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.HYPOTENUSE_LEG);
 
         private static List<RightTriangle> candidateRightTriangles = new List<RightTriangle>();
         private static List<CongruentSegments> candidateSegments = new List<CongruentSegments>();

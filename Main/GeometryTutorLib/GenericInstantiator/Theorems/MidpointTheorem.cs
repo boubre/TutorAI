@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class MidpointTheorem : Theorem
     {
         private readonly static string NAME = "Midpoint Theorem";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.MIDPOINT_THEOREM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.MIDPOINT_THEOREM);
 
         //
         // Midpoint(M, Segment(A, B)) -> 2AM = AB, 2BM = AB          A ------------- M ------------- B

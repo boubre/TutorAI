@@ -7,9 +7,9 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Tangent : Descriptor
     {
-        public ArcIntersection intersection { get; protected set; }
+        public CircleIntersection intersection { get; protected set; }
 
-        public Tangent(ArcIntersection that) : base()
+        public Tangent(CircleIntersection that) : base()
         {
             if (!that.IsTangent())
             {

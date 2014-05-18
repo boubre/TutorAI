@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class ChordTangentAngleHalfInterceptedArc : Theorem
     {
         private readonly static string NAME = "The measure of an angle formed by a chord and a tangent is equal to half the measure of the intercepted arc.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC);
 
         public static void Clear()
         {
@@ -119,11 +119,11 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Acquire the angle and intercepted arc.
             //
-            Segment chord = tan.arc.theCircle.ContainsChord(secant);
+            Segment chord = tan.theCircle.ContainsChord(secant);
 
             // Arc
             // We want the MINOR ARC only!
-            Arc theArc = Arc.GetFigureMinorArc(tan.arc.theCircle, chord.Point1, chord.Point2);
+            Arc theArc = Arc.GetFigureMinorArc(tan.theCircle, chord.Point1, chord.Point2);
 
             // Angle; the smaller angle is always the chosen angle
             Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point1);

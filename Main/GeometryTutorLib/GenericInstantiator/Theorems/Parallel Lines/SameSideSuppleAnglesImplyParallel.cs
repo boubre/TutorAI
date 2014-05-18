@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SameSideSuppleAnglesImplyParallel : Theorem
     {
         private readonly static string SAME_SIDE_INT_SUPPLE_NAME = "Same-Side Interior Angles Formed by a Transversal Are Supplementary Imply Parallel Lines";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(SAME_SIDE_INT_SUPPLE_NAME, JustificationSwitch.SAME_SIDE_SUPPLE_ANGLES_IMPLY_PARALLEL);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(SAME_SIDE_INT_SUPPLE_NAME, EngineUIBridge.JustificationSwitch.SAME_SIDE_SUPPLE_ANGLES_IMPLY_PARALLEL);
 
         private static List<Intersection> candIntersection = new List<Intersection>();
         private static List<Supplementary> candSupps = new List<Supplementary>();

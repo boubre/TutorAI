@@ -45,25 +45,7 @@ namespace GeometryTutorLib.ConcreteAST
             return this.point.StructurallyEquals(midpoint.point) && this.segment.StructurallyEquals(midpoint.segment);
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return point.Covers(gc) || segment.Covers(gc);
-        }
-
-        internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("InMiddle");
-            sb.AppendLine();
-            point.BuildUnparse(sb, tabDepth + 1);
-            segment.BuildUnparse(sb, tabDepth + 1);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool StructurallyEquals(Object obj)
         {

@@ -10,7 +10,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class RightTriangleDefinition : Definition
     {
         private readonly static string NAME = "Definition of Right Triangle";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.RIGHT_TRIANGLE_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.RIGHT_TRIANGLE_DEFINITION);
 
         private static List<RightAngle> candidateRightAngles = new List<RightAngle>();
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();

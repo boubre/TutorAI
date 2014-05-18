@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class InscribedQuadrilateralOppositeSupplementary : Theorem
     {
         private readonly static string NAME = "If a quadrilateral is inscribed in a circle, then its opposite angles are supplementary.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY);
 
         //         B ____________________ C
         //          /                   /
@@ -32,7 +32,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // For each inscribed quadrilateral, generate accordingly.
             //
-            foreach (Quadrilateral quad in circle.inscribedQuads)
+            foreach (Quadrilateral quad in circle.inscribedPolys[Polygon.QUADRILATERAL_INDEX])
             {
                 GeometricCongruentAngles gcas1 = new GeometricCongruentAngles(quad.topLeftAngle, quad.bottomRightAngle);
                 GeometricCongruentAngles gcas2 = new GeometricCongruentAngles(quad.bottomLeftAngle, quad.topRightAngle);

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class SegmentAdditionAxiom : Axiom
     {
         private static readonly string NAME = "Segment Addition Axiom";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.SEGMENT_ADDITION_AXIOM);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SEGMENT_ADDITION_AXIOM);
 
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {

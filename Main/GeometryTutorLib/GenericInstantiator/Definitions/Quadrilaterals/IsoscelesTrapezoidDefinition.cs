@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class IsoscelesTrapezoidDefinition : Definition
     {
         private readonly static string NAME = "Definition of Isosceles Trapezoid";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ISOSCELES_TRAPEZOID_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ISOSCELES_TRAPEZOID_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

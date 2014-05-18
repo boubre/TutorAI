@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class RhombusDefinition : Definition
     {
         private readonly static string NAME = "Definition of Rhombus";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.RHOMBUS_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.RHOMBUS_DEFINITION);
 
         // Reset saved data for another problem
         public static void Clear()

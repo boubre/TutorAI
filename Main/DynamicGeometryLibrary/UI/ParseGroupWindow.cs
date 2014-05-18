@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using GeometryTutorLib;
+using GeometryTutorLib.EngineUIBridge;
 
 namespace DynamicGeometry.UI
 {

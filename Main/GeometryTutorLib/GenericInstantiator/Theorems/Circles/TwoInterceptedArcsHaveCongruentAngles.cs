@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TwoInterceptedArcsHaveCongruentAngles : Theorem
     {
         private readonly static string NAME = "If two inscribed angles intercept the same arc, the angles are congruent.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES);
 
 
         //         B ____________________ C
@@ -33,7 +33,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // For each inscribed quadrilateral, generate accordingly.
             //
-            foreach (Quadrilateral quad in circle.inscribedQuads)
+            foreach (Quadrilateral quad in circle.inscribedPolys[Polygon.QUADRILATERAL_INDEX])
             {
                 GeometricCongruentAngles gcas1 = new GeometricCongruentAngles(quad.topLeftAngle, quad.bottomRightAngle);
                 GeometricCongruentAngles gcas2 = new GeometricCongruentAngles(quad.bottomLeftAngle, quad.topRightAngle);

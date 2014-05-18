@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleBisectorDefinition : Definition
     {
         private readonly static string NAME = "Definition of Angle Bisector";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLE_BISECTOR_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_DEFINITION);
 
         public static void Clear()
         {

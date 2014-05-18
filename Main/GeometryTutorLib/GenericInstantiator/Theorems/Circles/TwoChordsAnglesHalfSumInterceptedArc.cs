@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TwoChordsAnglesHalfSumInterceptedArc : Theorem
     {
         private readonly static string NAME = "The measure of an angle formed by two chords that intersect inside a circle is equal to half the sum of the measures of the interecepted arcs.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS);
 
         public static void Clear()
         {

@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentSegmentsImplyProportionalSegmentsDefinition : Axiom
     {
         private readonly static string NAME = "Congruent Segments Imply Proportional Segments";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
         private static List<CongruentSegments> candidateCongruentSegments = new List<CongruentSegments>();

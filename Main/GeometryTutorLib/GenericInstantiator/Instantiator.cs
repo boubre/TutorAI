@@ -41,7 +41,7 @@ namespace GeometryTutorLib.GenericInstantiator
             givens.ForEach(g => g.MakeGiven());
 
             // Calculates Coverage of the figure
-            HandleAllFigureIntrinsicFacts(figure);
+            //HandleAllFigureIntrinsicFacts(figure);
 
             HandleAllGivens(figure, givens);
 
@@ -234,7 +234,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is CongruentTriangles)
                 {
                     HandleDeducedClauses(worklist, CongruentTriangles.Instantiate(clause));
-                    HandleDeducedClauses(worklist, TransitiveCongruentTriangles.Instantiate(clause));
+                    // HandleDeducedClauses(worklist, TransitiveCongruentTriangles.Instantiate(clause));
                 }
                 else if (clause is CongruentAngles)
                 {
@@ -451,7 +451,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     //HandleDeducedClauses(worklist, TangentPerpendicularToRadius.Instantiate(clause));
                     //HandleDeducedClauses(worklist, TangentsToCircleFromPointAreCongruent.Instantiate(clause));
                 }
-                else if (clause is ArcIntersection)
+                else if (clause is CircleIntersection)
                 {
                     HandleDeducedClauses(worklist, DiameterPerpendicularToChordBisectsChordAndArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
@@ -475,10 +475,6 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is Circle)
                 {
                     Circle.Record(clause);
-
-                    // Determine all applicable secants, tangent, and chords for this circle
-                    (clause as Circle).AnalyzeSegments();
-                    (clause as Circle).AnalyzePolygons();
 
                     HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
@@ -555,42 +551,42 @@ namespace GeometryTutorLib.GenericInstantiator
             }
         }
 
-        //
-        // Constructs the coverage relationship amongst all figure components
-        //
-        private static void HandleAllFigureIntrinsicFacts(List<GroundedClause> figure)
-        {
-            for (int f1 = 0; f1 < figure.Count; f1++)
-            {
-                for (int f2 = 0; f2 < figure.Count; f2++)
-                {
-                    if (f1 != f2)
-                    {
-                        if (figure[f1].Covers(figure[f2])) figure[f1].AddComponent(figure[f2].clauseId);
-                    }
-                }
-            }
-        }
+        ////
+        //// Constructs the coverage relationship amongst all figure components
+        ////
+        //private static void HandleAllFigureIntrinsicFacts(List<GroundedClause> figure)
+        //{
+        //    for (int f1 = 0; f1 < figure.Count; f1++)
+        //    {
+        //        for (int f2 = 0; f2 < figure.Count; f2++)
+        //        {
+        //            if (f1 != f2)
+        //            {
+        //                if (figure[f1].Covers(figure[f2])) figure[f1].AddComponent(figure[f2].clauseId);
+        //            }
+        //        }
+        //    }
+        //}
 
         //
         // Preprocess the given clauses
         //
         private static void HandleAllGivens(List<GroundedClause> figure, List<GroundedClause> givens)
         {
-            //
-            // Link the boolean facts to the intrinsic facts through coverage (implication)
-            //
-            foreach (GroundedClause given in givens)
-            {
-                foreach (GroundedClause component in figure)
-                {
-                    if (given.Covers(component))
-                    {
-                        given.AddComponent(component.clauseId);
-                        given.AddComponentList(component.figureComponents);
-                    }
-                }
-            }
+            ////
+            //// Link the boolean facts to the intrinsic facts through coverage (implication)
+            ////
+            //foreach (GroundedClause given in givens)
+            //{
+            //    foreach (GroundedClause component in figure)
+            //    {
+            //        if (given.Covers(component))
+            //        {
+            //            given.AddComponent(component.clauseId);
+            //            given.AddComponentList(component.figureComponents);
+            //        }
+            //    }
+            //}
 
             //
             // Are any of the givens congruent relationships?

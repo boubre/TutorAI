@@ -33,11 +33,6 @@ namespace GeometryTutorLib.ConcreteAST
             ca2 = a2;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return ca1.Covers(gc) || ca2.Covers(gc);
-        }
-
         public override bool StructurallyEquals(Object obj)
         {
             CongruentAngles cas = obj as CongruentAngles;
@@ -113,21 +108,12 @@ namespace GeometryTutorLib.ConcreteAST
             return false;
         }
 
-        public void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            //Console.WriteLine("To Be Implemented");
-        }
-
         public bool LinksTriangles(Triangle ct1, Triangle ct2)
         {
             return ct1.HasAngle(ca1) && ct2.HasAngle(ca2) || ct1.HasAngle(ca2) && ct2.HasAngle(ca1);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {

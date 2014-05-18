@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class TangentPerpendicularToRadius : Theorem
     {
         private readonly static string NAME = "Tangents are Perpendicular To Radii";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS);
 
         public static void Clear()
         {

@@ -9,10 +9,10 @@ namespace GeometryTutorLib.GenericInstantiator
     public class CongruentArcsHaveCongruentChords : Theorem
     {
         private readonly static string FORWARD_NAME = "Congruent Chords have Congruent Arcs";
-        private static Hypergraph.EdgeAnnotation forwardAnnotation = new Hypergraph.EdgeAnnotation(FORWARD_NAME, JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS);
+        private static Hypergraph.EdgeAnnotation forwardAnnotation = new Hypergraph.EdgeAnnotation(FORWARD_NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS);
 
         private readonly static string CONVERSE_NAME = "Congruent Arcs have Congruent Chords";
-        private static Hypergraph.EdgeAnnotation converseAnnotation = new Hypergraph.EdgeAnnotation(CONVERSE_NAME, JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS);
+        private static Hypergraph.EdgeAnnotation converseAnnotation = new Hypergraph.EdgeAnnotation(CONVERSE_NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS);
 
         public static void Clear()
         {

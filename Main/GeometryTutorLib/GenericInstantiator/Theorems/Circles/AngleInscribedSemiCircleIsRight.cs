@@ -9,7 +9,7 @@ namespace GeometryTutorLib.GenericInstantiator
     public class AngleInscribedSemiCircleIsRight : Theorem
     {
         private readonly static string NAME = "An angle inscribed in a semicircle is a right angle.";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT);
 
         public static void Clear()
         {
