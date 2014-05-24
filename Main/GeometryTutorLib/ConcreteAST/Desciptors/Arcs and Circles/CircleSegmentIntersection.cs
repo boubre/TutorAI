@@ -27,17 +27,19 @@ namespace GeometryTutorLib.ConcreteAST
         //
         private bool CalcTangency()
         {
-            // Is the segment tangent to the circle?
-            Segment radius = theCircle.IsTangent(segment);
+            //// Is the segment tangent to the circle?
+            //Segment radius =
+                
+            return theCircle.IsTangent(segment) != null;
 
-            if (radius == null) return false;
+            //if (radius == null) return false;
 
-            //
-            // Is the radius inside the minor arc? That is, is the radius applicable to this arc or not?
-            //
-            Point ptOnCircle = radius.OtherPoint(theCircle.center);
+            ////
+            //// Is the radius inside the minor arc? That is, is the radius applicable to this arc or not?
+            ////
+            //Point ptOnCircle = radius.OtherPoint(theCircle.center);
 
-            return Arc.BetweenMinor(ptOnCircle, new MinorArc(theCircle, intersection1, intersection2));
+            //return Arc.BetweenMinor(ptOnCircle, new MinorArc(theCircle, intersection1, intersection2));
         }
 
         //

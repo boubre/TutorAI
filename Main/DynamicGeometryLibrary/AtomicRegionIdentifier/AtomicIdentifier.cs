@@ -19,8 +19,8 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //
         // The graph we use as the basis for region identification.
         //
-        private UndirectedGraph.PlanarGraph workingGraph; // graph that may be modified by the algorithm.
-        private UndirectedGraph.PlanarGraph graphCopy; // original, unaltered graph
+        private UndirectedPlanarGraph.PlanarGraph workingGraph; // graph that may be modified by the algorithm.
+        private UndirectedPlanarGraph.PlanarGraph originalGraph; // original, unaltered graph
 
         // This provides access to all of the required knowledge of the figure.
         private ImpliedComponentCalculator implied;
@@ -29,7 +29,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
         {
             implied = impl;
             atomicRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
-            workingGraph = new UndirectedGraph.PlanarGraph();
+            workingGraph = new UndirectedPlanarGraph.PlanarGraph();
 
             //
             // Populate the planar graph.
@@ -37,12 +37,23 @@ namespace LiveGeometry.AtomicRegionIdentifier
             ConstructGraph();
 
             // Keep an original copy for reference.
-            graphCopy = new UndirectedGraph.PlanarGraph(workingGraph);
+            originalGraph = new UndirectedPlanarGraph.PlanarGraph(workingGraph);
 
-            //MinimalBasisCalculator mbCalculator = new MinimalBasisCalculator(workingGraph);
-            //List<Primitive> primitives = mbCalculator.primitives;
+            Debug.WriteLine(workingGraph.ToString());
 
-            //ConvertPrimitivesToAtomicRegions(primitives);
+            MinimalBasisCalculator mbCalculator = new MinimalBasisCalculator(workingGraph);
+            List<Primitive> primitives = mbCalculator.primitives;
+
+            if (GeometryTutorLib.Utilities.ATOMIC_REGION_GEN_DEBUG)
+            {
+                Debug.WriteLine("Primitives:");
+                foreach (Primitive prim in primitives)
+                {
+                    Debug.WriteLine("\t" + prim.ToString());
+                }
+            }
+
+            atomicRegions = ConvertPrimitivesToAtomicRegions(primitives);
         }
 
         //
@@ -66,17 +77,17 @@ namespace LiveGeometry.AtomicRegionIdentifier
         {
             foreach (Point realPt in implied.allEvidentPoints)
             {
-                workingGraph.AddNode(realPt, UndirectedGraph.NodePointType.REAL);
+                workingGraph.AddNode(realPt, UndirectedPlanarGraph.NodePointType.REAL);
             }
 
-            foreach (Point extPt in implied.extendedSegmentPoints)
-            {
-                workingGraph.AddNode(extPt, UndirectedGraph.NodePointType.EXTENDED);
-            }
+            //foreach (Point extPt in implied.extendedSegmentPoints)
+            //{
+            //    workingGraph.AddNode(extPt, UndirectedPlanarGraph.NodePointType.EXTENDED);
+            //}
 
             foreach (Point extPt in implied.extendedCirclePoints)
             {
-                workingGraph.AddNode(extPt, UndirectedGraph.NodePointType.EXTENDED);
+                workingGraph.AddNode(extPt, UndirectedPlanarGraph.NodePointType.EXTENDED);
             }
         }
 
@@ -96,16 +107,20 @@ namespace LiveGeometry.AtomicRegionIdentifier
             AddDirectArcs();
 
             // Implied Chords
-            foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.impliedChords)
+            foreach (KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>> chordPair in implied.impliedChords)
             {
                                                                                                               // CTA: Real, Extended?
-                workingGraph.AddUndirectedEdge(segment.Point1, segment.Point2, segment.Length, UndirectedGraph.EdgeType.REAL_SEGMENT);
+                workingGraph.AddUndirectedEdge(chordPair.Key.Point1, chordPair.Key.Point2, chordPair.Key.Length, UndirectedPlanarGraph.EdgeType.REAL_SEGMENT); //.EXTENDED_SEGMENT);
             }
 
-            // Extended Diameters
-            foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.extendedDiameters)
+            // Extended Diameters (in the form of Radii)
+            foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.extendedRadii)
             {
-//                workingGraph.AddUndirectedEdge(arc.endpoint1, arc.endpoint2, arc.length, UndirectedGraph.EdgeType.REAL_ARC);
+                workingGraph.AddUndirectedEdge(segment.Point1, segment.Point2, segment.Length, UndirectedPlanarGraph.EdgeType.EXTENDED_SEGMENT);
+            }
+            foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.extendedRealRadii)
+            {
+                workingGraph.AddUndirectedEdge(segment.Point1, segment.Point2, segment.Length, UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
             }
         }
 
@@ -116,28 +131,23 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //
         public void AddDirectSegments()
         {
-            for (int s1 = 0; s1 < implied.segments.Count; s1++)
+            // Determine the actual set of minimal segments; check if any circle implied points are in the middle of the minimal segments.
+            foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.minimalSegments)
             {
-                //
-                // Does this segment (s1) have any subsegments?
-                //
-                bool hasSubsegment = false;
-                for (int s2 = 0; s2 < implied.segments.Count; s2++)
+                // Find the subset of applicable points; ensure they are ordered.
+                foreach (Point impliedCircPt in implied.impliedCirclePoints)
                 {
-                    if (s1 != s2)
-                    {
-                        if (implied.segments[s1].HasSubSegment(implied.segments[s2]))
-                        {
-                            hasSubsegment = true;
-                            break;
-                        }
-                    }
+                    if (segment.PointIsOnAndExactlyBetweenEndpoints(impliedCircPt)) segment.AddCollinearPoint(impliedCircPt);
                 }
 
-                // Add to the workingGraph if this segment has no other sub-segment.
-                if (!hasSubsegment)
+                // Generate the actual minimal segments.
+                for (int p = 0; p < segment.collinear.Count-1; p++)
                 {
-                    workingGraph.AddUndirectedEdge(implied.segments[s1].Point1, implied.segments[s1].Point2, implied.segments[s1].Length, UndirectedGraph.EdgeType.REAL_SEGMENT);
+                    GeometryTutorLib.ConcreteAST.Segment temp = new GeometryTutorLib.ConcreteAST.Segment(segment.collinear[p], segment.collinear[p + 1]);
+                    if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Segment>(implied.extendedRealRadii, temp))
+                    {
+                        workingGraph.AddUndirectedEdge(temp.Point1, temp.Point2, temp.Length, UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
+                    }
                 }
             }
         }
@@ -150,39 +160,117 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //
         public void AddDirectArcs()
         {
-            for (int a1 = 0; a1 < implied.minorArcs.Count; a1++)
+            //
+            // For each circle:
+            //   (1) Make a copy of the circle.
+            //   (2) Add the applicable extended points to the circle
+            //   (3) Traverse the set of circle points to add edges to the graph
+            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
             {
-                //
-                // Does this segment (s1) have any subsegments?
-                //
-                bool hasSubArc = false;
-                for (int a2 = 0; a2 < implied.minorArcs.Count; a2++)
+                GeometryTutorLib.ConcreteAST.Circle copy = new GeometryTutorLib.ConcreteAST.Circle(circle.center, circle.radius);
+                List<Point> pts = new List<Point>(circle.pointsOnCircle);
+
+                foreach (Point extendedPt in implied.extendedCirclePoints)
                 {
-                    if (a1 != a2)
-                    {
-                        if (implied.minorArcs[a1].HasMinorSubArc(implied.minorArcs[a2]))
-                        {
-                            hasSubArc = true;
-                            break;
-                        }
-                    }
+                    if (circle.PointIsOn(extendedPt)) pts.Add(extendedPt);
                 }
 
-                // Add to the workingGraph if this segment has no other sub-segment.
-                if (!hasSubArc)
+                copy.SetPointsOnCircle(pts);
+
+                for (int p = 0; p < copy.pointsOnCircle.Count; p++)
                 {
-                    workingGraph.AddUndirectedEdge(implied.minorArcs[a1].endpoint1, implied.minorArcs[a1].endpoint2,
-                                            Point.calcDistance(implied.minorArcs[a1].endpoint1, implied.minorArcs[a1].endpoint2), UndirectedGraph.EdgeType.REAL_ARC);
+                    GeometryTutorLib.ConcreteAST.Segment temp = new GeometryTutorLib.ConcreteAST.Segment(copy.pointsOnCircle[p], copy.pointsOnCircle[p+1 < copy.pointsOnCircle.Count ? p+1 : 0]);
+                    workingGraph.AddUndirectedEdge(temp.Point1, temp.Point2, temp.Length, UndirectedPlanarGraph.EdgeType.REAL_ARC); 
                 }
             }
         }
 
-        public void ConvertPrimitivesToAtomicRegions(List<Primitive> primitives)
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> ConvertPrimitivesToAtomicRegions(List<Primitive> primitives)
         {
+            List<MinimalCycle> cycles = new List<MinimalCycle>();
+            List<Filament> filaments = new List<Filament>();
+
             foreach (Primitive primitive in primitives)
             {
-                //primitive.ConvertToAtomicRegion();
+                if (primitive is MinimalCycle) cycles.Add(primitive as MinimalCycle);
+                if (primitive is Filament) filaments.Add(primitive as Filament);
             }
+
+            // TBC: HandleFilaments();
+
+            ComposeCycles(cycles);
+
+            if (GeometryTutorLib.Utilities.ATOMIC_REGION_GEN_DEBUG)
+            {
+                Debug.WriteLine("Composed:");
+                foreach (MinimalCycle cycle in cycles)
+                {
+                    Debug.WriteLine("\t" + cycle.ToString());
+                }
+            }
+
+            //
+            // Convert all cycles (perimeters) to atomic regions
+            //
+            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> regions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            foreach (MinimalCycle cycle in cycles)
+            {
+                List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> temp = cycle.ConstructAtomicRegions(implied, originalGraph);
+                foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in temp)
+                {
+                    if (!regions.Contains(atom)) regions.Add(atom);
+                }
+            }
+
+            return regions;
+        }
+
+        //
+        // If a cycle has an edge that is EXTENDED, there exist two regions, one on each side of the segment; compose the two segments.
+        //
+        // Fixed point algorithm: while there exists a cycle with an extended segment, compose.
+        private void ComposeCycles(List<MinimalCycle> cycles)
+        {
+            for (int cycleIndex = HasComposableCycle(cycles); cycleIndex != -1; cycleIndex = HasComposableCycle(cycles))
+            {
+                // Get the cycle and remove it from the list.
+                MinimalCycle thisCycle = cycles[cycleIndex];
+
+                cycles.RemoveAt(cycleIndex);
+
+                // Get the extended segment which is the focal segment of composition.
+                GeometryTutorLib.ConcreteAST.Segment extendedSeg = thisCycle.GetExtendedSegment(originalGraph);
+
+                // Find the matching cycle that has the same Extended segment
+                int otherIndex = GetComposableCycleWithSegment(cycles, extendedSeg);
+                MinimalCycle otherCycle = cycles[otherIndex];
+                cycles.RemoveAt(otherIndex);
+
+                // Compose the two cycles into a single cycle.
+                MinimalCycle composed = thisCycle.Compose(otherCycle, extendedSeg);
+
+                // Add the new, composed cycle
+                cycles.Add(composed);
+            }
+        }
+
+        private int HasComposableCycle(List<MinimalCycle> cycles)
+        {
+            for (int c = 0; c < cycles.Count; c++)
+            {
+                if (cycles[c].HasExtendedSegment(originalGraph)) return c;
+            }
+            return -1;
+        }
+
+        private int GetComposableCycleWithSegment(List<MinimalCycle> cycles, GeometryTutorLib.ConcreteAST.Segment segment)
+        {
+            for (int c = 0; c < cycles.Count; c++)
+            {
+                if (cycles[c].HasThisExtendedSegment(originalGraph, segment)) return c;
+            }
+
+            return -1;
         }
     }
 }

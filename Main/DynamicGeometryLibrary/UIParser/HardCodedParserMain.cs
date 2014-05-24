@@ -19,7 +19,7 @@ namespace LiveGeometry.TutorParser
                                    List<GeometryTutorLib.ConcreteAST.Collinear> collinear,
                                    List<GeometryTutorLib.ConcreteAST.Segment> segments, // This is an optional list.
                                    List<GeometryTutorLib.ConcreteAST.Circle> circles,
-                                   bool problemIsOn)
+                                   bool problemIsOn) : base()
         {
             //
             // Calculate all of the implied components of the figure.
@@ -40,9 +40,10 @@ namespace LiveGeometry.TutorParser
                 AtomicIdentifier atomicIdentifier = new AtomicIdentifier(implied);
                 List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atomicRegions = atomicIdentifier.GetAtomicRegions();
 
+                int a = 1;
                 foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
                 {
-                    Debug.WriteLine(atom.ToString());
+                    Debug.WriteLine((a++) + ": " + atom.ToString());
                 }
             }
         }

@@ -19,7 +19,7 @@ namespace LiveGeometry.TutorParser
         /// </summary>
         /// <param name="drawing">The drawing to parse.</param>
         /// <param name="parseController">The parseController, used to add disambiguation dialogs.</param>
-        public DrawingParserMain(Drawing drawing)
+        public DrawingParserMain(Drawing drawing) : base()
         {
             this.drawing = drawing;
         }

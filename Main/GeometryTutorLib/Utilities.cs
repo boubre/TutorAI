@@ -16,6 +16,7 @@ namespace GeometryTutorLib
         public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && false;   // Hypergraph edges and pebbled nodes
         public static readonly bool PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating the actual problems
         public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating backward problems
+        public static readonly bool ATOMIC_REGION_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating atomic regions
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
@@ -309,7 +310,7 @@ namespace GeometryTutorLib
         }
         public static bool LessThan(double a, double b)
         {
-            return Math.Abs(a - b) - EPSILON < 0;
+            return !GreaterThan(a, b) && !CompareValues(a, b);
         }
         public static bool GreaterThan(double a, double b)
         {

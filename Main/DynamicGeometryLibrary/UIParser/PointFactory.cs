@@ -18,6 +18,13 @@ namespace LiveGeometry.TutorParser
             return new GeometryTutorLib.ConcreteAST.Point(GetCurrentName(), x, y);
         }
 
+        // Reset for the next problem
+        public static void Reset()
+        {
+            currentName = "A";
+            numLetters = 1;
+        }
+
         private static string GetCurrentName()
         {
             string name = prefix + currentName;

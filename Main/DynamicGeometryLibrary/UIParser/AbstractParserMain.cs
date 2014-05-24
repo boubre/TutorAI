@@ -19,6 +19,7 @@ namespace LiveGeometry.TutorParser
 
         public AbstractParserMain()
         {
+            PointFactory.Reset();
         }
 
         //

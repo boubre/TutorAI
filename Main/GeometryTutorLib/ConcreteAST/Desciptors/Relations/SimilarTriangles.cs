@@ -117,7 +117,7 @@ namespace GeometryTutorLib.ConcreteAST
                                                                                        List<Point> orderedTriOnePts,
                                                                                        List<Point> orderedTriTwoPts)
         {
-            List<GroundedClause> congAngles = CongruentTriangles.GenerateCPCTCAngles(orderedTriOnePts, orderedTriTwoPts);;
+            List<GroundedClause> congAngles = CongruentTriangles.GenerateCPCTCAngles(orderedTriOnePts, orderedTriTwoPts);
 
             //
             // Construct the new deduced edges: congruent angles.

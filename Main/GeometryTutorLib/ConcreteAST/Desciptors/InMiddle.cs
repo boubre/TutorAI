@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -22,6 +23,16 @@ namespace GeometryTutorLib.ConcreteAST
         {
             this.point = p;
             this.segment = segment;
+        }
+
+        public void DumpXML(XmlWriter writer)
+        {
+            writer.WriteStartElement("InMiddle");
+
+            point.DumpXML(writer);
+            segment.DumpXML(writer);
+
+            writer.WriteEndElement();
         }
 
         //

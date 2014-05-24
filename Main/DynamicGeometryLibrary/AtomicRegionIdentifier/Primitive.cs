@@ -9,6 +9,5 @@ namespace LiveGeometry.AtomicRegionIdentifier
 {
     public abstract class Primitive
     {
-
     }
 }

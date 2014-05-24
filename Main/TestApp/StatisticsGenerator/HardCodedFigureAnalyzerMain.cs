@@ -2,44 +2,75 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeometryTutorLib;
 using System.Diagnostics;
 using System.Threading;
+using System.Xml;
 
-namespace GeometryTutorLib.StatisticsGenerator
+namespace StatisticsGenerator
 {
     public class HardCodedFigureAnalyzerMain
     {
         // The problem parameters to analyze
-        private List<ConcreteAST.GroundedClause> figure;
-        private List<ConcreteAST.GroundedClause> givens;
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> figure;
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> givens;
 
-        private Precomputer.CoordinatePrecomputer precomputer;
-        private Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
-        private GenericInstantiator.Instantiator instantiator;
-        private Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
-        private ProblemAnalyzer.PathGenerator pathGenerator;
+        private GeometryTutorLib.Precomputer.CoordinatePrecomputer precomputer;
+        private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> graph;
+        private GeometryTutorLib.GenericInstantiator.Instantiator instantiator;
+        private GeometryTutorLib.Pebbler.PebblerHypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> pebblerGraph;
+        private GeometryTutorLib.ProblemAnalyzer.PathGenerator pathGenerator;
         private GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator = null;
-        private ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
-//        private ProblemAnalyzer.QueryFeatureVector queryVector;
-//        private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
-        private List<ConcreteAST.GroundedClause> goals;
+        private GeometryTutorLib.ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
+//        private GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector queryVector;
+//        private GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> goals;
+//        private XmlWriter writer;
 
-        public HardCodedFigureAnalyzerMain(List<ConcreteAST.GroundedClause> fs, List<ConcreteAST.GroundedClause> gs, List<ConcreteAST.GroundedClause> gls)
+        public HardCodedFigureAnalyzerMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
+                                           List<GeometryTutorLib.ConcreteAST.GroundedClause> gs,
+                                           List<GeometryTutorLib.ConcreteAST.GroundedClause> gls)
         {
             this.figure = fs;
             this.givens = gs;
             this.goals = gls;
 
-            //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\givensCount.txt", true))
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+
+            //using (XmlWriter writer = XmlWriter.Create("C:\\Users\\ctalvin\\Desktop", settings))
             //{
-            //    file.WriteLine(this.givens.Count);
+            //    writer.WriteStartElement("Figure");
+            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause fig in this.figure)
+            //    {
+            //        fig.DumpXML(writer);
+            //    }
+            //    writer.WriteEndElement();
+
+            //    writer.WriteStartElement("Givens");
+            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause given in this.givens)
+            //    {
+            //        writer.WriteStartElement("given");
+            //        given.DumpXML(writer);
+            //        writer.WriteEndElement();
+            //    }
+            //    writer.WriteEndElement();
+
+            //    writer.WriteStartElement("Goals");
+            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause goal in this.goals)
+            //    {
+            //        writer.WriteStartElement("goal");
+            //        goal.DumpXML(writer);
+            //        writer.WriteEndElement();
+            //    }
+            //    writer.WriteEndElement();
+
+            //    writer.WriteEndDocument();
             //}
 
             // Create the precomputer object for coordinate-based pre-comutation analysis
-            precomputer = new Precomputer.CoordinatePrecomputer(figure);
-            instantiator = new GenericInstantiator.Instantiator();
-            //queryVector = new ProblemAnalyzer.QueryFeatureVector(givens.Count);
+            precomputer = new GeometryTutorLib.Precomputer.CoordinatePrecomputer(figure);
+            instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
+            //queryVector = new GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector(givens.Count);
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
@@ -71,10 +102,10 @@ namespace GeometryTutorLib.StatisticsGenerator
             Pebble();
 
             // Analyze paths in the hypergraph to generate the pair of <forward problems, backward problems> (precomputed nodes are goals)
-            KeyValuePair<List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>, List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>> problems = GenerateTemplateProblems();
+            KeyValuePair<List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>, List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> problems = GenerateTemplateProblems();
 
             // Combine the problems together into one list
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> candidateProbs = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> candidateProbs = new List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
             candidateProbs.AddRange(problems.Key);
             //candidateProbs.AddRange(problems.Value); // converse
 
@@ -82,8 +113,8 @@ namespace GeometryTutorLib.StatisticsGenerator
             figureStats.totalProblemsGenerated = candidateProbs.Count;
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
-            interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, goals);
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
+            interestingCalculator = new GeometryTutorLib.ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens, goals);
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> interestingProblems = interestingCalculator.DetermineInterestingProblems(candidateProbs);
             figureStats.totalInterestingProblems = interestingProblems.Count;
 
             // Explicit number of facts: hypergraph size - figure facts
@@ -96,7 +127,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             figureStats.stopwatch.Stop();
 
 
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = GetStrictlyInteresting(interestingProblems);
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> strictlyInteresting = GetStrictlyInteresting(interestingProblems);
 
             // Construct partitions based on different queries
             // GenerateStatistics(interestingProblems, figureStats, strictlyInteresting);
@@ -117,20 +148,20 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         // Given the problems with at least one assumption, construct ALL such combinations to form (I, G).
         //
-        private void CalculateKnonStrictCardinalities(ProblemAnalyzer.InterestingProblemCalculator interestingCalculator,
-                                                      List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems,
+        private void CalculateKnonStrictCardinalities(GeometryTutorLib.ProblemAnalyzer.InterestingProblemCalculator interestingCalculator,
+                                                      List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems,
                                                       StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
             // K-G  container: index 0 is 1-G, index 1 is 2-G, etc.
-            List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> KmgProblems = new List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>>();
+            List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> KmgProblems = new List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>>();
 
             //
             // Create the new set of multigoal problems each with 1 goal: 1-G
             //
-            List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> mgProblems = new List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>();
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> mgProblems = new List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
-                ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> new1GProblem = new ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>();
+                GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation> new1GProblem = new GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>();
                 new1GProblem.AddProblem(problem);
                 mgProblems.Add(new1GProblem);
             }
@@ -147,9 +178,9 @@ namespace GeometryTutorLib.StatisticsGenerator
             // That is, are the problems strictly interesting?
             //
             // Filtered K-G  container: index 0 is 1-G, index 1 is 2-G, etc.
-            List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> filteredKmgProblems = new List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>>();
+            List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> filteredKmgProblems = new List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>>();
 
-            foreach (List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> originalKgProblems in KmgProblems)
+            foreach (List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> originalKgProblems in KmgProblems)
             {
                 filteredKmgProblems.Add(interestingCalculator.DetermineStrictlyInterestingMultiGoalProblems(originalKgProblems));
             }
@@ -165,32 +196,32 @@ namespace GeometryTutorLib.StatisticsGenerator
 
             Debug.WriteLine(str);
 
-            if (Utilities.PROBLEM_GEN_DEBUG)
+            if (GeometryTutorLib.Utilities.PROBLEM_GEN_DEBUG)
             {
                 Debug.WriteLine(str);
             }
         }
 
         // Calculate k-G; a set of goals with k propositions
-        private void CalculateKnonStrictCardinalities(List<List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>> kgProblems,
-                                                      List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> interesting, int MAX_K)
+        private void CalculateKnonStrictCardinalities(List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> kgProblems,
+                                                      List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> interesting, int MAX_K)
         {
             for (int k = 2; k <= MAX_K; k++)
             {
                 // (k-1)-G list: 
-                List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> kMinus1Problems = kgProblems[k-2];
-                List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>> kProblems = new List<ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>>();
+                List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> kMinus1Problems = kgProblems[k - 2];
+                List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> kProblems = new List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
 
                 // For each (k-1)-G problem, add each interesting problem, in turn.
-                foreach(ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> kMinus1Problem in kMinus1Problems)
+                foreach (GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation> kMinus1Problem in kMinus1Problems)
                 {
                     if (kMinus1Problem.givens.Count < givens.Count)
                     {
                         // For each k-G, make a copy of the (k-1)-G problem and add the interesting problem to it.
-                        foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> sgProblem in interesting)
+                        foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> sgProblem in interesting)
                         {
                             // Make a copy
-                            ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> newKGproblem = new ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation>(kMinus1Problem);
+                            GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation> newKGproblem = new GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>(kMinus1Problem);
 
                             // Add the interesting problem to it; if the add is successful, the k-G problem is added to 
                             if (newKGproblem.AddProblem(sgProblem))
@@ -199,7 +230,7 @@ namespace GeometryTutorLib.StatisticsGenerator
 
                                 // Is this problem, based on (Givens, Goals) in this list already?
                                 bool alreadyExists = false;
-                                foreach (ProblemAnalyzer.MultiGoalProblem<Hypergraph.EdgeAnnotation> kProblem in kProblems)
+                                foreach (GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation> kProblem in kProblems)
                                 {
                                     if (kProblem.HasSameGivensGoals(newKGproblem))
                                     {
@@ -220,11 +251,11 @@ namespace GeometryTutorLib.StatisticsGenerator
         }
 
 
-        private List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> GetStrictlyInteresting(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems)
+        private List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> GetStrictlyInteresting(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems)
         {
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> strictlyInteresting = new List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
 
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
                 if (problem.interestingPercentage >= 100) strictlyInteresting.Add(problem);
             }
@@ -237,17 +268,17 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         private void CountIntrisicProperties(StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
-            foreach (ConcreteAST.GroundedClause clause in figure)
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause clause in figure)
             {
                 figureStats.totalProperties++;
-                if (clause is ConcreteAST.Point) figureStats.numPoints++;
-                else if (clause is ConcreteAST.InMiddle) figureStats.numInMiddle++;
-                else if (clause is ConcreteAST.Segment) figureStats.numSegments++;
-                else if (clause is ConcreteAST.Intersection) figureStats.numIntersections++;
-                else if (clause is ConcreteAST.Triangle) figureStats.numTriangles++;
-                else if (clause is ConcreteAST.Angle) figureStats.numAngles++;
-                else if (clause is ConcreteAST.Quadrilateral) figureStats.numQuadrilaterals++;
-                else if (clause is ConcreteAST.Circle) figureStats.numCircles++;
+                if (clause is GeometryTutorLib.ConcreteAST.Point) figureStats.numPoints++;
+                else if (clause is GeometryTutorLib.ConcreteAST.InMiddle) figureStats.numInMiddle++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Segment) figureStats.numSegments++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Intersection) figureStats.numIntersections++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Triangle) figureStats.numTriangles++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Angle) figureStats.numAngles++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Quadrilateral) figureStats.numQuadrilaterals++;
+                else if (clause is GeometryTutorLib.ConcreteAST.Circle) figureStats.numCircles++;
                 else
                 {
                     Debug.WriteLine("Did not count " + clause);
@@ -289,19 +320,19 @@ namespace GeometryTutorLib.StatisticsGenerator
         // Modify the given information to account for redundancy in stated nodes
         // That is, does given information strengthen a figure node?
         //
-        private List<ConcreteAST.GroundedClause> DoGivensStrengthenFigure()
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> DoGivensStrengthenFigure()
         {
-            List<ConcreteAST.GroundedClause> modifiedGivens = new List<ConcreteAST.GroundedClause>();
-            ConcreteAST.GroundedClause currentGiven = null;
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> modifiedGivens = new List<GeometryTutorLib.ConcreteAST.GroundedClause>();
+            GeometryTutorLib.ConcreteAST.GroundedClause currentGiven = null;
 
-            foreach (ConcreteAST.GroundedClause given in givens)
+            foreach (GeometryTutorLib.ConcreteAST.GroundedClause given in givens)
             {
                 currentGiven = given;
-                foreach (ConcreteAST.GroundedClause component in figure)
+                foreach (GeometryTutorLib.ConcreteAST.GroundedClause component in figure)
                 {
                     if (component.CanBeStrengthenedTo(given))
                     {
-                        currentGiven = new ConcreteAST.Strengthened(component, given);
+                        currentGiven = new GeometryTutorLib.ConcreteAST.Strengthened(component, given);
                         break;
                     }
                 }
@@ -317,12 +348,12 @@ namespace GeometryTutorLib.StatisticsGenerator
         private void ConstructHypergraph()
         {
             // Resets all saved data to allow multiple problems
-            GenericInstantiator.Instantiator.Clear();
+            GeometryTutorLib.GenericInstantiator.Instantiator.Clear();
 
             // Build the hypergraph through instantiation
             graph = instantiator.Instantiate(figure, givens);
 
-            if (Utilities.DEBUG)
+            if (GeometryTutorLib.Utilities.DEBUG)
             {
                 graph.DumpNonEquationClauses();
                 graph.DumpEquationClauses();
@@ -346,18 +377,18 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         private void Pebble()
         {
-            pathGenerator = new ProblemAnalyzer.PathGenerator(graph);
+            pathGenerator = new GeometryTutorLib.ProblemAnalyzer.PathGenerator(graph);
 
             // Acquire the integer values of the intrinsic / figure nodes
-            List<int> intrinsicSet = Utilities.CollectGraphIndices(graph, figure);
+            List<int> intrinsicSet = GeometryTutorLib.Utilities.CollectGraphIndices(graph, figure);
 
             // Acquire the integer values of the givens (from the original 
-            List<int> givenSet = Utilities.CollectGraphIndices(graph, givens);
+            List<int> givenSet = GeometryTutorLib.Utilities.CollectGraphIndices(graph, givens);
 
             // Perform pebbling based on the <figure, given> pair.
             pebblerGraph.Pebble(intrinsicSet, givenSet);
 
-            if (Utilities.PEBBLING_DEBUG)
+            if (GeometryTutorLib.Utilities.PEBBLING_DEBUG)
             {
 //                Debug.WriteLine("Forward Vertices after pebbling:");
 //                for (int i = 0; i < pebblerGraph.vertices.Length; i++)
@@ -380,9 +411,10 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         // Generate all of the problems based on the precomputed values (these precomputations are the problem goals)
         //
-        private KeyValuePair<List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>, List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>> GenerateTemplateProblems()
+        private KeyValuePair<List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>,
+                             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> GenerateTemplateProblems()
         {
-            templateProblemGenerator = new ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
+            templateProblemGenerator = new GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
 
             // Generate the problem pairs
             return templateProblemGenerator.Generate(precomputer.GetPrecomputedRelations(), precomputer.GetStrengthenedClauses(), givens);
@@ -392,26 +424,26 @@ namespace GeometryTutorLib.StatisticsGenerator
         // Given, the list of generated, interesting problems, validate (for soundness) the fact that the original book problem was generated.
         // Do so by constructing a goal-based isomorphism partitioning and check that there exists a problem with the same given set.
         //
-        private void Validate(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, FigureStatisticsAggregator figureStats)
+        private void Validate(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, FigureStatisticsAggregator figureStats)
         {
-            ProblemAnalyzer.QueryFeatureVector query = ProblemAnalyzer.QueryFeatureVector.ConstructGoalIsomorphismQueryVector();
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector query = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructGoalIsomorphismQueryVector();
 
-            ProblemAnalyzer.PartitionedProblemSpace goalBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, query);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace goalBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, query);
             
             goalBasedPartitions.ConstructPartitions(problems);
 
             // Validate that we have generated all of the original problems from the text.
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> generatedBookProblems = goalBasedPartitions.ValidateOriginalProblems(givens, goals);
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> generatedBookProblems = goalBasedPartitions.ValidateOriginalProblems(givens, goals);
             figureStats.totalBookProblemsGenerated = generatedBookProblems.Count;
 
-            if (Utilities.PROBLEM_GEN_DEBUG)
+            if (GeometryTutorLib.Utilities.PROBLEM_GEN_DEBUG)
             {
                 goalBasedPartitions.DumpPartitions();
             }
-            if (Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
+            if (GeometryTutorLib.Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
             {
                 Debug.WriteLine("\nAll " + generatedBookProblems.Count + " Book-specified problems: \n");
-                foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> bookProb in generatedBookProblems)
+                foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> bookProb in generatedBookProblems)
                 {
                     Debug.WriteLine(bookProb.ConstructProblemAndSolution(graph));
                 }
@@ -423,9 +455,9 @@ namespace GeometryTutorLib.StatisticsGenerator
         //
         // We may analyze the interesting problems constructing various partitions and queries
         //
-        private void GenerateStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems,
+        private void GenerateStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems,
             StatisticsGenerator.FigureStatisticsAggregator figureStats,
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> strictlyInteresting)
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> strictlyInteresting)
         {
             GenerateAverages(problems, figureStats);
             GenerateIsomorphicStatistics(problems, figureStats);
@@ -436,13 +468,13 @@ namespace GeometryTutorLib.StatisticsGenerator
             GeneratePaperQuery(strictlyInteresting, figureStats);
         }
 
-        private void GenerateAverages(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
             int totalWidth = 0;
             int totalLength = 0;
             int totalDeductiveSteps = 0;
 
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
                 totalWidth += problem.GetWidth();
                 totalLength += problem.GetLength();
@@ -454,7 +486,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             figureStats.averageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
         }
 
-        private void GenerateStrictAverages(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateStrictAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
             figureStats.totalStrictInterestingProblems = problems.Count;
 
@@ -462,7 +494,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             int totalLength = 0;
             int totalDeductiveSteps = 0;
 
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
                 totalWidth += problem.GetWidth();
                 totalLength += problem.GetLength();
@@ -474,14 +506,14 @@ namespace GeometryTutorLib.StatisticsGenerator
             figureStats.strictAverageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
         }
 
-        private void GenerateIsomorphicStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
             //
             // Determine number of problems based on SOURCE isomorphism
             //
-            ProblemAnalyzer.QueryFeatureVector sourceQuery = ProblemAnalyzer.QueryFeatureVector.ConstructSourceIsomorphismQueryVector();
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector sourceQuery = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructSourceIsomorphismQueryVector();
 
-            ProblemAnalyzer.PartitionedProblemSpace sourceBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, sourceQuery);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace sourceBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, sourceQuery);
 
             sourceBasedPartitions.ConstructPartitions(problems);
 
@@ -496,9 +528,9 @@ namespace GeometryTutorLib.StatisticsGenerator
             // 75% Difficult
             // 100% Extreme
             //
-            ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector difficultyQuery = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
 
-            ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
 
             difficultyBasedPartitions.ConstructPartitions(problems);
 
@@ -513,16 +545,16 @@ namespace GeometryTutorLib.StatisticsGenerator
             // 6-10 Difficult
             // 10+ Extreme
             //
-            ProblemAnalyzer.QueryFeatureVector interestingQuery = ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector interestingQuery = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
 
-            ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
 
             interestingBasedPartitions.ConstructPartitions(problems);
 
             figureStats.interestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
 
-        private void GenerateStrictIsomorphicStatistics(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateStrictIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
             //
             // Determine number of problems based on DIFFICULTY of the problems (easy, medium difficult, extreme) based on the number of deductions
@@ -533,9 +565,9 @@ namespace GeometryTutorLib.StatisticsGenerator
             // 75% Difficult
             // 100% Extreme
             //
-            ProblemAnalyzer.QueryFeatureVector difficultyQuery = ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector difficultyQuery = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDeductiveBasedIsomorphismQueryVector(GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds());
 
-            ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace difficultyBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, difficultyQuery);
 
             difficultyBasedPartitions.ConstructPartitions(problems);
 
@@ -550,24 +582,24 @@ namespace GeometryTutorLib.StatisticsGenerator
             // 6-10 Difficult
             // 10+ Extreme
             //
-            ProblemAnalyzer.QueryFeatureVector interestingQuery = ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
+            GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector interestingQuery = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingnessIsomorphismQueryVector(GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds());
 
-            ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
+            GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace interestingBasedPartitions = new GeometryTutorLib.ProblemAnalyzer.PartitionedProblemSpace(graph, interestingQuery);
 
             interestingBasedPartitions.ConstructPartitions(problems);
 
             figureStats.strictInterestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
 
-        private void GeneratePaperQuery(List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GeneratePaperQuery(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
         {
-            List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> sat = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
+            List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> sat = new List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
             int query = 0;
             int query2 = 0;
             int query3 = 0;
             int query4 = 0;
 
-            foreach (ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation> problem in problems)
+            foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems)
             {
                 bool WRITE_PROBLEMS = true;
                 int width = problem.GetWidth();

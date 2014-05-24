@@ -10,5 +10,10 @@ namespace LiveGeometry.AtomicRegionIdentifier
         {
             thePoint = pt;
         }
+
+        public override string ToString()
+        {
+            return "Point { " + thePoint.ToString() + " }";
+        }
     }
 }

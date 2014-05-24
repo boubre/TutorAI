@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Browser" />
+    <Reference Include="System.Xml.Serialization, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area-Based Analyses\Area Equations\AreaAddition.cs" />
@@ -62,6 +63,8 @@
     <Compile Include="Area-Based Analyses\Area Equations\AreaArithmeticOperation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\SimpleRegionEquation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\AreaSubtraction.cs" />
+    <Compile Include="Area-Based Analyses\NonShapeAtomicRegion.cs" />
+    <Compile Include="Area-Based Analyses\ShapeAtomicRegion.cs" />
     <Compile Include="ConcreteAST\Figures\Polygon.cs" />
     <Compile Include="Area-Based Analyses\Shape.cs" />
     <Compile Include="Area-Based Analyses\AtomicRegion.cs" />

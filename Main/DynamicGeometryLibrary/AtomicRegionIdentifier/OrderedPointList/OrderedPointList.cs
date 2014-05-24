@@ -11,14 +11,14 @@ namespace LiveGeometry.AtomicRegionIdentifier
     //
     public class OrderedPointList
     {
-        List<Node<Point>> ordered;
+        List<Point> ordered;
 
         //
         // Creates the Min-heap array and places the smallest value possible in array position 0
         //
         public OrderedPointList()
         {
-            ordered = new List<Node<Point>>();
+            ordered = new List<Point>();
         }
 
         public bool IsEmpty() { return ordered.Count == 0; }
@@ -26,7 +26,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //
         // Inserts an element
         //
-        private void Insert(Node<Point> thatNode)
+        private void Insert(Point thatNode)
         {
             // Empty list: add to beginning.
             if (!ordered.Any())
@@ -39,49 +39,40 @@ namespace LiveGeometry.AtomicRegionIdentifier
             int n;
             for (n = 0; n < ordered.Count; n++)
             {
-                if (Point.LexicographicOrdering(thatNode.data, ordered[n].data) <= 0)
+                if (Point.LexicographicOrdering(thatNode, ordered[n]) <= 0)
                 {
                     break;
                 }
             }
+
             ordered.Insert(n, thatNode);
         }
 
-        public void Add(Point pt, int gIndex)
+        public void Add(Point pt)
         {
-            Insert(new Node<Point>(pt, gIndex));
+            Insert(pt);
         }
 
         //
         // Removes the node at the first position: O(log n) due to Heapify
         //
-        private Node<Point> ExtractTheMin()
+        public Point ExtractMin()
         {
             if (!ordered.Any()) return null;
 
-            Node<Point> min = ordered[0];
+            Point min = ordered[0];
             ordered.RemoveAt(0);
             return min;
         }
 
-        public KeyValuePair<Point, int> PeekMin()
+        public Point PeekMin()
         {
-            return new KeyValuePair<Point, int>(ordered[0].data, ordered[0].graphIndex);
-        }
-
-        //
-        // public interace to acquire the minimum element
-        //
-        public KeyValuePair<Point, int> ExtractMin()
-        {
-            Node<Point> node = ExtractTheMin();
-
-            return new KeyValuePair<Point, int>(node.data, node.graphIndex);
+            return ordered[0];
         }
 
         public void Remove(Point pt)
         {
-            ordered.Remove(new Node<Point>(pt, -1));
+            ordered.Remove(pt);
         }
 
         //
@@ -94,7 +85,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             // Traverse the array and dump the (key, data) pairs
             for (int n = 0; n < ordered.Count; n++)
             {
-                retS += "(" + n + ": " + ordered[n].data + ") ";
+                retS += "(" + n + ": " + ordered[n] + ") ";
             }
 
             return retS + "\n";

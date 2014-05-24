@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Xml;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -60,6 +61,13 @@ namespace GeometryTutorLib.ConcreteAST
         private bool isObviousDefinition = false;
         public void SetClearDefinition() { isObviousDefinition = true; }
         public bool IsClearDefinition() { return isObviousDefinition; }
+
+        public virtual void DumpXML(XmlWriter writer)
+        {
+            writer.WriteStartElement("TBD");
+
+            writer.WriteEndElement();
+        }
 
         public void AddRelationPredecessor(GroundedClause gc)
         {

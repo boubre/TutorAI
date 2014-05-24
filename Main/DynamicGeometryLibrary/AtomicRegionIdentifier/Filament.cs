@@ -20,5 +20,20 @@ namespace LiveGeometry.AtomicRegionIdentifier
         {
             points.Add(pt);
         }
+
+        public override string ToString()
+        {
+            System.Text.StringBuilder str = new System.Text.StringBuilder();
+
+            str.Append("Filament { ");
+            for (int p = 0; p < points.Count; p++)
+            {
+                str.Append(points[p].ToString());
+                if (p < points.Count - 1) str.Append(", ");
+            }
+            str.Append(" }");
+
+            return str.ToString();
+        }
     }
 }

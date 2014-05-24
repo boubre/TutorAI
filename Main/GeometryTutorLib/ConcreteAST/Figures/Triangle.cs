@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -75,6 +76,21 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (segs.Count != 3) throw new ArgumentException("Triangle constructed with " + segs.Count + " segments.");
         }
+
+        public void DumpXML(XmlWriter writer)
+        {
+            writer.WriteStartElement("Triangle");
+
+            //point1.DUMPXML(writer);
+            //point2.DUMPXML(writer);
+            //point3.DUMPXML(writer);
+            foreach (Point pt in points)
+            {
+                pt.DumpXML(writer);
+            }
+
+            writer.WriteEndElement();
+	    }
 
         protected void addSuperFigureToDependencies()
         {
@@ -241,11 +257,6 @@ namespace GeometryTutorLib.ConcreteAST
         public bool LiesOn(Segment cs)
         {
             return SegmentA.IsCollinearWith(cs) || SegmentB.IsCollinearWith(cs) || SegmentC.IsCollinearWith(cs);
-        }
-
-        public bool HasSegment(Segment cs)
-        {
-            return SegmentA.Equals(cs) || SegmentB.Equals(cs) || SegmentC.Equals(cs);
         }
 
         // Does this triangle have this specific angle with these vertices

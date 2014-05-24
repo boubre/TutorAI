@@ -20,8 +20,8 @@ namespace GeometryTutorLib.ConcreteAST
         public Arc(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts) : base()
         {
             theCircle = circle;
-            e1 = endpoint1;
-            e2 = endpoint2;
+            endpoint1 = e1;
+            endpoint2 = e2;
             arcMinorPoints = new List<Point>(minorPts);
             arcMajorPoints = new List<Point>(majorPts);
 

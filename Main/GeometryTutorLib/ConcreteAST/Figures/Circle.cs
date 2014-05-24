@@ -84,18 +84,20 @@ namespace GeometryTutorLib.ConcreteAST
 
             foreach (Point point in points)
             {
-                double deltaX = point.X - this.center.X;
-                double deltaY = point.Y - this.center.Y;
+                double radianAngle = Point.GetStandardAngleWithCenter(this.center, point);
 
-                double radianAngle = System.Math.Atan2(deltaY, deltaX);
+                //double deltaX = point.X - this.center.X;
+                //double deltaY = point.Y - this.center.Y;
 
-                // Find the correct quadrant the point lies in to find the exact angle (w.r.t. unit circle)
-                // fourth quadrant
-                if (deltaX > 0 && deltaY < 0) radianAngle += 2 * Math.PI;
-                // second  or third quadrant
-                if (deltaX < 0) radianAngle += Math.PI;
-                // on the Y-axis (below x-axis)
-                if (GeometryTutorLib.Utilities.CompareValues(deltaX, 0) && deltaY < 0) radianAngle += Math.PI;
+                //double radianAngle = System.Math.Atan2(deltaY, deltaX);
+
+                //// Find the correct quadrant the point lies in to find the exact angle (w.r.t. unit circle)
+                //// fourth quadrant
+                //if (deltaX > 0 && deltaY < 0) radianAngle += 2 * Math.PI;
+                //// second  or third quadrant
+                //else if (deltaX < 0) radianAngle += Math.PI;
+                //// on the Y-axis (below x-axis)
+                //else if (GeometryTutorLib.Utilities.CompareValues(deltaX, 0) && deltaY < 0) radianAngle += Math.PI;
 
                 // Angles are between 0 and 2pi
                 // insert the point into the correct position (starting from the back); insertion sort-style
@@ -413,16 +415,16 @@ namespace GeometryTutorLib.ConcreteAST
             double lengthEC = System.Math.Sqrt(System.Math.Pow(E[0] - this.center.X, 2) + System.Math.Pow(E[1] - this.center.Y, 2));
 
             // Possible Intersection?
-            if (Utilities.LessThan(lengthEC, this.radius))
+            if (lengthEC < this.radius)
             {
                 // Compute distance from t to circle intersection point
                 double dt = System.Math.Sqrt(System.Math.Pow(this.radius, 2) - System.Math.Pow(lengthEC, 2));
 
                 // First intersection
-                inter1 = Point.GetFigurePoint(new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y));
+                inter1 = new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y);
 
                 // Second intersection
-                inter2 = Point.GetFigurePoint(new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y));
+                inter2 = new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y);
             }
             //
             // Tangent point (E)
@@ -430,7 +432,7 @@ namespace GeometryTutorLib.ConcreteAST
             else if (Utilities.CompareValues(lengthEC, this.radius))
             {
                 // First intersection
-                inter1 = Point.GetFigurePoint(new Point("", E[0], E[1]));
+                inter1 = new Point("", E[0], E[1]);
             }
         }
 
@@ -473,16 +475,16 @@ namespace GeometryTutorLib.ConcreteAST
                 // Only one intersection
                 if (h == 0)
                 {
-                    inter1 = Point.GetFigurePoint(new Point("", midpt[0], midpt[1]));
+                    inter1 = new Point("", midpt[0], midpt[1]);
                 }
                 // Two intersections
                 else
                 {
-                    inter1 = Point.GetFigurePoint(new Point("",
-                        midpt[0] + h * (thatCircle.center.Y - this.center.Y) / d, midpt[1] - h * (thatCircle.center.X - this.center.X) / d));
+                    inter1 = new Point("", midpt[0] + h * (thatCircle.center.Y - this.center.Y) / d,
+                                           midpt[1] - h * (thatCircle.center.X - this.center.X) / d);
 
-                    inter2 = Point.GetFigurePoint(new Point("",
-                        midpt[0] - h * (thatCircle.center.Y - this.center.Y) / d, midpt[1] + h * (thatCircle.center.X - this.center.X) / d));
+                    inter2 = new Point("", midpt[0] - h * (thatCircle.center.Y - this.center.Y) / d,
+                                           midpt[1] + h * (thatCircle.center.X - this.center.X) / d);
                 }
             }
         }
@@ -720,9 +722,35 @@ namespace GeometryTutorLib.ConcreteAST
             return chord;
         }
 
+        // return the midpoint between these two on the circle.
+        public Point Midpoint(Point a, Point b)
+        {
+            if (!this.PointIsOn(a)) return null;
+            if (!this.PointIsOn(b)) return null;
+
+            // Make the chord.
+            Segment chord = new Segment(a, b);
+
+            // Make radius through the midpoint of the chord.
+            Segment radius = new Segment(center, chord.Midpoint());
+
+            Point pt1 = null;
+            Point pt2 = null;
+            this.FindIntersection(radius, out pt1, out pt2);
+
+            if (pt2 == null) return pt1;
+
+            return Arc.StrictlyBetweenMinor(pt1, new MinorArc(this, a, b)) ? pt1 : pt2;
+        }
+
         public bool HasArc(Arc arc)
         {
             return this.StructurallyEquals(arc.theCircle);
+        }
+
+        public bool HasArc(Point p1, Point p2)
+        {
+            return this.PointIsOn(p1) && this.PointIsOn(p2);
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }

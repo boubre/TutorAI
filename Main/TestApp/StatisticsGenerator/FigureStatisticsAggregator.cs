@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib;
 
-namespace GeometryTutorLib.StatisticsGenerator
+namespace StatisticsGenerator
 {
     public class FigureStatisticsAggregator
     {
@@ -84,7 +84,7 @@ namespace GeometryTutorLib.StatisticsGenerator
             strictAverageProblemLength = -1;
             strictAverageProblemWidth = -1;
 
-            goalPartitionSummary = new List<KeyValuePair<ConcreteAST.GroundedClause, int>>();
+            goalPartitionSummary = new List<KeyValuePair<GeometryTutorLib.ConcreteAST.GroundedClause, int>>();
             sourcePartitionSummary = new List<int>();
             difficultyPartitionSummary = new Dictionary<int, int>();
             interestingPartitionSummary = new Dictionary<int, int>();

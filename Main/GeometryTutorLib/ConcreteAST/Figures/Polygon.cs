@@ -57,6 +57,37 @@ namespace GeometryTutorLib.ConcreteAST
             angles = angs;
         }
 
+        public bool HasSegment(Segment thatSegment)
+        {
+            return Utilities.HasStructurally<Segment>(orderedSides, thatSegment);
+        }
+
+        /// <summary>
+        /// Determines if the given point is inside the polygon; http://alienryderflex.com/polygon/
+        /// </summary>
+        /// <param name="polygon">the vertices of polygon</param>
+        /// <param name="testPoint">the given point</param>
+        /// <returns>true if the point is inside the polygon; otherwise, false</returns>
+        public bool IsInConvexPolygon(Point thatPoint)
+        {
+            bool result = false;
+            int j = points.Count - 1;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Y < thatPoint.Y &&
+                    points[j].Y >= thatPoint.Y || points[j].Y < thatPoint.Y &&
+                                                  points[i].Y >= thatPoint.Y)
+                {
+                    if (points[i].X + (thatPoint.Y - points[i].Y) / (points[j].Y - points[i].Y) * (points[j].X - points[i].X) < thatPoint.X)
+                    {
+                        result = !result;
+                    }
+                }
+                j = i;
+            }
+            return result;
+        }
+
         public override string ToString()
         {
             StringBuilder str = new StringBuilder();

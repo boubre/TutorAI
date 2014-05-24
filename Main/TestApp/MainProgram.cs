@@ -8,16 +8,18 @@ namespace GeometryTestbed
 {
     public class MainProgram
     {
-        private static List<GeometryTutorLib.StatisticsGenerator.ActualProblem> ConstructAllHardCodedProblems()
+        private static List<GeometryTestbed.ActualProblem> ConstructAllHardCodedProblems()
         {
-            List<GeometryTutorLib.StatisticsGenerator.ActualProblem> problems = new List<GeometryTutorLib.StatisticsGenerator.ActualProblem>();
+            List<GeometryTestbed.ActualProblem> problems = new List<GeometryTestbed.ActualProblem>();
 
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.JurgensenProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.GlencoeProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.IndianTextProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.HoltWorkbookProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.McDougallProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.StatisticsGenerator.McDougallWorkbookProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.IndianTextProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.HoltWorkbookProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
+
+            problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
 
             return problems;
         }
@@ -92,12 +94,12 @@ namespace GeometryTestbed
 
         static void Main(string[] args)
         {
-            List<GeometryTutorLib.StatisticsGenerator.ActualProblem> problems = ConstructAllHardCodedProblems();
+            List<GeometryTestbed.ActualProblem> problems = ConstructAllHardCodedProblems();
 
             DumpStatisticsHeader();
 
             int problemCount = 0;
-            foreach (GeometryTutorLib.StatisticsGenerator.ActualProblem problem in problems)
+            foreach (GeometryTestbed.ActualProblem problem in problems)
             {
                 if (problem.problemIsOn) // We may turn problems on / off: check on
                 {
@@ -119,67 +121,67 @@ namespace GeometryTestbed
 
             output += numFigures + "\t\t\t\t\t\t\t";
 
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalPoints + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSegments + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInMiddle + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalIntersections + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalAngles + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTriangles + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTotalProperties + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalPoints + "\t || ";
-            //output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalCircles + "\t";
-            //output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalQuadrilaterals + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalPoints + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalSegments + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalInMiddle + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalIntersections + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalAngles + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalTriangles + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalTotalProperties + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalPoints + "\t || ";
+            //output += GeometryTestbed.ActualProofProblem.TotalCircles + "\t";
+            //output += GeometryTestbed.ActualProofProblem.TotalQuadrilaterals + "\t";
 
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalExplicitFacts + "\t || ";
+            output += GeometryTestbed.ActualProofProblem.TotalExplicitFacts + "\t || ";
 
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalOriginalBookProblems + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoals + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemsGenerated + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictInterestingProblems + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalBackwardProblemsGenerated + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalOriginalBookProblems + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalGoals + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalProblemsGenerated + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalInterestingProblems + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalStrictInterestingProblems + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalBackwardProblemsGenerated + "\t";
 
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemWidth / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems);
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalProblemLength / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems);
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalDeducedSteps / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalProblemWidth / GeometryTestbed.ActualProofProblem.TotalInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalProblemLength / GeometryTestbed.ActualProofProblem.TotalInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalDeducedSteps / GeometryTestbed.ActualProofProblem.TotalInterestingProblems);
 
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictProblemWidth / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictInterestingProblems);
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictProblemLength / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictInterestingProblems);
-            output += System.String.Format("{0:N2}\t", GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictDeducedSteps / GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalStrictInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalStrictProblemWidth / GeometryTestbed.ActualProofProblem.TotalStrictInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalStrictProblemLength / GeometryTestbed.ActualProofProblem.TotalStrictInterestingProblems);
+            output += System.String.Format("{0:N2}\t", GeometryTestbed.ActualProofProblem.TotalStrictDeducedSteps / GeometryTestbed.ActualProofProblem.TotalStrictInterestingProblems);
 
 
             output += System.String.Format("{0:00}:{1:00}.{2:00}",
-                                           GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Minutes,
-                                           GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Seconds,
-                                           GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalTime.Milliseconds / 10);
+                                           GeometryTestbed.ActualProofProblem.TotalTime.Minutes,
+                                           GeometryTestbed.ActualProofProblem.TotalTime.Seconds,
+                                           GeometryTestbed.ActualProofProblem.TotalTime.Milliseconds / 10);
 
             // Queries
-            output += "\t" + GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalGoalPartitions + "\t";
-            output += GeometryTutorLib.StatisticsGenerator.ActualProblem.TotalSourcePartitions +"\t||\t";
+            output += "\t" + GeometryTestbed.ActualProofProblem.TotalGoalPartitions + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalSourcePartitions +"\t||\t";
 
             // Query: Difficulty Partitioning
-            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalDifficulty)
+            foreach (int numProbs in GeometryTestbed.ActualProofProblem.totalDifficulty)
             {
                 output += numProbs + "\t";
             }
 
             output += "||\t";
             // Query: Strict Difficulty Partitioning
-            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalStrictDifficulty)
+            foreach (int numProbs in GeometryTestbed.ActualProofProblem.totalStrictDifficulty)
             {
                 output += numProbs + "\t";
             }
 
             output += "||\t";
             // Query: Interesting Partitioning
-            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalInteresting)
+            foreach (int numProbs in GeometryTestbed.ActualProofProblem.totalInteresting)
             {
                 output += numProbs + "\t";
             }
 
             output += "||\t";
             // Query: Strict Interesting Partitioning
-            foreach (int numProbs in GeometryTutorLib.StatisticsGenerator.ActualProblem.totalStrictInteresting)
+            foreach (int numProbs in GeometryTestbed.ActualProofProblem.totalStrictInteresting)
             {
                 output += numProbs + "\t";
             }
