@@ -74,9 +74,9 @@ namespace StatisticsGenerator
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
-        public StatisticsGenerator.FigureStatisticsAggregator AnalyzeFigure()
+        public ProofProblemFigureStatisticsAggregator AnalyzeFigure()
         {
-            StatisticsGenerator.FigureStatisticsAggregator figureStats = new StatisticsGenerator.FigureStatisticsAggregator();
+            ProofProblemFigureStatisticsAggregator figureStats = new ProofProblemFigureStatisticsAggregator();
 
             // For statistical analysis, count the number of each particular type of implicit facts.
             CountIntrisicProperties(figureStats);
@@ -150,7 +150,7 @@ namespace StatisticsGenerator
         //
         private void CalculateKnonStrictCardinalities(GeometryTutorLib.ProblemAnalyzer.InterestingProblemCalculator interestingCalculator,
                                                       List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems,
-                                                      StatisticsGenerator.FigureStatisticsAggregator figureStats)
+                                                      StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             // K-G  container: index 0 is 1-G, index 1 is 2-G, etc.
             List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> KmgProblems = new List<List<GeometryTutorLib.ProblemAnalyzer.MultiGoalProblem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>>();
@@ -171,7 +171,7 @@ namespace StatisticsGenerator
 
 
             // Construct all of the remaining 
-            CalculateKnonStrictCardinalities(KmgProblems, problems, FigureStatisticsAggregator.MAX_K);
+            CalculateKnonStrictCardinalities(KmgProblems, problems, ProofProblemFigureStatisticsAggregator.MAX_K);
 
             //
             // Now that we have 1, 2, ..., MAX_K -G multigoal problems, we must filter them.
@@ -187,7 +187,7 @@ namespace StatisticsGenerator
 
             // Calculate the final numbers: counts of the k-G Strictly interesting problems.
             StringBuilder str = new StringBuilder();
-            for (int k = 1; k <= FigureStatisticsAggregator.MAX_K; k++)
+            for (int k = 1; k <= ProofProblemFigureStatisticsAggregator.MAX_K; k++)
             {
                 figureStats.kGcardinalities[k] = filteredKmgProblems[k - 1].Count;
 
@@ -266,7 +266,7 @@ namespace StatisticsGenerator
         //
         // For statistical analysis only count the number of occurrences of each intrisic property.
         //
-        private void CountIntrisicProperties(StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void CountIntrisicProperties(StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause clause in figure)
             {
@@ -424,7 +424,7 @@ namespace StatisticsGenerator
         // Given, the list of generated, interesting problems, validate (for soundness) the fact that the original book problem was generated.
         // Do so by constructing a goal-based isomorphism partitioning and check that there exists a problem with the same given set.
         //
-        private void Validate(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, FigureStatisticsAggregator figureStats)
+        private void Validate(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, ProofProblemFigureStatisticsAggregator figureStats)
         {
             GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector query = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructGoalIsomorphismQueryVector();
 
@@ -456,7 +456,7 @@ namespace StatisticsGenerator
         // We may analyze the interesting problems constructing various partitions and queries
         //
         private void GenerateStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems,
-            StatisticsGenerator.FigureStatisticsAggregator figureStats,
+            StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats,
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> strictlyInteresting)
         {
             GenerateAverages(problems, figureStats);
@@ -468,7 +468,7 @@ namespace StatisticsGenerator
             GeneratePaperQuery(strictlyInteresting, figureStats);
         }
 
-        private void GenerateAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             int totalWidth = 0;
             int totalLength = 0;
@@ -486,7 +486,7 @@ namespace StatisticsGenerator
             figureStats.averageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
         }
 
-        private void GenerateStrictAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateStrictAverages(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             figureStats.totalStrictInterestingProblems = problems.Count;
 
@@ -506,7 +506,7 @@ namespace StatisticsGenerator
             figureStats.strictAverageProblemDeductiveSteps = ((double)(totalDeductiveSteps)) / problems.Count;
         }
 
-        private void GenerateIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             //
             // Determine number of problems based on SOURCE isomorphism
@@ -554,7 +554,7 @@ namespace StatisticsGenerator
             figureStats.interestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
 
-        private void GenerateStrictIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GenerateStrictIsomorphicStatistics(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             //
             // Determine number of problems based on DIFFICULTY of the problems (easy, medium difficult, extreme) based on the number of deductions
@@ -591,7 +591,7 @@ namespace StatisticsGenerator
             figureStats.strictInterestingPartitionSummary = interestingBasedPartitions.GetInterestingPartitionSummary();
         }
 
-        private void GeneratePaperQuery(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.FigureStatisticsAggregator figureStats)
+        private void GeneratePaperQuery(List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems, StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats)
         {
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> sat = new List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>();
             int query = 0;

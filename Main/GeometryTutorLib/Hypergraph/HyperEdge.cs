@@ -29,11 +29,6 @@ namespace GeometryTutorLib.Hypergraph
             }
         }
 
-        //public PebblerHyperEdge CreatePebblerEdge()
-        //{
-        //    return new PebblerHyperEdge(sourceNodes, targetNode);
-        //}
-
         // The source nodes and target must be the same for equality.
         public override bool Equals(object obj)
         {

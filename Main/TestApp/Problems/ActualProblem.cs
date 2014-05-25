@@ -25,23 +25,52 @@ namespace GeometryTestbed
         //
         protected LiveGeometry.TutorParser.HardCodedParserMain parser;
 
-        protected List<Point> points = new List<Point>();
-        protected List<Collinear> collinear = new List<Collinear>();
-        protected List<Segment> segments = new List<Segment>();
-        protected List<Circle> circles = new List<Circle>();
+        protected List<Point> points;
+        protected List<Collinear> collinear;
+        protected List<Segment> segments;
+        protected List<Circle> circles;
 
-
-        //
-        // Statistics Generation
-        //
-        // All statistics returned from the analysis
-        protected StatisticsGenerator.FigureStatisticsAggregator figureStats;
-        
         public const bool INCOMPLETE = false;
         public const bool COMPLETE = true;
         public bool isComplete;
 
         // Main routine to run a problem through the system.
         public abstract void Run();
+
+        public ActualProblem(bool runOrNot, bool comp)
+        {
+            intrinsic = new List<GroundedClause>();
+            given = new List<GroundedClause>();
+            goals = new List<GroundedClause>();
+
+            points = new List<Point>();
+            collinear = new List<Collinear>();
+            segments = new List<Segment>();
+            circles = new List<Circle>();
+
+            problemName = "TODO: NAME ME" + this.GetType();
+            problemIsOn = runOrNot;
+
+            isComplete = comp;
+        }
+
+        protected void ConstructIntrinsicSet()
+        {
+            parser.implied.allEvidentPoints.ForEach(pt => intrinsic.Add(pt));
+            parser.implied.segments.ForEach(seg => intrinsic.Add(seg));
+            parser.implied.inMiddles.ForEach(im => intrinsic.Add(im));
+            parser.implied.angles.ForEach(angle => intrinsic.Add(angle));
+            parser.implied.ssIntersections.ForEach(inter => intrinsic.Add(inter));
+            parser.implied.minorArcs.ForEach(arc => intrinsic.Add(arc));
+            parser.implied.circles.ForEach(circ => intrinsic.Add(circ));
+            parser.implied.csIntersections.ForEach(inter => intrinsic.Add(inter));
+            parser.implied.ccIntersections.ForEach(inter => intrinsic.Add(inter));
+            parser.implied.arcInMiddle.ForEach(im => intrinsic.Add(im));
+
+            foreach (List<Polygon> polyList in parser.implied.polygons)
+            {
+                polyList.ForEach(poly => intrinsic.Add(poly));
+            }
+        }
     }
 }

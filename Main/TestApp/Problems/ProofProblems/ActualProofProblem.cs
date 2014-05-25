@@ -5,6 +5,13 @@ namespace GeometryTestbed
 {
     public abstract class ActualProofProblem : ActualProblem
     {
+
+        //
+        // Statistics Generation
+        //
+        // All statistics returned from the analysis
+        protected StatisticsGenerator.ProofProblemFigureStatisticsAggregator figureStats;
+
         //
         // Aggregation variables for all <figure, given, goal> pairings.
         //
@@ -42,16 +49,8 @@ namespace GeometryTestbed
         public static int[] totalStrictDifficulty = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds().Count + 1];
         public static int[] totalStrictInteresting = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds().Count + 1];
 
-        public ActualProofProblem(bool runOrNot, bool comp)
+        public ActualProofProblem(bool runOrNot, bool comp) : base(runOrNot, comp)
         {
-            intrinsic = new List<GroundedClause>();
-            given = new List<GroundedClause>();
-            goals = new List<GroundedClause>();
-
-            problemName = "TODO: NAME ME" + this.GetType();
-            problemIsOn = runOrNot;
-
-            isComplete = comp;
         }
 
         public override void Run()
@@ -169,25 +168,6 @@ namespace GeometryTestbed
                 ActualProofProblem.totalStrictDifficulty[i] += figureStats.strictDifficultyPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
             }
             ActualProofProblem.totalStrictDifficulty[upperBounds.Count] += figureStats.strictDifficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-        }
-
-        private void ConstructIntrinsicSet()
-        {
-            parser.implied.allEvidentPoints.ForEach(pt => intrinsic.Add(pt));
-            parser.implied.segments.ForEach(seg => intrinsic.Add(seg));
-            parser.implied.inMiddles.ForEach(im => intrinsic.Add(im));
-            parser.implied.angles.ForEach(angle => intrinsic.Add(angle));
-            parser.implied.ssIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.minorArcs.ForEach(arc => intrinsic.Add(arc));
-            parser.implied.circles.ForEach(circ => intrinsic.Add(circ));
-            parser.implied.csIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.ccIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.arcInMiddle.ForEach(im => intrinsic.Add(im));
-
-            foreach (List<Polygon> polyList in parser.implied.polygons)
-            {
-                polyList.ForEach(poly => intrinsic.Add(poly));
-            }
         }
 
         public override string ToString()

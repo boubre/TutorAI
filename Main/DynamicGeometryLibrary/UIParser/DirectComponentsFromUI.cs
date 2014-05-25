@@ -37,6 +37,7 @@ namespace LiveGeometry.TutorParser
 
             uiToEngineMap = new Dictionary<IFigure, GroundedClause>();
             definedPoints = new List<Point>();
+            definedSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
             circles = new List<GeometryTutorLib.ConcreteAST.Circle>();
 
             polygons = ConstructPolygonContainer();
@@ -113,8 +114,8 @@ namespace LiveGeometry.TutorParser
             //
             IPoint p1 = uiLine.Dependencies.FindPoint(uiLine.Coordinates.P1, 0);
             IPoint p2 = uiLine.Dependencies.FindPoint(uiLine.Coordinates.P2, 0);
-            ParsePoint(p1);
-            ParsePoint(p2);
+            Parse(p1);
+            Parse(p2);
 
             // Create the tutor segments
             GeometryTutorLib.ConcreteAST.Segment tutorSeg = new GeometryTutorLib.ConcreteAST.Segment(uiToEngineMap[p1] as Point, uiToEngineMap[p2] as Point);

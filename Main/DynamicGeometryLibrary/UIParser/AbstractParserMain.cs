@@ -19,6 +19,7 @@ namespace LiveGeometry.TutorParser
 
         public AbstractParserMain()
         {
+            // Reset the factory so we get points that start back at __A.
             PointFactory.Reset();
         }
 

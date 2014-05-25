@@ -22,7 +22,7 @@ namespace GeometryTestbed
             problems.Add(new IPage120Problem7(false, true));   // GTG
             problems.Add(new IPage120Problem8(false, true));   // GTG  Overlapping Right Triangles
             problems.Add(new JPage140Problem9(false, false));   // GTG
-            problems.Add(new JPage140Problem6(false, true));   // GTG: Interleaving Triangles
+            problems.Add(new JPage140Problem6(true, true));   // GTG: Interleaving Triangles
             problems.Add(new JPage140Problem7(false, false));   // GTG
             problems.Add(new JPage141Problem11(false, false));  // GTG
             problems.Add(new JPage135Example4(false, true));   // GTG

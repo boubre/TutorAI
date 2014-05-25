@@ -5,6 +5,16 @@ namespace GeometryTestbed
 {
     public abstract class ActualShadedAreaProblem : ActualProblem
     {
+        // Atomic regions
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRegions { get; protected set; }
+
+
+        //
+        // Statistics Generation
+        //
+        // All statistics returned from the analysis
+        protected StatisticsGenerator.ShadedAreaFigureStatisticsAggregator figureStats;
+
         //
         // Aggregation variables for all <figure, given, goal> pairings.
         //
@@ -20,47 +30,23 @@ namespace GeometryTestbed
         public static int TotalExplicitFacts = 0;
 
         public static System.TimeSpan TotalTime = new System.TimeSpan();
-        public static int TotalGoals = 0;
-        public static int TotalProblemsGenerated = 0;
-        public static int TotalBackwardProblemsGenerated = 0;
-        public static int TotalStrictInterestingProblems = 0;
-        public static int TotalInterestingProblems = 0;
-        public static int TotalOriginalBookProblems = 0;
 
-        public static double TotalProblemWidth = 0;
-        public static double TotalProblemLength = 0;
-        public static double TotalDeducedSteps = 0;
-
-        public static double TotalStrictProblemWidth = 0;
-        public static double TotalStrictProblemLength = 0;
-        public static double TotalStrictDeducedSteps = 0;
-
-        public static int TotalGoalPartitions = 0;
-        public static int TotalSourcePartitions = 0;
-        public static int[] totalDifficulty = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds().Count + 1];
-        public static int[] totalInteresting = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds().Count + 1];
-        public static int[] totalStrictDifficulty = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds().Count + 1];
-        public static int[] totalStrictInteresting = new int[GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds().Count + 1];
-
-        public ActualShadedAreaProblem(bool runOrNot, bool comp)
+        public ActualShadedAreaProblem(bool runOrNot, bool comp) : base(runOrNot, comp)
         {
-            intrinsic = new List<GroundedClause>();
-            given = new List<GroundedClause>();
-            goals = new List<GroundedClause>();
-
-            problemName = "TODO: NAME ME" + this.GetType();
-            problemIsOn = runOrNot;
-
-            isComplete = comp;
+            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
         }
 
         public override void Run()
         {
+            if (!this.problemIsOn) return;
+
+
+
             // Map the set of clauses from parser to one set of intrinsic clauses.
             ConstructIntrinsicSet();
 
             // Create the analyzer
-            StatisticsGenerator.HardCodedFigureAnalyzerMain analyzer = new StatisticsGenerator.HardCodedFigureAnalyzerMain(intrinsic, given, goals);
+            StatisticsGenerator.HardCodedShadedAreaMain analyzer = new StatisticsGenerator.HardCodedShadedAreaMain(intrinsic, goalRegions, this.parser.implied);
 
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();
@@ -116,78 +102,6 @@ namespace GeometryTestbed
             ActualShadedAreaProblem.TotalTotalProperties += figureStats.totalProperties;
 
             ActualShadedAreaProblem.TotalExplicitFacts += figureStats.totalExplicitFacts;
-
-            ActualShadedAreaProblem.TotalGoals += goals.Count;
-            ActualShadedAreaProblem.TotalProblemsGenerated += figureStats.totalProblemsGenerated;
-            ActualShadedAreaProblem.TotalBackwardProblemsGenerated += figureStats.totalBackwardProblemsGenerated;
-
-            // Query: Interesting Partitioning
-            int numProblemsInPartition;
-            List<int> upperBounds = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds();
-            for (int i = 0; i < upperBounds.Count; i++)
-            {
-                ActualShadedAreaProblem.totalInteresting[i] += figureStats.interestingPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
-            }
-            ActualShadedAreaProblem.totalInteresting[upperBounds.Count] += figureStats.interestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-
-            upperBounds = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds();
-            for (int i = 0; i < upperBounds.Count; i++)
-            {
-                ActualShadedAreaProblem.totalStrictInteresting[i] += figureStats.strictInterestingPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
-            }
-            ActualShadedAreaProblem.totalStrictInteresting[upperBounds.Count] += figureStats.strictInterestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-
-
-            // Rest of Cumulative Stats
-            ActualShadedAreaProblem.TotalStrictInterestingProblems += figureStats.totalStrictInterestingProblems;
-            ActualShadedAreaProblem.TotalInterestingProblems += figureStats.totalInterestingProblems;
-            ActualShadedAreaProblem.TotalOriginalBookProblems += goals.Count;
-
-            // Averages
-            ActualShadedAreaProblem.TotalDeducedSteps += figureStats.averageProblemDeductiveSteps * figureStats.totalInterestingProblems;
-            ActualShadedAreaProblem.TotalProblemLength += figureStats.averageProblemLength * figureStats.totalInterestingProblems;
-            ActualShadedAreaProblem.TotalProblemWidth += figureStats.averageProblemWidth * figureStats.totalInterestingProblems;
-            ActualShadedAreaProblem.TotalStrictDeducedSteps += figureStats.totalStrictInterestingProblems == 0 ? 0 : figureStats.strictAverageProblemDeductiveSteps * figureStats.totalStrictInterestingProblems;
-            ActualShadedAreaProblem.TotalStrictProblemLength += figureStats.totalStrictInterestingProblems == 0 ? 0 : figureStats.strictAverageProblemLength * figureStats.totalStrictInterestingProblems;
-            ActualShadedAreaProblem.TotalStrictProblemWidth += figureStats.totalStrictInterestingProblems == 0 ? 0 : figureStats.strictAverageProblemWidth * figureStats.totalStrictInterestingProblems;
-
-            // Queries
-            ActualShadedAreaProblem.TotalGoalPartitions += figureStats.goalPartitionSummary.Count;
-            ActualShadedAreaProblem.TotalSourcePartitions += figureStats.sourcePartitionSummary.Count;
-
-            // Query: Difficulty Partitioning
-            upperBounds = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
-            for (int i = 0; i < upperBounds.Count; i++)
-            {
-                ActualShadedAreaProblem.totalDifficulty[i] += figureStats.difficultyPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
-            }
-            ActualShadedAreaProblem.totalDifficulty[upperBounds.Count] += figureStats.difficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-
-            upperBounds = GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds();
-            for (int i = 0; i < upperBounds.Count; i++)
-            {
-                ActualShadedAreaProblem.totalStrictDifficulty[i] += figureStats.strictDifficultyPartitionSummary.TryGetValue(upperBounds[i], out numProblemsInPartition) ? numProblemsInPartition : 0;
-            }
-            ActualShadedAreaProblem.totalStrictDifficulty[upperBounds.Count] += figureStats.strictDifficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-        }
-
-        private void ConstructIntrinsicSet()
-        {
-            parser.implied.allEvidentPoints.ForEach(pt => intrinsic.Add(pt));
-            parser.implied.segments.ForEach(seg => intrinsic.Add(seg));
-            parser.implied.inMiddles.ForEach(im => intrinsic.Add(im));
-            parser.implied.angles.ForEach(angle => intrinsic.Add(angle));
-            parser.implied.ssIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.minorArcs.ForEach(arc => intrinsic.Add(arc));
-            parser.implied.circles.ForEach(circ => intrinsic.Add(circ));
-            parser.implied.csIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.ccIntersections.ForEach(inter => intrinsic.Add(inter));
-            parser.implied.arcInMiddle.ForEach(im => intrinsic.Add(im));
-
-            foreach (List<Polygon> polyList in parser.implied.polygons)
-            {
-                polyList.ForEach(poly => intrinsic.Add(poly));
-            }
         }
 
         public override string ToString()
@@ -210,70 +124,11 @@ namespace GeometryTestbed
             statsString += figureStats.totalExplicitFacts + "\t";
 
             statsString += this.goals.Count + "\t";
-            statsString += figureStats.totalBookProblemsGenerated + "\t";
-            statsString += figureStats.totalProblemsGenerated + "\t";
-            statsString += figureStats.totalInterestingProblems + "\t";
-            statsString += figureStats.totalStrictInterestingProblems + "\t";
-            statsString += figureStats.totalBackwardProblemsGenerated + "\t";
-
-            statsString += System.String.Format("{0:N2}\t", figureStats.averageProblemWidth);
-            statsString += System.String.Format("{0:N2}\t", figureStats.averageProblemLength);
-            statsString += System.String.Format("{0:N2}\t", figureStats.averageProblemDeductiveSteps);
-            statsString += System.String.Format("{0:N2}\t", figureStats.strictAverageProblemWidth);
-            statsString += System.String.Format("{0:N2}\t", figureStats.strictAverageProblemLength);
-            statsString += System.String.Format("{0:N2}\t", figureStats.strictAverageProblemDeductiveSteps);
 
             // Format and display the elapsed time for this problem
             statsString += System.String.Format("{0:00}:{1:00}.{2:00}",
                                                 figureStats.stopwatch.Elapsed.Minutes,
                                                 figureStats.stopwatch.Elapsed.Seconds, figureStats.stopwatch.Elapsed.Milliseconds / 10);
-
-            //
-            // Sample Query Output
-            //
-            // Goal Isomorphism
-            //
-            statsString += "\t\t" + figureStats.goalPartitionSummary.Count + "\t";
-
-            // Source Isomorphism
-            statsString += figureStats.sourcePartitionSummary.Count + "\t|\t";
-
-            // Difficulty Partitioning
-            int numProblemsInPartition;
-            foreach (int upperBound in GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds())
-            {
-                statsString +=  figureStats.difficultyPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
-                statsString += "\t";
-            }
-            statsString += figureStats.difficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-            statsString += "\t|\t";
-
-            foreach (int upperBound in GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructDifficultyPartitionBounds())
-            {
-                statsString += figureStats.strictDifficultyPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
-                statsString += "\t";
-            }
-            statsString += figureStats.strictDifficultyPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-            statsString += "\t|\t";
-
-
-            // Interesting Partitioning
-            foreach (int upperBound in GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds())
-            {
-                statsString += figureStats.interestingPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
-                statsString += "\t";
-            }
-            statsString += figureStats.interestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-            statsString += "\t|\t";
-
-            // Strict Interesting Partitioning
-            foreach (int upperBound in GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector.ConstructInterestingPartitionBounds())
-            {
-                statsString += figureStats.strictInterestingPartitionSummary.TryGetValue(upperBound, out numProblemsInPartition) ? numProblemsInPartition : 0;
-                statsString += "\t";
-            }
-            statsString += figureStats.strictInterestingPartitionSummary.TryGetValue(int.MaxValue, out numProblemsInPartition) ? numProblemsInPartition : 0;
-            statsString += "\t";
 
             return statsString;
         }

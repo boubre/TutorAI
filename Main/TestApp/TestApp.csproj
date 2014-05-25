@@ -53,8 +53,11 @@
     <Compile Include="Problems\ShadedAreaProblems\ShadedAreaProblems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Problems\ActualProblem.cs" />
-    <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
+    <Compile Include="StatisticsGenerator\ProofProblemFigureStatisticsAggregator.cs" />
+    <Compile Include="StatisticsGenerator\ShadedAreaFigureStatisticsAggregator.cs" />
     <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
+    <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
+    <Compile Include="StatisticsGenerator\HardCodedShadedAreaMain.cs" />
     <Compile Include="Problems\ProofProblems\Blue McDougall Workbook\BackwardPage80Problem9.cs" />
     <Compile Include="Problems\ProofProblems\Blue McDougall Workbook\McDougallWorkbookProblems.cs" />
     <Compile Include="Problems\ProofProblems\Blue McDougall Workbook\Page37Problem2.cs" />

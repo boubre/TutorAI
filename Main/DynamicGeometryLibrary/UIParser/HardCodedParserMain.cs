@@ -26,26 +26,13 @@ namespace LiveGeometry.TutorParser
             //
             implied = new ImpliedComponentCalculator(points, collinear, segments, circles);
             implied.ConstructAllImplied();
+        }
 
-            //
-            // Dump these clauses, if desired
-            //
-            if (problemIsOn)
-            {
-                if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
-                {
-                    Debug.WriteLine(implied.ToString());
-                }
-                
-                AtomicIdentifier atomicIdentifier = new AtomicIdentifier(implied);
-                List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atomicRegions = atomicIdentifier.GetAtomicRegions();
+        private void ConstructAreaHypergraph(List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms)
+        {
+            GeometryTutorLib.Area_Based_Analyses.AreaHypergraph areaHG = new GeometryTutorLib.Area_Based_Analyses.AreaHypergraph(atoms);
 
-                int a = 1;
-                foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
-                {
-                    Debug.WriteLine((a++) + ": " + atom.ToString());
-                }
-            }
+            Debug.WriteLine(areaHG);
         }
     }
 }

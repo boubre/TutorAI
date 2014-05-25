@@ -61,6 +61,9 @@ namespace LiveGeometry.TutorParser
         public List<GeometryTutorLib.ConcreteAST.Segment> extendedRealRadii { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.Segment> extendedRadii { get; private set; }
 
+        // The atomic regions for this figure.
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atomicRegions { get; private set; }
+
         //
         // Construction requires this minimal set from the UI.
         //
@@ -170,6 +173,12 @@ namespace LiveGeometry.TutorParser
             //
             CalculateSegmentBisectors();
             CalculateAngleBisectors();
+
+            //
+            // Atomic region identification
+            //
+            AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
+            atomicRegions = atomIder.GetAtomicRegions();
         }
 
         /// <summary>
@@ -1027,6 +1036,12 @@ namespace LiveGeometry.TutorParser
                 {
                     str.Append(" " + circle.ToString());
                 }
+            }
+
+            int a = 1;
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+            {
+                str.AppendLine((a++) + ": " + atom.ToString());
             }
 
             return str.ToString();

@@ -22,7 +22,9 @@ namespace GeometryTestbed
             circles.Add(new Circle(a, 2.0));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
-            
+
+            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>(parser.implied.atomicRegions);
+
             //given.Add(new GeometricCongruentSegments(mn, mp));
 
             //goals.Add(new GeometricCongruentSegments(cd, (Segment)parser.Get(new Segment(p, n))));

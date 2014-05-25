@@ -61,12 +61,12 @@
     <Compile Include="Area-Based Analyses\Area Equations\AreaAddition.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\AreaArithmeticNode.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\AreaArithmeticOperation.cs" />
+    <Compile Include="Area-Based Analyses\Area Equations\ComplexRegionEquation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\SimpleRegionEquation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\AreaSubtraction.cs" />
     <Compile Include="Area-Based Analyses\NonShapeAtomicRegion.cs" />
     <Compile Include="Area-Based Analyses\ShapeAtomicRegion.cs" />
     <Compile Include="ConcreteAST\Figures\Polygon.cs" />
-    <Compile Include="Area-Based Analyses\Shape.cs" />
     <Compile Include="Area-Based Analyses\AtomicRegion.cs" />
     <Compile Include="Area-Based Analyses\AreaHypergraph.cs" />
     <Compile Include="EngineUIBridge\Assumption.cs" />

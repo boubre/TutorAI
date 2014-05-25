@@ -9,7 +9,7 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool OVERRIDE_DEBUG = true;
+        public static readonly bool OVERRIDE_DEBUG = false;
 
         public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
@@ -367,6 +367,8 @@ namespace GeometryTutorLib
         // We maintain ONLY an array because we are using this for a specific purpse in this project
         public static List<List<int>>[] memoized = new List<List<int>>[10];
         public static List<string>[] memoizedCompressed = new List<string>[10];
+        public static List<List<int>>[] memoizedWithSingletons = new List<List<int>>[10];
+        public static List<string>[] memoizedCompressedWithSingletons = new List<string>[10];
         private static void ConstructPowerSetWithNoEmptyHelper(int n, int maxCardinality)
         {
             if (memoized[n] != null) return;
@@ -389,6 +391,25 @@ namespace GeometryTutorLib
             powerset.ForEach(subset => compressed.Add(CompressUniqueIntegerList(subset)));
             memoizedCompressed[n] = compressed;
         }
+        private static void ConstructPowerSetWithNoEmptyHelperWithSingletons(int n, int maxCardinality)
+        {
+            if (memoizedWithSingletons[n] != null) return;
+
+            // Construct the powerset and remove the emptyset
+            List<List<int>> powerset = ConstructRestrictedPowerSet(n, maxCardinality);
+            powerset.RemoveAt(0);
+
+            // Sort so the smallest sets are first and sets of the same size are compared based on elements.
+            powerset.Sort(CompareTwoSets);
+
+            // Save this construction
+            memoizedWithSingletons[n] = powerset;
+
+            // Save the compressed versions
+            List<string> compressed = new List<string>();
+            powerset.ForEach(subset => compressed.Add(CompressUniqueIntegerList(subset)));
+            memoizedCompressedWithSingletons[n] = compressed;
+        }
         public static List<List<int>> ConstructPowerSetWithNoEmpty(int n, int maxCardinality)
         {
             ConstructPowerSetWithNoEmptyHelper(n, maxCardinality);
@@ -397,9 +418,9 @@ namespace GeometryTutorLib
         }
         public static List<List<int>> ConstructPowerSetWithNoEmpty(int n)
         {
-            ConstructPowerSetWithNoEmptyHelper(n, n);
+            ConstructPowerSetWithNoEmptyHelperWithSingletons(n, n);
 
-            return memoized[n];
+            return memoizedWithSingletons[n];
         }
 
         public static List<string> ConstructPowerSetStringsWithNoEmpty(int n, int maxCardinality)

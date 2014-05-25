@@ -541,7 +541,7 @@ namespace GeometryTutorLib.GenericInstantiator
         private void AddForwardEdge(List<GroundedClause> antecedent, GroundedClause consequent, EdgeAnnotation annotation)
         {
             // Add the hyperedge to the hypergraph
-            graph.AddForwardEdge(antecedent, consequent, annotation);
+            graph.AddEdge(antecedent, consequent, annotation);
 
             // Create the linkage between the antecedent and consequent for coverage
             foreach (GroundedClause ante in antecedent)

@@ -39,36 +39,13 @@ namespace LiveGeometry.TutorParser
             // (d) Regular Polygons (in polygon structure)
             // (e) Circles
             DirectComponentsFromUI parser = new DirectComponentsFromUI(drawing, ifigs);
-
-            //
-            // Dump these clauses, if desired
-            //
-            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
-            {
-                Debug.WriteLine(parser.ToString());
-            }
+            parser.Parse();
 
             //
             // Calculate all of the implied components of the figure.
             //
             implied = new ImpliedComponentCalculator(parser.definedPoints, parser.definedSegments, parser.circles, parser.polygons);
             implied.ConstructAllImplied();
-
-            //
-            // Dump these clauses, if desired
-            //
-            if (GeometryTutorLib.Utilities.CONSTRUCTION_DEBUG)
-            {
-                Debug.WriteLine(implied.ToString());
-            }
-
-            AtomicIdentifier atomicIdentifier = new AtomicIdentifier(implied);
-            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atomicRegions =  atomicIdentifier.GetAtomicRegions();
-
-            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
-            {
-                Debug.WriteLine(atom.ToString());
-            }
         }
     }
 }
