@@ -20,6 +20,7 @@ namespace LiveGeometry
         Command CommandParse;
         Command CommandParseOptions;
         Command CommandProblemCharacteristics;
+        Command CommandMarkRegion;
 
         public void InitializeToolbar()
         {
@@ -35,6 +36,7 @@ namespace LiveGeometry
             CommandParse = new Command(ParseToAst, GetImageFromResource("Parse.png"), "Parse", "Parsing");
             CommandParseOptions = new Command(DisplayParseOptions, GetImageFromResource("ParseOptions.png"), "Def and Theorem Options", "Parsing");
             CommandProblemCharacteristics = new Command(DisplayProblemCharacteristics, GetImageFromResource("ParseOptions.png"), "Desired Problem Characteristics", "Parsing");
+            CommandMarkRegion = new Command(MarkRegion, GetImageFromResource("MarkRegion.png"), "Mark Region", "Parsing");
 
             drawingHost.DrawingControl.CommandUndo.Icon = GetImageFromResource("Undo.png");
             drawingHost.DrawingControl.CommandRedo.Icon = GetImageFromResource("Redo.png");
@@ -61,6 +63,7 @@ namespace LiveGeometry
             drawingHost.AddToolbarButton(drawingHost.CommandShowAIDebugWindow);
             drawingHost.AddToolbarButton(CommandParseOptions);
             drawingHost.AddToolbarButton(CommandProblemCharacteristics);
+            drawingHost.AddToolbarButton(CommandMarkRegion);
 
             drawingHost.Ribbon.GetPanel("Drawing").HeaderContent.Icon = GetImageFromResource("SaveFormDesign.png");
         }

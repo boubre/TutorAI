@@ -353,6 +353,8 @@
     <Compile Include="UI\Ribbon\Ribbon.cs" />
     <Compile Include="UI\Ribbon\TabPanel.cs" />
     <Compile Include="UI\Ribbon\ToolButton.cs" />
+    <Compile Include="UI\RegionShading\ShadedRegion.cs" />
+    <Compile Include="UI\RegionShading\ShadedShapeRegion.cs" />
     <Compile Include="UI\StatusBar.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

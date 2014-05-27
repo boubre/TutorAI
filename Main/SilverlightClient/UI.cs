@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using DynamicGeometry;
 using DynamicGeometry.UI;
 using ImageTools;
@@ -435,11 +436,17 @@ namespace LiveGeometry
         /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            UIDebugPublisher.clearWindow();
             UIDebugPublisher.publishString("Starting Parse Process...");
 
             // Execute Front-End Parse
             parser.Parse();
-            UIDebugPublisher.clearWindow();
+
+
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion ar in parser.IdentifyAtomicRegions())
+            {
+                UIDebugPublisher.publishString(ar.ToString());
+            }
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
@@ -454,6 +461,8 @@ namespace LiveGeometry
             {
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
+
+            
 
             UIDebugPublisher.publishString("Parse Complete.");
         }
@@ -483,6 +492,30 @@ namespace LiveGeometry
         void ProblemCharacteristicsWindow_Closed(object sender, EventArgs e)
         {
             //Do whatever needs to be done when the problem characteristics window closes
+        }
+
+        void MarkRegion()
+        {
+            WriteableBitmap bmp = new WriteableBitmap(100, 100);
+            for (int i = 0; i < 100; i++)
+                for (int j = 0; j < 100; j++)
+                {
+                    int pixel;
+                    if ((i + j) % 12 <= 3)
+                        pixel = unchecked((int)0xFFFF0000);
+                    else if ((i + j) % 12 <= 7)
+                        pixel = unchecked((int)0xFF00FF00);
+                    else
+                        pixel = unchecked((int)0xFF0000FF);
+
+                    bmp.Pixels[i * 100 + j] = pixel;
+                }
+
+            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
+            img.Source = bmp;
+            Canvas.SetTop(img, 50);
+            Canvas.SetLeft(img, 30);
+            drawingHost.CurrentDrawing.Canvas.Children.Add(img);
         }
     }
 }
