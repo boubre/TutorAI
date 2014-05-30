@@ -419,7 +419,6 @@ namespace LiveGeometry
             if (!parseWorker.IsBusy)
             {
                 parser = new DrawingParserMain(drawingHost.CurrentDrawing);
-
                 //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
