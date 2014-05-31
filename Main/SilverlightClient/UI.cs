@@ -21,6 +21,7 @@ namespace LiveGeometry
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private ParseOptionsWindow parseOptionsWindow;
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
+        private EnterSolutionWindow enterSolutionWindow;
         private ManageGivensWindow manageGivensWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
 
@@ -482,6 +483,16 @@ namespace LiveGeometry
         void ProblemCharacteristicsWindow_Closed(object sender, EventArgs e)
         {
             //Do whatever needs to be done when the problem characteristics window closes
+        }
+
+        void DisplayEnterSolution()
+        {
+            enterSolutionWindow.Show();
+        }
+
+        void EnterSolutionWindow_Closed(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
