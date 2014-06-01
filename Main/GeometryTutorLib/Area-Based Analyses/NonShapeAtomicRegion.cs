@@ -31,7 +31,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             public bool HasPoint(Point p) { return endpoint1.Equals(p) || endpoint2.Equals(p); }
             public override string ToString()
             {
-                return "< " + endpoint1 + ", " + endpoint2 + "(" + type + ") >: " + segmentOwner;
+                return "< " + endpoint1.name + ", " + endpoint2.name + "(" + type + ") >";
             }
 
             public bool StructurallyEquals(Connection that)
@@ -54,6 +54,9 @@ namespace GeometryTutorLib.Area_Based_Analyses
         public void AddConnection(Point e1, Point e2, ConnectionType t, Figure owner)
         {
             connections.Add(new Connection(e1, e2, t, owner));
+
+            Utilities.AddStructurallyUnique<Point>(ownedPoints, e1);
+            Utilities.AddStructurallyUnique<Point>(ownedPoints, e2);
         }
 
         //  |)
@@ -134,6 +137,43 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return false;
         }
 
+        ////
+        //// Can we put together this atom with the given atomic region?
+        //// Does a sequence of sides match?
+        ////
+        //public AtomicRegion Stitch(AtomicRegion thatAtom)
+        //{
+        //    return (thatAtom is ShapeAtomicRegion) ? StitchShape(thatAtom as ShapeAtomicRegion) : StitchNonShape(thatAtom as NonShapeAtomicRegion);
+        //}
+
+        //private AtomicRegion StitchShape(ShapeAtomicRegion shapeAtom)
+        //{
+        //    List<Connection> shared = new List<Connection>();
+        //    foreach (Connection conn in connections)
+        //    {
+        //        StitchConnection(conn, shapeAtom);
+        //    }
+        //}
+
+        //private AtomicRegion StitchConnection(Connection conn, ShapeAtomicRegion shapeAtom)
+        //{
+        //    if (conn.type == ConnectionType.SEGMENT && shapeAtom.shape is Polygon) return null;
+        //    {
+        //    }
+
+        //    if (conn.type == ConnectionType.ARC && (shapeAtom.shape is Arc || shapeAtom.shape is Circle))
+        //    {
+        //        if (shapeAtom.shape.HasSegmentWithEndpoints(conn.endpoint1, conn.endpoint2))
+        //        {
+        //            shared.Add(conn);
+        //        }
+        //    }
+        //}
+
+        //private AtomicRegion StitchNonShape(NonShapeAtomicRegion nonShapeAtom)
+        //{
+        //}
+
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(Object obj)
@@ -155,14 +195,15 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             StringBuilder str = new StringBuilder();
 
-            str.Append("AtomicRegion: {");
+            str.Append("Atom: {");
 
-            foreach (Connection conn in connections)
+            for (int c = 0; c < connections.Count; c++)
             {
-                str.AppendLine(conn.ToString());
+                str.Append(connections[c].ToString());
+                if (c < connections.Count-1) str.Append(", ");
             }
 
-            str.AppendLine(" }");
+            str.Append(" }");
 
             return str.ToString();
         }

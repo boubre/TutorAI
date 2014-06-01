@@ -155,9 +155,6 @@
     <Resource Include="..\DynamicGeometryLibrary\Resources\ParseOptions.png">
       <Link>ParseOptions.png</Link>
     </Resource>
-    <Resource Include="..\DynamicGeometryLibrary\Resources\MarkRegion.png">
-      <Link>MarkRegion.png</Link>
-    </Resource>
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

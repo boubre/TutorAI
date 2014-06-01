@@ -5,7 +5,6 @@
         Grid = 10,
         Axes = 20,
         Polygons = 30,
-        Shading = 35,
         Labels = 40,
         Figures = 50,
         Vectors = 55,

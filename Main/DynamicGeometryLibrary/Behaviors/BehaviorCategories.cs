@@ -16,6 +16,5 @@
         public const string Custom = "Custom";
         public const string Drawing = "Drawing";
         public const string Parsing = "Parsing";
-        public const string Regions = "Regions";
     }
 }

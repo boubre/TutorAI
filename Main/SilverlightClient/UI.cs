@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using DynamicGeometry;
 using DynamicGeometry.UI;
 using ImageTools;
@@ -419,6 +418,7 @@ namespace LiveGeometry
             if (!parseWorker.IsBusy)
             {
                 parser = new DrawingParserMain(drawingHost.CurrentDrawing);
+
                 //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
@@ -435,17 +435,11 @@ namespace LiveGeometry
         /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
-            UIDebugPublisher.clearWindow();
             UIDebugPublisher.publishString("Starting Parse Process...");
 
             // Execute Front-End Parse
             parser.Parse();
-
-
-            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion ar in parser.IdentifyAtomicRegions())
-            {
-                UIDebugPublisher.publishString(ar.ToString());
-            }
+            UIDebugPublisher.clearWindow();
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
@@ -460,8 +454,6 @@ namespace LiveGeometry
             {
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
-
-            
 
             UIDebugPublisher.publishString("Parse Complete.");
         }

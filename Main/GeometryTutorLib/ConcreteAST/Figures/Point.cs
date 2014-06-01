@@ -175,7 +175,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Make a deep copy of this object; this is actually shallow, but is all that is required.
         public override GroundedClause DeepCopy() { return (Point)(this.MemberwiseClone()); }
 
-        public override string ToString() { return name + "(" + string.Format("{0:N3}", X) + ", " + string.Format("{0:N3}", Y) + ")"; }
+        public override string ToString() { return name +"(" + string.Format("{0:N3}", X) + ", " + string.Format("{0:N3}", Y) + ")"; }
 
         /// <summary>
         /// p1 < p2 : -1

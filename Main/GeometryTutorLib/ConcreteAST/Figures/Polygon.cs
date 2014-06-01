@@ -50,11 +50,21 @@ namespace GeometryTutorLib.ConcreteAST
             angles = pair.Value;
         }
 
-        private Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
+        protected Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
         {
             orderedSides = segs;
             points = pts;
             angles = angs;
+        }
+
+        //public override bool HasSegmentWithEndpoints(Point p1, Point p2)
+        //{
+        //    return HasSegment(new Segment(p1, p2));
+        //}
+
+        public override bool IsPointOwned(Point pt)
+        {
+            return IsInPolygon(pt) || Utilities.HasStructurally<Point>(points, pt);
         }
 
         public bool HasSegment(Segment thatSegment)
@@ -68,7 +78,7 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="polygon">the vertices of polygon</param>
         /// <param name="testPoint">the given point</param>
         /// <returns>true if the point is inside the polygon; otherwise, false</returns>
-        public bool IsInConvexPolygon(Point thatPoint)
+        public bool IsInPolygon(Point thatPoint)
         {
             bool result = false;
             int j = points.Count - 1;
@@ -142,6 +152,10 @@ namespace GeometryTutorLib.ConcreteAST
 
             KeyValuePair<List<Point>, List<Angle>> pair = MakePointsAngle(orderedSides);
 
+            // If the polygon is concave, make that object.
+            if (IsConcavePolygon(pair.Key)) return new ConcavePolygon(orderedSides, pair.Key, pair.Value);
+
+            // Otherwise, make the other polygons
             switch (vertices.Count)
             {
                 case 3:
@@ -153,7 +167,48 @@ namespace GeometryTutorLib.ConcreteAST
             }
         }
 
-        private static KeyValuePair<List<Point>, List<Angle>> MakePointsAngle(List<Segment> orderedSides)
+        //
+        // Return True if the polygon is convex.
+        // http://blog.csharphelper.com/2010/01/04/determine-whether-a-polygon-is-convex-in-c.aspx
+        //
+        protected static bool IsConcavePolygon(List<Point> orderedPts)
+        {
+            // For each set of three adjacent points A, B, C,
+            // find the dot product AB · BC. If the sign of
+            // all the dot products is the same, the angles
+            // are all positive or negative (depending on the
+            // order in which we visit them) so the polygon
+            // is convex.
+            bool got_negative = false;
+            bool got_positive = false;
+            int B, C;
+            for (int A = 0; A < orderedPts.Count; A++)
+            {
+                B = (A + 1) % orderedPts.Count;
+                C = (B + 1) % orderedPts.Count;
+
+                // Create normalized vectors and find the cross-product.
+                Point vec1 = Point.MakeVector(orderedPts[A], orderedPts[B]);
+                Point vec2 = Point.MakeVector(orderedPts[B], orderedPts[C]);
+
+                double cross_product = Point.CrossProduct(vec1, vec2);
+
+                if (cross_product < 0)
+                {
+                    got_negative = true;
+                }
+                else if (cross_product > 0)
+                {
+                    got_positive = true;
+                }
+                if (got_negative && got_positive) return true;
+            }
+
+            // If we got this far, the polygon is convex.
+            return false;
+        }
+
+        protected static KeyValuePair<List<Point>, List<Angle>> MakePointsAngle(List<Segment> orderedSides)
         {
             List<Point> points = new List<Point>();
             List<Angle> angles = new List<Angle>();

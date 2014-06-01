@@ -347,15 +347,12 @@
     <Compile Include="UI\ParseGroupWindow.cs" />
     <Compile Include="UI\ParseOptionsWindow.cs" />
     <Compile Include="UI\ProblemCharacteristicsWindow.cs" />
-    <Compile Include="UI\RegionShading\ShadedRegionCreator.cs" />
     <Compile Include="UI\Ribbon\BehaviorToolButton.cs" />
     <Compile Include="UI\Ribbon\ButtonGrid.cs" />
     <Compile Include="UI\Ribbon\CommandToolButton.cs" />
     <Compile Include="UI\Ribbon\Ribbon.cs" />
     <Compile Include="UI\Ribbon\TabPanel.cs" />
     <Compile Include="UI\Ribbon\ToolButton.cs" />
-    <Compile Include="UI\RegionShading\ShadedRegion.cs" />
-    <Compile Include="UI\RegionShading\ShadedShapeRegion.cs" />
     <Compile Include="UI\StatusBar.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

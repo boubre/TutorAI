@@ -39,10 +39,10 @@ namespace GeometryTutorLib.Precomputer
         {
             foreach (GroundedClause clause in figure)
             {
-                //if (clause is Quadrilateral)
-                //{
-                //    quadrilaterals.Add(clause as Quadrilateral);
-                //}
+                if (clause is Quadrilateral)
+                {
+                    quadrilaterals.Add(clause as Quadrilateral);
+                }
                 if (clause is Triangle)
                 {
                     triangles.Add(clause as Triangle);

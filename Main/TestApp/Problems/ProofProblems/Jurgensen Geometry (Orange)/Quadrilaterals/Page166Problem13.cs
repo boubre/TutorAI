@@ -40,12 +40,12 @@ namespace GeometryTestbed
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            Quadrilateral givenQuad = (Quadrilateral) parser.Get(new Quadrilateral(ad, bc, (Segment) parser.Get(new Segment(d, c)), (Segment) parser.Get(new Segment(a, b))));
+            Quadrilateral givenQuad = (Quadrilateral)parser.Get(new Quadrilateral(ad, bc, (Segment)parser.Get(new Segment(d, c)), (Segment)parser.Get(new Segment(a, b))));
             given.Add(new Midpoint((InMiddle)parser.Get(new InMiddle(n, (Segment)parser.Get(new Segment(d, c))))));
             given.Add(new Midpoint((InMiddle)parser.Get(new InMiddle(m, (Segment)parser.Get(new Segment(a, b))))));
             given.Add(new Strengthened(givenQuad, new Parallelogram(givenQuad)));
 
-            Quadrilateral targetQuad = (Quadrilateral) parser.Get(new Quadrilateral(an, mc, (Segment)parser.Get(new Segment(n, c)), (Segment)parser.Get(new Segment(a, m))));
+            Quadrilateral targetQuad = (Quadrilateral)parser.Get(new Quadrilateral(an, mc, (Segment)parser.Get(new Segment(n, c)), (Segment)parser.Get(new Segment(a, m))));
             goals.Add(new Strengthened(targetQuad, new Parallelogram(targetQuad)));
         }
     }

@@ -32,6 +32,12 @@ namespace GeometryTutorLib.ConcreteAST
             length = CalculateArcMinorLength();
         }
 
+        //public override bool HasSegmentWithEndpoints(Point p1, Point p2)
+        //{
+        //    return Arc.BetweenMinor(p1, this) && Arc.BetweenMinor(p2, this) ||
+        //           Arc.BetweenMajor(p1, this) && Arc.BetweenMajor(p2, this);
+        //}
+
         //
         // Calculate the length of the arc: s = r * theta (radius * central angle)
         //

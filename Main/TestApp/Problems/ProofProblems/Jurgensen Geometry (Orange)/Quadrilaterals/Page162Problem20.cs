@@ -35,11 +35,11 @@ namespace GeometryTestbed
             pts.Add(f);
             collinear.Add(new Collinear(pts));
 
-            List<Point> pts2 = new List<Point>();
-            pts2.Add(c);
-            pts2.Add(x);
-            pts2.Add(d);
-            collinear.Add(new Collinear(pts2));
+            pts = new List<Point>();
+            pts.Add(c);
+            pts.Add(x);
+            pts.Add(d);
+            collinear.Add(new Collinear(pts));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 

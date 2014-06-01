@@ -34,6 +34,9 @@ namespace LiveGeometry.TutorParser
         public List<Intersection> ssIntersections { get; private set; }
         public List<Angle> angles { get; private set; }
         public List<MinorArc> minorArcs { get; private set; }
+        public List<MajorArc> majorArcs { get; private set; }
+        public List<Sector> minorSectors { get; private set; }
+        public List<Sector> majorSectors { get; private set; }
         public List<ArcInMiddle> arcInMiddle { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.CircleSegmentIntersection> csIntersections { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.CircleCircleIntersection> ccIntersections { get; private set; }
@@ -55,7 +58,7 @@ namespace LiveGeometry.TutorParser
         public List<GeometryTutorLib.ConcreteAST.Point> extendedCirclePoints { get; private set; }
 
         // Chords which result from points from the UI and intersections. 
-        public Dictionary<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>> impliedChords { get; private set; }
+        public List<KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>> impliedChords { get; private set; }
 
         // Diameters that result from connecting a point on a circle through the center to the opposite side. 
         public List<GeometryTutorLib.ConcreteAST.Segment> extendedRealRadii { get; private set; }
@@ -108,6 +111,9 @@ namespace LiveGeometry.TutorParser
             ssIntersections = new List<Intersection>();
             angles = new List<Angle>();
             minorArcs = new List<MinorArc>();
+            majorArcs = new List<MajorArc>();
+            minorSectors = new List<Sector>();
+            majorSectors = new List<Sector>();
             arcInMiddle = new List<ArcInMiddle>();
             csIntersections = new List<CircleSegmentIntersection>();
             ccIntersections = new List<CircleCircleIntersection>();
@@ -119,7 +125,7 @@ namespace LiveGeometry.TutorParser
 
             extendedSegmentPoints = new List<Point>();
             extendedCirclePoints = new List<Point>();
-            impliedChords = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>();
+            impliedChords = new List<KeyValuePair<GeometryTutorLib.ConcreteAST.Segment,List<GeometryTutorLib.ConcreteAST.Circle>>>();
             extendedRealRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
             extendedRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
         }
@@ -167,6 +173,9 @@ namespace LiveGeometry.TutorParser
             // Generate all implicit chords and diameters (for atomic region id) and associated extended points
             GenerateImplicitChordsDiameters();
 
+            // To determine if a set of atomic regions defines a shape.
+            AssociatePointsWithShapes();
+
 
             //
             // All of the following calculations are used in stating the assumptions (user-defined givens)
@@ -177,8 +186,8 @@ namespace LiveGeometry.TutorParser
             //
             // Atomic region identification
             //
-            AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
-            atomicRegions = atomIder.GetAtomicRegions();
+            //AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
+            //atomicRegions = atomIder.GetAtomicRegions();
         }
 
         /// <summary>
@@ -827,14 +836,27 @@ namespace LiveGeometry.TutorParser
                     List<Point> majorArcPoints;
                     PartitionArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
 
-                    MinorArc newArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
-                    GeometryTutorLib.Utilities.AddStructurallyUnique<MinorArc>(minorArcs, newArc);
-                    circle.AddArc(newArc);
+                    MinorArc newMinorArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+                    MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+                    Sector newMinorSector = new Sector(newMinorArc);
+                    Sector newMajorSector = new Sector(newMajorArc);
+                    if (GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MinorArc>(minorArcs, newMinorArc))
+                    {
+                        minorArcs.Add(newMinorArc);
+                        majorArcs.Add(newMajorArc);
+                        minorSectors.Add(newMinorSector);
+                        majorSectors.Add(newMajorSector);
+                    }
+                    
+                    circle.AddMinorArc(newMinorArc);
+                    circle.AddMajorArc(newMajorArc);
+                    circle.AddMinorSector(newMinorSector);
+                    circle.AddMajorSector(newMajorSector);
 
                     // Generate ArcInMiddle clauses.
                     for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
                     {
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newArc));
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newMinorArc));
                     }
                 }
             }
@@ -879,20 +901,17 @@ namespace LiveGeometry.TutorParser
                 {
                     for (int p2 = p1 + 1; p2 < circPts.Count; p2++)
                     {
+                        // Create the chord and acquire the user drawn chord (if it exists)
                         GeometryTutorLib.ConcreteAST.Segment chord = new GeometryTutorLib.ConcreteAST.Segment(circPts[p1], circPts[p2]);
                         GeometryTutorLib.ConcreteAST.Segment figureChord = GeometryTutorLib.Utilities.GetStructurally<GeometryTutorLib.ConcreteAST.Segment>(segments, chord);
 
-                        // Add this chord to the list of chords no matter if this is a 'real' chord or not.
-                        if (figureChord != null)
-                        {
-                            if (impliedChords.ContainsKey(figureChord)) impliedChords[figureChord].Add(circle);
-                            impliedChords.Add(figureChord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle));
-                        }
-                        else
-                        {
-                            if (impliedChords.ContainsKey(chord)) impliedChords[chord].Add(circle);
-                            impliedChords.Add(chord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle));
-                        }
+                        // This is the actual chord we manipulate
+                        GeometryTutorLib.ConcreteAST.Segment theChord = figureChord != null ? figureChord : chord;
+
+                        // Add the <chord, Circle> pair to the implied chords list.
+                        int index = GeometryTutorLib.Utilities.StructuralIndex<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>(impliedChords, theChord);
+                        if (index != -1) impliedChords[index].Value.Add(circle);
+                        else impliedChords.Add(new KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>(theChord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle)));
                     }
                 }
 
@@ -921,6 +940,50 @@ namespace LiveGeometry.TutorParser
             }
         }
 
+        // For all points, determine which points are on or inside all shapes.
+        private void AssociatePointsWithShapes()
+        {
+            //
+            // Collect the set of all points.
+            //
+            List<Point> allPoints = new List<Point>(this.allEvidentPoints);
+
+            allPoints.AddRange(this.extendedCirclePoints);
+
+            foreach (Point point in allPoints)
+            {
+                //
+                // Polygons.
+                //
+                foreach (List<GeometryTutorLib.ConcreteAST.Polygon> polyList in polygons)
+                {
+                    foreach (GeometryTutorLib.ConcreteAST.Polygon poly in polyList)
+                    {
+                        if (poly.IsPointOwned(point)) poly.AddOwnedPoint(point);
+                    }
+                }
+
+                //
+                // Circles
+                //
+                foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
+                {
+                    if (circle.IsPointOwned(point)) circle.AddOwnedPoint(point);
+                }
+
+                //
+                // Sectors
+                //
+                foreach (GeometryTutorLib.ConcreteAST.Sector minorSector in minorSectors)
+                {
+                    if (minorSector.IsPointOwned(point)) minorSector.AddOwnedPoint(point);
+                }
+                foreach (GeometryTutorLib.ConcreteAST.Sector majorSector in majorSectors)
+                {
+                    if (majorSector.IsPointOwned(point)) majorSector.AddOwnedPoint(point);
+                }
+            }
+        }
 
 
 
