@@ -12,40 +12,40 @@ namespace GeometryTestbed
             List<ActualProofProblem> problems = new List<ActualProofProblem>();
 
             // Transversals
-            problems.Add(new Page23Theorem11(false, true));                  // GTG
-            problems.Add(new Page32ClassroomProblem11To14(false, false));     // GTG
+            //problems.Add(new Page23Theorem11(false, true));                  // GTG
+            //problems.Add(new Page32ClassroomProblem11To14(false, false));     // GTG
 
             // Parallel
-            problems.Add(new Page60Theorem22(false, false));                  // GTG
-            problems.Add(new Page62Problem1(false, false));                   // GTG
-            problems.Add(new Page62Problem2(false, false));                   // GTG
-            problems.Add(new Page62Problems3To4(false, false));               // GTG if no AngleAdditionAxiom
+            //problems.Add(new Page60Theorem22(false, false));                  // GTG
+            //problems.Add(new Page62Problem1(false, false));                   // GTG
+            //problems.Add(new Page62Problem2(false, false));                   // GTG
+            //problems.Add(new Page62Problems3To4(false, false));               // GTG if no AngleAdditionAxiom
 
             // Congruent Triangles
-            problems.Add(new Page113Problem7(false, true));                  // GTG
-            problems.Add(new Page134Problem6(false, true));                  // GTG
-            problems.Add(new Page134Problem7(false, true));                  // GTG
-            problems.Add(new Page135Problem21(false, false));                 // GTG
-            problems.Add(new Page144ClassroomExercise01(false, false));       // GTG
-            problems.Add(new Page144ClassroomExercise02(false, true));       // GTG
-            problems.Add(new Page144ClassroomExercise03(false, false));       // GTG
-            problems.Add(new Page144ClassroomExercise04(false, false));       // GTG 1:38 execute
-            problems.Add(new Page144Problem01(false, true));                 // GTG
-            problems.Add(new Page144Problem02(false, false));                 // GTG
-            problems.Add(new Page145Problem03(false, false));                 // GTG
-            problems.Add(new Page145Problem04(false, false));                 // GTG // Intersection
-            problems.Add(new Page145Problem07(false, true));                 // GTG // Intersection
-            problems.Add(new Page145Problem08(false, false));                 // GTG // Intersection
-            problems.Add(new Page145Problem09(false, true));                 // GTG
-            problems.Add(new Page145Problem10(false, false));                 // GTG
-            problems.Add(new Page146Problem14(false, false));                 // GTG // Intersection
-            problems.Add(new Page146Problem15(false, false));                 // GTG
-            problems.Add(new Page146Problem18(false, false));                 // GTG 1:20 execute
-            problems.Add(new Page155Problem14(false, true));                 // GTG
-            problems.Add(new Page175ClassroomExercise12(false, true));       // GTG
-            problems.Add(new Page223Problem22(false, false));                 // GTG
-            problems.Add(new Page223Problem23(false, false));                 // GTG
-            problems.Add(new Page242Problem17(false, false));                 // GTG
+            //problems.Add(new Page113Problem7(false, true));                  // GTG
+            //problems.Add(new Page134Problem6(false, true));                  // GTG
+            //problems.Add(new Page134Problem7(false, true));                  // GTG
+            //problems.Add(new Page135Problem21(false, false));                 // GTG
+            //problems.Add(new Page144ClassroomExercise01(false, false));       // GTG
+            //problems.Add(new Page144ClassroomExercise02(false, true));       // GTG
+            //problems.Add(new Page144ClassroomExercise03(false, false));       // GTG
+            //problems.Add(new Page144ClassroomExercise04(false, false));       // GTG 1:38 execute
+            //problems.Add(new Page144Problem01(false, true));                 // GTG
+            //problems.Add(new Page144Problem02(false, false));                 // GTG
+            //problems.Add(new Page145Problem03(false, false));                 // GTG
+            //problems.Add(new Page145Problem04(false, false));                 // GTG // Intersection
+            //problems.Add(new Page145Problem07(false, true));                 // GTG // Intersection
+            //problems.Add(new Page145Problem08(false, false));                 // GTG // Intersection
+            //problems.Add(new Page145Problem09(false, true));                 // GTG
+            //problems.Add(new Page145Problem10(false, false));                 // GTG
+            //problems.Add(new Page146Problem14(false, false));                 // GTG // Intersection
+            //problems.Add(new Page146Problem15(false, false));                 // GTG
+            //problems.Add(new Page146Problem18(false, false));                 // GTG 1:20 execute
+            //problems.Add(new Page155Problem14(false, true));                 // GTG
+            //problems.Add(new Page175ClassroomExercise12(false, true));       // GTG
+            //problems.Add(new Page223Problem22(false, false));                 // GTG
+            //problems.Add(new Page223Problem23(false, false));                 // GTG
+            //problems.Add(new Page242Problem17(false, false));                 // GTG
 
 
             //problems.Add(new CircleTester2(true));
@@ -79,10 +79,14 @@ namespace GeometryTestbed
             //problems.Add(new Page229Problem07(false, false));
             //problems.Add(new Page229Problem08(false, false));  
             //problems.Add(new Page229Problem09(false, false)); 
-            // problems.Add(new Page242Problem16(false, false)); Given Encoding
+            //problems.Add(new Page242Problem16(false, false)); Given Encoding
             //problems.Add(new Page242Problem21(false, false)); OMIT goal encoding
             //problems.Add(new Page243Problem15(false, false)); OMIT goal encoding
             //problems.Add(new Page243Problem16(false, false)); OMIT given encoding
+
+            //Quadrilaterals
+            //problems.Add(new Page166Problem01to05(true, false));
+            problems.Add(new Page162Problem20(true, false));
 
             return problems;
         }
