@@ -83,6 +83,7 @@
     <Compile Include="Controls\Controls.Toolkit\Common\LengthConverter.cs" />
     <Compile Include="Controls\Controls.Toolkit\WrapPanel\OrientedSize.cs" />
     <Compile Include="Controls\Controls.Toolkit\WrapPanel\WrapPanel.cs" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Data\Demo\CircumscribedCircle.xml" />
     <None Include="Data\Demo\Demo.xml" />
     <None Include="Data\Demo\LocusSample.xml" />
@@ -304,6 +305,7 @@
     <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
+    <Compile Include="UI\EnterSolutionWindow.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />
     <Compile Include="UI\CommandSystem\CompositeCommandObserver.cs" />
     <Compile Include="UI\CommandSystem\ICommand.cs" />
