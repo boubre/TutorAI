@@ -15,6 +15,11 @@ namespace GeometryTutorLib.ConcreteAST
         public double Length { get; private set; }
         public double Slope { get; private set; }
 
+        // An ORDERED list of collinear points.
+        public List<Point> collinear { get; private set; }
+
+        public bool DefinesCollinearity() { return collinear.Count > 2; }
+
         /// <summary>
         /// Create a new ConcreteSegment. 
         /// </summary>
@@ -29,6 +34,24 @@ namespace GeometryTutorLib.ConcreteAST
 
             Utilities.AddUniqueStructurally(Point1.getSuperFigures(), this);
             Utilities.AddUniqueStructurally(Point2.getSuperFigures(), this);
+
+            collinear = new List<Point>();
+            // We add the two points arbitrarily since this list is vacuously ordered.
+            collinear.Add(p1);
+            collinear.Add(p2);
+        }
+
+        public void AddCollinearPoint(Point newPt)
+        {
+            // Traverse list to find where to insert the new point in the list in the proper order
+            for (int p = 0; p < collinear.Count - 1; p++)
+            {
+                if (Segment.Between(newPt, collinear[p], collinear[p + 1]))
+                {
+                    collinear.Insert(p+1, newPt);
+                    return;
+                }
+            }
         }
 
         //
@@ -63,22 +86,7 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("ConcreteSegment [l=");
-            sb.Append(Length);
-            sb.Append(']');
-            sb.AppendLine();
-            Point1.BuildUnparse(sb, tabDepth + 1);
-            Point2.BuildUnparse(sb, tabDepth + 1);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         // Checking for structural equality (is it the same segment) excluding the multiplier
         public override bool StructurallyEquals(object obj)
@@ -177,6 +185,60 @@ namespace GeometryTutorLib.ConcreteAST
 
             return Utilities.CompareValues(this.Slope, otherSegment.Slope) &&
                    this.PointIsOn(otherSegment.Point1) && this.PointIsOn(otherSegment.Point2); // Check both endpoints just to be sure
+        }
+
+        //
+        // Are the segments coinciding and share an endpoint?
+        //
+        public bool AdjacentCoinciding(Segment thatSegment)
+        {
+            if (!IsCollinearWith(thatSegment)) return false;
+
+            Point shared = this.SharedVertex(thatSegment);
+
+            return shared == null ? false : true;
+        }
+
+        //
+        // Are the segments coinciding with overlap? That is, it's ok to be coinciding with no overlap.
+        //
+        public bool CoincidingWithOverlap(Segment thatSegment)
+        {
+            if (!IsCollinearWith(thatSegment)) return false;
+
+            if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point1)) return true;
+
+            if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point2)) return true;
+
+            return false;
+        }
+
+        //
+        // Are the segments coinciding with overlap? That is, it's ok to be coinciding with no overlap.
+        //
+        public bool CoincidingWithoutOverlap(Segment thatSegment)
+        {
+            if (!IsCollinearWith(thatSegment)) return false;
+
+            if (this.PointIsOnAndBetweenEndpoints(thatSegment.Point1)) return false;
+
+            if (this.PointIsOnAndBetweenEndpoints(thatSegment.Point2)) return false;
+
+            return false;
+        }
+
+        //
+        // Do these segments creates an X?
+        //
+        public bool Crosses(Segment s)
+        {
+            Point p = this.FindIntersection(s);
+
+            if (this.PointIsOnAndExactlyBetweenEndpoints(p)) return true;
+
+            if (s.PointIsOnAndExactlyBetweenEndpoints(p)) return true;
+
+            return false;
         }
 
         public Point SharedVertex(Segment s)
@@ -348,7 +410,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Each segment is congruent to itself; only generate if it is a shared segment
         //
         private static readonly string REFLEXIVE_SEGMENT_NAME = "Reflexive Segments";
-        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, JustificationSwitch.REFLEXIVE);
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_SEGMENT_NAME, EngineUIBridge.JustificationSwitch.REFLEXIVE);
 
         public static List<GenericInstantiator.EdgeAggregator> Instantiate(GroundedClause gc)
         {
@@ -420,24 +482,6 @@ namespace GeometryTutorLib.ConcreteAST
         public bool IsIncludedSegment(Angle ang1, Angle ang2)
         {
             return this.Equals(ang1.SharedRay(ang2));
-        }
-
-        // Is the given clause an intrinsic component of this Segment?
-        public override bool Covers(GroundedClause gc)
-        {
-            // immeidate hierarchy: a segment covers a point
-            if (gc is Point) return this.PointIsOnAndBetweenEndpoints(gc as Point);
-
-            // A triangle is covered if at least one of the sides is covered
-            if (gc is Triangle) return (gc as Triangle).HasSegment(this);
-
-            // If the segments are coinciding and have a point in between this segment, we say this segment is covered.
-            Segment thatSegment = gc as Segment;
-            if (thatSegment == null) return false;
-
-            if (!this.IsCollinearWith(thatSegment)) return false;
-
-            return this.PointIsOnAndBetweenEndpoints(thatSegment.Point1) || this.PointIsOnAndBetweenEndpoints(thatSegment.Point2);
         }
 
         //

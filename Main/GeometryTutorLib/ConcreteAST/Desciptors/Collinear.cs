@@ -53,17 +53,13 @@ namespace GeometryTutorLib.ConcreteAST
             return true;
         }
 
+        public override int GetHashCode() { return base.GetHashCode(); }
+
         public override string ToString()
         {
             List<String> strings = new List<String>();
             foreach (Point p in points) strings.Add(p.ToString());
             return "Collinear(" + string.Join(",", strings.ToArray()) + ")";
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
         }
     }
 }

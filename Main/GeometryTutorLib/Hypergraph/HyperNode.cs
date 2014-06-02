@@ -13,27 +13,31 @@ namespace GeometryTutorLib.Hypergraph
         public T data;
         public int id;
 
-        public List<HyperEdge<A>> forwardEdges;
-        public List<HyperEdge<A>> backwardEdges;
+        // Edges in which this node is a source
+        public List<HyperEdge<A>> edges;
 
-        public void AddForwardEdge(HyperEdge<A> edge)
+        // Edges in which this node is the target
+        public List<HyperEdge<A>> targetEdges;
+
+        public void AddEdge(HyperEdge<A> edge)
         {
-            forwardEdges.Add(edge);
+            edges.Add(edge);
         }
 
-        public void AddBackwardEdge(HyperEdge<A> edge)
+        public void AddTargetEdge(HyperEdge<A> edge)
         {
-            backwardEdges.Add(edge);
-        }
+            if (edge.targetNode != id) throw new ArgumentException("Given node is not the target as advertised " + edge);
 
+            targetEdges.Add(edge);
+        }
 
         public HyperNode(T d, int i)
         {
             id = i;
             data = d;
            
-            forwardEdges = new List<HyperEdge<A>>();
-            backwardEdges = new List<HyperEdge<A>>();
+            edges = new List<HyperEdge<A>>();
+            targetEdges = new List<HyperEdge<A>>();
         }
 
         // Creating a shallow copy of this node as a pebbler node
@@ -47,11 +51,11 @@ namespace GeometryTutorLib.Hypergraph
             string retS = data.ToString() + "\t\t\t\t= { ";
 
             retS += id + "SuccE = { ";
-            foreach (HyperEdge<A> edge in forwardEdges) { retS += edge.ToString() + ", "; }
-            if (forwardEdges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
-            retS += " } }, BackE={";
-            foreach (HyperEdge<A> edge in backwardEdges) { retS += edge.ToString() + ", "; }
-            if (backwardEdges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
+            foreach (HyperEdge<A> edge in edges) { retS += edge.ToString() + ", "; }
+            if (edges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
+            retS += "} TargetE = { ";
+            foreach (HyperEdge<A> edge in targetEdges) { retS += edge.ToString() + ", "; }
+            if (targetEdges.Count != 0) retS = retS.Substring(0, retS.Length - 2);
             retS += " } }";
 
             return retS;

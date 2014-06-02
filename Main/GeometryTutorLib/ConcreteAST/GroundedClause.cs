@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Xml;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -43,8 +44,8 @@ namespace GeometryTutorLib.ConcreteAST
         public List<int> figureComponents { get; private set; }
         public void AddComponent(int component) { Utilities.AddUnique<int>(figureComponents, component); }
         public void AddComponentList(List<int> componentList) { Utilities.AddUniqueList<int>(figureComponents, componentList); }
-        // Is the given clause an intrinsic component of this clause
-        public virtual bool Covers(GroundedClause gc) { return false; }
+
+
         // Can this node be strengthened to the given node?
         public virtual bool CanBeStrengthenedTo(GroundedClause gc) { return false; }
         // For problems: if a theorem or result is obvious and should never be a real source node for a problem
@@ -60,6 +61,13 @@ namespace GeometryTutorLib.ConcreteAST
         private bool isObviousDefinition = false;
         public void SetClearDefinition() { isObviousDefinition = true; }
         public bool IsClearDefinition() { return isObviousDefinition; }
+
+        public virtual void DumpXML(XmlWriter writer)
+        {
+            writer.WriteStartElement("TBD");
+
+            writer.WriteEndElement();
+        }
 
         public void AddRelationPredecessor(GroundedClause gc)
         {
@@ -148,38 +156,6 @@ namespace GeometryTutorLib.ConcreteAST
         public virtual bool Contains(GroundedClause clause) { return false; }
         public virtual void Substitute(GroundedClause c1, GroundedClause c2) { }
         public virtual GroundedClause DeepCopy() { return (GroundedClause)this.MemberwiseClone(); }
-
-        /// <summary>
-        /// Create a formatted string that represents the tree structure of this clause and its children.
-        /// </summary>
-        /// <returns>A textual representation of the Clause and its subclauses</returns>
-        public string Unparse()
-        {
-            StringBuilder sb = new StringBuilder();
-//            BuildUnparse(sb, 0);
-            return sb.ToString();
-        }
-
-        ///// <summary>
-        ///// Build the Unparse() string.
-        ///// </summary>
-        ///// <param name="sb">A StringBuffer to append text to. This buffer should be passed to child nodes by calling their BuildUnparse() methods.</param>
-        ///// <param name="tabDepth">The number of tabs to indent before appending text to the buffer.</param>
-        //p abstract void BuildUnparse(StringBuilder sb, int tabDepth);
-
-        private int tabSize = 3;
-        /// <summary>
-        /// Appends tabs to the given StringBuffer.
-        /// </summary>
-        /// <param name="sb">The StringBuffer to append tabs to.</param>
-        /// <param name="tabDepth">The number of tabs to append.</param>
-        protected void Indent(StringBuilder sb, int tabDepth)
-        {
-            for (int i = 0; i < tabSize * tabDepth; i++)
-            {
-                sb.Append(' ');
-            }
-        }
 
         public override int GetHashCode() { return base.GetHashCode(); }
 

@@ -17,6 +17,8 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment ray2 { get; private set; }
         public double measure { get; private set; }
 
+        public Point GetVertex() { return B; }
+
         // Make a deep copy of this object
         public override GroundedClause DeepCopy()
         {
@@ -125,28 +127,7 @@ namespace GeometryTutorLib.ConcreteAST
             return degrees * System.Math.PI / 180;
         }
 
-        internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("ConcreteAngle [angle=");
-            sb.Append(measure);
-            sb.Append("deg");
-            sb.AppendLine();
-            A.BuildUnparse(sb, tabDepth + 1);
-            B.BuildUnparse(sb, tabDepth + 1);
-            C.BuildUnparse(sb, tabDepth + 1);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
-
-        public Point GetVertex()
-        {
-            return B;
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public Point SameVertex(Angle ang)
         {
@@ -451,7 +432,7 @@ namespace GeometryTutorLib.ConcreteAST
         // Generate the actual angle congruence
         //
         private static readonly string REFLEXIVE_ANGLE_NAME = "Reflexive Angles";
-        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_ANGLE_NAME, JustificationSwitch.REFLEXIVE);
+        private static Hypergraph.EdgeAnnotation reflexAnnotation = new Hypergraph.EdgeAnnotation(REFLEXIVE_ANGLE_NAME, EngineUIBridge.JustificationSwitch.REFLEXIVE);
 
         public static GenericInstantiator.EdgeAggregator GenerateAngleCongruence(Triangle tri, Angle angle)
         {
@@ -547,16 +528,6 @@ namespace GeometryTutorLib.ConcreteAST
         public bool HasSegment(Segment seg)
         {
             return ray1.RayOverlays(seg) || ray2.RayOverlays(seg);
-        }
-
-        // Is the given clause an intrinsic component of this angle?
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Point) return this.HasPoint(gc as Point);
-            else if (gc is Segment) return this.HasSegment(gc as Segment);
-            else if (gc is Triangle) return (gc as Triangle).Covers(this);
-
-            return false;
         }
 
         // CTA: Be careful with equality; this is object-based equality

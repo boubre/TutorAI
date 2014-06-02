@@ -23,9 +23,19 @@ namespace GeometryTutorLib.Hypergraph
         public Hypergraph()
         {
             vertices = new List<HyperNode<T, A>>();
+            edgeCount = 0;
         }
 
+        public Hypergraph(int capacity)
+        {
+            vertices = new List<HyperNode<T, A>>(capacity);
+            edgeCount = 0;
+        }
+
+
         public int Size() { return vertices.Count; }
+        private int edgeCount;
+        public int EdgeCount() { return edgeCount; }
 
         //
         // Integer-based representation of the main hypergraph
@@ -46,7 +56,7 @@ namespace GeometryTutorLib.Hypergraph
             //
             for (int v = 0; v < vertices.Count; v++)
             {
-                foreach (HyperEdge<A> edge in vertices[v].forwardEdges)
+                foreach (HyperEdge<A> edge in vertices[v].edges)
                 {
                     // Only add once to all nodes when this is the 'minimum' source node
                     if (v == edge.sourceNodes.Min())
@@ -143,11 +153,19 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Is this edge in the graph (using local, integer-based information)
         //
-        private bool HasLocalForwardEdge(List<int> antecedent, int consequent)
+        private bool HasLocalEdge(List<int> antecedent, int consequent)
         {
+            foreach (int ante in antecedent)
+            {
+                if (ante < 0 || ante > vertices.Count) throw new ArgumentException("Index of bounds on local edge: " + ante);
+            }
+  
+            if (consequent < 0 || consequent > vertices.Count) throw new ArgumentException("Index of bounds on local edge: " + consequent);
+
+
             foreach (HyperNode<T, A> vertex in vertices)
             {
-                foreach (HyperEdge<A> edge in vertex.forwardEdges)
+                foreach (HyperEdge<A> edge in vertex.edges)
                 {
                     if (edge.DefinesEdge(antecedent, consequent)) return true;
                 }
@@ -159,11 +177,11 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Check if the graph contains an edge defined by a many to one clause mapping
         //
-        public bool HasForwardEdge(List<T> antecedent, T consequent)
+        public bool HasEdge(List<T> antecedent, T consequent)
         {
             KeyValuePair<List<int>, int> local = ConvertToLocal(antecedent, consequent);
 
-            return HasLocalForwardEdge(local.Key, local.Value);
+            return HasLocalEdge(local.Key, local.Value);
         }
 
         //
@@ -198,12 +216,12 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Adding an edge to the graph
         //
-        public void AddForwardEdge(List<T> antecedent, T consequent, A annotation)
+        public bool AddEdge(List<T> antecedent, T consequent, A annotation)
         {
             //
             // Add a local representaiton of this edge to each node in which it is applicable
             //
-            if (HasForwardEdge(antecedent, consequent)) return;
+            if (HasEdge(antecedent, consequent)) return false;
 
             KeyValuePair<List<int>, int> local = ConvertToLocal(antecedent, consequent);
 
@@ -213,8 +231,35 @@ namespace GeometryTutorLib.Hypergraph
 
             foreach (int src in local.Key)
             {
-                vertices[src].AddForwardEdge(edge);
+                vertices[src].AddEdge(edge);
             }
+
+            // Add this as a target edge to the target node.
+            vertices[local.Value].AddTargetEdge(edge);
+            edgeCount++;
+
+            return true;
+        }
+
+        //
+        // Adding an edge to the graph based on known indices.
+        //
+        public bool AddIndexEdge(List<int> antecedent, int consequent, A annotation)
+        {
+            if (HasLocalEdge(antecedent, consequent)) return false;
+
+            HyperEdge<A> edge = new HyperEdge<A>(antecedent, consequent, annotation);
+
+            foreach (int src in antecedent)
+            {
+                vertices[src].AddEdge(edge);
+            }
+
+            // Add this as a target edge to the target node.
+            vertices[consequent].AddTargetEdge(edge);
+            edgeCount++;
+
+            return true;
         }
 
         public void DebugDumpClauses()
@@ -224,22 +269,7 @@ namespace GeometryTutorLib.Hypergraph
             StringBuilder edgeStr = new StringBuilder();
             for (int v = 0; v < vertices.Count; v++)
             {
-                //if (vertices[v].data is Congruent)
-                //{
-                    if (vertices[v].backwardEdges.Any())
-                    {
-                        edgeStr = new StringBuilder();
-                        edgeStr.Append("{ ");
-                        foreach (int s in vertices[v].backwardEdges[0].sourceNodes)
-                        {
-                            edgeStr.Append(s + " ");
-                        }
-                        edgeStr.Remove(edgeStr.Length - 1, 1);
-                        edgeStr.Append(" }");
-                    }
-
-                    Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
-                //}
+                Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
             }
 
 
@@ -247,10 +277,10 @@ namespace GeometryTutorLib.Hypergraph
             edgeStr = new StringBuilder();
             for (int v = 0; v < vertices.Count; v++)
             {
-                if (vertices[v].forwardEdges.Any())
+                if (vertices[v].edges.Any())
                 {
                     edgeStr.Append(v + ": {");
-                    foreach (HyperEdge<A> edge in vertices[v].forwardEdges)
+                    foreach (HyperEdge<A> edge in vertices[v].edges)
                     {
                         edgeStr.Append(" { ");
                         foreach (int s in edge.sourceNodes)
@@ -275,18 +305,6 @@ namespace GeometryTutorLib.Hypergraph
             {
                 if (!(vertices[v].data is Equation))
                 {
-                    if (vertices[v].backwardEdges.Any())
-                    {
-                        edgeStr = new StringBuilder();
-                        edgeStr.Append("{ ");
-                        foreach (int s in vertices[v].backwardEdges[0].sourceNodes)
-                        {
-                            edgeStr.Append(s + " ");
-                        }
-                        edgeStr.Remove(edgeStr.Length - 1, 1);
-                        edgeStr.Append(" }");
-                    }
-
                     Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
                 }
             }
@@ -301,18 +319,6 @@ namespace GeometryTutorLib.Hypergraph
             {
                 if (vertices[v].data is Equation)
                 {
-                    if (vertices[v].backwardEdges.Any())
-                    {
-                        edgeStr = new StringBuilder();
-                        edgeStr.Append("{ ");
-                        foreach (int s in vertices[v].backwardEdges[0].sourceNodes)
-                        {
-                            edgeStr.Append(s + " ");
-                        }
-                        edgeStr.Remove(edgeStr.Length - 1, 1);
-                        edgeStr.Append(" }");
-                    }
-
                     Debug.WriteLine(edgeStr + " " + v + " " + vertices[v].data.ToString());
                 }
             }
@@ -325,36 +331,10 @@ namespace GeometryTutorLib.Hypergraph
             StringBuilder edgeStr = new StringBuilder();
             for (int v = 0; v < vertices.Count; v++)
             {
-                if (vertices[v].forwardEdges.Any())
+                if (vertices[v].edges.Any())
                 {
                     edgeStr.Append(v + ": {");
-                    foreach (HyperEdge<A> edge in vertices[v].forwardEdges)
-                    {
-                        edgeStr.Append(" { ");
-                        foreach (int s in edge.sourceNodes)
-                        {
-                            edgeStr.Append(s + " ");
-                        }
-                        edgeStr.Append("} -> " + edge.targetNode + ", ");
-                    }
-                    edgeStr.Remove(edgeStr.Length - 2, 2);
-                    edgeStr.Append(" }\n");
-                }
-            }
-            Debug.WriteLine(edgeStr);
-        }
-
-        public void DumpClauseBackwardEdges()
-        {
-            Debug.WriteLine("\n Backward Edges: ");
-
-            StringBuilder edgeStr = new StringBuilder();
-            for (int v = 0; v < vertices.Count; v++)
-            {
-                if (vertices[v].backwardEdges.Any())
-                {
-                    edgeStr.Append(v + ": {");
-                    foreach (HyperEdge<A> edge in vertices[v].backwardEdges)
+                    foreach (HyperEdge<A> edge in vertices[v].edges)
                     {
                         edgeStr.Append(" { ");
                         foreach (int s in edge.sourceNodes)

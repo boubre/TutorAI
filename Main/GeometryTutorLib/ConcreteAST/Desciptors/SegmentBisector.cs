@@ -16,16 +16,7 @@ namespace GeometryTutorLib.ConcreteAST
             bisector = bisec;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return bisected.Covers(gc) || bisector.Covers(gc);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         // SegmentBisector has a specific order associated with the intersection segments.
         public override bool StructurallyEquals(Object obj)

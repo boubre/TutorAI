@@ -20,8 +20,8 @@ namespace GeometryTutorLib.ConcreteAST
         public Arc(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts) : base()
         {
             theCircle = circle;
-            e1 = endpoint1;
-            e2 = endpoint2;
+            endpoint1 = e1;
+            endpoint2 = e2;
             arcMinorPoints = new List<Point>(minorPts);
             arcMajorPoints = new List<Point>(majorPts);
 
@@ -31,6 +31,12 @@ namespace GeometryTutorLib.ConcreteAST
             minorMeasure = CalculateArcMinorMeasureDegrees();
             length = CalculateArcMinorLength();
         }
+
+        //public override bool HasSegmentWithEndpoints(Point p1, Point p2)
+        //{
+        //    return Arc.BetweenMinor(p1, this) && Arc.BetweenMinor(p2, this) ||
+        //           Arc.BetweenMajor(p1, this) && Arc.BetweenMajor(p2, this);
+        //}
 
         //
         // Calculate the length of the arc: s = r * theta (radius * central angle)

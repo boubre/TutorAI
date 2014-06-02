@@ -86,12 +86,12 @@ namespace DynamicGeometry.UI.GivenWindow
             }
 
             //Pick a first triangle...
-            foreach (Triangle t1 in parser.Triangles)
+            foreach (Triangle t1 in parser.implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX])
             {
                 List<Triangle> possible = new List<Triangle>();
 
                 //... and see what other triangles are viable second options.
-                foreach (Triangle t2 in parser.Triangles)
+                foreach (Triangle t2 in parser.implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX])
                 {
                     if (isCongruent(t1, t2))
                     {

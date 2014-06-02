@@ -86,12 +86,12 @@ namespace DynamicGeometry.UI.GivenWindow
             }
 
             //Pick a first angle...
-            foreach (Angle a1 in parser.Angles)
+            foreach (Angle a1 in parser.implied.angles)
             {
                 List<Angle> possible = new List<Angle>();
 
                 //... and see what other angles are viable second options.
-                foreach (Angle a2 in parser.Angles)
+                foreach (Angle a2 in parser.implied.angles)
                 {
                     if (a1.measure == a2.measure)
                     {

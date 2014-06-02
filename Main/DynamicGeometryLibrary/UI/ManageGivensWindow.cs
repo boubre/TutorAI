@@ -132,7 +132,7 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void AddGivenBtn_Click(object sender, RoutedEventArgs e)
         {
-            givenWindows[addSelection.SelectedValue as string].Show(new DrawingParser(drawingHost.CurrentDrawing), new List<GroundedClause>(currentGivens.Values));
+            givenWindows[addSelection.SelectedValue as string].Show(new LiveGeometry.TutorParser.DrawingParserMain(drawingHost.CurrentDrawing), new List<GroundedClause>(currentGivens.Values));
         }
 
         /// <summary>

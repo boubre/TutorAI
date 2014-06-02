@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeometryTutorLib;
+using GeometryTutorLib.EngineUIBridge;
 
 namespace DynamicGeometry.UI
 {

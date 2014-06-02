@@ -27,11 +27,7 @@ namespace GeometryTutorLib.ConcreteAST
         // This should never be true, otherwuse they are coinciding
         public override bool IsReflexive() { return segment1.StructurallyEquals(segment2); }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public Segment OtherSegment(Segment that)
         {
@@ -65,11 +61,6 @@ namespace GeometryTutorLib.ConcreteAST
             return shared;
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            return segment1.Covers(gc) || segment2.Covers(gc);
-        }
-
         public override bool StructurallyEquals(Object obj)
         {
             Parallel p = obj as Parallel;
@@ -92,7 +83,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         private static readonly string NAME = "Transitivity";
-        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, JustificationSwitch.TRANSITIVE_PARALLEL);
+        private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TRANSITIVE_PARALLEL);
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveParallel(Parallel parallel1, Parallel parallel2)
         {

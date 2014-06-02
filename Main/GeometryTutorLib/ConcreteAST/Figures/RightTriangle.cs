@@ -53,23 +53,7 @@ namespace GeometryTutorLib.ConcreteAST
             return rt.LiesOn(this.rightAngle.OtherRayEquates(altSegment));
         }
 
-        new internal void BuildUnparse(StringBuilder sb, int tabDepth)
-        {
-            Indent(sb, tabDepth);
-            sb.Append("RightTriangle [right=");
-            sb.Append(isRight);
-            sb.Append(']');
-            sb.AppendLine();
-            SegmentA.BuildUnparse(sb, tabDepth + 1);
-            SegmentB.BuildUnparse(sb, tabDepth + 1);
-            SegmentC.BuildUnparse(sb, tabDepth + 1);
-        }
-
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(Object obj)
         {

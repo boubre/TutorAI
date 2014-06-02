@@ -1037,19 +1037,6 @@ namespace GeometryTutorLib.ConcreteAST
                                                         (lhs.StructurallyEquals(perp.rhs) && rhs.StructurallyEquals(perp.lhs)));
         }
 
-        public override bool Covers(GroundedClause gc)
-        {
-            if (gc is Point) return intersect.Equals(gc as Point) || lhs.Covers(gc) || rhs.Covers(gc);
-            else if (gc is Segment) return lhs.Covers(gc) || rhs.Covers(gc);
-            // An intersection covers a triangle if a triangle covers the intersection (the intersection
-            // point is a vertex and a segment is a side of the triangle)
-            else if (gc is Triangle) return (gc as Triangle).Covers(this);
-
-            InMiddle im = gc as InMiddle;
-            if (im == null) return false;
-            return intersect.Covers(im.point) && (lhs.Covers(im.segment) || rhs.Covers(im.segment));
-        }
-
         //
         // Is the given segment collinear with this intersection
         //
@@ -1133,11 +1120,7 @@ namespace GeometryTutorLib.ConcreteAST
             return StructurallyEquals(inter) && base.Equals(inter);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {

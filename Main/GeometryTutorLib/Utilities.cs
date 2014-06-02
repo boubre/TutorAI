@@ -11,14 +11,105 @@ namespace GeometryTutorLib
     {
         public static readonly bool OVERRIDE_DEBUG = true;
 
-        public static readonly bool DEBUG              = OVERRIDE_DEBUG && false;
+        public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
         public static readonly bool PEBBLING_DEBUG     = OVERRIDE_DEBUG && false;   // Hypergraph edges and pebbled nodes
         public static readonly bool PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating the actual problems
         public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating backward problems
+        public static readonly bool ATOMIC_REGION_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating atomic regions
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
+
+        //
+        // Given a list, remove duplicates
+        //
+        public static List<T> RemoveDuplicates<T>(List<T> list) where T : ConcreteAST.GroundedClause
+        {
+            List<T> cleanList = new List<T>();
+
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                if (list[i] != null)
+                {
+                    for (int j = i + 1; j < list.Count; j++)
+                    {
+                        if (list[j] != null && list[i].StructurallyEquals(list[j]))
+                        {
+                            list[j] = null;
+                        }
+                    }
+                }
+            }
+
+            foreach (T t in list)
+            {
+                if (t != null)
+                {
+                    cleanList.Add(t);
+                }
+            }
+
+            return cleanList;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static int StructuralIndex<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].StructurallyEquals(t)) return i;
+            }
+
+            return -1;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static bool HasStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            return Utilities.StructuralIndex<T>(list, t) != -1;
+        }
+
+        //
+        // Given a list of grounded clauses, get the structurally unique.
+        //
+        public static T GetStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            foreach (T oldT in list)
+            {
+                if (oldT.StructurallyEquals(t)) return oldT;
+            }
+
+            return null;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static void AddStructurallyUnique<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            if (HasStructurally<T>(list, t)) return;
+
+            list.Add(t);
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static int StructuralIndex<T, A>(List<KeyValuePair<T, A>> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Key.StructurallyEquals(t)) return i;
+            }
+
+            return -1;
+        }
+
 
         // Given a sorted list, insert the element from the front to the back.
         public static void InsertAscendingOrdered(List<int> list, int value)
@@ -196,12 +287,37 @@ namespace GeometryTutorLib
             return true;
         }
 
+        // Is the list a subset of any of the sets in the list of lists?
+        public static bool ListHasSubsetOfSet<T>(List<List<T>> sets, List<T> theSet)
+        {
+            // Do not consider a new subset which contains an existent polygon.
+            foreach (List<T> set in sets)
+            {
+                if (Subset<T>(theSet, set)) return true;
+            }
+
+            return false;
+        }
+
         // Is set1 \equals set2
         public static bool EqualSets<T>(List<T> set1, List<T> set2)
         {
             if (set1.Count != set2.Count) return false;
 
             return Subset<T>(set1, set2); // redundant since we checked same size && Subset<T>(set2, set1);
+        }
+
+        // Is set1 \equals set2 (and the input sets are ordered for efficiency)
+        public static bool EqualOrderedSets(List<int> set1, List<int> set2)
+        {
+            if (set1.Count != set2.Count) return false;
+
+            for (int i = 0; i < set1.Count; i++)
+            {
+                if (set1[i] != set2[i]) return false;
+            }
+
+            return true;
         }
 
         // set1 \cap set2
@@ -229,12 +345,49 @@ namespace GeometryTutorLib
         }
         public static bool LessThan(double a, double b)
         {
-            return Math.Abs(a - b) - EPSILON < 0;
+            return !GreaterThan(a, b) && !CompareValues(a, b);
         }
         public static bool GreaterThan(double a, double b)
         {
             return Math.Abs(a - b) + EPSILON > 0;
         }
+
+        private static long[] memoizedFactorials = new long[30];
+        public static long Factorial(long x)
+        {
+            if (x <= 1) return 1;
+
+            // Return saved
+            if (memoizedFactorials[x] != 0) return memoizedFactorials[x];
+
+            long result = 1;
+
+            for (int i = 2; i <= x; i++)
+            {
+                result *= i;
+            }
+
+            // Save it
+            memoizedFactorials[x] = result;
+            return result;
+        }
+
+        public static long Permutation(long n, long r)
+        {
+            if (r == 0) return 0;
+
+            if (n == 0) return 0;
+
+            return ((r >= 0) && (r <= n)) ? Factorial(n) / Factorial(n - r) : 0;
+        }
+
+        public static long Combination(long a, long b)
+        {
+            if (a <= 1) return 1;
+
+            return Factorial(a) / (Factorial(b) * Factorial(a - b));
+        }
+
 
         //
         // Constructs an integer representation of the powerset based on input value integer n
@@ -284,8 +437,10 @@ namespace GeometryTutorLib
         // A memoized copy of all the powersets. 10 is large for this, we expect max of 5.
         // Note, we use a matrix since maxCardinality may change
         // We maintain ONLY an array because we are using this for a specific purpse in this project
-        public static List<List<int>>[] memoized = new List<List<int>>[10];
-        public static List<string>[] memoizedCompressed = new List<string>[10];
+        public static List<List<int>>[] memoized = new List<List<int>>[14];
+        public static List<string>[] memoizedCompressed = new List<string>[14];
+        public static List<List<int>>[] memoizedWithSingletons = new List<List<int>>[14];
+        public static List<string>[] memoizedCompressedWithSingletons = new List<string>[14];
         private static void ConstructPowerSetWithNoEmptyHelper(int n, int maxCardinality)
         {
             if (memoized[n] != null) return;
@@ -308,6 +463,25 @@ namespace GeometryTutorLib
             powerset.ForEach(subset => compressed.Add(CompressUniqueIntegerList(subset)));
             memoizedCompressed[n] = compressed;
         }
+        private static void ConstructPowerSetWithNoEmptyHelperWithSingletons(int n, int maxCardinality)
+        {
+            if (memoizedWithSingletons[n] != null) return;
+
+            // Construct the powerset and remove the emptyset
+            List<List<int>> powerset = ConstructRestrictedPowerSet(n, maxCardinality);
+            powerset.RemoveAt(0);
+
+            // Sort so the smallest sets are first and sets of the same size are compared based on elements.
+            powerset.Sort(CompareTwoSets);
+
+            // Save this construction
+            memoizedWithSingletons[n] = powerset;
+
+            // Save the compressed versions
+            List<string> compressed = new List<string>();
+            powerset.ForEach(subset => compressed.Add(CompressUniqueIntegerList(subset)));
+            memoizedCompressedWithSingletons[n] = compressed;
+        }
         public static List<List<int>> ConstructPowerSetWithNoEmpty(int n, int maxCardinality)
         {
             ConstructPowerSetWithNoEmptyHelper(n, maxCardinality);
@@ -316,9 +490,9 @@ namespace GeometryTutorLib
         }
         public static List<List<int>> ConstructPowerSetWithNoEmpty(int n)
         {
-            ConstructPowerSetWithNoEmptyHelper(n, n);
+            ConstructPowerSetWithNoEmptyHelperWithSingletons(n, n);
 
-            return memoized[n];
+            return memoizedWithSingletons[n];
         }
 
         public static List<string> ConstructPowerSetStringsWithNoEmpty(int n, int maxCardinality)

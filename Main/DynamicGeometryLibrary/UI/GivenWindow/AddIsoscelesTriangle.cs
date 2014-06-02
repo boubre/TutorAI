@@ -63,7 +63,7 @@ namespace DynamicGeometry.UI.GivenWindow
 
             List<Triangle> isosTriangles = new List<Triangle>();
             //Populate list with possible choices
-            foreach (Triangle t in parser.Triangles)
+            foreach (Triangle t in parser.implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX])
             {
                 if (isIsosceles(t))
                 {

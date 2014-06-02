@@ -23,22 +23,12 @@ namespace GeometryTutorLib.ConcreteAST
             provenIsosceles = true;
             provenEquilateral = true;
         }
-
-        new internal void BuildUnparse(StringBuilder sb, int tabDepth)
+        public EquilateralTriangle(List<Segment> segs) : this(segs[0], segs[1], segs[2])
         {
-            Indent(sb, tabDepth);
-            sb.Append("ConcreteEquilateralTriangle");
-            sb.AppendLine();
-            SegmentA.BuildUnparse(sb, tabDepth + 1);
-            SegmentB.BuildUnparse(sb, tabDepth + 1);
-            SegmentC.BuildUnparse(sb, tabDepth + 1);
+            if (segs.Count != 3) throw new ArgumentException("Equilateral Triangle constructed with " + segs.Count + " segments.");
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(Object obj)
         {

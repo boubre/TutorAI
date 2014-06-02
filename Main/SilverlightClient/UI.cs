@@ -12,12 +12,13 @@ using ImageTools;
 using ImageTools.IO;
 using ImageTools.IO.Bmp;
 using ImageTools.IO.Png;
+using LiveGeometry.TutorParser;
 
 namespace LiveGeometry
 {
     public partial class Page
     {
-        private DrawingParser parser;
+        private DrawingParserMain parser;
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private ParseOptionsWindow parseOptionsWindow;
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
@@ -417,7 +418,7 @@ namespace LiveGeometry
         {
             if (!parseWorker.IsBusy)
             {
-                parser = new DrawingParser(drawingHost.CurrentDrawing);
+                parser = new DrawingParserMain(drawingHost.CurrentDrawing);
 
                 //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();

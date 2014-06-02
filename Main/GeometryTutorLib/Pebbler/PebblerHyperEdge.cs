@@ -44,33 +44,9 @@ namespace GeometryTutorLib.Pebbler
             return sourceNodes.Count == sourcePebbles.Count;
         }
 
-        //public bool IsFullyPebbled()
-        //{
-        //    if (pebbled) return true;
-
-        //    foreach (int srcNode in sourceNodes)
-        //    {
-        //        if (!sourcePebbles.Contains(srcNode)) return false;
-        //    }
-
-        //    if (sourceNodes.Count == sourcePebbles.Count) pebbled = true;
-
-        //    return pebbled;
-        //}
-
         public void SetColor(PebblerColorType color)
         {
-            //if (color == PebblerColorType.PURPLE_BOTH)
-            //{
-            //    throw new ArgumentException("Attempt to color an edge PURPLE; this is not possible.");
-            //}
-
             pebbleColor = color;
-        }
-
-        public bool HasNotBeenVisited()
-        {
-            return pebbleColor == PebblerColorType.NO_PEBBLE || !IsFullyPebbled();
         }
 
         // The source nodes and target must be the same for equality.
