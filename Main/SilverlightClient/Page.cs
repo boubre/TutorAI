@@ -85,12 +85,12 @@ namespace LiveGeometry
                     UIDebugPublisher.publishString(pg.Name);
                 }
             }
+
             parseOptionsWindow = new ParseOptionsWindow();
             parseOptionsWindow.Closed += new EventHandler(ParseOptionsWindow_Closed);
             manageGivensWindow = new ManageGivensWindow() { drawingHost = drawingHost };
             problemCharacteristicsWindow = new ProblemCharacteristicsWindow(manageGivensWindow);
             problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
-
         }
 
         private void AddBehaviors()

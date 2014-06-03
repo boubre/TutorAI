@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using DynamicGeometry;
 using DynamicGeometry.UI;
 using ImageTools;
@@ -22,7 +23,6 @@ namespace LiveGeometry
         private BackgroundWorker parseWorker = new BackgroundWorker();
         private ParseOptionsWindow parseOptionsWindow;
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
-        private EnterSolutionWindow enterSolutionWindow;
         private ManageGivensWindow manageGivensWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
 
@@ -419,7 +419,6 @@ namespace LiveGeometry
             if (!parseWorker.IsBusy)
             {
                 parser = new DrawingParserMain(drawingHost.CurrentDrawing);
-
                 //Do parse and back-end computation on background worker
                 parseWorker.RunWorkerAsync();
             }
@@ -436,11 +435,17 @@ namespace LiveGeometry
         /// <param name="e"></param>
         void BackgroundWorker_ParseToAST(object sender, DoWorkEventArgs e)
         {
+            UIDebugPublisher.clearWindow();
             UIDebugPublisher.publishString("Starting Parse Process...");
 
             // Execute Front-End Parse
             parser.Parse();
-            UIDebugPublisher.clearWindow();
+
+
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion ar in parser.IdentifyAtomicRegions())
+            {
+                UIDebugPublisher.publishString(ar.ToString());
+            }
 
             GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
@@ -455,6 +460,8 @@ namespace LiveGeometry
             {
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
+
+            
 
             UIDebugPublisher.publishString("Parse Complete.");
         }
@@ -484,16 +491,6 @@ namespace LiveGeometry
         void ProblemCharacteristicsWindow_Closed(object sender, EventArgs e)
         {
             //Do whatever needs to be done when the problem characteristics window closes
-        }
-
-        void DisplayEnterSolution()
-        {
-            enterSolutionWindow.Show();
-        }
-
-        void EnterSolutionWindow_Closed(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
     }
 }

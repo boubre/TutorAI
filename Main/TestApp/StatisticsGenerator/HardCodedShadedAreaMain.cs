@@ -37,11 +37,7 @@ namespace StatisticsGenerator
             // Create the precomputer object for coordinate-based pre-comutation analysis
             precomputer = new GeometryTutorLib.Precomputer.CoordinatePrecomputer(figure);
             instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
-            areaGraph = new GeometryTutorLib.Area_Based_Analyses.AreaHypergraph(implied.atomicRegions,
-                                                                                implied.circles,
-                                                                                implied.polygons,
-                                                                                implied.minorSectors,
-                                                                                implied.majorSectors);
+            areaGraph = new GeometryTutorLib.Area_Based_Analyses.AreaHypergraph(implied.atomicRegions);
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
@@ -68,8 +64,7 @@ namespace StatisticsGenerator
 
             // Find the equation of the given atomic regions.
             // TraceAreSolution()
-            GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation eq = areaGraph.TraceRegionArea(regions);
-            Debug.Write(eq);
+            //areaGraph.TraceRegionArea(regions);
 
 
 

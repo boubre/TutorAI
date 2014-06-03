@@ -10,31 +10,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
     {
         public Figure shape { get; private set; }
         
-        //public ShapeAtomicRegion() : base()
-        //{
-        //}
+        public ShapeAtomicRegion() : base()
+        {
+        }
 
         public ShapeAtomicRegion(Figure f) : base()
         {
             shape = f;
-            ownedPoints.AddRange(f.ownedPoints);
         }
-
-
-        ////
-        //// Can we put together this atom with the given atomic region?
-        //// Does a sequence of sides match?
-        ////
-        //public override bool Stitch(AtomicRegion thatAtom)
-        //{
-        //    if (thatAtom is NonShapeAtomicRegion) return thatAtom.Stitch(this);
-
-        //    //
-        //    // This is ShapeAtomic + ShapeAtomic
-        //    //
-
-        //    return false;
-        //}
 
         public override int GetHashCode() { return base.GetHashCode(); }
 
@@ -48,7 +31,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public override string ToString()
         {
-            return "ShapeAtom: (" + shape.ToString() + ")";
+            return "ShapeAtomicRegion: (" + shape.ToString() + ")";
         }
     }
 }

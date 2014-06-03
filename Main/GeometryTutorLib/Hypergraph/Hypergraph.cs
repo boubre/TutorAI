@@ -23,19 +23,9 @@ namespace GeometryTutorLib.Hypergraph
         public Hypergraph()
         {
             vertices = new List<HyperNode<T, A>>();
-            edgeCount = 0;
         }
-
-        public Hypergraph(int capacity)
-        {
-            vertices = new List<HyperNode<T, A>>(capacity);
-            edgeCount = 0;
-        }
-
 
         public int Size() { return vertices.Count; }
-        private int edgeCount;
-        public int EdgeCount() { return edgeCount; }
 
         //
         // Integer-based representation of the main hypergraph
@@ -155,14 +145,6 @@ namespace GeometryTutorLib.Hypergraph
         //
         private bool HasLocalEdge(List<int> antecedent, int consequent)
         {
-            foreach (int ante in antecedent)
-            {
-                if (ante < 0 || ante > vertices.Count) throw new ArgumentException("Index of bounds on local edge: " + ante);
-            }
-  
-            if (consequent < 0 || consequent > vertices.Count) throw new ArgumentException("Index of bounds on local edge: " + consequent);
-
-
             foreach (HyperNode<T, A> vertex in vertices)
             {
                 foreach (HyperEdge<A> edge in vertex.edges)
@@ -216,12 +198,12 @@ namespace GeometryTutorLib.Hypergraph
         //
         // Adding an edge to the graph
         //
-        public bool AddEdge(List<T> antecedent, T consequent, A annotation)
+        public void AddEdge(List<T> antecedent, T consequent, A annotation)
         {
             //
             // Add a local representaiton of this edge to each node in which it is applicable
             //
-            if (HasEdge(antecedent, consequent)) return false;
+            if (HasEdge(antecedent, consequent)) return;
 
             KeyValuePair<List<int>, int> local = ConvertToLocal(antecedent, consequent);
 
@@ -233,33 +215,6 @@ namespace GeometryTutorLib.Hypergraph
             {
                 vertices[src].AddEdge(edge);
             }
-
-            // Add this as a target edge to the target node.
-            vertices[local.Value].AddTargetEdge(edge);
-            edgeCount++;
-
-            return true;
-        }
-
-        //
-        // Adding an edge to the graph based on known indices.
-        //
-        public bool AddIndexEdge(List<int> antecedent, int consequent, A annotation)
-        {
-            if (HasLocalEdge(antecedent, consequent)) return false;
-
-            HyperEdge<A> edge = new HyperEdge<A>(antecedent, consequent, annotation);
-
-            foreach (int src in antecedent)
-            {
-                vertices[src].AddEdge(edge);
-            }
-
-            // Add this as a target edge to the target node.
-            vertices[consequent].AddTargetEdge(edge);
-            edgeCount++;
-
-            return true;
         }
 
         public void DebugDumpClauses()

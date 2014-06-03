@@ -39,12 +39,7 @@ namespace GeometryTutorLib.ConcreteAST
         public List<Point> pointsOnCircle { get; private set; }
 
         // The minor Arcs of this circle (based on pointsOnCircle list)
-        public List<MinorArc> minorArcs { get; private set; }
-        public List<MajorArc> majorArcs { get; private set; }
-
-        // The sectors of this circle (based on pointsOnCircle list)
-        public List<Sector> minorSectors { get; private set; }
-        public List<Sector> majorSectors { get; private set; }
+        public List<MinorArc> arcs { get; private set; }
 
         /// <summary>
         /// Create a new ConcreteSegment. 
@@ -71,28 +66,13 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             pointsOnCircle = new List<Point>();
-
-            minorArcs = new List<MinorArc>();
-            majorArcs = new List<MajorArc>();
-            minorSectors = new List<Sector>();
-            majorSectors = new List<Sector>();
+            arcs = new List<MinorArc>();
 
             Utilities.AddUniqueStructurally(this.center.getSuperFigures(), this);
         }
 
-        public void AddMinorArc(MinorArc mArc) { minorArcs.Add(mArc); }
-        public void AddMajorArc(MajorArc mArc) { majorArcs.Add(mArc); }
-        public void AddMinorSector(Sector mSector) { minorSectors.Add(mSector); }
-        public void AddMajorSector(Sector mSector) { majorSectors.Add(mSector); }
-
+        public void AddArc(MinorArc mArc) { arcs.Add(mArc); }
         public void SetPointsOnCircle(List<Point> pts) { OrderPoints(pts); }
-        public override bool IsPointOwned(Point pt) { return PointIsOn(pt) || PointIsInterior(pt); }
-
-        //public override bool HasSegmentWithEndpoints(Point p1, Point p2)
-        //{
-        //    return Utilities.HasStructurally<Point>(pointsOnCircle, p1) && 
-        //           Utilities.HasStructurally<Point>(pointsOnCircle, p2);
-        //}
 
         //
         // For arcs, order the points so that there is a consistency: A, B, C, D-> B between AC, B between AD, etc.

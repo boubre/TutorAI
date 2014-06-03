@@ -185,9 +185,6 @@ namespace LiveGeometry.AtomicRegionIdentifier
             }
         }
 
-        //
-        // Take the cycle-based representation and convert in into AtomicRegion objects.
-        //
         public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> ConvertPrimitivesToAtomicRegions(List<Primitive> primitives)
         {
             List<MinimalCycle> cycles = new List<MinimalCycle>();

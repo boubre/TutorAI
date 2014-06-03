@@ -8,14 +8,9 @@ namespace GeometryTutorLib.Area_Based_Analyses
 {
     public abstract class AtomicRegion
     {
-        public List<Point> ownedPoints { get; protected set; }
-
         public AtomicRegion()
         {
-            ownedPoints = new List<Point>();
         }
-
-        //public abstract bool Stitch(AtomicRegion thatAtom);
 
         public override int GetHashCode() { return base.GetHashCode(); }
 

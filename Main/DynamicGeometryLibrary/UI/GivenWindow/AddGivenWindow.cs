@@ -138,7 +138,7 @@ namespace DynamicGeometry.UI.GivenWindow
         /// <param name="e"></param>
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
-            WindowResult = Result.Cancel;  
+            WindowResult = Result.Cancel;
             Clause = null;
             Close();
         }

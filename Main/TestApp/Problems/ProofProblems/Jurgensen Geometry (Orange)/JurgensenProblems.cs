@@ -48,25 +48,7 @@ namespace GeometryTestbed
             problems.Add(new Page242Problem17(false, false));                 // GTG
 
 
-
-
-            //
-            // Quadrilaterals
-            //
-            problems.Add(new Page162Problem20(false, false));
-            problems.Add(new Page166Problem01(false, false));
-            problems.Add(new Page166Problem02(false, false));
-            problems.Add(new Page166Problem03(false, false));
-            problems.Add(new Page166Problem04(false, false));
-            problems.Add(new Page166Problem05(false, false));
-            problems.Add(new Page166Problem13(false, false));
-
-
-
-
-
-
-
+            //problems.Add(new CircleTester2(true));
 
 
             //problems.Add(new BackwardPage134Problem7(false, false)); 

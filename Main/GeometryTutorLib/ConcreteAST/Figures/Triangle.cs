@@ -77,7 +77,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (segs.Count != 3) throw new ArgumentException("Triangle constructed with " + segs.Count + " segments.");
         }
 
-        public override void DumpXML(XmlWriter writer)
+        public void DumpXML(XmlWriter writer)
         {
             writer.WriteStartElement("Triangle");
 

@@ -302,7 +302,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point midpt = leftOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
 
                     // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
+                    if (poly.IsInConvexPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
                 }
                 else if (leftOuterCircles[p] == null && rightOuterCircles[p] != null)
                 {
@@ -310,7 +310,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point midpt = rightOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
 
                     // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = rightOuterCircles[p];
+                    if (poly.IsInConvexPolygon(midpt)) circlesCutInsidePoly[p] = rightOuterCircles[p];
                 }
                 else if (leftOuterCircles[p] != null && rightOuterCircles[p] != null)
                 {
@@ -318,7 +318,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point midpt = leftOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
 
                     // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
+                    if (poly.IsInConvexPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
                     else circlesCutInsidePoly[p] = rightOuterCircles[p];
                 }
                 else

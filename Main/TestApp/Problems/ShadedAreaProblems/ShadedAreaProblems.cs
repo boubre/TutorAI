@@ -11,8 +11,7 @@ namespace GeometryTestbed
         {
             List<ActualShadedAreaProblem> problems = new List<ActualShadedAreaProblem>();
 
-            //problems.Add(new CircCircRegionTester(true, false));
-            //problems.Add(new RegionTester(true, false));
+            problems.Add(new RegionTester(true, false));
             //problems.Add(new PathologicalTester(false, false));
 
             return problems;
