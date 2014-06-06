@@ -7,9 +7,19 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Rhombus : Parallelogram
     {
-        public Rhombus(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
+        public Rhombus(Quadrilateral quad)
+            : this(quad.left, quad.right, quad.top, quad.bottom,
+                quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection)
+        {
+        }
 
-        public Rhombus(Segment left, Segment right, Segment top, Segment bottom) : base(left, right, top, bottom)
+        //TODO: Need to find a way to determine the validity of diagonals, and to find the intersection if both diagonals are valid
+        //These values are determined for base quadrilaterals by the Implied Component Calculator in the UI parser, but are never
+        //computed for the specialized quads
+
+        public Rhombus(Segment left, Segment right, Segment top, Segment bottom,
+            bool tlDiag = false, bool brDiag = false, Intersection inter = null)
+            : base(left, right, top, bottom)
         {
             if (!Utilities.CompareValues(top.Length, left.Length))
             {
@@ -23,6 +33,11 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 throw new ArgumentException("Quadrilateral is not a Rhombus; sides are not equal length: " + top + " " + bottom);
             }
+
+            //Set the diagonal and intersection values
+            if (!tlDiag) this.SetTopLeftDiagonalInValid();
+            if (!brDiag) this.SetBottomRightDiagonalInValid();
+            this.SetIntersection(inter);
         }
 
         public override bool StructurallyEquals(Object obj)

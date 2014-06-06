@@ -48,7 +48,25 @@ namespace GeometryTestbed
             problems.Add(new Page242Problem17(false, false));                 // GTG
 
 
-            //problems.Add(new CircleTester2(true));
+
+
+            //
+            // Quadrilaterals
+            //
+            problems.Add(new Page162Problem20(false, false));          //parallelogram
+            problems.Add(new Page166Problem01(false, false));          //parallelogram
+            problems.Add(new Page166Problem02(false, false));          //parallelogram
+            problems.Add(new Page166Problem03(false, false));          //parallelogram
+            problems.Add(new Page166Problem04(false, false));          //parallelogram
+            problems.Add(new Page166Problem05(false, false));          //parallelogram
+            problems.Add(new Page166Problem13(false, false));          //parallelogram
+            problems.Add(new Page170ClassroomExercise02(true, false)); //rhombus
+            problems.Add(new Page172Problem19(false, false));          //rhombus
+
+
+
+
+
 
 
             //problems.Add(new BackwardPage134Problem7(false, false)); 
