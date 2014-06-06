@@ -31,11 +31,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool StructurallyEquals(Object obj)
         {
-            //Parallelogram thatPara = obj as Parallelogram;
-            //if (thatPara == null) return false;
-            
-            //Fix to prevent a false positive when obj is of a derived type:
-            if (!Object.ReferenceEquals(this.GetType(), obj.GetType())) return false;
+            Parallelogram thatPara = obj as Parallelogram;
+            if (thatPara == null) return false;
 
             return base.StructurallyEquals(obj);
         }
