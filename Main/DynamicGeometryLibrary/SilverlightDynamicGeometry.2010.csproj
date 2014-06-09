@@ -319,6 +319,7 @@
     <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
+    <Compile Include="UI\EnterSolutionWindow.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />
     <Compile Include="UI\CommandSystem\CompositeCommandObserver.cs" />
     <Compile Include="UI\CommandSystem\ICommand.cs" />
