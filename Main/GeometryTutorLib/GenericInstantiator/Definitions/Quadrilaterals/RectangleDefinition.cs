@@ -132,7 +132,12 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 Strengthened streng = clause as Strengthened;
 
-                if (streng.strengthened is Parallelogram)
+                /*Fix to prevent cycle - A rectangle could pass the 'is' comparison, so a clause such as 
+                Strengthed(Parallelogram(...), Rectangle(...)) would lead to the instantiation of the
+                rectangle to another rectangle (i.e. Strengthened(Rectangle(...), Rectangle(...))*/
+
+                //if(streng.strengthened is Parallelogram)
+                if (streng.strengthened.GetType().Equals(typeof(Parallelogram)))
                 {
                     foreach (RightAngle rightAngle in candidateRightAngle)
                     {

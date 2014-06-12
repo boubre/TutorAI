@@ -54,8 +54,11 @@
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page166Problem04.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page166Problem05.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page166Problem13.cs" />
+    <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page169Theorem413.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page170ClassroomExercise02.cs" />
+    <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page171Problem17.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page172Problem19.cs" />
+    <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page178SelfTest07.cs" />
     <Compile Include="Problems\ProofProblems\QuadrilateralsProblem.cs" />
     <Compile Include="Problems\ShadedAreaProblems\ActualShadedAreaProblem.cs" />
     <Compile Include="Problems\ShadedAreaProblems\PathologicalTester.cs" />

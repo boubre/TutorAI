@@ -7,9 +7,11 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Rectangle : Parallelogram
     {
-        public Rectangle(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
+        public Rectangle(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom,
+                            quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection) { }
 
-        public Rectangle(Segment a, Segment b, Segment c, Segment d) : base(a, b, c, d)
+        public Rectangle(Segment a, Segment b, Segment c, Segment d, 
+            bool tlDiag = false, bool brDiag = false, Intersection inter = null) : base(a, b, c, d)
         {
             foreach (Angle angle in angles)
             {
@@ -18,6 +20,11 @@ namespace GeometryTutorLib.ConcreteAST
                     throw new ArgumentException("Quadrilateral is not a Rectangle; angle does not measure 90^o: " + angle);
                 }
             }
+
+            //Set the diagonal and intersection values
+            if (!tlDiag) this.SetTopLeftDiagonalInValid();
+            if (!brDiag) this.SetBottomRightDiagonalInValid();
+            this.SetIntersection(inter);
         }
 
         public override bool StructurallyEquals(Object obj)

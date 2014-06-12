@@ -60,9 +60,12 @@ namespace GeometryTestbed
             problems.Add(new Page166Problem04(false, false));          //parallelogram
             problems.Add(new Page166Problem05(false, false));          //parallelogram
             problems.Add(new Page166Problem13(false, false));          //parallelogram
-            problems.Add(new Page170ClassroomExercise02(true, false)); //rhombus
+            problems.Add(new Page170ClassroomExercise02(false, false)); //rhombus
             problems.Add(new Page172Problem19(false, false));          //rhombus
-
+            problems.Add(new Page169Theorem413(true, false));          //rectangle
+            problems.Add(new Page171Problem17(false, false));           //rectangle
+            
+            //problems.Add(new Page178SelfTest07(true, false));          //rectangle - NOT WORKING - see problem for details
 
 
 
