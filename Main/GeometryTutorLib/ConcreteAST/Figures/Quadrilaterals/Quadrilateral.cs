@@ -485,6 +485,8 @@ namespace GeometryTutorLib.ConcreteAST
             Quadrilateral thatQuad = obj as Quadrilateral;
             if (thatQuad == null) return false;
 
+            if (!thatQuad.IsStrictQuadrilateral()) return false;
+
             return this.HasSamePoints(thatQuad);
         }
 

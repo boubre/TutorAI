@@ -34,7 +34,10 @@ namespace GeometryTutorLib.ConcreteAST
             Parallelogram thatPara = obj as Parallelogram;
             if (thatPara == null) return false;
 
-            return base.StructurallyEquals(obj);
+            if (thatPara is Rhombus || thatPara is Rectangle) return false;
+
+            //return base.StructurallyEquals(obj);
+            return base.HasSamePoints(thatPara as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

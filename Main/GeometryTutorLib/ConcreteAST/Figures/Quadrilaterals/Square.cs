@@ -36,7 +36,8 @@ namespace GeometryTutorLib.ConcreteAST
             Square thatSquare = obj as Square;
             if (thatSquare == null) return false;
 
-            return base.StructurallyEquals(obj);
+            //return base.StructurallyEquals(obj);
+            return this.HasSamePoints(obj as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

@@ -45,7 +45,10 @@ namespace GeometryTutorLib.ConcreteAST
             Rhombus thatRhom = obj as Rhombus;
             if (thatRhom == null) return false;
 
-            return base.StructurallyEquals(obj);
+            if (thatRhom is Square) return false;
+
+            //return base.StructurallyEquals(obj);
+            return base.HasSamePoints(obj as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

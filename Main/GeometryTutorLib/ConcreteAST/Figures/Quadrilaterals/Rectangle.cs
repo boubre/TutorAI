@@ -25,7 +25,8 @@ namespace GeometryTutorLib.ConcreteAST
             Rectangle thatRect = obj as Rectangle;
             if (thatRect == null) return false;
 
-            return base.StructurallyEquals(obj);
+            //return base.StructurallyEquals(obj);
+            return base.HasSamePoints(obj as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

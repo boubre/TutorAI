@@ -214,6 +214,8 @@ namespace GeometryTutorLib.ConcreteAST
             Polygon thatPoly = obj as Polygon;
             if (thatPoly == null) return false;
 
+            if (thatPoly is Quadrilateral) return false;
+
             foreach (Point pt in thatPoly.points)
             {
                 if (!Utilities.HasStructurally<Point>(this.points, pt)) return false; 

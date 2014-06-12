@@ -43,7 +43,8 @@ namespace GeometryTutorLib.ConcreteAST
             Kite thatKite = obj as Kite;
             if (thatKite == null) return false;
 
-            return base.StructurallyEquals(obj);
+            //return base.StructurallyEquals(obj);
+            return base.HasSamePoints(obj as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

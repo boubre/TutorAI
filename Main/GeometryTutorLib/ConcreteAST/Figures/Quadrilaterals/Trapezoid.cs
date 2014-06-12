@@ -132,7 +132,10 @@ namespace GeometryTutorLib.ConcreteAST
             Trapezoid thatTrap = obj as Trapezoid;
             if (thatTrap == null) return false;
 
-            return base.StructurallyEquals(obj);
+            if (thatTrap is IsoscelesTrapezoid) return false;
+
+            //return base.StructurallyEquals(obj);
+            return base.HasSamePoints(obj as Quadrilateral);
         }
 
         public override bool Equals(Object obj)

@@ -20,9 +20,6 @@ namespace GeometryTestbed
             Point e = new Point("E", -1, 0); points.Add(e);
             Point f = new Point("F", -1, -2); points.Add(f);
             Point g = new Point("G", 3, -4); points.Add(g);
-            /*Point h represents the diagonal intersection. 
-            Commented out to test the component calculator when handling an undefined intersection*/
-            //Point h = new Point("H", 1, 2); points.Add(h);
 
             Segment bc = new Segment(b, c); segments.Add(bc);
             Segment cd = new Segment(c, d); segments.Add(cd);
@@ -31,7 +28,6 @@ namespace GeometryTestbed
             List<Point> pnts = new List<Point>();
             pnts.Add(f);
             pnts.Add(a);
-            //pnts.Add(h);
             pnts.Add(c);
             collinear.Add(new Collinear(pnts));
 
@@ -46,12 +42,6 @@ namespace GeometryTestbed
             pnts3.Add(a);
             pnts3.Add(b);
             collinear.Add(new Collinear(pnts3));
-
-            //List<Point> pnts4 = new List<Point>();
-            //pnts4.Add(b);
-            //pnts4.Add(h);
-            //pnts4.Add(d);
-            //collinear.Add(new Collinear(pnts4));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
