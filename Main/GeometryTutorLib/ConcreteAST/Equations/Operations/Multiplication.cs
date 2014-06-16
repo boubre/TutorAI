@@ -25,7 +25,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (leftExp is NumericValue && rightExp is NumericValue)
             {
-                list.Add(new NumericValue((leftExp as NumericValue).value * (rightExp as NumericValue).value));
+                list.Add(new NumericValue((leftExp as NumericValue).DoubleValue * (rightExp as NumericValue).DoubleValue));
                 return list;
             }
             
@@ -35,7 +35,7 @@ namespace GeometryTutorLib.ConcreteAST
                 {
                     GroundedClause copyGC = gc.DeepCopy();
 
-                    copyGC.multiplier *= ((NumericValue)leftExp).value;
+                    copyGC.multiplier *= ((NumericValue)leftExp).IntValue;
                     list.Add(copyGC);
                 }
             }
@@ -46,7 +46,7 @@ namespace GeometryTutorLib.ConcreteAST
                 {
                     GroundedClause copyGC = gc.DeepCopy();
 
-                    copyGC.multiplier *= ((NumericValue)rightExp).value;
+                    copyGC.multiplier *= ((NumericValue)rightExp).IntValue;
                     list.Add(copyGC);
                 }
             }
@@ -61,10 +61,6 @@ namespace GeometryTutorLib.ConcreteAST
             return base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

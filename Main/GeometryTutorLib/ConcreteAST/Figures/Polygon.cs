@@ -50,7 +50,7 @@ namespace GeometryTutorLib.ConcreteAST
             angles = pair.Value;
         }
 
-        private Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
+        protected Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
         {
             orderedSides = segs;
             points = pts;
@@ -62,13 +62,40 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.HasStructurally<Segment>(orderedSides, thatSegment);
         }
 
+        public override bool PointLiesInside(Point pt) { return IsInPolygon(pt); }
+        public override bool PointLiesInOrOn(Point pt)
+        {
+            if (IsInPolygon(pt)) return true;
+
+            foreach (Segment side in orderedSides)
+            {
+                if (side.PointIsOnAndBetweenEndpoints(pt)) return true;
+            }
+
+            return false;
+        }
+        public override Polygon GetPolygonalized() { return this; }
+
+        ////
+        //// Does this polygon contain all points defined by thatPoly?
+        ////
+        //public override bool Contains(Polygon thatPoly)
+        //{
+        //    foreach (Point thatPt in thatPoly.points)
+        //    {
+        //        if (!IsInPolygon(thatPt)) return false;
+        //    }
+
+        //    return true;
+        //}
+
         /// <summary>
         /// Determines if the given point is inside the polygon; http://alienryderflex.com/polygon/
         /// </summary>
         /// <param name="polygon">the vertices of polygon</param>
         /// <param name="testPoint">the given point</param>
         /// <returns>true if the point is inside the polygon; otherwise, false</returns>
-        public bool IsInConvexPolygon(Point thatPoint)
+        public bool IsInPolygon(Point thatPoint)
         {
             bool result = false;
             int j = points.Count - 1;
@@ -140,9 +167,45 @@ namespace GeometryTutorLib.ConcreteAST
                 throw new Exception("Construction new polygon failed.");
             }
 
+            return ActuallyConstructThePolygonObject(orderedSides);
+        }
+
+        private static Polygon ActuallyConstructThePolygonObject(List<Segment> orderedSides)
+        {
+            //
+            // Check for lines that are actually collinear (and can be compressed into a single segment).
+            //
+            bool change = true;
+            while (change)
+            {
+                change = false;
+                for (int s = 0; s < orderedSides.Count; s++)
+                {
+                    Segment first = orderedSides[s];
+                    Segment second = orderedSides[(s + 1) % orderedSides.Count];
+                    Point shared = first.SharedVertex(second);
+
+                    // We know these lines share an endpoint and that they are collinear.
+                    if (first.IsCollinearWith(second))
+                    {
+                        Segment newSegment = new Segment(first.OtherPoint(shared), second.OtherPoint(shared));
+
+                        // Replace the two original lines with the new line.
+                        orderedSides.Insert(s, newSegment);
+                        orderedSides.Remove(first);
+                        orderedSides.Remove(second);
+                        change = true;
+                    }
+                }
+            }
+
             KeyValuePair<List<Point>, List<Angle>> pair = MakePointsAngle(orderedSides);
 
-            switch (vertices.Count)
+            // If the polygon is concave, make that object.
+            if (IsConcavePolygon(pair.Key)) return new ConcavePolygon(orderedSides, pair.Key, pair.Value);
+
+            // Otherwise, make the other polygons
+            switch (orderedSides.Count)
             {
                 case 3:
                     return new Triangle(orderedSides);
@@ -151,9 +214,52 @@ namespace GeometryTutorLib.ConcreteAST
                 default:
                     return new Polygon(orderedSides, pair.Key, pair.Value);
             }
+
+            //return null;
         }
 
-        private static KeyValuePair<List<Point>, List<Angle>> MakePointsAngle(List<Segment> orderedSides)
+        //
+        // Return True if the polygon is convex.
+        // http://blog.csharphelper.com/2010/01/04/determine-whether-a-polygon-is-convex-in-c.aspx
+        //
+        protected static bool IsConcavePolygon(List<Point> orderedPts)
+        {
+            // For each set of three adjacent points A, B, C,
+            // find the dot product AB · BC. If the sign of
+            // all the dot products is the same, the angles
+            // are all positive or negative (depending on the
+            // order in which we visit them) so the polygon
+            // is convex.
+            bool got_negative = false;
+            bool got_positive = false;
+            int B, C;
+            for (int A = 0; A < orderedPts.Count; A++)
+            {
+                B = (A + 1) % orderedPts.Count;
+                C = (B + 1) % orderedPts.Count;
+
+                // Create normalized vectors and find the cross-product.
+                Point vec1 = Point.MakeVector(orderedPts[A], orderedPts[B]);
+                Point vec2 = Point.MakeVector(orderedPts[B], orderedPts[C]);
+
+                double cross_product = Point.CrossProduct(vec1, vec2);
+
+                if (cross_product < 0)
+                {
+                    got_negative = true;
+                }
+                else if (cross_product > 0)
+                {
+                    got_positive = true;
+                }
+                if (got_negative && got_positive) return true;
+            }
+
+            // If we got this far, the polygon is convex.
+            return false;
+        }
+
+        protected static KeyValuePair<List<Point>, List<Angle>> MakePointsAngle(List<Segment> orderedSides)
         {
             List<Point> points = new List<Point>();
             List<Angle> angles = new List<Angle>();
@@ -178,6 +284,10 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static Polygon MakePolygon(List<Segment> theseSegs)
         {
+            // If we are given the sides already ordered, just make the polygon stright-away.
+            Polygon simple = MakeOrderedPolygon(theseSegs);
+            if (simple != null) return simple;
+
             // Parallel arrays of (1) vertices and (2) segments that share the given vertex.
             List<Point> vertices = new List<Point>();
             List<KeyValuePair<Segment, Segment>> pairs = new List<KeyValuePair<Segment, Segment>>();
@@ -193,7 +303,10 @@ namespace GeometryTutorLib.ConcreteAST
                     {
                         // Shared vertices must be unique among all combinations of segments
                         // if this vertex is already in the list, we don't have a polygon
-                        if (vertices.Contains(vertex)) return null;
+                        if (vertices.Contains(vertex))
+                        {
+                            return null;
+                        }
 
                         // We have a candidate vertex: save the vertex and the 2 segments which created it.
                         vertices.Add(vertex);
@@ -207,6 +320,19 @@ namespace GeometryTutorLib.ConcreteAST
 
             // These segments make a polygon; the Polygon class will order the segments appropriately.
             return Polygon.ConstructPolygon(vertices, pairs);
+        }
+
+        //
+        // If we are given the sides already ordered, just make the polygon stright-away.
+        //
+        public static Polygon MakeOrderedPolygon(List<Segment> theseSegs)
+        {
+            for (int s = 0; s < theseSegs.Count; s++)
+            {
+                if (theseSegs[s].SharedVertex(theseSegs[(s+1) % theseSegs.Count]) == null) return null;
+            }
+
+            return ActuallyConstructThePolygonObject(theseSegs);
         }
 
         public override bool StructurallyEquals(Object obj)

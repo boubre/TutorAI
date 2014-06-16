@@ -30,8 +30,10 @@ namespace LiveGeometry.TutorParser
 
         private void ConstructAreaHypergraph(List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms)
         {
-            GeometryTutorLib.Area_Based_Analyses.AreaHypergraph areaHG = new GeometryTutorLib.Area_Based_Analyses.AreaHypergraph(atoms);
-
+            GeometryTutorLib.Area_Based_Analyses.AreaPowersetHypergraph areaHG = new GeometryTutorLib.Area_Based_Analyses.AreaPowersetHypergraph(atoms, implied.circles,
+                                                                                                                                        implied.polygons,
+                                                                                                                                        implied.minorSectors,
+                                                                                                                                        implied.majorSectors);
             Debug.WriteLine(areaHG);
         }
     }

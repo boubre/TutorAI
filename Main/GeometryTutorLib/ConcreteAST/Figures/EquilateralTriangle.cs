@@ -18,8 +18,23 @@ namespace GeometryTutorLib.ConcreteAST
             provenIsosceles = true;
             provenEquilateral = true;
         }
-        public EquilateralTriangle(Triangle t) : base(t.SegmentA, t.SegmentA, t.SegmentA)
+        public EquilateralTriangle(Triangle t) : base(t.SegmentA, t.SegmentB, t.SegmentC)
         {
+            if (!Utilities.CompareValues(t.SegmentA.Length, t.SegmentB.Length))
+            {
+                throw new ArgumentException("Equilateral Triangle constructed with non-congruent segments " + t.SegmentA.ToString() + " " + t.SegmentB.ToString());
+            }
+
+            if (!Utilities.CompareValues(t.SegmentA.Length, t.SegmentC.Length))
+            {
+                throw new ArgumentException("Equilateral Triangle constructed with non-congruent segments " + t.SegmentA.ToString() + " " + t.SegmentC.ToString());
+            }
+
+            if (!Utilities.CompareValues(t.SegmentB.Length, t.SegmentC.Length))
+            {
+                throw new ArgumentException("Equilateral Triangle constructed with non-congruent segments " + t.SegmentB.ToString() + " " + t.SegmentC.ToString());
+            }
+
             provenIsosceles = true;
             provenEquilateral = true;
         }

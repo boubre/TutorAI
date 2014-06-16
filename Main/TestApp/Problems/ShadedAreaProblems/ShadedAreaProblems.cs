@@ -11,8 +11,36 @@ namespace GeometryTestbed
         {
             List<ActualShadedAreaProblem> problems = new List<ActualShadedAreaProblem>();
 
-            problems.Add(new RegionTester(true, false));
+            //
+            // Testing
+            //
+            // problems.Add(new CircCircRegionTester(true, false));
+
+            //
+            // Class X
+            //
+
+            //problems.Add(new Page1Col1Prob1(true, false));
+
+            //problems.Add(new Page1Col2Prob1(true, false));
+            // problems.Add(new Page1Col2Prob2(true, false));                           // GTG
+            // problems.Add(new Page1Col2Prob3(true, false));                           // Goal not in Hypergraph
+
+            // problems.Add(new Page2Col1Prob2(true, false));                          // GTG
+
+            // problems.Add(new Page2Col2Prob2(true, false));                          // No Solution
+
+            
+            // problems.Add(new Page2Col2Prob1(true, false));                             // No solution
+
+
             //problems.Add(new PathologicalTester(false, false));
+
+            //
+            // Jurgensen
+            //
+            // problems.Add(new Page2prob15(true, false));    // GTG
+            // problems.Add(new Page2prob17(true, false)); 
 
             return problems;
         }

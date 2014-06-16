@@ -5,19 +5,19 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
     //
     // For atomic region identification
     //
-    public enum NodePointType { REAL, EXTENDED };
+    // public enum NodePointType { REAL, EXTENDED };
 
     public class PlanarGraphNode
     {
         public List<PlanarGraphEdge> edges { get; private set; }
         public GeometryTutorLib.ConcreteAST.Point thePoint { get; private set; }
-        public NodePointType type { get; private set; }
+        // public NodePointType type { get; private set; }
 
 
-        public PlanarGraphNode(GeometryTutorLib.ConcreteAST.Point value, NodePointType t)
+        public PlanarGraphNode(GeometryTutorLib.ConcreteAST.Point value) // , NodePointType t)
         {
             thePoint = value;
-            type = t;
+            //type = t;
             edges = new List<PlanarGraphEdge>();
         }
 
@@ -27,7 +27,7 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         public PlanarGraphNode(PlanarGraphNode thatNode)
         {
             thePoint = thatNode.thePoint;
-            type = thatNode.type;
+            // type = thatNode.type;
             edges = new List<PlanarGraphEdge>();
 
             foreach (PlanarGraphEdge e in thatNode.edges)
@@ -100,7 +100,7 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         {
             System.Text.StringBuilder str = new System.Text.StringBuilder();
 
-            str.Append("<" + thePoint.ToString() + ", " + type + ">: ");
+            str.Append("<" + thePoint.ToString() + ", " /*+ type */ + ">: ");
             foreach (PlanarGraphEdge edge in edges)
             {
                 str.Append(edge.ToString() + "\t");

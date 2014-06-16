@@ -26,6 +26,9 @@ namespace GeometryTutorLib.Area_Based_Analyses
             smaller = small;
         }
 
+        // Copy constructor
+        public SimpleRegionEquation(SimpleRegionEquation simple) : this(simple.target, simple.bigger, simple.op, simple.smaller) {}
+
         public override int GetHashCode() { return base.GetHashCode(); }
 
         //

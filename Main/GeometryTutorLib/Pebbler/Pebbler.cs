@@ -22,18 +22,17 @@ namespace GeometryTutorLib.Pebbler
         public HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> forwardPebbledEdges { get; private set; }
         public HyperEdgeMultiMap<Hypergraph.EdgeAnnotation> backwardPebbledEdges { get; private set; }
 
-        public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)
+        public Pebbler(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph,
+                       PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pGraph)
         {
-            graph = g;
-            forwardPebbledEdges.SetOriginalHypergraph(g);
-            backwardPebbledEdges.SetOriginalHypergraph(g);
-        }
+            this.graph = graph;
+            this.pebblerGraph = pGraph;
+            
+            forwardPebbledEdges = new HyperEdgeMultiMap<Hypergraph.EdgeAnnotation>(pGraph.vertices.Length);
+            backwardPebbledEdges = new HyperEdgeMultiMap<Hypergraph.EdgeAnnotation>(pGraph.vertices.Length);
 
-        public Pebbler(PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> hypergraph)
-        {
-            pebblerGraph = hypergraph;
-            forwardPebbledEdges = new HyperEdgeMultiMap<Hypergraph.EdgeAnnotation>(hypergraph.vertices.Length);
-            backwardPebbledEdges = new HyperEdgeMultiMap<Hypergraph.EdgeAnnotation>(hypergraph.vertices.Length);
+            forwardPebbledEdges.SetOriginalHypergraph(graph);
+            backwardPebbledEdges.SetOriginalHypergraph(graph);
         }
 
         // Clear all pebbles from all nodes and edges in the hypergraph
@@ -165,7 +164,7 @@ namespace GeometryTutorLib.Pebbler
                 worklist.RemoveAt(0);
 
                 // Pebble the current node as a forward node and percolate forward
-                pebblerGraph.vertices[currentNodeIndex].pebble = PebblerColorType.RED_FORWARD;
+                pebblerGraph.vertices[currentNodeIndex].pebbled = true;
 
                 // For all hyperedges leaving this node, mark a pebble along the arc
                 foreach (PebblerHyperEdge<Hypergraph.EdgeAnnotation> currentEdge in pebblerGraph.vertices[currentNodeIndex].edges)
@@ -209,7 +208,7 @@ namespace GeometryTutorLib.Pebbler
             foreach (int fIndex in figure)
             {
                 // Pebble the current node as a backward; DO NOT PERCOLATE forward
-                pebblerGraph.vertices[fIndex].pebble = PebblerColorType.RED_FORWARD; //.BLUE_BACKWARD;
+                pebblerGraph.vertices[fIndex].pebbled = true;
 
                 // For all hyperedges leaving this node, mark a pebble along the arc
                 foreach (PebblerHyperEdge<Hypergraph.EdgeAnnotation> currentEdge in pebblerGraph.vertices[fIndex].edges)

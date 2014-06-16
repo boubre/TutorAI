@@ -18,6 +18,7 @@ namespace GeometryTutorLib
         public Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph { get; private set; }
         private GenericInstantiator.Instantiator instantiator;
         private Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
+        private Pebbler.Pebbler pebbler;
         private ProblemAnalyzer.PathGenerator pathGenerator;
         private GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator = null;
         private ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
@@ -180,9 +181,6 @@ namespace GeometryTutorLib
         {
             // Create the Pebbler version of the hypergraph (all integer representation) from the original hypergraph
             pebblerGraph = graph.GetPebblerHypergraph();
-
-            // Provide the original hypergraph for reference
-            pebblerGraph.SetOriginalHypergraph(graph);
         }
 
         //
@@ -190,6 +188,8 @@ namespace GeometryTutorLib
         //
         private void Pebble()
         {
+            pebbler = new Pebbler.Pebbler(graph, pebblerGraph);
+
             pathGenerator = new ProblemAnalyzer.PathGenerator(graph);
 
             // Acquire the integer values of the intrinsic / figure nodes
@@ -199,7 +199,7 @@ namespace GeometryTutorLib
             List<int> givenSet = CollectGraphIndices(givens);
 
             // Perform pebbling based on the <figure, given> pair.
-            pebblerGraph.Pebble(intrinsicSet, givenSet);
+            pebbler.Pebble(intrinsicSet, givenSet);
 
             if (Utilities.PEBBLING_DEBUG)
             {
@@ -207,17 +207,11 @@ namespace GeometryTutorLib
                 for (int i = 0; i < pebblerGraph.vertices.Length; i++)
                 {
                     StringBuilder strLocal = new StringBuilder();
-                    strLocal.Append(pebblerGraph.vertices[i].id + ": pebbled(");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
-//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
-                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
-                    strLocal.Append(")");
+                    strLocal.Append(pebblerGraph.vertices[i].id + ": pebbled(" + pebblerGraph.vertices[i].pebbled + ")");
                     Debug.WriteLine(strLocal.ToString());
                 }
 
-                pebblerGraph.DebugDumpClauses();
+                pebbler.DebugDumpClauses();
             }
         }
 
@@ -226,7 +220,7 @@ namespace GeometryTutorLib
         //
         private KeyValuePair<List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>, List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>> GenerateTemplateProblems()
         {
-            templateProblemGenerator = new ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
+            templateProblemGenerator = new ProblemAnalyzer.TemplateProblemGenerator(graph, pebbler, pathGenerator);
 
             // Generate the problem pairs
             return templateProblemGenerator.Generate(precomputer.GetPrecomputedRelations(), precomputer.GetStrengthenedClauses(), givens);

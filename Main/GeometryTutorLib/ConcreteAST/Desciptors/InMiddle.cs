@@ -25,7 +25,7 @@ namespace GeometryTutorLib.ConcreteAST
             this.segment = segment;
         }
 
-        public void DumpXML(XmlWriter writer)
+        public override void DumpXML(XmlWriter writer)
         {
             writer.WriteStartElement("InMiddle");
 

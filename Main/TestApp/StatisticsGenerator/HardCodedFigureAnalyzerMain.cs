@@ -18,6 +18,7 @@ namespace StatisticsGenerator
         private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> graph;
         private GeometryTutorLib.GenericInstantiator.Instantiator instantiator;
         private GeometryTutorLib.Pebbler.PebblerHypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> pebblerGraph;
+        private GeometryTutorLib.Pebbler.Pebbler pebbler;
         private GeometryTutorLib.ProblemAnalyzer.PathGenerator pathGenerator;
         private GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator templateProblemGenerator = null;
         private GeometryTutorLib.ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
@@ -34,15 +35,29 @@ namespace StatisticsGenerator
             this.givens = gs;
             this.goals = gls;
 
+            WriteProblemToXML();
+
+            // Create the precomputer object for coordinate-based pre-comutation analysis
+            precomputer = new GeometryTutorLib.Precomputer.CoordinatePrecomputer(figure);
+            instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
+            //queryVector = new GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector(givens.Count);
+        }
+
+        private void WriteProblemToXML()
+        {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
 
-            //using (XmlWriter writer = XmlWriter.Create("C:\\Users\\ctalvin\\Desktop", settings))
+            //using (XmlWriter writer = XmlWriter.Create("C:\\Users\\Public", settings))
             //{
+            //    writer.WriteStartDocument();
+
             //    writer.WriteStartElement("Figure");
             //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause fig in this.figure)
             //    {
-            //        fig.DumpXML(writer);
+            //        writer.WriteStartElement("component");
+            //        //fig.DumpXML(writer);
+            //        writer.WriteEndElement();
             //    }
             //    writer.WriteEndElement();
 
@@ -50,7 +65,7 @@ namespace StatisticsGenerator
             //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause given in this.givens)
             //    {
             //        writer.WriteStartElement("given");
-            //        given.DumpXML(writer);
+            //        //given.DumpXML(writer);
             //        writer.WriteEndElement();
             //    }
             //    writer.WriteEndElement();
@@ -59,18 +74,13 @@ namespace StatisticsGenerator
             //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause goal in this.goals)
             //    {
             //        writer.WriteStartElement("goal");
-            //        goal.DumpXML(writer);
+            //        //goal.DumpXML(writer);
             //        writer.WriteEndElement();
             //    }
             //    writer.WriteEndElement();
 
             //    writer.WriteEndDocument();
             //}
-
-            // Create the precomputer object for coordinate-based pre-comutation analysis
-            precomputer = new GeometryTutorLib.Precomputer.CoordinatePrecomputer(figure);
-            instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
-            //queryVector = new GeometryTutorLib.ProblemAnalyzer.QueryFeatureVector(givens.Count);
         }
 
         // Returns: <number of interesting problems, number of original problems generated>
@@ -367,9 +377,6 @@ namespace StatisticsGenerator
         {
             // Create the Pebbler version of the hypergraph (all integer representation) from the original hypergraph
             pebblerGraph = graph.GetPebblerHypergraph();
-
-            // Provide the original hypergraph for reference
-            pebblerGraph.SetOriginalHypergraph(graph);
         }
 
         //
@@ -377,6 +384,8 @@ namespace StatisticsGenerator
         //
         private void Pebble()
         {
+            pebbler = new GeometryTutorLib.Pebbler.Pebbler(graph, pebblerGraph);
+
             pathGenerator = new GeometryTutorLib.ProblemAnalyzer.PathGenerator(graph);
 
             // Acquire the integer values of the intrinsic / figure nodes
@@ -386,25 +395,11 @@ namespace StatisticsGenerator
             List<int> givenSet = GeometryTutorLib.Utilities.CollectGraphIndices(graph, givens);
 
             // Perform pebbling based on the <figure, given> pair.
-            pebblerGraph.Pebble(intrinsicSet, givenSet);
+            pebbler.Pebble(intrinsicSet, givenSet);
 
             if (GeometryTutorLib.Utilities.PEBBLING_DEBUG)
             {
-//                Debug.WriteLine("Forward Vertices after pebbling:");
-//                for (int i = 0; i < pebblerGraph.vertices.Length; i++)
-//                {
-//                    StringBuilder strLocal = new StringBuilder();
-//                    strLocal.Append(pebblerGraph.vertices[i].id + ": pebbled(");
-//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.NO_PEBBLE) strLocal.Append("NONE");
-//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.RED_FORWARD) strLocal.Append("RED");
-//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLUE_BACKWARD) strLocal.Append("BLUE");
-////                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.PURPLE_BOTH) strLocal.Append("PURPLE");
-//                    if (pebblerGraph.vertices[i].pebble == Pebbler.PebblerColorType.BLACK_EDGE) strLocal.Append("BLACK");
-//                    strLocal.Append(")");
-//                    Debug.WriteLine(strLocal.ToString());
-//                }
-
-                pebblerGraph.DebugDumpEdges();
+                pebbler.DebugDumpEdges();
             }
         }
 
@@ -414,7 +409,7 @@ namespace StatisticsGenerator
         private KeyValuePair<List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>,
                              List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>>> GenerateTemplateProblems()
         {
-            templateProblemGenerator = new GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator(graph, pebblerGraph, pathGenerator);
+            templateProblemGenerator = new GeometryTutorLib.ProblemAnalyzer.TemplateProblemGenerator(graph, pebbler, pathGenerator);
 
             // Generate the problem pairs
             return templateProblemGenerator.Generate(precomputer.GetPrecomputedRelations(), precomputer.GetStrengthenedClauses(), givens);

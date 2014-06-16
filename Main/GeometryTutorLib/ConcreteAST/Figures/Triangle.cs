@@ -77,7 +77,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (segs.Count != 3) throw new ArgumentException("Triangle constructed with " + segs.Count + " segments.");
         }
 
-        public void DumpXML(XmlWriter writer)
+        public override void DumpXML(XmlWriter writer)
         {
             writer.WriteStartElement("Triangle");
 
@@ -772,6 +772,11 @@ namespace GeometryTutorLib.ConcreteAST
             Triangle tri = gc as Triangle;
             if (gc == null) return false;
 
+            //if (gc is Strengthened)
+            //{
+            //    return this.StructurallyEquals((gc as Strengthened).original);
+            //}
+
             // Handles isosceles, right, or equilateral
             if (!this.StructurallyEquals(gc)) return false;
 
@@ -913,6 +918,110 @@ namespace GeometryTutorLib.ConcreteAST
 
             return correspondence;
         }
+
+        //
+        // Area-Related Computations
+        //
+        // Hero's Formula.
+        protected double HeroArea(double s1, double s2, double s3)
+        {
+            double semip = 0.5 * (s1 + s2 + s3);
+
+            return Math.Sqrt(semip * (s1 - semip) * (s2 - semip) * (s3 - semip));
+        }
+        // SAS: 1/2 a * b * sin C
+        protected double TrigArea(double a, double b, double theta)
+        {
+            return 0.5 * a * b * Math.Sin(Angle.toRadians(theta));
+        }
+        // Classic: 1/2 base * height
+        protected double Area(double b, double h)
+        {
+            return 0.5 * b * h;
+        }
+        protected double RationalArea(double b, double h) { return Area(b, h); }
+        protected double RationalArea(double s1, double s2, double s3) { return HeroArea(s1, s2, s3); }
+        public override bool IsComputableArea() { return true; }
+
+        // Does Hero's Formula apply?
+        private double HeroArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            List<double> lengths = new List<double>();
+
+            foreach (Segment side in orderedSides)
+            {
+                double leng = known.GetSegmentLength(side);
+
+                if (leng < 0) return -1;
+
+                lengths.Add(leng);
+            }
+
+            return HeroArea(lengths[0], lengths[1], lengths[2]);
+        }
+
+        // Does the included Trig Formula apply?
+        private double TrigArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            for (int s = 0; s < orderedSides.Count; s++)
+            {
+                double a = known.GetSegmentLength(orderedSides[s]);
+                double b = known.GetSegmentLength(orderedSides[(s+1) % orderedSides.Count]);
+
+                double theta = known.GetAngleMeasure(new Angle(orderedSides[s], orderedSides[(s+1) % orderedSides.Count]));
+
+                if (a > 0 && b > 0 && theta > 0)
+                {
+                    return TrigArea(a, b, theta);
+                }
+            }
+
+            return -1;
+        }
+
+        // Does the included Trig Formula apply?
+        private double ClassicArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            for (int s = 0; s < orderedSides.Count; s++)
+            {
+                double b = known.GetSegmentLength(orderedSides[s]);
+
+                //
+                // How to handle heights?
+                //
+                int h = 0;
+
+                if (b > 0 && h > 0)
+                {
+                    return Area(b, h);
+                }
+            }
+
+            return -1;
+        }
+
+        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            if (ClassicArea(known) > 0) return true;
+
+            if (TrigArea(known) > 0) return true;
+
+            if (HeroArea(known) > 0) return true;
+
+            return false;
+        }
+
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            double area = ClassicArea(known);
+            if (area > 0) return area;
+
+            area = TrigArea(known);
+            if (area > 0) return area;
+
+            return HeroArea(known);
+        }
+
 
         public override bool StructurallyEquals(Object obj)
         {

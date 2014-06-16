@@ -56,14 +56,22 @@ namespace GeometryTutorLib
         //
         // Given a list of grounded clauses, add a new value which is structurally unique.
         //
-        public static bool HasStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        public static int StructuralIndex<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
         {
-            foreach (T oldT in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                if (oldT.StructurallyEquals(t)) return true;
+                if (list[i].StructurallyEquals(t)) return i;
             }
 
-            return false;
+            return -1;
+        }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static bool HasStructurally<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            return Utilities.StructuralIndex<T>(list, t) != -1;
         }
 
         //
@@ -88,6 +96,20 @@ namespace GeometryTutorLib
 
             list.Add(t);
         }
+
+        //
+        // Given a list of grounded clauses, add a new value which is structurally unique.
+        //
+        public static int StructuralIndex<T, A>(List<KeyValuePair<T, A>> list, T t) where T : ConcreteAST.GroundedClause
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Key.StructurallyEquals(t)) return i;
+            }
+
+            return -1;
+        }
+
 
         // Given a sorted list, insert the element from the front to the back.
         public static void InsertAscendingOrdered(List<int> list, int value)
@@ -226,6 +248,11 @@ namespace GeometryTutorLib
             return new KeyValuePair<int, int>(-1, -1);
         }
 
+        public static bool IsInteger(double x)
+        {
+            return Utilities.CompareValues(x, (int)x);
+        }
+
         // Makes a list containing a single element
         public static List<T> MakeList<T>(T obj)
         {
@@ -282,7 +309,20 @@ namespace GeometryTutorLib
         {
             if (set1.Count != set2.Count) return false;
 
-            return Subset<T>(set1, set2); // redundant since we checked same size && Subset<T>(set2, set1);
+            return Subset<T>(set1, set2);      // redundant since we checked same size && Subset<T>(set2, set1);
+        }
+
+        // Is set1 \equals set2 (and the input sets are ordered for efficiency)
+        public static bool EqualOrderedSets(List<int> set1, List<int> set2)
+        {
+            if (set1.Count != set2.Count) return false;
+
+            for (int i = 0; i < set1.Count; i++)
+            {
+                if (set1[i] != set2[i]) return false;
+            }
+
+            return true;
         }
 
         // set1 \cap set2
@@ -310,12 +350,49 @@ namespace GeometryTutorLib
         }
         public static bool LessThan(double a, double b)
         {
-            return !GreaterThan(a, b) && !CompareValues(a, b);
+            return a - b - EPSILON < 0;
         }
         public static bool GreaterThan(double a, double b)
         {
-            return Math.Abs(a - b) + EPSILON > 0;
+            return a - b + EPSILON > 0;
         }
+
+        private static long[] memoizedFactorials = new long[30];
+        public static long Factorial(long x)
+        {
+            if (x <= 1) return 1;
+
+            // Return saved
+            if (memoizedFactorials[x] != 0) return memoizedFactorials[x];
+
+            long result = 1;
+
+            for (int i = 2; i <= x; i++)
+            {
+                result *= i;
+            }
+
+            // Save it
+            memoizedFactorials[x] = result;
+            return result;
+        }
+
+        public static long Permutation(long n, long r)
+        {
+            if (r == 0) return 0;
+
+            if (n == 0) return 0;
+
+            return ((r >= 0) && (r <= n)) ? Factorial(n) / Factorial(n - r) : 0;
+        }
+
+        public static long Combination(long a, long b)
+        {
+            if (a <= 1) return 1;
+
+            return Factorial(a) / (Factorial(b) * Factorial(a - b));
+        }
+
 
         //
         // Constructs an integer representation of the powerset based on input value integer n
@@ -365,10 +442,10 @@ namespace GeometryTutorLib
         // A memoized copy of all the powersets. 10 is large for this, we expect max of 5.
         // Note, we use a matrix since maxCardinality may change
         // We maintain ONLY an array because we are using this for a specific purpse in this project
-        public static List<List<int>>[] memoized = new List<List<int>>[10];
-        public static List<string>[] memoizedCompressed = new List<string>[10];
-        public static List<List<int>>[] memoizedWithSingletons = new List<List<int>>[10];
-        public static List<string>[] memoizedCompressedWithSingletons = new List<string>[10];
+        public static List<List<int>>[] memoized = new List<List<int>>[14];
+        public static List<string>[] memoizedCompressed = new List<string>[14];
+        public static List<List<int>>[] memoizedWithSingletons = new List<List<int>>[14];
+        public static List<string>[] memoizedCompressedWithSingletons = new List<string>[14];
         private static void ConstructPowerSetWithNoEmptyHelper(int n, int maxCardinality)
         {
             if (memoized[n] != null) return;

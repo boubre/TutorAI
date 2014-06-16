@@ -35,11 +35,13 @@ namespace GeometryTutorLib.ConcreteAST
         private bool tlbrDiagonalValid = true;
         public bool TopLeftDiagonalIsValid() { return tlbrDiagonalValid; }
         public void SetTopLeftDiagonalInValid() { tlbrDiagonalValid = false; }
+        private KeyValuePair<Triangle, Triangle> triPairTLBR;
 
         public Segment bottomLeftTopRightDiagonal { get; private set; }
         private bool bltrDiagonalValid = true;
         public bool BottomRightDiagonalIsValid() { return bltrDiagonalValid; }
         public void SetBottomRightDiagonalInValid() { bltrDiagonalValid = false; }
+        private KeyValuePair<Triangle, Triangle> triPairBLTR;
 
         public Quadrilateral(Segment left, Segment right, Segment top, Segment bottom) : base()
         {
@@ -53,8 +55,8 @@ namespace GeometryTutorLib.ConcreteAST
 
             orderedSides = new List<Segment>();
             orderedSides.Add(left);
-            orderedSides.Add(right);
             orderedSides.Add(top);
+            orderedSides.Add(right);
             orderedSides.Add(bottom);
 
             //
@@ -96,6 +98,8 @@ namespace GeometryTutorLib.ConcreteAST
             this.topLeftBottomRightDiagonal = new Segment(topLeft, bottomRight);
             this.bottomLeftTopRightDiagonal = new Segment(bottomLeft, topRight);
             this.diagonalIntersection = null;
+            triPairTLBR = new KeyValuePair<Triangle, Triangle>(new Triangle(topLeft, bottomLeft, bottomRight), new Triangle(topLeft, topRight, bottomRight));
+            triPairBLTR = new KeyValuePair<Triangle, Triangle>(new Triangle(bottomLeft, topLeft, topRight), new Triangle(bottomLeft, bottomRight, topRight));
 
             //
             // Angles
@@ -642,6 +646,50 @@ namespace GeometryTutorLib.ConcreteAST
             bottom = null;
 
             return null;
+        }
+
+
+        //
+        // Area-Related Computations
+        //
+        public override bool IsComputableArea() { return true; }
+
+        //
+        // As a general mechanism, can we split up this quadrilateral into two triangles and find those individual areas?
+        // We must try two combinations of triangle splitting.
+        //
+        private double SplitTriangleArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            //
+            // Check the areas of each pairs, only if a diagonal is evident.
+            //
+            if (TopLeftDiagonalIsValid())
+            {
+                double area1 = triPairTLBR.Key.GetArea(known);
+                double area2 = triPairTLBR.Value.GetArea(known);
+
+                if (area1 > 0 && area2 > 0) return area1 + area2;
+            }
+
+            if (BottomRightDiagonalIsValid())
+            {
+                double area1 = triPairBLTR.Key.GetArea(known);
+                double area2 = triPairBLTR.Value.GetArea(known);
+
+                if (area1 > 0 && area2 > 0) return area1 + area2;
+            }
+
+            return -1;
+        }
+
+        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            return SplitTriangleArea(known) > 0;
+        }
+
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            return SplitTriangleArea(known);
         }
     }
 }

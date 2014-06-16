@@ -18,12 +18,12 @@ namespace GeometryTutorLib.ConcreteAST
             rhs = r;
         }
 
-        public Equation(GroundedClause l, GroundedClause r, string just) : base()
-        {
-            lhs = l;
-            rhs = r;
-            justification = just;
-        }
+        //public Equation(GroundedClause l, GroundedClause r, string just) : base()
+        //{
+        //    lhs = l;
+        //    rhs = r;
+        //    justification = just;
+        //}
 
         public override void Substitute(GroundedClause toFind, GroundedClause toSub)
         {

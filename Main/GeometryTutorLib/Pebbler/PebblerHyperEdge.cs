@@ -19,7 +19,7 @@ namespace GeometryTutorLib.Pebbler
         // Contains all source nodes that have been pebbled: for each source node,
         // there is a 'standard edge' that must be pebbled
         public List<int> sourcePebbles;
-        public PebblerColorType pebbleColor;
+        //public PebblerColorType pebbleColor;
 
         // Whether the node has been pebbled or not.
         public bool pebbled;
@@ -30,7 +30,6 @@ namespace GeometryTutorLib.Pebbler
             sourceNodes = src;
             sourcePebbles = new List<int>(); // If empty, we assume all false (not pebbled)
             targetNode = target;
-            pebbleColor = PebblerColorType.NO_PEBBLE;
             pebbled = false;
         }
 
@@ -44,10 +43,10 @@ namespace GeometryTutorLib.Pebbler
             return sourceNodes.Count == sourcePebbles.Count;
         }
 
-        public void SetColor(PebblerColorType color)
-        {
-            pebbleColor = color;
-        }
+        //public void SetColor(PebblerColorType color)
+        //{
+        //    pebbleColor = color;
+        //}
 
         // The source nodes and target must be the same for equality.
         public override bool Equals(object obj)

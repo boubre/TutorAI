@@ -10,18 +10,13 @@ namespace GeometryTutorLib.ConcreteAST
         public GeometricAngleEquation() : base() { }
 
         public GeometricAngleEquation(GroundedClause l, GroundedClause r) : base(l, r) { }
-        //public GeometricAngleEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
 
         public override GroundedClause DeepCopy()
         {
             return new GeometricAngleEquation(this.lhs.DeepCopy(), this.rhs.DeepCopy());
         }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {

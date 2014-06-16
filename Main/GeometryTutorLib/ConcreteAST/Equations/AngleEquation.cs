@@ -9,7 +9,16 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public AngleEquation() : base() { }
 
-        public AngleEquation(GroundedClause l, GroundedClause r) : base(l, r) { }
+        public AngleEquation(GroundedClause l, GroundedClause r) : base(l, r)
+        {
+            double sumL = SumSide(l.CollectTerms());
+            double sumR = SumSide(r.CollectTerms());
+
+            if (!Utilities.CompareValues(sumL, sumR))
+            {
+                throw new ArgumentException("Angle equation is inaccurate; sums differ: " + l + " " + r);
+            }
+        }
 
         private double SumSide(List<GroundedClause> side)
         {
@@ -18,7 +27,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 if (clause is NumericValue)
                 {
-                    sum += (clause as NumericValue).value;
+                    sum += (clause as NumericValue).DoubleValue;
                 }
                 else if (clause is Angle)
                 {
@@ -28,27 +37,23 @@ namespace GeometryTutorLib.ConcreteAST
             return sum;
         }
 
-        public AngleEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just)
-        {
-            double sumL = SumSide(l.CollectTerms());
-            double sumR = SumSide(r.CollectTerms());
+        //public AngleEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just)
+        //{
+        //    double sumL = SumSide(l.CollectTerms());
+        //    double sumR = SumSide(r.CollectTerms());
 
-            if (!Utilities.CompareValues(sumL, sumR))
-            {
-                throw new ArgumentException("Angle equation is inaccurate; sums differ: " + l + " " + r);
-            }
+        //    if (!Utilities.CompareValues(sumL, sumR))
+        //    {
+        //        throw new ArgumentException("Angle equation is inaccurate; sums differ: " + l + " " + r);
+        //    }
 
-            //if (sumL == 0 && sumR == 0)
-            //{
-            //    throw new ArgumentException("Should not have an equation that is 0 = 0: " + this.ToString());
-            //}
-        }
+        //    //if (sumL == 0 && sumR == 0)
+        //    //{
+        //    //    throw new ArgumentException("Should not have an equation that is 0 = 0: " + this.ToString());
+        //    //}
+        //}
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         //
         // Equals checks that for both sides of this equation is the same as one entire side of the other equation

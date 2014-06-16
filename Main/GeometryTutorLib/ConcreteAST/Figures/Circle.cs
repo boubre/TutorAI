@@ -39,7 +39,16 @@ namespace GeometryTutorLib.ConcreteAST
         public List<Point> pointsOnCircle { get; private set; }
 
         // The minor Arcs of this circle (based on pointsOnCircle list)
-        public List<MinorArc> arcs { get; private set; }
+        public List<MinorArc> minorArcs { get; private set; }
+        public List<MajorArc> majorArcs { get; private set; }
+
+        // The sectors of this circle (based on pointsOnCircle list)
+        public List<Sector> minorSectors { get; private set; }
+        public List<Sector> majorSectors { get; private set; }
+
+        // Points that approximate the circle using straight-line segments.
+        public List<Point> approxPoints { get; protected set; }
+        public List<Segment> approxSegments { get; protected set; }
 
         /// <summary>
         /// Create a new ConcreteSegment. 
@@ -66,13 +75,72 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             pointsOnCircle = new List<Point>();
-            arcs = new List<MinorArc>();
+
+            minorArcs = new List<MinorArc>();
+            majorArcs = new List<MajorArc>();
+            minorSectors = new List<Sector>();
+            majorSectors = new List<Sector>();
 
             Utilities.AddUniqueStructurally(this.center.getSuperFigures(), this);
         }
 
-        public void AddArc(MinorArc mArc) { arcs.Add(mArc); }
+        public void AddMinorArc(MinorArc mArc) { minorArcs.Add(mArc); }
+        public void AddMajorArc(MajorArc mArc) { majorArcs.Add(mArc); }
+        public void AddMinorSector(Sector mSector) { minorSectors.Add(mSector); }
+        public void AddMajorSector(Sector mSector) { majorSectors.Add(mSector); }
+
         public void SetPointsOnCircle(List<Point> pts) { OrderPoints(pts); }
+        public override bool PointLiesInOrOn(Point pt) { return PointIsOn(pt) || PointIsInterior(pt); }
+
+        public bool DefinesRadius(Segment seg)
+        {
+            if (center.StructurallyEquals(seg.Point1) && this.PointIsOn(seg.Point2)) return true;
+
+            return center.StructurallyEquals(seg.Point1) && this.PointIsOn(seg.Point2);
+        }
+
+        public bool DefinesDiameter(Segment seg)
+        {
+            if (!seg.PointIsOnAndExactlyBetweenEndpoints(center)) return false;
+
+            return this.PointIsOn(seg.Point1) && this.PointIsOn(seg.Point2);
+        }
+
+        //
+        // Area-Related Computations
+        //
+        protected double Area(double radius)
+        {
+            return radius * radius * Math.PI;
+        }
+        protected double RationalArea(double radius)
+        {
+            return Area(radius) / Math.PI;
+        }
+        public override bool IsComputableArea() { return true; }
+        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            // Any Radius known?
+            foreach (Segment thisRadius in radii)
+            {
+                double length = known.GetSegmentLength(thisRadius);
+                if (length > 0) return true;
+            }
+
+            return false;
+        }
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            // Any Radius known?
+            double length = 0;
+            foreach (Segment thisRadius in radii)
+            {
+                length = known.GetSegmentLength(thisRadius);
+                if (length > 0) break;
+            }
+
+            return Area(length);
+        }
 
         //
         // For arcs, order the points so that there is a consistency: A, B, C, D-> B between AC, B between AD, etc.
@@ -84,20 +152,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             foreach (Point point in points)
             {
-                double radianAngle = Point.GetStandardAngleWithCenter(this.center, point);
-
-                //double deltaX = point.X - this.center.X;
-                //double deltaY = point.Y - this.center.Y;
-
-                //double radianAngle = System.Math.Atan2(deltaY, deltaX);
-
-                //// Find the correct quadrant the point lies in to find the exact angle (w.r.t. unit circle)
-                //// fourth quadrant
-                //if (deltaX > 0 && deltaY < 0) radianAngle += 2 * Math.PI;
-                //// second  or third quadrant
-                //else if (deltaX < 0) radianAngle += Math.PI;
-                //// on the Y-axis (below x-axis)
-                //else if (GeometryTutorLib.Utilities.CompareValues(deltaX, 0) && deltaY < 0) radianAngle += Math.PI;
+                double radianAngle = Point.GetRadianStandardAngleWithCenter(this.center, point);
 
                 // Angles are between 0 and 2pi
                 // insert the point into the correct position (starting from the back); insertion sort-style
@@ -121,8 +176,52 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment GetRadius(Segment r)
         {
             if (r == null) return null;
-            int index = radii.IndexOf(r);
-            return index == -1 ? null : radii[index];
+
+            return Utilities.GetStructurally<Segment>(radii, r);
+        }
+
+        public override List<Point> GetApproximatingPoints() { return approxPoints; }
+
+        public override bool PointLiesInside(Point pt) { return PointIsInterior(pt); }
+        public override List<Segment> Segmentize()
+        {
+            if (approxSegments.Any()) return approxSegments;
+
+            // How much we will change the angle measure as we create segments.
+            double angleIncrement = 2 * Math.PI / Figure.NUM_SEGS_TO_APPROX_ARC;
+
+            // The first point will always be at 0 degrees.
+            Point firstPoint = Point.GetPointFromAngle(center, radius, 0.0);
+            Point secondPoint = null;
+            double angle = 0;
+            for (int i = 1; i <= Figure.NUM_SEGS_TO_APPROX_ARC; i++)
+            {
+                approxPoints.Add(firstPoint);
+
+                // Get the next point.
+                angle += angleIncrement;
+                secondPoint = Point.GetPointFromAngle(center, radius, angle);
+
+                // Make the segment.
+                approxSegments.Add(new Segment(firstPoint, secondPoint));
+
+                // Rotate points.
+                firstPoint = secondPoint;
+            }
+
+            approxPoints.Add(secondPoint);
+
+            return approxSegments;
+        }
+
+        // Make the circle into a regular n-gon that approximates it.
+        public override Polygon GetPolygonalized()
+        {
+            if (polygonalized != null) return polygonalized;
+
+            polygonalized = Polygon.MakePolygon(Segmentize());
+
+            return polygonalized;
         }
 
         //
@@ -168,14 +267,25 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Determine if this segment is applicable to the circle: secants, tangent, and chords.
         //
-        public void AnalyzeSegment(Segment thatSegment)
+        public void AnalyzeSegment(Segment thatSegment, List<Point> figPoints)
         {
             Segment tangentRadius = IsTangent(thatSegment);
             if (tangentRadius != null) tangents.Add(thatSegment, tangentRadius);
 
-            else if (IsChord(thatSegment)) Utilities.AddUnique<Segment>(chords, thatSegment);
+            if (DefinesDiameter(thatSegment))
+            {
+                // Add radii to the list.
+                Utilities.AddStructurallyUnique<Segment>(radii, new Segment(this.center, thatSegment.Point1));
+                Utilities.AddStructurallyUnique<Segment>(radii, new Segment(this.center, thatSegment.Point2));
+            }
+
+            if (IsChord(thatSegment))
+            {
+                Utilities.AddUnique<Segment>(chords, thatSegment);
+            }
             else
             {
+                // Handle secants and diameters (thus radii in special cases)
                 Segment chord;
                 if (IsSecant(thatSegment, out chord))
                 {
@@ -189,7 +299,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Is a radius the result of a segment starting at the center and extending outward?
             // We collect all other types below.
-            Segment radius = IsRadius(thatSegment);
+            Segment radius = IsRadius(thatSegment, figPoints);
             if (radius != null) Utilities.AddUnique<Segment>(radii, radius);
         }
 
@@ -208,8 +318,13 @@ namespace GeometryTutorLib.ConcreteAST
                     Utilities.AddUnique<Segment>(diameters, chord);
 
                     // but also collect radii
-                    Utilities.AddUnique<Segment>(radii, Segment.GetFigureSegment(this.center, chord.Point1));
-                    Utilities.AddUnique<Segment>(radii, Segment.GetFigureSegment(this.center, chord.Point2));
+                    Segment newRadius = Segment.GetFigureSegment(this.center, chord.Point1);
+                    if (newRadius == null) newRadius = new Segment(this.center, chord.Point1);
+                    Utilities.AddStructurallyUnique<Segment>(radii, newRadius);
+ 
+                    newRadius = Segment.GetFigureSegment(this.center, chord.Point2);
+                    if (newRadius == null) newRadius = new Segment(this.center, chord.Point2);
+                    Utilities.AddStructurallyUnique<Segment>(radii, newRadius);
                 }
             }
         }
@@ -298,9 +413,17 @@ namespace GeometryTutorLib.ConcreteAST
             // Make it null and overwrite when necessary.
             chord = null;
 
+            // Is one endpoint of the segment simply on the interior of the circle (so we have nothing)?
+            if (this.PointIsInterior(segment.Point1) || this.PointIsInterior(segment.Point2)) return false;
+
             if (ContainsDiameter(segment))
             {
                 chord = ConstructChord(segment, this.center, this.radius);
+
+                // Add radii to the list.
+                radii.Add(new Segment(this.center, chord.Point1));
+                radii.Add(new Segment(this.center, chord.Point2));
+
                 return true;
             }
 
@@ -331,7 +454,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Is this a direct radius segment where one endpoint originates at the origin and extends outward?
         // Return the exact radius.
-        private Segment IsRadius(Segment segment)
+        private Segment IsRadius(Segment segment, List<Point> figPoints)
         {
             // The segment must originate from the circle center.
             if (!segment.HasPoint(this.center)) return null;
@@ -352,44 +475,14 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Find the exact coordinates of the 'circ' points.
             //
-            double deltaX = 0;
-            double deltaY = 0;
-            if (segment.IsVertical())
-            {
-                deltaX = 0;
-                deltaY = this.radius;
-            }
-            else if (segment.IsHorizontal())
-            {
-                deltaX = this.radius;
-                deltaY = 0;
-            }
-            else
-            {
-                deltaX = Math.Sqrt(Math.Pow(this.radius, 2) / (1 + Math.Pow(segment.Slope, 2)));
-                deltaY = segment.Slope * deltaX;
-            }
-            Point circPt1 = Point.GetFigurePoint(new Point("", this.center.X + deltaX, this.center.Y + deltaY));
+            Point inter1 = null;
+            Point inter2 = null;
+            this.FindIntersection(segment, out inter1, out inter2);
 
-            // intersection is the midpoint of circPt1 and pt2.
-            Point circPt2 = Point.GetFigurePoint(new Point("", 2 * this.center.X - circPt1.X, 2 * this.center.Y - circPt1.Y));
+            Point figPoint = Utilities.GetStructurally<Point>(figPoints, inter1);
+            if (figPoint == null) figPoint = Utilities.GetStructurally<Point>(figPoints, inter2);
 
-            // Return the radius which the segment defines (we generated two points, which is in the middle of the given segment endpoints)
-            Segment radius = null;
-            if (segment.PointIsOnAndExactlyBetweenEndpoints(circPt1))
-            {
-                radius = Segment.GetFigureSegment(this.center, circPt1);
-            }
-            else if (segment.PointIsOnAndExactlyBetweenEndpoints(circPt2))
-            {
-                radius = Segment.GetFigureSegment(this.center, circPt2);
-            }
-            else
-            {
-                throw new ArgumentException("Expected to find candidate points involved in radius as being valid: " + circPt1 + " " + circPt2);
-            }
-
-            return radius;
+            return new Segment(center, figPoint);
         }
 
         //
@@ -434,6 +527,9 @@ namespace GeometryTutorLib.ConcreteAST
                 // First intersection
                 inter1 = new Point("", E[0], E[1]);
             }
+
+            // Put the intersection into inter1 if there is only one intersection.
+            if (inter1 == null && inter2 != null) inter1 = inter2;
         }
 
         //
@@ -487,6 +583,9 @@ namespace GeometryTutorLib.ConcreteAST
                                            midpt[1] + h * (thatCircle.center.X - this.center.X) / d);
                 }
             }
+
+            // Put the intersection into inter1 if there is only one intersection.
+            if (inter1 == null && inter2 != null) inter1 = inter2;
         }
 
         //
@@ -595,7 +694,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // Maintain a public repository of all triangles objects in the figure.
+        // Maintain a public repository of all circle objects in the figure.
         //
         public static void Clear()
         {

@@ -8,6 +8,12 @@ namespace GeometryTestbed
         // Atomic regions
         public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRegions { get; protected set; }
 
+        // Known values stated in the problem.
+        public GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known { get; protected set; }
+
+        private double solutionArea;
+        protected void SetSolutionArea(double a) { solutionArea = a; }
+        public double GetSolutionArea() { return solutionArea; }
 
         //
         // Statistics Generation
@@ -34,22 +40,27 @@ namespace GeometryTestbed
         public ActualShadedAreaProblem(bool runOrNot, bool comp) : base(runOrNot, comp)
         {
             goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            known = new GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator();
+
+            solutionArea = -1;
         }
 
         public override void Run()
         {
             if (!this.problemIsOn) return;
 
-
-
             // Map the set of clauses from parser to one set of intrinsic clauses.
             ConstructIntrinsicSet();
 
             // Create the analyzer
-            StatisticsGenerator.HardCodedShadedAreaMain analyzer = new StatisticsGenerator.HardCodedShadedAreaMain(intrinsic, goalRegions, this.parser.implied);
+            StatisticsGenerator.HardCodedShadedAreaMain analyzer = new StatisticsGenerator.HardCodedShadedAreaMain(intrinsic, given, known, goalRegions, this.parser.implied, GetSolutionArea());
 
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();
+
+
+
+
 
             //
             // If we know it's complete, keep that overridden completeness.
@@ -57,37 +68,14 @@ namespace GeometryTestbed
             //
             if (!this.isComplete) this.isComplete = figureStats.isComplete;
 
-            System.Diagnostics.Debug.WriteLine("Resultant Complete: " + this.isComplete +"\n");
+            //System.Diagnostics.Debug.WriteLine("Resultant Complete: " + this.isComplete +"\n");
 
-
-            // Calculate the final numbers: counts of the k-G Strictly interesting problems.
-            System.Text.StringBuilder str = new System.Text.StringBuilder();
-            for (int k = 1; k <= StatisticsGenerator.FigureStatisticsAggregator.MAX_K; k++)
-            {
-                str.Append(figureStats.kGcardinalities[k] + "\t");
-            }
 
             if (this.isComplete)
             {
-                //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\complete.txt", true))
-                //{
-                //    file.WriteLine(str);
-                //}
-                //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\completeTime.txt", true))
-                //{
-                //    file.WriteLine(figureStats.stopwatch.Elapsed);
-                //}
             }
             else
             {
-                //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\interesting.txt", true))
-                //{
-                //    file.WriteLine(str);
-                //}
-                //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\interestingTime.txt", true))
-                //{
-                //    file.WriteLine(figureStats.stopwatch.Elapsed);
-                //}
             }
 
             // Add to the cumulative statistics

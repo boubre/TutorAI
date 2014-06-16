@@ -29,6 +29,7 @@ namespace GeometryTutorLib.EngineUIBridge
             ANGLE_BISECTOR_DEFINITION,
             COMPLEMENTARY_DEFINITION,
             CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION,
+            EQUILATERAL_TRIANGLE_DEFINITION,
             ISOSCELES_TRIANGLE_DEFINITION,
             MEDIAN_DEFINITION,
             MIDPOINT_DEFINITION,
@@ -111,6 +112,7 @@ namespace GeometryTutorLib.EngineUIBridge
             CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS,
             DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC,
             MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC,
+            CIRCLE_DEFINITION,
             CIRCLE_CONGRUENCE_DEFINITION,
             ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT,
             CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC,
@@ -169,6 +171,7 @@ namespace GeometryTutorLib.EngineUIBridge
             justMap.Add(DeductionJustType.ANGLE_BISECTOR_DEFINITION, new Assumption("Defintion of Angle Bisector", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.COMPLEMENTARY_DEFINITION, new Assumption("Complementary Angles", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.ISOSCELES_TRIANGLE_DEFINITION, new Assumption("Isosceles Triangle", Assumption.AssumptionType.Definition));
+            justMap.Add(DeductionJustType.EQUILATERAL_TRIANGLE_DEFINITION, new Assumption("Equilateral Triangle", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.MEDIAN_DEFINITION, new Assumption("Median", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.MIDPOINT_DEFINITION, new Assumption("Midpoint", Assumption.AssumptionType.Definition));
             justMap.Add(DeductionJustType.PERPENDICULAR_DEFINITION, new Assumption("Perpendicular", Assumption.AssumptionType.Definition));
@@ -239,6 +242,7 @@ namespace GeometryTutorLib.EngineUIBridge
             justMap.Add(DeductionJustType.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
 
             // Circles
+            justMap.Add(DeductionJustType.CIRCLE_DEFINITION, new Assumption("Definition of Circle: Congruent Radii", Assumption.AssumptionType.Axiom));
             justMap.Add(DeductionJustType.CIRCLE_CONGRUENCE_DEFINITION, new Assumption("Circles of Equal Radii Congruent", Assumption.AssumptionType.Axiom));
 
             justMap.Add(DeductionJustType.TANGENT_IS_PERPENDICULAR_TO_RADIUS, new Assumption("A Tangent Is Perpendicular to a Radius", Assumption.AssumptionType.Theorem));
@@ -286,6 +290,7 @@ namespace GeometryTutorLib.EngineUIBridge
         public static bool COMPLEMENTARY_DEFINITION = true;
         public static bool CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION = true;
         public static bool ISOSCELES_TRIANGLE_DEFINITION = true;
+        public static bool EQUILATERAL_TRIANGLE_DEFINITION = true;
         public static bool MEDIAN_DEFINITION = true;
         public static bool MIDPOINT_DEFINITION = true;
         public static bool PERPENDICULAR_DEFINITION = true;
@@ -357,6 +362,7 @@ namespace GeometryTutorLib.EngineUIBridge
         public static bool MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES = true;
 
         // Circles
+        public static bool CIRCLE_DEFINITION = true;
         public static bool TANGENT_IS_PERPENDICULAR_TO_RADIUS = true;
         public static bool PERPENDICULAR_TO_RADIUS_IS_TANGENT = true;
         public static bool TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT = true;
@@ -408,6 +414,7 @@ namespace GeometryTutorLib.EngineUIBridge
                         EngineUIBridge.JustificationSwitch.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = false;
                         EngineUIBridge.JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = false;
                         EngineUIBridge.JustificationSwitch.CIRCLE_CONGRUENCE_DEFINITION = false;
+                        EngineUIBridge.JustificationSwitch.CIRCLE_DEFINITION = false;
                         EngineUIBridge.JustificationSwitch.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT = false;
                         EngineUIBridge.JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC = false;
                         EngineUIBridge.JustificationSwitch.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC = false;
@@ -521,6 +528,10 @@ namespace GeometryTutorLib.EngineUIBridge
                     else if (assumption.Key == DeductionJustType.ISOSCELES_TRIANGLE_DEFINITION)
                     {
                         EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION = false;
+                    }
+                    else if (assumption.Key == DeductionJustType.EQUILATERAL_TRIANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.EQUILATERAL_TRIANGLE_DEFINITION = false;
                     }
                     else if (assumption.Key == DeductionJustType.MEDIAN_DEFINITION)
                     {

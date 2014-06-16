@@ -15,6 +15,9 @@ namespace GeometryTutorLib.ConcreteAST
         public double minorMeasure { get; protected set; }
         public double length { get; protected set; }
 
+        public List<Point> approxPoints { get; protected set; }
+        public List<Segment> approxSegments { get; protected set; }
+
         public Arc(Circle circle, Point e1, Point e2) : this(circle, e1, e2, new List<Point>(), new List<Point>()) { }
 
         public Arc(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts) : base()
@@ -30,6 +33,29 @@ namespace GeometryTutorLib.ConcreteAST
 
             minorMeasure = CalculateArcMinorMeasureDegrees();
             length = CalculateArcMinorLength();
+            approxPoints = new List<Point>();
+            approxSegments = new List<Segment>();
+        }
+
+        public KeyValuePair<Segment, Segment> GetRadii()
+        {
+            return new KeyValuePair<Segment, Segment>(new Segment(theCircle.center, endpoint1), new Segment(theCircle.center, endpoint2));
+        }
+        public Angle GetCentralAngle()
+        {
+            return new Angle(endpoint1, theCircle.center, endpoint2);
+        }
+        public override List<Point> GetApproximatingPoints()
+        {
+            if (!approxPoints.Any()) Segmentize();
+
+            return approxPoints;
+        }
+        public List<Segment> GetApproximatingSegments()
+        {
+            if (!approxSegments.Any()) return Segmentize();
+
+            return approxSegments;
         }
 
         //

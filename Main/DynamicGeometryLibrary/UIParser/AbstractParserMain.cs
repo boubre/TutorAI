@@ -38,12 +38,12 @@ namespace LiveGeometry.TutorParser
         public GeometryTutorLib.EngineUIBridge.ProblemDescription MakeProblemDescription(List<GroundedClause> givens)
         {
             GeometryTutorLib.EngineUIBridge.ProblemDescription pdesc = new GeometryTutorLib.EngineUIBridge.ProblemDescription();
-            pdesc.givens = givens;
-            pdesc.points = new List<Point>();
-            pdesc.collinear = new List<Collinear>();
-            pdesc.triangles = new List<Triangle>();
-            pdesc.segments = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            pdesc.inMiddles = new List<InMiddle>();
+            //pdesc.givens = givens;
+            //pdesc.points = Points;
+            //pdesc.collinear = Collinear;
+            //pdesc.triangles = Triangles;
+            //pdesc.segments = Segments;
+            //pdesc.inMiddles = InMiddles;
 
             return pdesc;
         }

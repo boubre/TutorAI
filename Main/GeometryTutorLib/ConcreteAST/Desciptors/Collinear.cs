@@ -19,6 +19,14 @@ namespace GeometryTutorLib.ConcreteAST
             Verify();
         }
 
+        //
+        // We assume the points are ordered how they appear
+        // But we verify just in case
+        public Collinear() : base()
+        {
+            points = new List<Point>();
+        }
+
         private void Verify()
         {
             if (points.Count < 2) throw new ArgumentException("A Collinear relationship requires at least 2 points: " + this.ToString());
@@ -38,6 +46,20 @@ namespace GeometryTutorLib.ConcreteAST
                     throw new ArgumentException("Point " + pt + " is not between the endpoints of segment " + line.ToString());
                 }
             }
+        }
+
+        public void AddCollinearPoint(Point newPt)
+        {
+            // Traverse list to find where to insert the new point in the list in the proper order
+            for (int p = 0; p < points.Count - 1; p++)
+            {
+                if (Segment.Between(newPt, points[p], points[p + 1]))
+                {
+                    points.Insert(p + 1, newPt);
+                    return;
+                }
+            }
+            points.Add(newPt);
         }
 
         public override bool Equals(Object obj)

@@ -34,6 +34,9 @@ namespace LiveGeometry.TutorParser
         public List<Intersection> ssIntersections { get; private set; }
         public List<Angle> angles { get; private set; }
         public List<MinorArc> minorArcs { get; private set; }
+        public List<MajorArc> majorArcs { get; private set; }
+        public List<Sector> minorSectors { get; private set; }
+        public List<Sector> majorSectors { get; private set; }
         public List<ArcInMiddle> arcInMiddle { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.CircleSegmentIntersection> csIntersections { get; private set; }
         public List<GeometryTutorLib.ConcreteAST.CircleCircleIntersection> ccIntersections { get; private set; }
@@ -51,18 +54,24 @@ namespace LiveGeometry.TutorParser
         //
         public List<GeometryTutorLib.ConcreteAST.Point> extendedSegmentPoints { get; private set; }
 
-        // All points which result (1) extending segments to lines and (2) from construction: diameters and chords
+        // All points which result from extending diameters to lines
         public List<GeometryTutorLib.ConcreteAST.Point> extendedCirclePoints { get; private set; }
 
         // Chords which result from points from the UI and intersections. 
-        public Dictionary<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>> impliedChords { get; private set; }
+        public List<KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>> impliedChords { get; private set; }
 
         // Diameters that result from connecting a point on a circle through the center to the opposite side. 
         public List<GeometryTutorLib.ConcreteAST.Segment> extendedRealRadii { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.Segment> extendedRadii { get; private set; }
+        public List<GeometryTutorLib.ConcreteAST.Segment> extendedNonRealRadii { get; private set; }
 
         // The atomic regions for this figure.
         public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atomicRegions { get; private set; }
+
+        // All the shapes in a single list.
+        public List<Figure> allFigures { get; private set; }
+
+        // Imaginary points due to constructed segments.
+        public List<ImaginaryPoint> imagPoints { get; private set; }
 
         //
         // Construction requires this minimal set from the UI.
@@ -108,6 +117,9 @@ namespace LiveGeometry.TutorParser
             ssIntersections = new List<Intersection>();
             angles = new List<Angle>();
             minorArcs = new List<MinorArc>();
+            majorArcs = new List<MajorArc>();
+            minorSectors = new List<Sector>();
+            majorSectors = new List<Sector>();
             arcInMiddle = new List<ArcInMiddle>();
             csIntersections = new List<CircleSegmentIntersection>();
             ccIntersections = new List<CircleCircleIntersection>();
@@ -119,9 +131,11 @@ namespace LiveGeometry.TutorParser
 
             extendedSegmentPoints = new List<Point>();
             extendedCirclePoints = new List<Point>();
-            impliedChords = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>();
+            impliedChords = new List<KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>>();
             extendedRealRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            extendedRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            extendedNonRealRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            allFigures = new List<Figure>();
+            imagPoints = new List<ImaginaryPoint>();
         }
 
         public void ConstructAllImplied()
@@ -165,8 +179,7 @@ namespace LiveGeometry.TutorParser
             AnalyzeAllCirclePointRelationships();
 
             // Generate all implicit chords and diameters (for atomic region id) and associated extended points
-            GenerateImplicitChordsDiameters();
-
+            GenerateImplicitChords();
 
             //
             // All of the following calculations are used in stating the assumptions (user-defined givens)
@@ -179,6 +192,16 @@ namespace LiveGeometry.TutorParser
             //
             //AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
             //atomicRegions = atomIder.GetAtomicRegions();
+
+            //
+            // Put all the figures into a single list: sectors, circles, polygons
+            //
+            //ComposeAllShapesIntoSingleList();
+
+            //
+            // Now that we have all polygons and circles, associate the atomic regions with those shapes (and vice versa)
+            //
+            //AssociateAtomicRegionsWithShapes();
         }
 
         /// <summary>
@@ -250,7 +273,7 @@ namespace LiveGeometry.TutorParser
         //
         private void CalculateAllImpliedPolygons()
         {
-            bool[ , ] eligible = DetermineEligibleCombinations();
+            bool[,] eligible = DetermineEligibleCombinations();
             List<List<int>> constructedPolygonSets = new List<List<int>>();
             List<List<int>> failedPolygonSets = new List<List<int>>();
 
@@ -315,7 +338,7 @@ namespace LiveGeometry.TutorParser
         //
         // Given the set, is the given single term eligible?
         //
-        private bool IsEligible(List<int> indices, bool[ , ] eligible, int newElement)
+        private bool IsEligible(List<int> indices, bool[,] eligible, int newElement)
         {
             foreach (int index in indices)
             {
@@ -328,7 +351,7 @@ namespace LiveGeometry.TutorParser
         //
         // For each given set, add 1 new side (at a time) to the list of sides in order to construct polygons.
         //
-        private void InductivelyConstructPolygon(List<List<int>> openPolygonSets, bool[ , ] eligible, List<List<int>> constructedPolygonSets)
+        private void InductivelyConstructPolygon(List<List<int>> openPolygonSets, bool[,] eligible, List<List<int>> constructedPolygonSets)
         {
             // Stop if no sets to consider and grow from.
             if (!openPolygonSets.Any()) return;
@@ -381,9 +404,9 @@ namespace LiveGeometry.TutorParser
         //   (1) Cross the other segment through the middle (creating an X or |-)
         //   (2) Coincide with overlap (or share a vertex)
         //
-        private bool[ , ] DetermineEligibleCombinations()
+        private bool[,] DetermineEligibleCombinations()
         {
-            bool[ , ] eligible = new bool[segments.Count, segments.Count]; // defaults to false
+            bool[,] eligible = new bool[segments.Count, segments.Count]; // defaults to false
 
             for (int s1 = 0; s1 < segments.Count - 1; s1++)
             {
@@ -643,14 +666,6 @@ namespace LiveGeometry.TutorParser
                     inter2 = HandleIntersectionPoint(points, impliedCirclePoints, segment, inter2);
 
                     //
-                    // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
-                    //
-                    if (inter1 != null)
-                    {
-                        circle.AnalyzeSegment(segment);
-                    }
-
-                    //
                     // Construct the intersections
                     //
                     CircleSegmentIntersection csInter = null;
@@ -658,12 +673,18 @@ namespace LiveGeometry.TutorParser
                     if (inter1 != null)
                     {
                         csInter = new CircleSegmentIntersection(inter1, circle, segment);
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(csIntersections, csInter); 
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(csIntersections, csInter);
+
+                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
+                        circle.AnalyzeSegment(segment, points);
                     }
                     if (inter2 != null)
                     {
                         csInter = new CircleSegmentIntersection(inter2, circle, segment);
                         GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(csIntersections, csInter);
+
+                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
+                        circle.AnalyzeSegment(segment, points);
                     }
                 }
 
@@ -847,14 +868,27 @@ namespace LiveGeometry.TutorParser
                     List<Point> majorArcPoints;
                     PartitionArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
 
-                    MinorArc newArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
-                    GeometryTutorLib.Utilities.AddStructurallyUnique<MinorArc>(minorArcs, newArc);
-                    circle.AddArc(newArc);
+                    MinorArc newMinorArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+                    MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+                    Sector newMinorSector = new Sector(newMinorArc);
+                    Sector newMajorSector = new Sector(newMajorArc);
+                    if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MinorArc>(minorArcs, newMinorArc))
+                    {
+                        minorArcs.Add(newMinorArc);
+                        majorArcs.Add(newMajorArc);
+                        minorSectors.Add(newMinorSector);
+                        majorSectors.Add(newMajorSector);
+                    }
+
+                    circle.AddMinorArc(newMinorArc);
+                    circle.AddMajorArc(newMajorArc);
+                    circle.AddMinorSector(newMinorSector);
+                    circle.AddMajorSector(newMajorSector);
 
                     // Generate ArcInMiddle clauses.
                     for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
                     {
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newArc));
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newMinorArc));
                     }
                 }
             }
@@ -882,11 +916,12 @@ namespace LiveGeometry.TutorParser
 
         //
         // (1) Construct all chords between each pair of points on the circle; no extended points.
-        // (2) Construct all diameters from points through center and intersection opp side (these are extended circle points).
+        // Omitted: (2) Construct all diameters from points through center and intersection opp side (these are extended circle points).
+        // (2) Construct all imaginary points which result from the itnersections of all constructed chords and all (a) segments, (b) circles, (c) constructed chords.
         //
         // For atomic region id
         //
-        private void GenerateImplicitChordsDiameters()
+        private void GenerateImplicitChords()
         {
             foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
             {
@@ -899,50 +934,110 @@ namespace LiveGeometry.TutorParser
                 {
                     for (int p2 = p1 + 1; p2 < circPts.Count; p2++)
                     {
+                        // Create the chord and acquire the user drawn chord (if it exists)
                         GeometryTutorLib.ConcreteAST.Segment chord = new GeometryTutorLib.ConcreteAST.Segment(circPts[p1], circPts[p2]);
                         GeometryTutorLib.ConcreteAST.Segment figureChord = GeometryTutorLib.Utilities.GetStructurally<GeometryTutorLib.ConcreteAST.Segment>(segments, chord);
 
-                        // Add this chord to the list of chords no matter if this is a 'real' chord or not.
-                        if (figureChord != null)
+                        // This is the actual chord we manipulate
+                        GeometryTutorLib.ConcreteAST.Segment theChord = figureChord != null ? figureChord : chord;
+
+                        // Add the <chord, Circle> pair to the implied chords list only if it's not a diameter
+                        if (!circle.DefinesDiameter(theChord))
                         {
-                            if (impliedChords.ContainsKey(figureChord)) impliedChords[figureChord].Add(circle);
-                            impliedChords.Add(figureChord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle));
-                        }
-                        else
-                        {
-                            if (impliedChords.ContainsKey(chord)) impliedChords[chord].Add(circle);
-                            impliedChords.Add(chord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle));
+                            int index = GeometryTutorLib.Utilities.StructuralIndex<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>(impliedChords, theChord);
+                            if (index != -1) impliedChords[index].Value.Add(circle);
+                            else impliedChords.Add(new KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>>(theChord, GeometryTutorLib.Utilities.MakeList<GeometryTutorLib.ConcreteAST.Circle>(circle)));
                         }
                     }
                 }
 
                 //
-                // Construct (implicit) diameters
+                // Construct (implicit) radii
                 //
                 foreach (Point pt in circPts)
                 {
+                    //
                     // Find the coordinates of the other side of the implied diameter
+                    //
                     double newX = 2 * circle.center.X - pt.X;
                     double newY = 2 * circle.center.Y - pt.Y;
 
                     Point opp = HandleIntersectionPoint(allEvidentPoints, extendedCirclePoints, PointFactory.GeneratePoint(newX, newY));
 
-                    GeometryTutorLib.ConcreteAST.Segment radius = new GeometryTutorLib.ConcreteAST.Segment(circle.center, opp);
-                    if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Segment>(minimalSegments, radius))
+                    GeometryTutorLib.ConcreteAST.Segment nonRealRadius = new GeometryTutorLib.ConcreteAST.Segment(circle.center, opp);
+                    if (!DoesSegmentExistExplicitly(nonRealRadius)) GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(extendedNonRealRadii, nonRealRadius);
+
+                    //
+                    // Needed radii for sectors / atomic regions calculations
+                    //
+                    GeometryTutorLib.ConcreteAST.Segment realRadius = new GeometryTutorLib.ConcreteAST.Segment(circle.center, pt);
+                    if (!DoesSegmentExistExplicitly(realRadius)) GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(extendedRealRadii, realRadius);
+                }
+            }
+
+            //
+            // Find the imaginary intersection points between all constructed chords.
+            //
+            for (int s1 = 0; s1 < impliedChords.Count; s1++)
+            {
+                //
+                // Find the imaginary intersection points BETWEEN all constructed chords.
+                //
+                for (int s2 = s1 + 1; s2 < impliedChords.Count; s2++)
+                {
+                    ConstructImaginaryIntersectionPoint(impliedChords[s1].Key, impliedChords[s2].Key);
+                }
+
+                //
+                // Find the imaginary intersection points between all radii, real and constructed.
+                //
+                foreach (GeometryTutorLib.ConcreteAST.Segment radius in extendedRealRadii)
+                {
+                    ConstructImaginaryIntersectionPoint(impliedChords[s1].Key, radius);
+                }
+
+                //
+                // Find the imaginary intersection points between all radii, real and constructed.
+                //
+                foreach (GeometryTutorLib.ConcreteAST.Segment radius in extendedNonRealRadii)
+                {
+                    ConstructImaginaryIntersectionPoint(impliedChords[s1].Key, radius);
+                }
+            }
+
+            Debug.WriteLine("Imaginary Points (" + imagPoints.Count + "): ");
+            foreach (ImaginaryPoint imPt in imagPoints)
+            {
+                Debug.WriteLine("\t" + imPt);
+            }
+        }
+
+        private void ConstructImaginaryIntersectionPoint(GeometryTutorLib.ConcreteAST.Segment s1, GeometryTutorLib.ConcreteAST.Segment s2)
+        {
+            Point intersection = s1.FindIntersection(s2);
+
+            if (!double.IsInfinity(intersection.X) && !double.IsInfinity(intersection.Y))
+            {
+                if (s1.PointIsOnAndBetweenEndpoints(intersection) && s2.PointIsOnAndBetweenEndpoints(intersection))
+                {
+                    if (!GeometryTutorLib.Utilities.HasStructurally<Point>(allEvidentPoints, intersection))
                     {
-                        extendedRadii.Add(radius);
-                    }
-                    radius = new GeometryTutorLib.ConcreteAST.Segment(circle.center, pt);
-                    if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Segment>(minimalSegments, radius))
-                    {
-                        extendedRealRadii.Add(radius);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<ImaginaryPoint>(imagPoints, new ImaginaryPoint(intersection));
                     }
                 }
             }
         }
 
+        // Check to see if the given segment already exists directly or indirectly as collinear points.
+        private bool DoesSegmentExistExplicitly(GeometryTutorLib.ConcreteAST.Segment seg)
+        {
+            foreach (GeometryTutorLib.ConcreteAST.Segment maximal in maximalSegments)
+            {
+                if (maximal.HasSubSegment(seg)) return true;
+            }
 
-
+            return false;
+        }
 
         /// <summary>
         /// Calculate segment bisctors.
@@ -991,6 +1086,39 @@ namespace LiveGeometry.TutorParser
                             // We found an angle bisector!
                             angleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, segment));
                         }
+                    }
+                }
+            }
+        }
+
+        //
+        // Compose the list of circles, sectors, and polygons into a single list
+        //
+        private void ComposeAllShapesIntoSingleList()
+        {
+            circles.ForEach(c => allFigures.Add(c));
+            minorSectors.ForEach(s => allFigures.Add(s));
+            majorSectors.ForEach(s => allFigures.Add(s));
+            foreach (List<GeometryTutorLib.ConcreteAST.Polygon> polys in polygons)
+            {
+                polys.ForEach(p => allFigures.Add(p));
+            }
+        }
+
+        //
+        // Associate the atoms with the figures and vice versa.
+        //
+        private void AssociateAtomicRegionsWithShapes()
+        {
+            foreach (Figure fig in allFigures)
+            {
+                foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+                {
+                    GeometryTutorLib.ConcreteAST.Polygon atomPoly = atom.GetPolygonalized();
+                    if (fig.Contains(atomPoly))
+                    {
+                        fig.AddAtomicRegion(atom);
+                        atom.AddOwnedFigure(fig);
                     }
                 }
             }
@@ -1065,6 +1193,76 @@ namespace LiveGeometry.TutorParser
             }
 
             return str.ToString();
+        }
+
+        //
+        // Search the list of atomic regions using a single point to determine whether the point is inside the region or not.
+        //
+        public GeometryTutorLib.Area_Based_Analyses.AtomicRegion GetAtomicRegionByPoint(Point pt)
+        {
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+            {
+                if (atom.PointLiesInside(pt)) return atom;
+            }
+
+            return null;
+        }
+
+        //
+        // Search the list of atomic regions using a single set of points to determine whether the point is inside the region or not.
+        //
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> GetAtomicRegionsByPoints(List<Point> points)
+        {
+            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+
+            foreach (Point pt in points)
+            {
+                foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+                {
+                    if (atom.PointLiesInside(pt)) atoms.Add(atom);
+                }
+            }
+
+            return atoms;
+        }
+
+        //
+        // Search the list of atomic regions using a single point to determine whether the point is inside the region or not.
+        //
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> GetAllAtomicRegionsWithoutPoint(Point pt)
+        {
+            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+            {
+                if (!atom.PointLiesInside(pt)) atoms.Add(atom);
+            }
+
+            return atoms;
+        }
+
+        //
+        // Search the list of atomic regions using a set of point to determine whether the point is inside the region or not.
+        //
+        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> GetAllAtomicRegionsWithoutPoints(List<Point> thePoints)
+        {
+            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+
+            foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion atom in atomicRegions)
+            {
+                bool inside = false;
+                foreach (Point pt in thePoints)
+                {
+                    if (atom.PointLiesInside(pt))
+                    {
+                        inside = true;
+                        break;
+                    }
+                }
+                if (!inside) atoms.Add(atom);
+            }
+
+            return atoms;
         }
     }
 }

@@ -31,6 +31,53 @@ namespace GeometryTutorLib.ConcreteAST
             }
         }
 
+        //
+        // Area-Related Computations
+        //
+        // Side-squared
+        protected double Area(double s)
+        {
+            return s * s;
+        }
+        protected double RationalArea(double s) { return Area(s); }
+        public override bool IsComputableArea() { return true; }
+
+        private double ClassicArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                double sideLength = known.GetSegmentLength(side);
+
+                if (sideLength > 0) return Area(sideLength);
+            }
+
+            return -1;
+        }
+
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            // Check side-squared.
+            if (ClassicArea(known) > 0) return true;
+
+            // If not side-squared, check the general quadrilateral split into triangles.
+            return base.CanAreaBeComputed(known);
+        }
+
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            // Check side-squared.
+            double area = ClassicArea(known);
+            
+            if (area > 0) return area;
+
+            // If not side-squared, check the general quadrilateral split into triangles.
+            return base.GetArea(known);
+        }
+
+
+
+
+
         public override bool StructurallyEquals(Object obj)
         {
             Square thatSquare = obj as Square;

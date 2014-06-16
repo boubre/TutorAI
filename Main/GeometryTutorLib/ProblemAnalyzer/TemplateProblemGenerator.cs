@@ -10,15 +10,15 @@ namespace GeometryTutorLib.ProblemAnalyzer
     public class TemplateProblemGenerator
     {
         Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
-        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerGraph;
+        Pebbler.Pebbler pebbler;
         ProblemAnalyzer.PathGenerator pathGenerator;
 
         public TemplateProblemGenerator(Hypergraph.Hypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g,
-                                        Pebbler.PebblerHypergraph<ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> pebblerG,
+                                        Pebbler.Pebbler pebbler,
                                         ProblemAnalyzer.PathGenerator generator)
         {
             graph = g;
-            pebblerGraph = pebblerG;
+            this.pebbler = pebbler;
             pathGenerator = generator;
         }
 
@@ -73,8 +73,8 @@ namespace GeometryTutorLib.ProblemAnalyzer
             descriptors.ForEach(r => descriptorsAndStrengthened.Add(r));
             strengthened.ForEach(r => descriptorsAndStrengthened.Add(r));
 
-            List<Problem<Hypergraph.EdgeAnnotation>> forwardList = GenerateForwardProblems(descriptorsAndStrengthened, pebblerGraph.forwardPebbledEdges, givens.Count);
-            List<Problem<Hypergraph.EdgeAnnotation>> backwardList = GenerateBackwardProblems(givens, pebblerGraph.backwardPebbledEdges);
+            List<Problem<Hypergraph.EdgeAnnotation>> forwardList = GenerateForwardProblems(descriptorsAndStrengthened, pebbler.forwardPebbledEdges, givens.Count);
+            List<Problem<Hypergraph.EdgeAnnotation>> backwardList = GenerateBackwardProblems(givens, pebbler.backwardPebbledEdges);
 
             if (Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
             {

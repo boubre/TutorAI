@@ -10,7 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
         public AlgebraicSegmentEquation() : base() { }
 
         public AlgebraicSegmentEquation(GroundedClause l, GroundedClause r) : base(l, r) { }
-        public AlgebraicSegmentEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
+        // public AlgebraicSegmentEquation(GroundedClause l, GroundedClause r, string just) : base(l, r, just) { }
 
         public override GroundedClause DeepCopy()
         {
@@ -20,11 +20,7 @@ namespace GeometryTutorLib.ConcreteAST
         public override bool IsAlgebraic() { return true; }
         public override bool IsGeometric() { return false; }
 
-        public override int GetHashCode()
-        {
-            //Change this if the object is no longer immutable!!!
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString()
         {

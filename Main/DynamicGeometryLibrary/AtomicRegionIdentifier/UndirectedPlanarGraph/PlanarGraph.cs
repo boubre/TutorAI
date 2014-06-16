@@ -25,9 +25,9 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
             }
         }
 
-        public void AddNode(Point value, NodePointType type)
+        public void AddNode(Point value) // , NodePointType type)
         {
-            AddNode(new PlanarGraphNode(value, type));
+            AddNode(new PlanarGraphNode(value)); // , type));
         }
 
         private void AddNode(PlanarGraphNode node)
@@ -37,7 +37,7 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
 
         public int IndexOf(Point pt)
         {
-            return nodes.IndexOf(new PlanarGraphNode(pt, NodePointType.REAL));
+            return nodes.IndexOf(new PlanarGraphNode(pt)); // , NodePointType.REAL));
         }
 
         //
@@ -47,17 +47,21 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         {
             if (oldType == EdgeType.REAL_SEGMENT && newType == EdgeType.REAL_SEGMENT)
             {
-                throw new ArgumentException("Cannot have two edges defined by a real segment.");
+                return EdgeType.REAL_SEGMENT;
+                //throw new ArgumentException("Cannot have two edges defined by a real segment.");
             }
 
             if (oldType == EdgeType.EXTENDED_SEGMENT || newType == EdgeType.EXTENDED_SEGMENT)
             {
-                throw new ArgumentException("Cannot change an edge to / from an extended segment type.");
+                return EdgeType.EXTENDED_SEGMENT;
+//                throw new ArgumentException("Cannot change an edge to / from an extended segment type.");
             }
 
             if (newType == EdgeType.REAL_DUAL)
             {
-                throw new ArgumentException("Cannot change an edge to be dual.");
+                return EdgeType.REAL_DUAL;
+
+//                throw new ArgumentException("Cannot change an edge to be dual.");
             }
 
             // DUAL + ARC / SEGMENT = DUAL
@@ -81,8 +85,8 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
             //
             // Are these nodes in the graph?
             //
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
-            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
+            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to));
 
             if (fromNodeIndex == -1 || toNodeIndex == -1)
             {
@@ -119,12 +123,12 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
 
         public bool Contains(Point value)
         {
-            return nodes.Contains(new PlanarGraphNode(value, NodePointType.REAL));
+            return nodes.Contains(new PlanarGraphNode(value));
         }
 
         public bool RemoveNode(Point value)
         {
-            if (!nodes.Remove(new PlanarGraphNode(value, NodePointType.REAL))) return false; // REAL is arbitrary here.
+            if (!nodes.Remove(new PlanarGraphNode(value))) return false;
 
             // enumerate through each node in the nodes, removing edges to this node
             foreach (PlanarGraphNode node in nodes)
@@ -138,11 +142,11 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         public bool RemoveEdge(Point from, Point to)
         {
             // Does this edge exist already?
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
             if (fromNodeIndex == -1) return false;
             nodes[fromNodeIndex].RemoveEdge(to);
 
-            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to, NodePointType.REAL)); // REAL is arbitrary here.
+            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to));
             if (toNodeIndex == -1) return false;
             nodes[toNodeIndex].RemoveEdge(from);
 
@@ -152,10 +156,10 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         public PlanarGraphEdge GetEdge(Point from, Point to)
         {
             // Does this edge exist already?
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
             if (fromNodeIndex == -1) return null;
 
-            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to, NodePointType.REAL)); // REAL is arbitrary here.
+            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to));
             if (toNodeIndex == -1) return null;
 
             return nodes[fromNodeIndex].GetEdge(to);
@@ -163,18 +167,18 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
 
         public EdgeType GetEdgeType(Point from, Point to)
         {
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
 
             return nodes[fromNodeIndex].GetEdge(to).edgeType;
         }
 
         public void MarkCycleEdge(Point from, Point to)
         {
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
             if (fromNodeIndex == -1) return;
             nodes[fromNodeIndex].MarkEdge(to);
 
-            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to, NodePointType.REAL)); // REAL is arbitrary here.
+            int toNodeIndex = nodes.IndexOf(new PlanarGraphNode(to));
             if (toNodeIndex == -1) return;
             nodes[toNodeIndex].MarkEdge(from);
         }
@@ -182,7 +186,7 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         public bool IsCycleEdge(Point from, Point to)
         {
             // Does this edge exist already?
-            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from, NodePointType.REAL)); // REAL is arbitrary here.
+            int fromNodeIndex = nodes.IndexOf(new PlanarGraphNode(from));
 
             if (fromNodeIndex == -1) return false;
 

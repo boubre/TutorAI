@@ -56,13 +56,11 @@ namespace GeometryTutorLib.ConcreteAST
         public void GetRadii(out Segment radius1, out Segment radius2)
         {
             radius1 = theCircle.GetRadius(new Segment(theCircle.center, intersection1));
-            radius2 = theCircle.GetRadius(new Segment(theCircle.center, intersection2));
 
-            // Make sure the first arg is non-null.
-            if (radius1 == null && radius2 != null)
+            if (intersection2 == null) radius2 = null;
+            else
             {
-                radius1 = radius2;
-                radius2 = null;
+                radius2 = theCircle.GetRadius(new Segment(theCircle.center, intersection2));
             }
         }
 

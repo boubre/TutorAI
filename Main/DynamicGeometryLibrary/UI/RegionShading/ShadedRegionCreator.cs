@@ -47,7 +47,7 @@ namespace DynamicGeometry.UI.RegionShading
                 {
                     ShapeAtomicRegion sar = ar as ShapeAtomicRegion;
                     GeometryTutorLib.ConcreteAST.Polygon shape = sar.shape as GeometryTutorLib.ConcreteAST.Polygon;
-                    if (shape != null && shape.IsInConvexPolygon(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
+                    if (shape != null && shape.IsInPolygon(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
                     {
                         ShadedRegion sr = ShadedRegion.CreateAndAdd(sar, logicalPt);
                         Image img = sr.Draw(Drawing, ShadedRegion.COLORS[0], ShadedRegion.COLORS[1]);

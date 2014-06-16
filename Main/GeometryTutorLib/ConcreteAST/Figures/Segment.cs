@@ -41,6 +41,8 @@ namespace GeometryTutorLib.ConcreteAST
             collinear.Add(p2);
         }
 
+        public Segment(Segment s) : this(s.Point1, s.Point2) { }
+
         public void AddCollinearPoint(Point newPt)
         {
             // Traverse list to find where to insert the new point in the list in the proper order
@@ -471,7 +473,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Point Midpoint()
         {
-            return new Point(null, (Point1.X + Point2.X) / 2, (Point1.Y + Point2.Y) / 2);
+            return new Point(null, (Point1.X + Point2.X) / 2.0, (Point1.Y + Point2.Y) / 2.0);
         }
 
         public override string ToString() { return "Segment(" + Point1.ToString() + ", " + Point2.ToString() + ")"; }

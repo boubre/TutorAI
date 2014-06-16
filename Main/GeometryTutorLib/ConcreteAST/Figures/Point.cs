@@ -36,6 +36,14 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Expects a radian angle measurement.
+        //
+        public static Point GetPointFromAngle(Point center, double radius, double angle)
+        {
+            return new Point("", center.X + radius * Math.Cos(angle), center.Y + radius * Math.Sin(angle));
+        }
+
+        //
         // Assumes our points represent vectors in std position
         //
         public static double CrossProduct(Point thisPoint, Point thatPoint)
@@ -70,32 +78,23 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // Returns a radian angle measurement between [-pi / 2, 3 pi / 2]. 
+        // Returns a degree angle measurement between [0, 360]. 
         //
-        public static double GetStandardAngleWithCenter(Point center, Point other)
+        public static double GetDegreeStandardAngleWithCenter(Point center, Point other)
+        {
+            return GetRadianStandardAngleWithCenter(center, other) / Math.PI * 180;
+        }
+
+        //
+        // Returns a radian angle measurement between [0, 2PI]. 
+        //
+        public static double GetRadianStandardAngleWithCenter(Point center, Point other)
         {
             Point stdVector = new Point("", other.X - center.X, other.Y - center.Y);
 
             double angle = System.Math.Atan2(stdVector.Y, stdVector.X);
 
-            //// Add to the angle to place it into the proper quadrant.
-            //switch (stdVector.Quadrant())
-            //{
-            //    case 0:
-            //    case 1:
-            //    case 14:
-            //    case 12:
-            //    case 34:
-            //    case 4:
-            //        break;
-            //    case 2:
-            //    case 23:
-            //    case 3:
-            //        angle += Math.PI;
-            //        break;
-            //}
-
-            return angle;
+            return angle < 0 ? angle + 2 * Math.PI : angle;
         }
 
         //
@@ -120,16 +119,6 @@ namespace GeometryTutorLib.ConcreteAST
 
             return null;
         }
-        //public static Point GetFigurePointOrCreate(Point candPoint)
-        //{
-        //    // Get the existent point
-        //    Point p = GetFigurePoint(candPoint);
-            
-        //    if (p != null) return p;
-
-        //    // Create a new point
-        //    return EngineUIBridge.PointFactory.GeneratePoint(candPoint.X, candPoint.Y);
-        //}
 
         /// <summary>
         /// Find the distance between two points

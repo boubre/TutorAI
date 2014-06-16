@@ -169,7 +169,7 @@ namespace DynamicGeometry.UI.RegionShading
             //FOR NOW: USE THIS
             ShapeAtomicRegion sar = Region as ShapeAtomicRegion;
             GeometryTutorLib.ConcreteAST.Polygon shape = sar.shape as GeometryTutorLib.ConcreteAST.Polygon;
-            if (shape == null || !shape.IsInConvexPolygon(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
+            if (shape == null || !shape.IsInPolygon(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
             {
                 return false;
             }

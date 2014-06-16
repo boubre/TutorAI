@@ -15,7 +15,7 @@ namespace GeometryTutorLib.Pebbler
         public List<PebblerHyperEdge<A>> edges;
 
         // Coloration of the edge when pebbled
-        public PebblerColorType pebble;
+        //public PebblerColorType pebble;
 
         // Whether the node has been pebbled or not.
         public bool pebbled;
@@ -24,7 +24,7 @@ namespace GeometryTutorLib.Pebbler
         {
             id = thatId;
             data = thatData;
-            pebble = PebblerColorType.NO_PEBBLE;
+            pebbled = false;
 
             edges = new List<PebblerHyperEdge<A>>();
         }
@@ -43,12 +43,7 @@ namespace GeometryTutorLib.Pebbler
         {
             string retS = data.ToString() + "\t\t\t\t= { ";
 
-            retS += id + ", Pebbled(";
-            if (pebble == PebblerColorType.NO_PEBBLE) retS += "NONE";
-            if (pebble == PebblerColorType.RED_FORWARD) retS += "RED";
-            if (pebble == PebblerColorType.BLUE_BACKWARD) retS += "BLUE";
-            //if (pebble == PebblerColorType.PURPLE_BOTH) retS += "PURPLE";
-            retS += "), ";
+            retS += id + ", Pebbled(" + pebbled + "), ";
             retS += "SuccN={";
             foreach (int n in nodes) retS += n + ",";
             if (nodes.Count != 0) retS = retS.Substring(0, retS.Length - 1);
