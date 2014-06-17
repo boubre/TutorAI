@@ -187,21 +187,23 @@ namespace LiveGeometry.TutorParser
             CalculateSegmentBisectors();
             CalculateAngleBisectors();
 
+#if !ATOMIC_REGION_OFF //Define in Properties->Build->Compilation Symbols to turn off this section
             //
             // Atomic region identification
             //
-            //AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
-            //atomicRegions = atomIder.GetAtomicRegions();
+            AtomicRegionIdentifier.AtomicIdentifier atomIder = new AtomicRegionIdentifier.AtomicIdentifier(this);
+            atomicRegions = atomIder.GetAtomicRegions();
 
             //
             // Put all the figures into a single list: sectors, circles, polygons
             //
-            //ComposeAllShapesIntoSingleList();
+            ComposeAllShapesIntoSingleList();
 
             //
             // Now that we have all polygons and circles, associate the atomic regions with those shapes (and vice versa)
             //
-            //AssociateAtomicRegionsWithShapes();
+            AssociateAtomicRegionsWithShapes();
+#endif
         }
 
         /// <summary>

@@ -62,11 +62,9 @@ namespace GeometryTutorLib.ConcreteAST
         public void SetClearDefinition() { isObviousDefinition = true; }
         public bool IsClearDefinition() { return isObviousDefinition; }
 
-        public virtual void DumpXML(XmlWriter writer)
+        public virtual void DumpXML(Action<string, List<GroundedClause>> write)
         {
-            writer.WriteStartElement("TBD");
-
-            writer.WriteEndElement();
+            write("TBD", new List<GroundedClause>());
         }
 
         public void AddRelationPredecessor(GroundedClause gc)

@@ -25,14 +25,10 @@ namespace GeometryTutorLib.ConcreteAST
             this.segment = segment;
         }
 
-        public override void DumpXML(XmlWriter writer)
+        public override void DumpXML(Action<string, List<GroundedClause>> write)
         {
-            writer.WriteStartElement("InMiddle");
-
-            point.DumpXML(writer);
-            segment.DumpXML(writer);
-
-            writer.WriteEndElement();
+            GroundedClause[] children = { point, segment };
+            write("InMiddle", new List<GroundedClause>(children));
         }
 
         //

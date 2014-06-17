@@ -47,40 +47,38 @@ namespace StatisticsGenerator
         {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
+            using (XmlWriter writer = XmlWriter.Create(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TutorAIDump.xml", settings)) //%AppData%\Roaming
+            {
+                //WORKAROUND: XmlWriter is readonly in using environment
+                Action<string, List<GeometryTutorLib.ConcreteAST.GroundedClause>> write = null; //Allow passing write as paramater from within write
+                write = (string s, List<GeometryTutorLib.ConcreteAST.GroundedClause> list) =>
+                 {
+                     writer.WriteStartElement(s);
+                     foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in list)
+                     {
+                         gc.DumpXML(write);
+                     }
+                     writer.WriteEndElement();
+                 };
 
-            //using (XmlWriter writer = XmlWriter.Create("C:\\Users\\Public", settings))
-            //{
-            //    writer.WriteStartDocument();
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Root");
 
-            //    writer.WriteStartElement("Figure");
-            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause fig in this.figure)
-            //    {
-            //        writer.WriteStartElement("component");
-            //        //fig.DumpXML(writer);
-            //        writer.WriteEndElement();
-            //    }
-            //    writer.WriteEndElement();
+                writer.WriteStartElement("Figure");
+                write("component", figure);
+                writer.WriteEndElement();
 
-            //    writer.WriteStartElement("Givens");
-            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause given in this.givens)
-            //    {
-            //        writer.WriteStartElement("given");
-            //        //given.DumpXML(writer);
-            //        writer.WriteEndElement();
-            //    }
-            //    writer.WriteEndElement();
+                writer.WriteStartElement("Givens");
+                write("given", givens);
+                writer.WriteEndElement();
 
-            //    writer.WriteStartElement("Goals");
-            //    foreach (GeometryTutorLib.ConcreteAST.GroundedClause goal in this.goals)
-            //    {
-            //        writer.WriteStartElement("goal");
-            //        //goal.DumpXML(writer);
-            //        writer.WriteEndElement();
-            //    }
-            //    writer.WriteEndElement();
+                writer.WriteStartElement("Goals");
+                write("goal", goals);
+                writer.WriteEndElement();
 
-            //    writer.WriteEndDocument();
-            //}
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+            }
         }
 
         // Returns: <number of interesting problems, number of original problems generated>

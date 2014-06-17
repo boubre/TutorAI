@@ -6,7 +6,7 @@ namespace DynamicGeometry.UI
     public class ParseDisambiguationWindow : ChildWindow
     {
         private string message, title;
-        public Result DialogResult { get; private set; }
+        public Result PDWDialogResult { get; private set; }
 
         public enum Result { Yes = 0, No };
 
@@ -19,7 +19,7 @@ namespace DynamicGeometry.UI
         {
             this.message = message;
             this.title = title;
-            DialogResult = Result.No;
+            PDWDialogResult = Result.No;
             Initialize();
             LayoutDesign();
         }
@@ -89,7 +89,7 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void YesButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = Result.Yes;
+            PDWDialogResult = Result.Yes;
             Close();
         }
 
@@ -101,7 +101,7 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void NoButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = Result.No;
+            PDWDialogResult = Result.No;
             Close();
         }
     }

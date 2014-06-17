@@ -77,19 +77,14 @@ namespace GeometryTutorLib.ConcreteAST
             if (segs.Count != 3) throw new ArgumentException("Triangle constructed with " + segs.Count + " segments.");
         }
 
-        public override void DumpXML(XmlWriter writer)
+        public override void DumpXML(Action<string, List<GroundedClause>> write)
         {
-            writer.WriteStartElement("Triangle");
-
-            //point1.DUMPXML(writer);
-            //point2.DUMPXML(writer);
-            //point3.DUMPXML(writer);
+            List<GroundedClause> children = new List<GroundedClause>();
             foreach (Point pt in points)
             {
-                pt.DumpXML(writer);
+                children.Add(pt);
             }
-
-            writer.WriteEndElement();
+            write("Triangle", children);
 	    }
 
         protected void addSuperFigureToDependencies()
