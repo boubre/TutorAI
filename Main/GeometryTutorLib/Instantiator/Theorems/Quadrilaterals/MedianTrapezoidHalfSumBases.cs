@@ -45,8 +45,10 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
+            // If median has not been checked, check now
+            if (!trapezoid.IsMedianChecked()) trapezoid.FindMedian();
             // Generate only if the median is valid (exists in the original figure)
-            if (trapezoid.IsMedianIsValid()) return newGrounded;
+            if (!trapezoid.IsMedianIsValid()) return newGrounded;
 
             Addition sum = new Addition(trapezoid.baseSegment, trapezoid.oppBaseSegment);
             Multiplication product = new Multiplication(new NumericValue(2), trapezoid.median);

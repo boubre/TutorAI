@@ -120,7 +120,8 @@ namespace GeometryTutorLib.GenericInstantiator
                 Strengthened streng = clause as Strengthened;
 
                 if (!(streng.strengthened is Trapezoid)) return newGrounded;
-                if (!(streng.strengthened is IsoscelesTrapezoid)) return newGrounded;
+                //Don't strengthen an isosceles trapezoid to an isosceles trapezoid
+                if (streng.strengthened is IsoscelesTrapezoid) return newGrounded;
 
                 foreach (CongruentSegments css in candidateCongruent)
                 {

@@ -21,11 +21,15 @@ namespace GeometryTutorLib.ConcreteAST
         public Angle bottomRightBaseAngle { get; private set; }
 
         public Segment median { get; private set; }
+        private bool medianChecked = true;
         private bool medianValid = true;
         public bool IsMedianIsValid() { return medianValid; }
+        public bool IsMedianChecked() { return medianChecked; }
         public void SetMedianInvalid() { medianValid = false; }
+        public void SetMedianChecked(bool val) { medianChecked = val; }
 
-        public Trapezoid(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
+        public Trapezoid(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) {
+        }
 
         public Trapezoid(Segment left, Segment right, Segment top, Segment bottom) : base(left, right, top, bottom)
         {
@@ -79,8 +83,15 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Find the figure segment which acts as the median of this trapezoid
         //
-        private void FindMedian()
+        public void FindMedian()
         {
+            if (Segment.figureSegments.Count == 0)
+            {
+                //Segments have not yet been recorded for the figure, wait to check for median
+                SetMedianChecked(false);
+                return;
+            }
+
             foreach(Segment medianCand in Segment.figureSegments)
             {
                 // The median is parallel to the bases.
@@ -114,6 +125,8 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             if (this.median == null) this.SetMedianInvalid();
+
+            SetMedianChecked(true);
         }
 
         //

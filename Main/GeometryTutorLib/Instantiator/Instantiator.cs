@@ -364,12 +364,15 @@ namespace GeometryTutorLib.GenericInstantiator
                     {
                         HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, MedianTrapezoidParallelToBases.Instantiate(clause));
+                        HandleDeducedClauses(worklist, MedianTrapezoidHalfSumBases.Instantiate(clause));
                     }
 
                     if (clause is IsoscelesTrapezoid)
                     {
                         HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
                         HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, BaseAnglesIsoscelesTrapezoidCongruent.Instantiate(clause));
                     }
 
                     if (clause is Rhombus)
@@ -428,6 +431,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
 
                     // For quadrilateral definitions
+                    HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, SquareDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
@@ -443,6 +447,9 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
+                    HandleDeducedClauses(worklist, BaseAnglesIsoscelesTrapezoidCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MedianTrapezoidParallelToBases.Instantiate(clause));
+                    HandleDeducedClauses(worklist, MedianTrapezoidHalfSumBases.Instantiate(clause));
 
                     // Circle
                     HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));

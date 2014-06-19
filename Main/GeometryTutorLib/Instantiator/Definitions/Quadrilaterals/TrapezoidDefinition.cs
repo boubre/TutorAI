@@ -75,7 +75,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Determine the parallel opposing sides and output that.
             //
-            Parallel newParallel = new Parallel(trapezoid.baseSegment, trapezoid.oppBaseSegment);
+            GeometricParallel newParallel = new GeometricParallel(trapezoid.baseSegment, trapezoid.oppBaseSegment);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
