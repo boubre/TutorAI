@@ -53,12 +53,13 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            Rhombus thatRhom = obj as Rhombus;
-            if (thatRhom == null) return false;
+            //Rhombus thatRhom = obj as Rhombus;
+            //if (thatRhom == null) return false;
 
-            if (thatRhom is Square) return false;
+            //if (thatRhom is Square) return false;
 
-            return base.StructurallyEquals(obj);
+            //return this.StructurallyEquals(obj);
+            return this.StructurallyEquals(obj);
         }
 
         public override string ToString()

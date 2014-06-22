@@ -18,8 +18,8 @@ namespace GeometryTestbed
             //problems.AddRange(GeometryTestbed.HoltWorkbookProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
-
-            problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
 
             return problems;
         }

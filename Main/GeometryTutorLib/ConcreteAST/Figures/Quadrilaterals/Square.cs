@@ -7,9 +7,11 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public class Square : Rhombus
     {
-        public Square(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
+        public Square(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom,
+            quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection) { }
 
-        public Square(Segment left, Segment right, Segment top, Segment bottom) : base(left, right, top, bottom)
+        public Square(Segment left, Segment right, Segment top, Segment bottom, 
+            bool tlDiag = false, bool brDiag = false, Intersection inter = null) : base(left, right, top, bottom)
         {
             if (!Utilities.CompareValues(topLeftAngle.measure, 90))
             {
@@ -29,6 +31,11 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 throw new ArgumentException("Quadrilateral is not a Square; angle does not measure 90^o: " + bottomRightAngle);
             }
+
+            //Set the diagonal and intersection values
+            if (!tlDiag) this.SetTopLeftDiagonalInValid();
+            if (!brDiag) this.SetBottomRightDiagonalInValid();
+            this.SetIntersection(inter);
         }
 
         //
