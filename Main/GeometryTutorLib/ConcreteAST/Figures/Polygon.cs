@@ -284,10 +284,6 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static Polygon MakePolygon(List<Segment> theseSegs)
         {
-            // If we are given the sides already ordered, just make the polygon stright-away.
-            Polygon simple = MakeOrderedPolygon(theseSegs);
-            if (simple != null) return simple;
-
             // Parallel arrays of (1) vertices and (2) segments that share the given vertex.
             List<Point> vertices = new List<Point>();
             List<KeyValuePair<Segment, Segment>> pairs = new List<KeyValuePair<Segment, Segment>>();
@@ -317,6 +313,10 @@ namespace GeometryTutorLib.ConcreteAST
 
             // We must have the same number of vertices as input segments (ensures degree 2 for all vertices)
             if (vertices.Count != theseSegs.Count) return null;
+
+            // If we are given the sides already ordered, just make the polygon straight-away.
+            Polygon simple = MakeOrderedPolygon(theseSegs);
+            if (simple != null) return simple;
 
             // These segments make a polygon; the Polygon class will order the segments appropriately.
             return Polygon.ConstructPolygon(vertices, pairs);

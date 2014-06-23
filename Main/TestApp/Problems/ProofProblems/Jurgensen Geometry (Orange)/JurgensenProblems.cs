@@ -65,7 +65,7 @@ namespace GeometryTestbed
             problems.Add(new Page169Theorem413(false, false));          //rectangle
             problems.Add(new Page171Problem17(false, false));           //rectangle
 
-            problems.Add(new Page178SelfTest07(false, false));          //rectangle - NOT WORKING - see problem for details
+            problems.Add(new Page178SelfTest07(true, false));          //rectangle - NOT WORKING - see problem for details
 
             problems.Add(new Page173Theorem415(false, false));          //trapezoid
             problems.Add(new Page174Theorem416_1(false, false));          //trapezoid

@@ -55,6 +55,8 @@ namespace GeometryTestbed
 
         public override void Run()
         {
+            if (!problemIsOn) return;
+
             // Map the set of clauses from parser to one set of intrinsic clauses.
             ConstructIntrinsicSet();
 

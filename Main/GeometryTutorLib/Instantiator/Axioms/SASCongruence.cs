@@ -116,10 +116,9 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
-        // Checks for ASA given the 5 values
+        // Checks for SAS given the 5 values
         //
-        private static List<EdgeAggregator> InstantiateSAS(Triangle tri1, Triangle tri2,
-                                                                                               CongruentSegments css1, CongruentSegments css2, CongruentAngles cas)
+        private static List<EdgeAggregator> InstantiateSAS(Triangle tri1, Triangle tri2, CongruentSegments css1, CongruentSegments css2, CongruentAngles cas)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
