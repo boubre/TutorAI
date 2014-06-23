@@ -149,6 +149,10 @@ namespace GeometryTutorLib.GenericInstantiator
             if (segTri1.IsIncludedSegment(angle1Tri1, angle2Tri1)) return newGrounded;
             if (segTri2.IsIncludedSegment(angle1Tri2, angle2Tri2)) return newGrounded;
 
+            // The segments for each triangle must be corresponding
+            if (segTri1.Equals(tri1.OtherSide(angle1Tri1)) && segTri2.Equals(tri2.OtherSide(angle2Tri2))) return newGrounded;
+            if (segTri1.Equals(tri1.OtherSide(angle2Tri1)) && segTri2.Equals(tri2.OtherSide(angle1Tri2))) return newGrounded;
+
             //
             // Construct the corrsesponding points between the triangles
             //

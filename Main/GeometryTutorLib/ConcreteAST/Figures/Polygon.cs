@@ -357,7 +357,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             foreach (Point pt in thatPoly.points)
             {
-                if (this.points.Contains(pt)) return false;
+                if (!(this.points.Contains(pt))) return false;
             }
 
             return true;
