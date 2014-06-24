@@ -11,7 +11,7 @@ namespace GeometryTestbed
         {
             List<ActualProofProblem> problems = new List<ActualProofProblem>();
 
-            problems.Add(new KiteProblem01(true, false));
+            problems.Add(new KiteProblem01(false, false));
             problems.Add(new KiteProblem02(false, false));
 
             return problems;

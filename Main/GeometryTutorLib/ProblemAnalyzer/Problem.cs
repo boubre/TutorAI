@@ -139,7 +139,16 @@ namespace GeometryTutorLib.ProblemAnalyzer
             // Add to the graph
             graph.AddHyperEdge(edge.sourceNodes, edge.targetNode);
 
-            Utilities.AddUnique<PebblerHyperEdge<A>>(this.edges, edge);
+            if (this.edges.Contains(edge)) return;
+
+            // Add in an ordered manner according to the target node.
+            int e = 0;
+            for ( ; e < this.edges.Count; e++)
+            {
+                if (edge.targetNode < this.edges[e].targetNode) break;
+            }
+
+            this.edges.Insert(e, edge);
         }
 
         //
