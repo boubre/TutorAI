@@ -23,7 +23,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             Tangent tangent = obj as Tangent;
             if (tangent == null) return false;
-            return this.intersection.StructurallyEquals(tangent);
+            return this.intersection.StructurallyEquals(tangent.intersection);
         }
 
         public override bool Equals(Object obj)

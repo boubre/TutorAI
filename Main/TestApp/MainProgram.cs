@@ -12,9 +12,9 @@ namespace GeometryTestbed
         {
             List<GeometryTestbed.ActualProblem> problems = new List<GeometryTestbed.ActualProblem>();
 
-            //problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
-            problems.AddRange(GeometryTestbed.IndianTextProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.IndianTextProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.HoltWorkbookProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
