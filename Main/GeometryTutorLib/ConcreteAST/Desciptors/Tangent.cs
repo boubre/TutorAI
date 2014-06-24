@@ -30,7 +30,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             Tangent tangent = obj as Tangent;
             if (tangent == null) return false;
-            return this.intersection.Equals(tangent);
+            return this.intersection.Equals(tangent.intersection);
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
