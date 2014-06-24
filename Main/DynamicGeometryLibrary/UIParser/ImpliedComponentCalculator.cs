@@ -147,14 +147,14 @@ namespace LiveGeometry.TutorParser
             if (!collinear.Any()) CalculateCollinear();
             GenerateSegmentClauses();
 
+            // Using only segments, identify all polygons which are implied.
+            CalculateAllImpliedPolygons();
+
             // Find all implied Segment-Segment Intersection Points
             FindAllImpliedExtendedSegmentSegmentPoints();
 
             // Add the implied points to the complete list of points.
             allEvidentPoints.AddRange(impliedSegmentPoints);
-
-            // Using only segments, identify all polygons which are implied.
-            CalculateAllImpliedPolygons();
 
             // Calculate all (selective) Segment-Segment Intersections
             CalculateIntersections();
@@ -458,9 +458,7 @@ namespace LiveGeometry.TutorParser
                     {
                         if (segments[s1].PointIsOnAndExactlyBetweenEndpoints(inter) && segments[s2].PointIsOnAndExactlyBetweenEndpoints(inter))
                         {
-                            Point p = HandleIntersectionPoint(points, impliedSegmentPoints, inter);
-                            Point nP = GeometryTutorLib.Utilities.GetStructurally<GeometryTutorLib.ConcreteAST.Point>(impliedSegmentPoints, p);
-                            if (nP != null) HandleSegmentsAtIntersection(segments[s1], segments[s2], nP); 
+                            HandleIntersectionPoint(points, impliedSegmentPoints, inter);
                         }
                         // This is an extended point (beyond the two segments; the intersection is not apparent in the drawing)
                         else
@@ -759,24 +757,6 @@ namespace LiveGeometry.TutorParser
             Point newPoint = PointFactory.GeneratePoint(pt.X, pt.Y);
             GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Point>(toAdd, newPoint);
             return newPoint;
-        }
-
-        //Simple function for creating new segments formed by an intersection
-        private void HandleSegmentsAtIntersection(GeometryTutorLib.ConcreteAST.Segment s1, GeometryTutorLib.ConcreteAST.Segment s2, Point inter)
-        {
-            //Create new segments
-            List<GeometryTutorLib.ConcreteAST.Segment> newSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            newSegments.Add(new GeometryTutorLib.ConcreteAST.Segment(s1.Point1, inter));
-            newSegments.Add(new GeometryTutorLib.ConcreteAST.Segment(s1.Point2, inter));
-            newSegments.Add(new GeometryTutorLib.ConcreteAST.Segment(s2.Point1, inter));
-            newSegments.Add(new GeometryTutorLib.ConcreteAST.Segment(s2.Point2, inter));
-
-            //Add new segments to the segments list
-            segments.AddRange(newSegments);
-
-            //Update InMiddle
-            inMiddles.Add(new InMiddle(inter, s1));
-            inMiddles.Add(new InMiddle(inter, s2));
         }
 
         //
