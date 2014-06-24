@@ -26,6 +26,8 @@ namespace LiveGeometry
         private EnterSolutionWindow enterSolutionWindow;
         private ManageGivensWindow manageGivensWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
+        private GeometryTutorLib.UIFigureAnalyzerMain analyzer;
+        private GeometryTutorLib.EngineUIBridge.HypergraphWrapper hypergraph;
 
         private void initParseWorker()
         {
@@ -442,14 +444,16 @@ namespace LiveGeometry
             // Execute Front-End Parse
             parser.Parse();
 
-
             foreach (GeometryTutorLib.Area_Based_Analyses.AtomicRegion ar in parser.IdentifyAtomicRegions())
             {
                 UIDebugPublisher.publishString(ar.ToString());
             }
 
-            GeometryTutorLib.UIFigureAnalyzerMain analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
+            analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
+
+            // Acquire access to the backend hypergraph
+            hypergraph = analyzer.GetHypergraphWrapper();
 
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause gc in manageGivensWindow.GetGivens())
             {
@@ -461,8 +465,6 @@ namespace LiveGeometry
             {
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
-
-            
 
             UIDebugPublisher.publishString("Parse Complete.");
         }

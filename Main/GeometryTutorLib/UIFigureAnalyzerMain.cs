@@ -24,7 +24,9 @@ namespace GeometryTutorLib
         private ProblemAnalyzer.InterestingProblemCalculator interestingCalculator;
         private ProblemAnalyzer.QueryFeatureVector queryVector;
         private ProblemAnalyzer.PartitionedProblemSpace problemSpacePartitions;
-        // private List<ConcreteAST.GroundedClause> goals;
+
+        private EngineUIBridge.HypergraphWrapper hgWrapper;
+        public EngineUIBridge.HypergraphWrapper GetHypergraphWrapper() { return hgWrapper; }
 
         public UIFigureAnalyzerMain(EngineUIBridge.ProblemDescription pdesc)
         {
@@ -35,9 +37,6 @@ namespace GeometryTutorLib
             pdesc.segments.ForEach((ConcreteAST.Segment s) => figure.Add(s));
             pdesc.triangles.ForEach((ConcreteAST.Triangle t) => figure.Add(t));
             //END TEMPORARY
-
-            // Complete the object population by calculating intersections, angles, and triangles
-            //figure.AddRange(Precomputer.ClauseConstructor.GenerateAngleIntersectionPolygonClauses(figure, true));
             
             givens = pdesc.givens;
 
@@ -49,7 +48,6 @@ namespace GeometryTutorLib
             EngineUIBridge.JustificationSwitch.SetAssumptions(EngineUIBridge.Assumption.GetAssumptions());
         }
 
-        // Returns: <number of interesting problems, number of original problems generated>
         public List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> AnalyzeFigure()
         {
             // Precompute all coordinate-based interesting relations (problem goal nodes)
@@ -166,6 +164,9 @@ namespace GeometryTutorLib
 
             // Build the hypergraph through instantiation
             graph = instantiator.Instantiate(figure, givens);
+
+            // Construct the hypergraph wrapper to give access to the front-end.
+            hgWrapper = new EngineUIBridge.HypergraphWrapper(graph);
 
             if (Utilities.DEBUG)
             {

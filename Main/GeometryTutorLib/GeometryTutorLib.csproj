@@ -111,6 +111,8 @@
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Square.cs" />
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Parallelogram.cs" />
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Quadrilateral.cs" />
+    <Compile Include="EngineUIBridge\HypergraphWrapper.cs" />
+    <Compile Include="HintGenerator\HintGenerator.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CongruentCircleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CircleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\EquilateralTriangleDefinition.cs" />

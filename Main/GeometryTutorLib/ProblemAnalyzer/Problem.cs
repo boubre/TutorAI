@@ -264,7 +264,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
                     if (savedEdge != null)
                     {
-                        if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("CTA: Found another edge which can deduce givens." + savedEdge);
+                        // if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("CTA: Found another edge which can deduce givens." + savedEdge);
 
                         // Add the found edge to the problem
                         this.AddEdge(savedEdge);
