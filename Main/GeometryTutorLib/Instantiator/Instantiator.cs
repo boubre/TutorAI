@@ -170,6 +170,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     HandleDeducedClauses(worklist, SameSideSuppleAnglesImplyParallel.Instantiate(clause));
                     HandleDeducedClauses(worklist, RelationsOfCongruentAnglesAreCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, SupplementaryAndCongruentImplyRightAngles.Instantiate(clause));
                 }
                 else if (clause is Equation)
                 {
@@ -238,6 +239,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is CongruentAngles)
                 {
+                    HandleDeducedClauses(worklist, SupplementaryAndCongruentImplyRightAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, TwoPairsCongruentAnglesImplyThirdPairCongruent.Instantiate(clause));
                     HandleDeducedClauses(worklist, SASCongruence.Instantiate(clause));
                     HandleDeducedClauses(worklist, ASA.Instantiate(clause));
@@ -397,6 +399,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     if (clause is Kite)
                     {
                         HandleDeducedClauses(worklist, KiteDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, DiagonalsOfKiteArePerpendicular.Instantiate(clause));
                     }
                 }
                 else if (clause is Strengthened)
@@ -445,6 +448,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, DiagonalsParallelogramBisectEachOther.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsBisectEachOtherImplyParallelogram.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsOfRectangleAreCongruent.Instantiate(clause));
+                    HandleDeducedClauses(worklist, DiagonalsOfKiteArePerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsOfRhombusArePerpendicular.Instantiate(clause));
                     HandleDeducedClauses(worklist, DiagonalsOfRhombusBisectRhombusAngles.Instantiate(clause));
                     HandleDeducedClauses(worklist, BaseAnglesIsoscelesTrapezoidCongruent.Instantiate(clause));

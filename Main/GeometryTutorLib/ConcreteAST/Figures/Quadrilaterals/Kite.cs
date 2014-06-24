@@ -12,9 +12,11 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment pairBSegment1 { get; private set; }
         public Segment pairBSegment2 { get; private set; }
 
-        public Kite(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
+        public Kite(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom,
+            quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection) { }
 
-        public Kite(Segment left, Segment right, Segment top, Segment bottom) : base(left, right, top, bottom)
+        public Kite(Segment left, Segment right, Segment top, Segment bottom,
+            bool tlDiag = false, bool brDiag = false, Intersection inter = null) : base(left, right, top, bottom)
         {
             if (Utilities.CompareValues(left.Length, top.Length) && Utilities.CompareValues(right.Length, bottom.Length))
             {
@@ -36,6 +38,11 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 throw new ArgumentException("Quadrilateral does not define a kite; no two adjacent sides are equal lengths: " + this);
             }
+
+            //Set the diagonal and intersection values
+            if (!tlDiag) this.SetTopLeftDiagonalInValid();
+            if (!brDiag) this.SetBottomRightDiagonalInValid();
+            this.SetIntersection(inter);
         }
 
         public override bool StructurallyEquals(Object obj)

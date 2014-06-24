@@ -17,11 +17,24 @@ namespace GeometryTestbed
             Point b = new Point("B", 3, 3); points.Add(b);
             Point c = new Point("C", 6, 0); points.Add(c);
             Point d = new Point("D", 3, -4); points.Add(d);
+            Point m = new Point("M", 3, 0); points.Add(m);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment bc = new Segment(b, c); segments.Add(bc);
             Segment cd = new Segment(c, d); segments.Add(cd);
             Segment ad = new Segment(a, d); segments.Add(ad);
+
+            List<Point> pnts = new List<Point>();
+            pnts.Add(b);
+            pnts.Add(m);
+            pnts.Add(d);
+            collinear.Add(new Collinear(pnts));
+
+            pnts = new List<Point>();
+            pnts.Add(a);
+            pnts.Add(m);
+            pnts.Add(c);
+            collinear.Add(new Collinear(pnts));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 

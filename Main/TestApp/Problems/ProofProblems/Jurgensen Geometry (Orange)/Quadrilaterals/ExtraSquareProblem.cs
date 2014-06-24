@@ -39,10 +39,11 @@ namespace GeometryTestbed
             Segment bd = (Segment)parser.Get(new Segment(b, d));
             Segment ac = (Segment)parser.Get(new Segment(a,c));
 
-            given.Add(new Strengthened(quad, new Square(quad)));
+            given.Add(new Strengthened(quad, new Parallelogram(quad)));
+            given.Add(new Perpendicular(parser.GetIntersection(ac, bd)));
+            given.Add(new GeometricCongruentSegments(ac, bd));
 
-            goals.Add(new Perpendicular(parser.GetIntersection(ac, bd)));
-            goals.Add(new GeometricCongruentSegments(ac, bd));
+            goals.Add(new Strengthened(quad, new Square(quad)));
         }
     }
 }

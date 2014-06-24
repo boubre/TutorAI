@@ -137,6 +137,7 @@
     <Compile Include="Instantiator\Theorems\Circles\TangentPerpendicularToRadius.cs" />
     <Compile Include="Instantiator\Theorems\Quadrilaterals\BothPairsOppAnglesCongruentImpliesParallelogram.cs" />
     <Compile Include="Instantiator\Theorems\Quadrilaterals\BaseAnglesIsoscelesTrapezoidCongruent.cs" />
+    <Compile Include="Instantiator\Theorems\Quadrilaterals\DiagonalsOfKiteArePerpendicular.cs" />
     <Compile Include="Instantiator\Theorems\Quadrilaterals\MedianTrapezoidHalfSumBases.cs" />
     <Compile Include="Instantiator\Theorems\Quadrilaterals\MedianTrapezoidParallelToBases.cs" />
     <Compile Include="Instantiator\Theorems\Quadrilaterals\DiagonalsOfRhombusBisectRhombusAngles.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Instantiator\Definitions\SupplementaryDefinition.cs" />
     <Compile Include="Instantiator\EdgeAggregator.cs" />
     <Compile Include="Hypergraph\EdgeAnnotation.cs" />
+    <Compile Include="Instantiator\Theorems\SupplementaryAndCongruentImplyRightAngles.cs" />
     <Compile Include="Pebbler\Pebbler.cs" />
     <Compile Include="ProblemAnalyzer\MultiGoalProblem.cs" />
     <Compile Include="EngineUIBridge\ProblemDescription.cs" />

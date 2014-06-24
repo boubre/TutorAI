@@ -49,6 +49,7 @@ namespace GeometryTutorLib.EngineUIBridge
             ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR,
             ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES,
             ANGLE_BISECTOR_THEOREM,
+            CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES,
             CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR,
             CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES,
             CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES,
@@ -93,6 +94,7 @@ namespace GeometryTutorLib.EngineUIBridge
             OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM,
             DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM,
             DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT,
+            DIAGONALS_OF_KITE_ARE_PERPENDICULAR,
             DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR,
             DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS,
             TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS,
@@ -201,6 +203,7 @@ namespace GeometryTutorLib.EngineUIBridge
             justMap.Add(DeductionJustType.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR, new Assumption("Altitude of Right Triangles Imply Similar Triangles", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES, new Assumption("Angle Bisector of Isosceles Triangles is Perpendicular Bisector", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.ANGLE_BISECTOR_THEOREM, new Assumption("Angle Bisector Theorem", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES, new Assumption("Congruent Supplementary Angles Are Right Angles", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR, new Assumption("Two Lines Forming Congruent Adjacent Imply Perpendicular", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES, new Assumption("Congruent Angles in Triangle Imply Congruent Opposite Sides", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES, new Assumption("Congruent Sides in Triangle Imply Congruent Opposite Angles", Assumption.AssumptionType.Theorem));
@@ -234,6 +237,7 @@ namespace GeometryTutorLib.EngineUIBridge
             justMap.Add(DeductionJustType.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM, new Assumption("Opp. Sides Congruent in Quad Implies Parallelogram", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM, new Assumption("Diagonals Bisect Each Other Imply Parallelogram", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT, new Assumption("Diagonals of a Rectangle are Congruent", Assumption.AssumptionType.Theorem));
+            justMap.Add(DeductionJustType.DIAGONALS_OF_KITE_ARE_PERPENDICULAR, new Assumption("Diagonals of a Kite are Perpendicular", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR, new Assumption("Diagonals of a Rhombus are Perpendicular", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS, new Assumption("Diagonals of a Rhmbus Bisect the Angles of a Rhombus", Assumption.AssumptionType.Theorem));
             justMap.Add(DeductionJustType.TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS, new Assumption("Two Congruent Consecutive Sides of a Parallelogram Imply Rhombus", Assumption.AssumptionType.Theorem));
@@ -321,6 +325,7 @@ namespace GeometryTutorLib.EngineUIBridge
         public static bool ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR = true;
         public static bool ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES = true;
         public static bool ANGLE_BISECTOR_THEOREM = true;
+        public static bool CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES = true;
         public static bool CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR = true;
         public static bool CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES = true;
         public static bool CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES = true;
@@ -354,6 +359,7 @@ namespace GeometryTutorLib.EngineUIBridge
         public static bool OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM = true;
         public static bool DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM = true;
         public static bool DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT = true;
+        public static bool DIAGONALS_OF_KITE_ARE_PERPENDICULAR = true;
         public static bool DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR = true;
         public static bool DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS = true;
         public static bool TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS = true;
@@ -443,6 +449,7 @@ namespace GeometryTutorLib.EngineUIBridge
                         EngineUIBridge.JustificationSwitch.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM = false;
                         EngineUIBridge.JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM = false;
                         EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT = false;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_OF_KITE_ARE_PERPENDICULAR = false;
                         EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR = false;
                         EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS = false;
                         EngineUIBridge.JustificationSwitch.TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS = false;
@@ -597,6 +604,10 @@ namespace GeometryTutorLib.EngineUIBridge
                     else if (assumption.Key == DeductionJustType.ANGLE_BISECTOR_THEOREM)
                     {
                         EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_THEOREM = false;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES = false;
                     }
                     else if (assumption.Key == DeductionJustType.CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR)
                     {
