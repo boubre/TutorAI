@@ -123,6 +123,8 @@ namespace LiveGeometry.TutorParser
             // TempSegs.Add(new TempSegment(s.Point1, s.Point2));
 
             uiToEngineMap.Add(uiLine, tutorSeg);
+
+            definedSegments.Add(tutorSeg);
         }
 
         /// <summary>

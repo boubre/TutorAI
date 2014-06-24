@@ -87,15 +87,13 @@ namespace DynamicGeometry.UI.GivenWindow
             }
 
             //Pick a first segment...
-            foreach (GeometryTutorLib.ConcreteAST.Segment ts1 in parser.implied.segments)
+            foreach (GeometryTutorLib.ConcreteAST.Segment s1 in parser.implied.segments)
             {
                 List<GeometryTutorLib.ConcreteAST.Segment> possible = new List<GeometryTutorLib.ConcreteAST.Segment>();
-                GeometryTutorLib.ConcreteAST.Segment s1 = new GeometryTutorLib.ConcreteAST.Segment(ts1.Point1, ts1.Point2);
 
                 //... and see what other segments are viable second options.
-                foreach (GeometryTutorLib.ConcreteAST.Segment ts2 in parser.implied.segments)
+                foreach (GeometryTutorLib.ConcreteAST.Segment s2 in parser.implied.segments)
                 {
-                    GeometryTutorLib.ConcreteAST.Segment s2 = new GeometryTutorLib.ConcreteAST.Segment(ts2.Point1, ts2.Point2);
                     if (s1.Length == s2.Length)
                     {
                         CongruentSegments cseg = new CongruentSegments(s1, s2);
