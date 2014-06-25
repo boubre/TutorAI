@@ -44,7 +44,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
                     if (nodeIndex == -1)
                     {
-                        if (!(goal is ProportionalAngles) && !(goal is ProportionalSegments))
+                        if (!(goal is ProportionalAngles) && !(goal is SegmentRatio))
                         {
                             System.Diagnostics.Debug.WriteLine("Did not find precomputed node in the hypergraph: " + goal.ToString());
                             allGoalsCovered = false;
@@ -239,12 +239,12 @@ namespace GeometryTutorLib.ProblemAnalyzer
                                     // Choose the shorter problem (fewer edges wins)
                                     if (problems[p2].edges.Count < minimalProblem.edges.Count)
                                     {
-                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
+                                        // if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
                                         minimalProblem = problems[p2];
                                     }
                                     else
                                     {
-                                        if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
+                                        // if (Utilities.PROBLEM_GEN_DEBUG) Debug.WriteLine("Outer Filtering: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
                                     }
                                 }
                                 // Check if the givens from new problem are a subset of the givens of the minimal problem.
@@ -254,7 +254,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
                                     if (Utilities.PROBLEM_GEN_DEBUG || Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
                                     {
-                                        Debug.WriteLine("Filtering for Minimal Givens: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
+                                        // Debug.WriteLine("Filtering for Minimal Givens: " + minimalProblem.ToString() + " for " + problems[p2].ToString());
                                     }
                                     minimalProblem = problems[p2];
                                 }
@@ -265,7 +265,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
                                     if (Utilities.PROBLEM_GEN_DEBUG || Utilities.BACKWARD_PROBLEM_GEN_DEBUG)
                                     {
-                                        Debug.WriteLine("Filtering for Minimal Givens: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
+                                        // Debug.WriteLine("Filtering for Minimal Givens: " + problems[p2].ToString() + " for " + minimalProblem.ToString());
                                     }
                                 }
                             }

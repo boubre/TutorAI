@@ -13,24 +13,24 @@ namespace GeometryTutorLib.GenericInstantiator
         private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.SSS_SIMILARITY);
 
         private static List<Triangle> candidateTriangles = new List<Triangle>();
-        private static List<ProportionalSegments> candidateSegments = new List<ProportionalSegments>();
+        private static List<SegmentRatioEquation> candidateSegmentEquations = new List<SegmentRatioEquation>();
 
         // Resets all saved data.
         public static void Clear()
         {
             candidateTriangles.Clear();
-            candidateSegments.Clear();
+            candidateSegmentEquations.Clear();
         }
 
         //
         // In order for two triangles to be congruent, we require the following:
         //    Triangle(A, B, C), Triangle(D, E, F),
-        //    ProportionalSegments(Segment(A, B), Segment(D, E)),
-        //    ProportionalSegments(Segment(A, C), Segment(D, F)),
-        //    ProportionalSegments(Segment(B, C), Segment(E, F)) -> Congruent(Triangle(A, B, C), Triangle(D, E, F)),
-        //                                                          Congruent(Angles(A, B, C), Angle(D, E, F)),
-        //                                                          Congruent(Angles(C, A, B), Angle(F, D, E)),
-        //                                                          Congruent(Angles(B, C, A), Angle(E, F, D)),
+        //    SegmentRatio(Segment(A, B), Segment(D, E)),
+        //    SegmentRatio(Segment(A, C), Segment(D, F)),
+        //    SegmentRatio(Segment(B, C), Segment(E, F)) -> Congruent(Triangle(A, B, C), Triangle(D, E, F)),
+        //                                                  Congruent(Angles(A, B, C), Angle(D, E, F)),
+        //                                                  Congruent(Angles(C, A, B), Angle(F, D, E)),
+        //                                                  Congruent(Angles(B, C, A), Angle(E, F, D)),
         //
         // Note: we need to figure out the proper order of the sides to guarantee congruence
         //
@@ -40,9 +40,9 @@ namespace GeometryTutorLib.GenericInstantiator
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // If this is a new segment, check for congruent triangles with this new piece of information
-            if (clause is ProportionalSegments)
+            if (clause is SegmentRatioEquation)
             {
-                ProportionalSegments newProp = clause as ProportionalSegments;
+                SegmentRatioEquation newEq = clause as SegmentRatioEquation;
 
                 // Check all combinations of triangles to see if they are congruent
                 // This congruence must include the new segment congruence
@@ -50,18 +50,15 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     for (int j = i + 1; j < candidateTriangles.Count; j++)
                     {
-                        for (int m = 0; m < candidateSegments.Count - 1; m++)
+                        foreach (SegmentRatioEquation oldEq in candidateSegmentEquations)
                         {
-                            for (int n = m + 1; n < candidateSegments.Count; n++)
-                            {
-                                newGrounded.AddRange(CheckForSSS(candidateTriangles[i], candidateTriangles[j], newProp, candidateSegments[m], candidateSegments[n]));
-                            }
+                            newGrounded.AddRange(CheckForSSS(candidateTriangles[i], candidateTriangles[j], newEq, oldEq));
                         }
                     }
                 }
 
                 // Add this segment to the list of possible clauses to unify later
-                candidateSegments.Add(newProp);
+                candidateSegmentEquations.Add(newEq);
             }
             // If this is a new triangle, check for triangles which may be congruent to this new triangle
             else if (clause is Triangle)
@@ -70,14 +67,11 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 foreach (Triangle oldTriangle in candidateTriangles)
                 {
-                    for (int m = 0; m < candidateSegments.Count - 2; m++)
+                    for (int m = 0; m < candidateSegmentEquations.Count - 1; m++)
                     {
-                        for (int n = m + 1; n < candidateSegments.Count - 1; n++)
+                        for (int n = m + 1; n < candidateSegmentEquations.Count; n++)
                         {
-                            for (int p = n + 1; p < candidateSegments.Count; p++)
-                            {
-                                newGrounded.AddRange(CheckForSSS(newTriangle, oldTriangle, candidateSegments[m], candidateSegments[n], candidateSegments[p]));
-                            }
+                            newGrounded.AddRange(CheckForSSS(newTriangle, oldTriangle, candidateSegmentEquations[m], candidateSegmentEquations[n]));
                         }
                     }
                 }
@@ -92,41 +86,39 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Of all the congruent segment pairs, choose a subset of 3. Exhaustively check all; if they work, return the set.
         //
-        private static List<EdgeAggregator> CheckForSSS(Triangle ct1, Triangle ct2, ProportionalSegments pss1, ProportionalSegments pss2, ProportionalSegments pss3)
+        private static List<EdgeAggregator> CheckForSSS(Triangle ct1, Triangle ct2, SegmentRatioEquation sre1, SegmentRatioEquation sre2)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // The proportional relationships need to link the given triangles
             //
-            if (!pss1.LinksTriangles(ct1, ct2)) return newGrounded;
-            if (!pss2.LinksTriangles(ct1, ct2)) return newGrounded;
-            if (!pss3.LinksTriangles(ct1, ct2)) return newGrounded;
+            if (!sre1.LinksTriangles(ct1, ct2)) return newGrounded;
+            if (!sre2.LinksTriangles(ct1, ct2)) return newGrounded;
 
             //
-            // Segments must be proportionally equal
+            // Both equations must share a fraction (ratio)
             //
-            if (!pss1.ProportionallyEquals(pss2)) return newGrounded;
-            if (!pss1.ProportionallyEquals(pss3)) return newGrounded;
-            if (!pss2.ProportionallyEquals(pss3)) return newGrounded;
-
-            // The smaller segments must belong to one triangle, same for larger segments.
-            if (!(ct1.HasSegment(pss1.smallerSegment) && ct1.HasSegment(pss2.smallerSegment) && ct1.HasSegment(pss3.smallerSegment) &&
-                  ct2.HasSegment(pss1.largerSegment) && ct2.HasSegment(pss2.largerSegment) && ct2.HasSegment(pss3.largerSegment))  &&
-                !(ct1.HasSegment(pss1.largerSegment) && ct1.HasSegment(pss2.largerSegment) && ct1.HasSegment(pss3.largerSegment) &&
-                  ct2.HasSegment(pss1.smallerSegment) && ct2.HasSegment(pss2.smallerSegment) && ct2.HasSegment(pss3.smallerSegment)))
-                return newGrounded;
+            if (!sre1.SharesRatio(sre2)) return newGrounded;
 
             //
             // Collect all of the applicable segments
             //
-            Segment seg1Tri1 = ct1.GetSegment(pss1);
-            Segment seg2Tri1 = ct1.GetSegment(pss2);
-            Segment seg3Tri1 = ct1.GetSegment(pss3);
+            SegmentRatio shared = sre1.GetSharedRatio(sre2);
+            SegmentRatio other1 = sre1.GetOtherRatio(shared);
+            SegmentRatio other2 = sre2.GetOtherRatio(shared);
 
-            Segment seg1Tri2 = ct2.GetSegment(pss1);
-            Segment seg2Tri2 = ct2.GetSegment(pss2);
-            Segment seg3Tri2 = ct2.GetSegment(pss3);
+            Segment seg1Tri1 = ct1.GetSegment(shared);
+            Segment seg2Tri1 = ct1.GetSegment(other1);
+            Segment seg3Tri1 = ct1.GetSegment(other2);
+
+            if (seg1Tri1 == null || seg2Tri1 == null || seg3Tri1 == null) return newGrounded;
+
+            Segment seg1Tri2 = ct2.GetSegment(shared);
+            Segment seg2Tri2 = ct2.GetSegment(other1);
+            Segment seg3Tri2 = ct2.GetSegment(other2);
+
+            if (seg1Tri2 == null || seg2Tri2 == null || seg3Tri2 == null) return newGrounded;
 
             // Avoid redundant segments, if they arise
             if (seg1Tri1.StructurallyEquals(seg2Tri1) || seg1Tri1.StructurallyEquals(seg3Tri1) || seg2Tri1.StructurallyEquals(seg3Tri1)) return newGrounded;
@@ -143,9 +135,8 @@ namespace GeometryTutorLib.GenericInstantiator
             List<GroundedClause> simTriAntecedent = new List<GroundedClause>();
             simTriAntecedent.Add(ct1);
             simTriAntecedent.Add(ct2);
-            simTriAntecedent.Add(pss1);
-            simTriAntecedent.Add(pss2);
-            simTriAntecedent.Add(pss3);
+            simTriAntecedent.Add(sre1);
+            simTriAntecedent.Add(sre2);
 
             newGrounded.AddRange(SASSimilarity.GenerateCorrespondingParts(pointPairs, simTriAntecedent, annotation));
 

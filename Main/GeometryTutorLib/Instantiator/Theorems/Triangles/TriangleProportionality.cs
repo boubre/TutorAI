@@ -183,11 +183,13 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!triangleSide2.PointIsOnAndExactlyBetweenEndpoints(off1)) return newGrounded;
 
             //
-            // Construct the new proprtional relationships
+            // Construct the new proprtional relationship and resultant equation
             //
             Point sharedVertex = triangleSide1.SharedVertex(triangleSide2);
-            GeometricProportionalSegments newProp1 = new GeometricProportionalSegments(new Segment(sharedVertex, off2), triangleSide1);
-            GeometricProportionalSegments newProp2 = new GeometricProportionalSegments(new Segment(sharedVertex, off1), triangleSide2);
+            SegmentRatio newProp1 = new SegmentRatio(new Segment(sharedVertex, off2), triangleSide1);
+            SegmentRatio newProp2 = new SegmentRatio(new Segment(sharedVertex, off1), triangleSide2);
+
+            GeometricSegmentRatioEquation newEq = new GeometricSegmentRatioEquation(newProp1, newProp2);
 
             // Construct hyperedge
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -196,8 +198,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(inter2);
             antecedent.Add(parallel);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, newProp1, annotation));
-            newGrounded.Add(new EdgeAggregator(antecedent, newProp2, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, newEq, annotation));
 
             return newGrounded;
         }

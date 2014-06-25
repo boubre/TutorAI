@@ -29,8 +29,7 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<GeometricAngleEquation> geoAngleEqs = new List<GeometricAngleEquation>();
 
         // Old Proportional Segment Expressions
-        private static List<GeometricProportionalSegments> geoPropSegs = new List<GeometricProportionalSegments>();
-        private static List<AlgebraicProportionalSegments> algPropSegs = new List<AlgebraicProportionalSegments>();
+        private static List<SegmentRatio> propSegs = new List<SegmentRatio>();
 
         // Old Proportional Angle Expressions
         private static List<GeometricProportionalAngles> geoPropAngs = new List<GeometricProportionalAngles>();
@@ -51,8 +50,7 @@ namespace GeometryTutorLib.GenericInstantiator
             algAngleEqs.Clear();
             geoAngleEqs.Clear();
 
-            geoPropSegs.Clear();
-            algPropSegs.Clear();
+            propSegs.Clear();
 
             geoPropAngs.Clear();
             algPropAngs.Clear();
@@ -74,7 +72,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have an equation or congruence?
-            if (!(clause is Equation) && !(clause is Congruent) && !(clause is ProportionalSegments)) return newGrounded;
+            if (!(clause is Equation) && !(clause is Congruent) && !(clause is SegmentRatio)) return newGrounded;
 
             // Has this clause been generated before?
             // Since generated clauses will eventually be instantiated as well, this will reach a fixed point and stop.
@@ -103,12 +101,12 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 newGrounded.AddRange(HandleNewCongruentSegments(clause as CongruentSegments));
             }
-            else if (clause is ProportionalSegments)
+            else if (clause is SegmentRatio)
             {
                 // Avoid using proportional segments that should really be congruent (they are deduced from similar triangles which are, in fact, congruent)
-                if (Utilities.CompareValues((clause as ProportionalSegments).dictatedProportion, 1)) return newGrounded;
+                if (Utilities.CompareValues((clause as SegmentRatio).dictatedProportion, 1)) return newGrounded;
 
-                newGrounded.AddRange(HandleNewProportionalSegments(clause as ProportionalSegments));
+                newGrounded.AddRange(HandleNewSegmentRatio(clause as SegmentRatio));
             }
 
             // Add the new clause to the right list for later combining
@@ -181,7 +179,7 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // For generation of transitive proportional segments
         //
-        private static List<EdgeAggregator> CreateProportionalSegments(ProportionalSegments pss, CongruentSegments conSeg)
+        private static List<EdgeAggregator> CreateSegmentRatio(SegmentRatio pss, CongruentSegments conSeg)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
@@ -196,7 +194,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 case 1:
                     // Expected case to create a new congruence relationship
-                    return ProportionalSegments.CreateTransitiveProportion(pss, conSeg);
+//                    return SegmentRatio.CreateTransitiveProportion(pss, conSeg);
 
                 case 2:
                     // This is either reflexive or the exact same congruence relationship (which shouldn't happen)
@@ -278,9 +276,9 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // New proportions? G + G -> A
-            foreach (GeometricProportionalSegments gps in geoPropSegs)
+            foreach (SegmentRatio ps in propSegs)
             {
-                newGrounded.AddRange(CreateProportionalSegments(gps, congSegs));
+                newGrounded.AddRange(CreateSegmentRatio(ps, congSegs));
             }
 
             if (congSegs is GeometricCongruentSegments)
@@ -298,10 +296,10 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
 
                 // New proportions? G + A -> A
-                foreach (AlgebraicProportionalSegments aps in algPropSegs)
-                {
-                    newGrounded.AddRange(CreateProportionalSegments(aps, congSegs));
-                }
+                //foreach (AlgebraicSegmentRatio aps in algPropSegs)
+                //{
+                //    newGrounded.AddRange(CreateSegmentRatio(aps, congSegs));
+                //}
             }
 
             //
@@ -322,10 +320,10 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
 
                 // New proportions? A + A -> A
-                foreach (AlgebraicProportionalSegments aps in algPropSegs)
-                {
-                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalSegments(aps, congSegs)));
-                }
+                //foreach (AlgebraicSegmentRatio aps in algPropSegs)
+                //{
+                //    newGrounded.AddRange(MakePurelyAlgebraic(CreateSegmentRatio(aps, congSegs)));
+                //}
             }
 
             return newGrounded;
@@ -334,33 +332,33 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Segments
         //
-        private static List<EdgeAggregator> HandleNewProportionalSegments(ProportionalSegments propSegs)
+        private static List<EdgeAggregator> HandleNewSegmentRatio(SegmentRatio propSegs)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // New transitivity? G + G -> A
             foreach (GeometricCongruentSegments gcs in geoCongSegments)
             {
-                newGrounded.AddRange(CreateProportionalSegments(propSegs, gcs));
+                newGrounded.AddRange(CreateSegmentRatio(propSegs, gcs));
             }
 
-            if (propSegs is GeometricProportionalSegments)
+            if (propSegs is SegmentRatio)
             {
                 // New transitivity? G + A -> A
                 foreach (AlgebraicCongruentSegments acs in algCongSegments)
                 {
-                    newGrounded.AddRange(CreateProportionalSegments(propSegs, acs));
+                    newGrounded.AddRange(CreateSegmentRatio(propSegs, acs));
                 }
             }
 
-            else if (propSegs is AlgebraicProportionalSegments)
-            {
-                // New transitivity? A + A -> A
-                foreach (AlgebraicCongruentSegments acs in algCongSegments)
-                {
-                    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalSegments(propSegs, acs)));
-                }
-            }
+            //else if (propSegs is AlgebraicSegmentRatio)
+            //{
+            //    // New transitivity? A + A -> A
+            //    foreach (AlgebraicCongruentSegments acs in algCongSegments)
+            //    {
+            //        newGrounded.AddRange(MakePurelyAlgebraic(CreateSegmentRatio(propSegs, acs)));
+            //    }
+            //}
 
             return newGrounded;
         }
@@ -1191,14 +1189,14 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 algCongAngles.Add(c as AlgebraicCongruentAngles);
             }
-            else if (c is GeometricProportionalSegments)
+            else if (c is GeometricSegmentRatioEquation)
             {
-                geoPropSegs.Add(c as GeometricProportionalSegments);
+                propSegs.Add(c as SegmentRatio);
             }
-            else if (c is AlgebraicProportionalSegments)
-            {
-                algPropSegs.Add(c as AlgebraicProportionalSegments);
-            }
+            //else if (c is AlgebraicSegmentRatioEquation)
+            //{
+            //    algPropSegs.Add(c as AlgebraicSegmentRatioEquation);
+            //}
             else if (c is GeometricProportionalAngles)
             {
                 geoPropAngs.Add(c as GeometricProportionalAngles);
@@ -1246,14 +1244,14 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 return algCongAngles.Contains(c as AlgebraicCongruentAngles);
             }
-            else if (c is GeometricProportionalSegments)
+            else if (c is GeometricSegmentRatioEquation)
             {
-                return geoPropSegs.Contains(c as GeometricProportionalSegments);
+                return propSegs.Contains(c as SegmentRatio);
             }
-            else if (c is AlgebraicProportionalSegments)
-            {
-                return algPropSegs.Contains(c as AlgebraicProportionalSegments);
-            }
+            //else if (c is AlgebraicSegmentRatioEquation)
+            //{
+            //    return algPropSegs.Contains(c as AlgebraicSegmentRatioEquation);
+            //}
             else if (c is GeometricProportionalAngles)
             {
                 return geoPropAngs.Contains(c as GeometricProportionalAngles);

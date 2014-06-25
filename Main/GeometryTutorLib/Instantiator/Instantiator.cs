@@ -175,7 +175,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is Equation)
                 {
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
-                    HandleDeducedClauses(worklist, ProportionalSegments.InstantiateEquation(clause));
+                    HandleDeducedClauses(worklist, SegmentRatio.InstantiateEquation(clause));
                     if (clause is AngleEquation)
                     {
                         HandleDeducedClauses(worklist, AnglesOfEqualMeasureAreCongruent.Instantiate(clause));
@@ -186,7 +186,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     if ((clause as Equation).IsGeometric())
                     {
                         HandleDeducedClauses(worklist, ProportionalAngles.Instantiate(clause));
-                        HandleDeducedClauses(worklist, ProportionalSegments.InstantiateEquation(clause));
+                        HandleDeducedClauses(worklist, SegmentRatio.InstantiateEquation(clause));
                     }
                 }
                 else if (clause is Midpoint)
@@ -221,11 +221,11 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, OnePairOppSidesCongruentParallelImpliesParallelogram.Instantiate(clause));
                 }
-                else if (clause is ProportionalSegments)
+                else if (clause is SegmentRatioEquation)
                 {
                     HandleDeducedClauses(worklist, SASSimilarity.Instantiate(clause));
                     HandleDeducedClauses(worklist, SSSSimilarity.Instantiate(clause));
-                    HandleDeducedClauses(worklist, ProportionalSegments.InstantiateProportion(clause));
+//                    HandleDeducedClauses(worklist, SegmentRatio.InstantiateProportion(clause));
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
                 }
                 else if (clause is ProportionalAngles)
@@ -275,7 +275,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, MidpointDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
                     HandleDeducedClauses(worklist, CongruentSidesInTriangleImplyCongruentAngles.Instantiate(clause));
-                    HandleDeducedClauses(worklist, CongruentSegmentsImplyProportionalSegmentsDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CongruentSegmentsImplySegmentRatioDefinition.Instantiate(clause));
 
                     // For quadrilaterals
                     HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
@@ -314,7 +314,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, CongruentSegmentsImplyProportionalSegmentsDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CongruentSegmentsImplySegmentRatioDefinition.Instantiate(clause));
                     
                     if (clause is IsoscelesTriangle)
                     {
@@ -675,7 +675,7 @@ namespace GeometryTutorLib.GenericInstantiator
             AltitudeDefinition.Clear();
             AngleBisectorDefinition.Clear();
             ComplementaryDefinition.Clear();
-            CongruentSegmentsImplyProportionalSegmentsDefinition.Clear();
+            CongruentSegmentsImplySegmentRatioDefinition.Clear();
             EquilateralTriangleDefinition.Clear();
             IsoscelesTriangleDefinition.Clear();
             MedianDefinition.Clear();

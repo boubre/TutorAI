@@ -218,7 +218,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
             {
                 if (this.givens.Remove(p))
                 {
-                    if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("A node existed in the path AND givens (" + p + "); removing from givens");
+                    // if (Utilities.PROBLEM_GEN_DEBUG) System.Diagnostics.Debug.WriteLine("A node existed in the path AND givens (" + p + "); removing from givens");
                 }
             }
 

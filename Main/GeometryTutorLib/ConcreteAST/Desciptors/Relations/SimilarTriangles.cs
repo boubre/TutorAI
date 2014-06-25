@@ -69,22 +69,21 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Create the three resultant angles from each triangle to create the congruency of angles
         //
-        private static List<GenericInstantiator.EdgeAggregator> GenerateProportionalSegments(SimilarTriangles simTris,
-                                                                                             List<Point> orderedTriOnePts,
-                                                                                             List<Point> orderedTriTwoPts)
+        private static List<GenericInstantiator.EdgeAggregator> GenerateSegmentRatio(SimilarTriangles simTris,
+                                                                                     List<Point> orderedTriOnePts,
+                                                                                     List<Point> orderedTriTwoPts)
         {
-            List<GroundedClause> propSegments = new List<GroundedClause>();
-
             //
             // Cycle through the points creating the angles: ABC - DEF ; BCA - EFD ; CAB - FDE
             //
+            List<SegmentRatio> ratios = new List<SegmentRatio>();
             for (int i = 0; i < orderedTriOnePts.Count; i++)
             {
                 Segment cs1 = new Segment(orderedTriOnePts[0], orderedTriOnePts[1]);
                 Segment cs2 = new Segment(orderedTriTwoPts[0], orderedTriTwoPts[1]);
-                GeometricProportionalSegments prop = new GeometricProportionalSegments(cs1, cs2);
+                SegmentRatio ratio = new SegmentRatio(cs1, cs2);
 
-                propSegments.Add(prop);
+                ratios.Add(ratio);
 
                 // rotate the lists
                 Point tmp = orderedTriOnePts.ElementAt(0);
@@ -97,14 +96,23 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             //
+            // Take the ratios and create ratio equations.
+            //
+            List<GroundedClause> ratioEqs = new List<GroundedClause>();
+            for (int i = 0; i < ratios.Count; i++)
+            {
+                ratioEqs.Add(new GeometricSegmentRatioEquation(ratios[i], ratios[(i + 1) % ratios.Count]));
+            }
+
+            //
             // Construct the new deduced edges: proportional segments.
             //
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(simTris);
-            foreach (GroundedClause prop in propSegments)
+            foreach (GroundedClause eq in ratioEqs)
             {
-                newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, prop, segmentAnnotation));
+                newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, eq, segmentAnnotation));
             }
 
             return newGrounded;
@@ -137,7 +145,7 @@ namespace GeometryTutorLib.ConcreteAST
                                                                                   List<Point> orderedTriTwoPts)
         {
             List<GenericInstantiator.EdgeAggregator> angles = GenerateCongruentAngles(simTris, orderedTriOnePts, orderedTriTwoPts);
-            List<GenericInstantiator.EdgeAggregator> segments = GenerateProportionalSegments(simTris, orderedTriOnePts, orderedTriTwoPts);
+            List<GenericInstantiator.EdgeAggregator> segments = GenerateSegmentRatio(simTris, orderedTriOnePts, orderedTriTwoPts);
             angles.AddRange(segments);
  
             return angles;

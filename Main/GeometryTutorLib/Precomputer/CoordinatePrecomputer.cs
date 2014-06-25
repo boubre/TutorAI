@@ -160,7 +160,7 @@ namespace GeometryTutorLib.Precomputer
                             {
                                 System.Diagnostics.Debug.WriteLine("< " + proportion.Key + ", " + proportion.Value + " >: " + segments[s1] + " : " + segments[s2]);
                             }
-                            descriptors.Add(new ProportionalSegments(segments[s1], segments[s2]));
+                            descriptors.Add(new SegmentRatio(segments[s1], segments[s2]));
                         }
                     }
                 }

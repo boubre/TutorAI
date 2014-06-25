@@ -6,7 +6,7 @@ using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib.GenericInstantiator
 {
-    public class CongruentSegmentsImplyProportionalSegmentsDefinition : Axiom
+    public class CongruentSegmentsImplySegmentRatioDefinition : Axiom
     {
         private readonly static string NAME = "Congruent Segments Imply Proportional Segments";
         private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION);
@@ -116,27 +116,40 @@ namespace GeometryTutorLib.GenericInstantiator
             propAntecedent.Add(css1);
             propAntecedent.Add(css2);
 
-            GeometricProportionalSegments newProp = null;
-            if (!Utilities.CompareValues(seg1Tri1.Length, seg1Tri2.Length))
-            {
-                newProp = new GeometricProportionalSegments(seg1Tri1, seg1Tri2);
-                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
-            }
-            if (!Utilities.CompareValues(seg1Tri1.Length, seg2Tri2.Length))
-            {
-                newProp = new GeometricProportionalSegments(seg1Tri1, seg2Tri2);
-                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
-            }
-            if (!Utilities.CompareValues(seg2Tri1.Length, seg1Tri2.Length))
-            {
-                newProp = new GeometricProportionalSegments(seg2Tri1, seg1Tri2);
-                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
-            }
-            if (!Utilities.CompareValues(seg2Tri1.Length, seg2Tri2.Length))
-            {
-                newProp = new GeometricProportionalSegments(seg2Tri1, seg2Tri2);
-                newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
-            }
+            SegmentRatio ratio1 = new SegmentRatio(seg1Tri1, seg1Tri2);
+            SegmentRatio ratio2 = new SegmentRatio(seg2Tri1, seg2Tri2);
+
+            GeometricSegmentRatioEquation newEq = new GeometricSegmentRatioEquation(ratio1, ratio2);
+            
+            newGrounded.Add(new EdgeAggregator(propAntecedent, newEq, annotation));
+
+            ////
+            //// Only generate if ratios are not 1.
+            ////
+
+
+
+            //GeometricSegmentRatio newProp = null;
+            //if (!Utilities.CompareValues(seg1Tri1.Length, seg1Tri2.Length))
+            //{
+            //    newProp = new GeometricSegmentRatio(seg1Tri1, seg1Tri2);
+            //    newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
+            //}
+            //if (!Utilities.CompareValues(seg1Tri1.Length, seg2Tri2.Length))
+            //{
+            //    newProp = new GeometricSegmentRatio(seg1Tri1, seg2Tri2);
+            //    newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
+            //}
+            //if (!Utilities.CompareValues(seg2Tri1.Length, seg1Tri2.Length))
+            //{
+            //    newProp = new GeometricSegmentRatio(seg2Tri1, seg1Tri2);
+            //    newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
+            //}
+            //if (!Utilities.CompareValues(seg2Tri1.Length, seg2Tri2.Length))
+            //{
+            //    newProp = new GeometricSegmentRatio(seg2Tri1, seg2Tri2);
+            //    newGrounded.Add(new EdgeAggregator(propAntecedent, newProp, annotation));
+            //}
 
             return newGrounded;
         }

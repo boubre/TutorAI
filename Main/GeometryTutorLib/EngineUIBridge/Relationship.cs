@@ -9,7 +9,7 @@ namespace GeometryTutorLib.EngineUIBridge
     {
         public static Relationship CongruentTriangles = new Relationship("Congruent Triangles");
         public static Relationship SimilarTriangles = new Relationship("Similar Triangles");
-        public static Relationship ProportionalSegments = new Relationship("Proportional Segments");
+        public static Relationship SegmentRatio = new Relationship("Proportional Segments");
         public static Relationship CongruentAngles = new Relationship("Congruent Angles");
         public static Relationship CongruentSegments = new Relationship("Congruent Segments");
         public static Relationship Midpoint = new Relationship("Midpoint");
@@ -43,7 +43,7 @@ namespace GeometryTutorLib.EngineUIBridge
             List<Relationship> rv = new List<Relationship>();
             rv.Add(CongruentTriangles);
             rv.Add(SimilarTriangles);
-            rv.Add(ProportionalSegments);
+            rv.Add(SegmentRatio);
             rv.Add(CongruentAngles);
             rv.Add(CongruentSegments);
             rv.Add(Midpoint);

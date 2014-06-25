@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Obsolete\AlgebraicSegmentRatio.cs" />
     <Compile Include="Obsolete\ASA.cs" />
     <Compile Include="Obsolete\ClauseConstructor.cs" />
     <Compile Include="Obsolete\DiGraph.cs" />
+    <Compile Include="Obsolete\GeometricSegmentRatio.cs" />
     <Compile Include="Obsolete\ParallelImplySameSideInteriorSupplementary.cs" />
     <Compile Include="MainProgram.cs" />
     <Compile Include="Obsolete\PebblerHypergraph.cs" />

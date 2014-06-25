@@ -223,7 +223,7 @@ namespace GeometryTutorLib.ProblemAnalyzer
 
 //        private bool StronglyRelated(GroundedClause firstNode, GroundedClause secondNode)
 //        {
-//            if (firstNode is ProportionalSegments && secondNode is ProportionalSegments) return true;
+//            if (firstNode is SegmentRatio && secondNode is SegmentRatio) return true;
 //            if (firstNode is ProportionalAngles && secondNode is ProportionalAngles) return true;
 
 //            if (firstNode is Congruent && secondNode is Congruent)

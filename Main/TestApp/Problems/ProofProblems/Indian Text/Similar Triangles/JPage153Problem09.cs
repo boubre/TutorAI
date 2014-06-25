@@ -29,10 +29,10 @@ namespace GeometryTestbed
             pts.Add(c);
             collinear.Add(new Collinear(pts));
 
-                        parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+            parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
             
-            given.Add(new GeometricProportionalSegments((Segment)parser.Get(new Segment(b, d)), (Segment)parser.Get(new Segment(c, d))));
-            given.Add(new GeometricProportionalSegments(ab, ac));
+            // given.Add(new GeometricProportionalSegments((Segment)parser.Get(new Segment(b, d)), (Segment)parser.Get(new Segment(c, d))));
+            // given.Add(new GeometricProportionalSegments(ab, ac));
         }
     }
 }

@@ -355,7 +355,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         // Of the propportional pair, return the segment that applies to this triangle
-        public Segment GetSegment(ProportionalSegments prop)
+        public Segment GetSegment(SegmentRatio prop)
         {
             if (HasSegment(prop.smallerSegment)) return prop.smallerSegment;
             if (HasSegment(prop.largerSegment)) return prop.largerSegment;
