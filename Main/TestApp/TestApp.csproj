@@ -52,6 +52,7 @@
     <Compile Include="Problems\ProofProblems\ActualProofProblem.cs" />
     <Compile Include="Problems\ProofProblems\CirclesProblem.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Circles\Page296Theorem7_1.cs" />
+    <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Circles\Page296Theorem7_1_Test2.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\ExtraSquareProblem.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page162Problem20.cs" />
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page166Problem05.cs" />

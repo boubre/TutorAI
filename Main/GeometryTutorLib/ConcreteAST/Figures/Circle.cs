@@ -339,13 +339,13 @@ namespace GeometryTutorLib.ConcreteAST
             Segment perpendicular = segment.GetPerpendicular(this.center);
 
             // Is this perpendicular segment a radius? Check length
-            if (!Utilities.CompareValues(perpendicular.Length, this.radius)) return null;
+            //if (!Utilities.CompareValues(perpendicular.Length, this.radius)) return null;
 
-            //
-            // The intersection between the perpendicular and the segment must be within the endpoints of the segment.
-            //
+            // Is the perpendicular a radius? Check that the intersection of the segment and the perpendicular is on the circle
             Point intersection = segment.FindIntersection(perpendicular);
+            if (!this.PointIsOn(intersection)) return null;
 
+            // The intersection between the perpendicular and the segment must be within the endpoints of the segment.
             return segment.PointIsOnAndBetweenEndpoints(intersection) ? perpendicular : null;
         }
 

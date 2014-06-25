@@ -75,7 +75,7 @@ namespace GeometryTestbed
             //Circles
             //
             problems.Add(new Page296Theorem7_1(true, false));
-
+            problems.Add(new Page296Theorem7_1_Test2(true, false));
 
 
             //problems.Add(new BackwardPage134Problem7(false, false)); 
