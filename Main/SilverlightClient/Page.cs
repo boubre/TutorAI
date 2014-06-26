@@ -91,7 +91,7 @@ namespace LiveGeometry
             manageGivensWindow = new ManageGivensWindow() { drawingHost = drawingHost };
             problemCharacteristicsWindow = new ProblemCharacteristicsWindow(manageGivensWindow);
             problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
-            enterSolutionWindow = new EnterSolutionWindow();
+            enterSolutionWindow = new EnterSolutionWindow() { drawingHost = drawingHost };
         }
 
         private void AddBehaviors()
