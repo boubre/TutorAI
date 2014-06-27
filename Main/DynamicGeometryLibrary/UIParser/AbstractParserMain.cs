@@ -95,6 +95,14 @@ namespace LiveGeometry.TutorParser
             {
                 return GeometryTutorLib.Utilities.GetStructurally<InMiddle>(implied.inMiddles, clause as InMiddle);
             }
+            else if (clause is MinorArc)
+            {
+                return GeometryTutorLib.Utilities.GetStructurally<MinorArc>(implied.minorArcs, clause as MinorArc);
+            }
+            else if (clause is MajorArc)
+            {
+                return GeometryTutorLib.Utilities.GetStructurally<MajorArc>(implied.majorArcs, clause as MajorArc);
+            }
             else if (clause is ArcInMiddle)
             {
                 return GeometryTutorLib.Utilities.GetStructurally<ArcInMiddle>(implied.arcInMiddle, clause as ArcInMiddle);

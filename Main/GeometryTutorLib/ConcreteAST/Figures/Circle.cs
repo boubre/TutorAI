@@ -816,6 +816,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             Segment chord = null;
 
+            // If the given segment is a chord, return that segment
+            if (chords.Contains(thatSegment)) return thatSegment;
+
+            // Otherwise, check to see if it is a secant containing a chord
             secants.TryGetValue(thatSegment, out chord);
 
             return chord;

@@ -95,7 +95,7 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!inter.intersect.StructurallyEquals(perp.intersect)) return newGrounded;
 
             // Is this too restrictive?
-            if ((inter.HasSegment(perp.lhs) && inter.HasSegment(perp.rhs)) && (perp.HasSegment(inter.lhs) && perp.HasSegment(inter.rhs))) return newGrounded;
+            if (!((inter.HasSegment(perp.lhs) && inter.HasSegment(perp.rhs)) && (perp.HasSegment(inter.lhs) && perp.HasSegment(inter.rhs)))) return newGrounded;
 
             //
             // Does this perpendicular intersection apply to a given circle?
