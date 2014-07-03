@@ -63,8 +63,8 @@ namespace GeometryTutorLib.ConcreteAST
         public const int BOTH_ATOMIC = 2;
         public int GetAtomicity()
         {
-            bool leftIs = lhs is Angle || lhs is Segment || lhs is NumericValue;
-            bool rightIs = rhs is Angle || rhs is Segment || rhs is NumericValue;
+            bool leftIs = lhs is Angle || lhs is Segment || lhs is Arc || lhs is NumericValue;
+            bool rightIs = rhs is Angle || rhs is Segment || rhs is Arc || rhs is NumericValue;
 
             if (leftIs && rightIs) return BOTH_ATOMIC;
             if (!leftIs && !rightIs) return NONE_ATOMIC;

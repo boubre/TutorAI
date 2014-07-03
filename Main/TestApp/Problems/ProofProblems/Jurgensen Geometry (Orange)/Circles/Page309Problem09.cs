@@ -7,7 +7,7 @@ namespace GeometryTestbed
 {
     class Page309Problem09 : CirclesProblem
     {
-        //Demonstrates: Tangents are perpendicular to radii
+        //Demonstrates: Congruent chords have congruent arcs (and converse); arc addition axiom
 
         public Page309Problem09(bool onoff, bool complete) : base(onoff, complete)
         {

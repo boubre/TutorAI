@@ -73,6 +73,14 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 inflated = new GeometricAngleEquation(singleLeftExp, singleRightExp);
             }
+            else if (original is AlgebraicArcEquation)
+            {
+                inflated = new AlgebraicArcEquation(singleLeftExp, singleRightExp);
+            }
+            else if (original is GeometricArcEquation)
+            {
+                inflated = new GeometricArcEquation(singleLeftExp, singleRightExp);
+            }
 
             // If simplifying didn't do anything, return the original equation
             if (inflated.Equals(original))

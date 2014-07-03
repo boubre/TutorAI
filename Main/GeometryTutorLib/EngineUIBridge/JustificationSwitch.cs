@@ -23,6 +23,7 @@ namespace GeometryTutorLib.EngineUIBridge
             SSS,
             ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT,
             TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE,
+            ARC_ADDITION_AXIOM,
 
             // Definitions
             ALTITUDE_DEFINITION,
@@ -167,6 +168,7 @@ namespace GeometryTutorLib.EngineUIBridge
             justMap.Add(DeductionJustType.SSS, new Assumption("SSS Congruence", Assumption.AssumptionType.Axiom));
             justMap.Add(DeductionJustType.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT, new Assumption("Angles of Equal Measure are Congruent", Assumption.AssumptionType.Axiom));
             justMap.Add(DeductionJustType.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION, new Assumption("Congruent Segments Imply Proportional Segments", Assumption.AssumptionType.Axiom));
+            justMap.Add(DeductionJustType.ARC_ADDITION_AXIOM, new Assumption("Arc Addition", Assumption.AssumptionType.Axiom));
 
             // Definitions
             justMap.Add(DeductionJustType.ALTITUDE_DEFINITION, new Assumption("Altitude", Assumption.AssumptionType.Definition));
@@ -285,6 +287,7 @@ namespace GeometryTutorLib.EngineUIBridge
         public static bool SSS = true;
         public static bool ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT = true;
         public static bool TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE = true;
+        public static bool ARC_ADDITION_AXIOM = true;
 
         //
         // Definitions
@@ -410,6 +413,7 @@ namespace GeometryTutorLib.EngineUIBridge
                     //
                     if (assumption.Key == DeductionJustType.CIRCLES)
                     {
+                        EngineUIBridge.JustificationSwitch.ARC_ADDITION_AXIOM = false;
                         EngineUIBridge.JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS = false;
                         EngineUIBridge.JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT = false;
                         EngineUIBridge.JustificationSwitch.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT = false;

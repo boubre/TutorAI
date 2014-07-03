@@ -174,6 +174,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<Point> ordered = new List<Point>();
             foreach (KeyValuePair<double, Point> pair in pointAngleMap)
             {
+                pointsOnCircle.Add(pair.Value);
                 ordered.Add(pair.Value);
             }
 

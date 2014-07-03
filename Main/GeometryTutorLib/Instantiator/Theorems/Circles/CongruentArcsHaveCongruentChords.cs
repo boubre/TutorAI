@@ -103,14 +103,17 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 // Make an arc out of the chord and circle
                 MinorArc arc1 = new MinorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
+                MajorArc majorArc1 = new MajorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
 
                 foreach (Circle circle2 in circles2)
                 {
                     // Make an arc out of the chord and circle
-                    MinorArc arc2 = new MinorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
-
+                    MinorArc arc2 = new MinorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
+                    MajorArc majorArc2 = new MajorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
+                    
                     // Construct the congruence
                     GeometricCongruentArcs gcas = new GeometricCongruentArcs(arc1, arc2);
+                    GeometricCongruentArcs gcas2 = new GeometricCongruentArcs(majorArc1, majorArc2);
 
                     // For hypergraph
                     List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -119,6 +122,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     antecedent.Add(cas);
 
                     newGrounded.Add(new EdgeAggregator(antecedent, gcas, forwardAnnotation));
+                    newGrounded.Add(new EdgeAggregator(antecedent, gcas2, forwardAnnotation));
                 }
             }
 

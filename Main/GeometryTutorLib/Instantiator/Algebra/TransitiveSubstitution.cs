@@ -15,10 +15,12 @@ namespace GeometryTutorLib.GenericInstantiator
         // Congruences imply equations: AB \cong CD -> AB = CD
         private static List<GeometricCongruentSegments> geoCongSegments = new List<GeometricCongruentSegments>();
         private static List<GeometricCongruentAngles> geoCongAngles = new List<GeometricCongruentAngles>();
+        private static List<GeometricCongruentArcs> geoCongArcs = new List<GeometricCongruentArcs>();
 
         // These are transitively deduced congruences
         private static List<AlgebraicCongruentSegments> algCongSegments = new List<AlgebraicCongruentSegments>();
         private static List<AlgebraicCongruentAngles> algCongAngles = new List<AlgebraicCongruentAngles>();
+        private static List<AlgebraicCongruentArcs> algCongArcs = new List<AlgebraicCongruentArcs>();
 
         // Old segment equations
         private static List<GeometricSegmentEquation> geoSegmentEqs = new List<GeometricSegmentEquation>();
@@ -27,6 +29,10 @@ namespace GeometryTutorLib.GenericInstantiator
         // Old angle measure equations
         private static List<AlgebraicAngleEquation> algAngleEqs = new List<AlgebraicAngleEquation>();
         private static List<GeometricAngleEquation> geoAngleEqs = new List<GeometricAngleEquation>();
+
+        // Old arc equations
+        private static List<GeometricArcEquation> geoArcEqs = new List<GeometricArcEquation>();
+        private static List<AlgebraicArcEquation> algArcEqs = new List<AlgebraicArcEquation>();
 
         // Old Proportional Segment Expressions
         private static List<SegmentRatio> propSegs = new List<SegmentRatio>();
@@ -40,15 +46,20 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             geoCongSegments.Clear();
             geoCongAngles.Clear();
+            geoCongArcs.Clear();
 
             algCongSegments.Clear();
             algCongAngles.Clear();
+            algCongArcs.Clear();
 
             geoSegmentEqs.Clear();
             algSegmentEqs.Clear();
 
             algAngleEqs.Clear();
             geoAngleEqs.Clear();
+
+            algArcEqs.Clear();
+            geoArcEqs.Clear();
 
             propSegs.Clear();
 
@@ -93,6 +104,10 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 newGrounded.AddRange(HandleNewAngleEquation(clause as AngleEquation));
             }
+            else if (clause is ArcEquation)
+            {
+                newGrounded.AddRange(HandleNewArcEquation(clause as ArcEquation));
+            }
             else if (clause is CongruentAngles)
             {
                 newGrounded.AddRange(HandleNewCongruentAngles(clause as CongruentAngles));
@@ -100,6 +115,10 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (clause is CongruentSegments)
             {
                 newGrounded.AddRange(HandleNewCongruentSegments(clause as CongruentSegments));
+            }
+            else if (clause is CongruentArcs)
+            {
+                newGrounded.AddRange(HandleNewCongruentArcs(clause as CongruentArcs));
             }
             else if (clause is SegmentRatio)
             {
@@ -525,6 +544,128 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
+        // For generation of transitive congruent Arcs
+        //
+        private static List<EdgeAggregator> CreateCongruentArcs(CongruentArcs cas1, CongruentArcs cas2)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            int numSharedExps = cas1.SharesNumClauses(cas2);
+            switch (numSharedExps)
+            {
+                case 0:
+                    // Nothing is shared: do nothing
+                    break;
+
+                case 1:
+                    // Expected case to create a new congruence relationship
+                    return Congruent.CreateTransitiveCongruence(cas1, cas2);
+
+                case 2:
+                    // This is either reflexive or the exact same congruence relationship (which shouldn't happen)
+                    break;
+
+                default:
+
+                    throw new Exception("Congruent Statements may only have 0, 1, or 2 common expressions; not, " + numSharedExps);
+            }
+
+            return newGrounded;
+        }
+
+        //
+        // Substitute this new arc congruence into old arc equations
+        //
+        private static List<EdgeAggregator> CreateArcEquation(ArcEquation arcEq, CongruentArcs congArcs)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+            EdgeAggregator newEquationEdge;
+
+            //            if (angEq.HasRelationPredecessor(congAng) || congAng.HasRelationPredecessor(angEq)) return newGrounded;
+
+            newEquationEdge = PerformEquationSubstitution(arcEq, congArcs, congArcs.ca1, congArcs.ca2);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
+            newEquationEdge = PerformEquationSubstitution(arcEq, congArcs, congArcs.ca2, congArcs.ca1);
+            if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
+
+            return newGrounded;
+        }
+
+        //
+        // Generate all new relationships from a Geoemetric, Congruent Pair of Arcs
+        //
+        private static List<EdgeAggregator> HandleNewCongruentArcs(CongruentArcs congArcs)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            // New transitivity? G + G -> A
+            foreach (GeometricCongruentArcs gcss in geoCongArcs)
+            {
+                newGrounded.AddRange(CreateCongruentArcs(gcss, congArcs));
+            }
+
+            // New equations? G + G -> A
+            foreach (GeometricArcEquation gseqs in geoArcEqs)
+            {
+                newGrounded.AddRange(CreateArcEquation(gseqs, congArcs));
+            }
+
+            //// New proportions? G + G -> A
+            //foreach (GeometricProportionalAngles gpas in geoPropAngs)
+            //{
+            //    newGrounded.AddRange(CreateProportionalAngles(gpas, congAngs));
+            //}
+
+            if (congArcs is GeometricCongruentArcs)
+            {
+                // New transitivity? G + A -> A
+                foreach (AlgebraicCongruentArcs acas in algCongArcs)
+                {
+                    newGrounded.AddRange(CreateCongruentArcs(acas, congArcs));
+                }
+
+                // New equations? G + A -> A
+                foreach (AlgebraicArcEquation aseqs in algArcEqs)
+                {
+                    newGrounded.AddRange(CreateArcEquation(aseqs, congArcs));
+                }
+
+                // New proportions? G + A -> A
+                //foreach (AlgebraicProportionalAngles apas in algPropAngs)
+                //{
+                //    newGrounded.AddRange(CreateProportionalAngles(apas, congAngs));
+                //}
+            }
+
+            //
+            // NEW
+            //
+            else if (congArcs is AlgebraicCongruentArcs)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentArcs oldACAS in algCongArcs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateCongruentArcs(oldACAS, congArcs)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicArcEquation aseqs in algArcEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateArcEquation(aseqs, congArcs)));
+                }
+
+                //// New proportions? G + A -> A
+                //foreach (AlgebraicProportionalAngles apas in algPropAngs)
+                //{
+                //    newGrounded.AddRange(MakePurelyAlgebraic(CreateProportionalAngles(apas, congAngs)));
+                //}
+            }
+
+            return newGrounded;
+        }
+
+
+        //
         // Check equivalence of lists by verifying dual containment.
         //
         private static bool EqualLists(List<GroundedClause> list1, List<GroundedClause> list2)
@@ -545,11 +686,13 @@ namespace GeometryTutorLib.GenericInstantiator
         // For cosntruction of the new equations
         private static readonly int SEGMENT_EQUATION = 0;
         private static readonly int ANGLE_EQUATION = 1;
+        private static readonly int ARC_EQUATION = 2;
         private static readonly int EQUATION_ERROR = 1;
         private static int GetEquationType(Equation eq)
         {
             if (eq is SegmentEquation) return SEGMENT_EQUATION;
             if (eq is AngleEquation) return ANGLE_EQUATION;
+            if (eq is ArcEquation) return ARC_EQUATION;
             return EQUATION_ERROR;
         }
 
@@ -569,6 +712,10 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (equationType == ANGLE_EQUATION)
             {
                 newEq = new AlgebraicAngleEquation(left, right);
+            }
+            else if (equationType == ARC_EQUATION)
+            {
+                newEq = new AlgebraicArcEquation(left, right);
             }
 
             //
@@ -747,6 +894,61 @@ namespace GeometryTutorLib.GenericInstantiator
         }
 
         //
+        // Generate all new relationships from an Equation Containing Arc measurements
+        //
+        private static List<EdgeAggregator> HandleNewArcEquation(ArcEquation newArcEq)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            // New transitivity? G + G -> A
+            foreach (GeometricCongruentArcs gcas in geoCongArcs)
+            {
+                newGrounded.AddRange(CreateArcEquation(newArcEq, gcas));
+            }
+
+            // New equations? G + G -> A
+            foreach (GeometricArcEquation gangs in geoArcEqs)
+            {
+                newGrounded.AddRange(CreateNewEquation(gangs, newArcEq));
+            }
+
+            if (newArcEq is GeometricArcEquation)
+            {
+                // New transitivity? G + A -> A
+                foreach (AlgebraicCongruentArcs acas in algCongArcs)
+                {
+                    newGrounded.AddRange(CreateArcEquation(newArcEq, acas));
+                }
+
+                // New equations? G + A -> A
+                foreach (AlgebraicArcEquation aarcs in algArcEqs)
+                {
+                    newGrounded.AddRange(CreateNewEquation(aarcs, newArcEq));
+                }
+            }
+
+            //
+            // NEW
+            //
+            else if (newArcEq is AlgebraicArcEquation)
+            {
+                // New transitivity? A + A -> A
+                foreach (AlgebraicCongruentArcs oldACAS in algCongArcs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateArcEquation(newArcEq, oldACAS)));
+                }
+
+                // New equations? A + A -> A
+                foreach (AlgebraicArcEquation aarcs in algArcEqs)
+                {
+                    newGrounded.AddRange(MakePurelyAlgebraic(CreateNewEquation(aarcs, newArcEq)));
+                }
+            }
+
+            return newGrounded;
+        }
+        
+        //
         // Generate all new relationships from an Equation Containing Angle measurements
         //
         private static List<EdgeAggregator> HandleNewAngleEquation(AngleEquation newAngEq)
@@ -897,6 +1099,10 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 newEq = new AlgebraicAngleEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy());
             }
+            else if (eq is ArcEquation)
+            {
+                newEq = new AlgebraicArcEquation(eq.lhs.DeepCopy(), eq.rhs.DeepCopy());
+            }
 
             // Substitute into the copy
             newEq.Substitute(toFind, toSub);
@@ -945,6 +1151,10 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (simplified is AlgebraicSegmentEquation)
             {
                 newCongruent = new AlgebraicCongruentSegments((Segment)simplified.lhs, (Segment)simplified.rhs);
+            }
+            else if (simplified is AlgebraicArcEquation)
+            {
+                newCongruent = new AlgebraicCongruentArcs((Arc)simplified.lhs, (Arc)simplified.rhs);
             }
 
             // There is no need to simplify a congruence, so just return
@@ -1173,6 +1383,14 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 geoAngleEqs.Add(c as GeometricAngleEquation);
             }
+            else if (c is GeometricCongruentArcs)
+            {
+                geoCongArcs.Add(c as GeometricCongruentArcs);
+            }
+            else if (c is GeometricArcEquation)
+            {
+                geoArcEqs.Add(c as GeometricArcEquation);
+            }
             else if (c is AlgebraicSegmentEquation)
             {
                 algSegmentEqs.Add(c as AlgebraicSegmentEquation);
@@ -1181,6 +1399,10 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 algAngleEqs.Add(c as AlgebraicAngleEquation);
             }
+            else if (c is AlgebraicArcEquation)
+            {
+                algArcEqs.Add(c as AlgebraicArcEquation);
+            }
             else if (c is AlgebraicCongruentSegments)
             {
                 algCongSegments.Add(c as AlgebraicCongruentSegments);
@@ -1188,6 +1410,10 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (c is AlgebraicCongruentAngles)
             {
                 algCongAngles.Add(c as AlgebraicCongruentAngles);
+            }
+            else if (c is AlgebraicCongruentArcs)
+            {
+                algCongArcs.Add(c as AlgebraicCongruentArcs);
             }
             else if (c is GeometricSegmentRatioEquation)
             {
@@ -1228,6 +1454,14 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 return geoAngleEqs.Contains(c as GeometricAngleEquation);
             }
+            else if (c is GeometricCongruentArcs)
+            {
+                return geoCongArcs.Contains(c as GeometricCongruentArcs);
+            }
+            else if (c is GeometricArcEquation)
+            {
+                return geoArcEqs.Contains(c as GeometricArcEquation);
+            }
             else if (c is AlgebraicSegmentEquation)
             {
                 return algSegmentEqs.Contains(c as AlgebraicSegmentEquation);
@@ -1236,6 +1470,10 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 return algAngleEqs.Contains(c as AlgebraicAngleEquation);
             }
+            else if (c is AlgebraicArcEquation)
+            {
+                 return algArcEqs.Contains(c as AlgebraicArcEquation);
+            }
             else if (c is AlgebraicCongruentSegments)
             {
                 return algCongSegments.Contains(c as AlgebraicCongruentSegments);
@@ -1243,6 +1481,10 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (c is AlgebraicCongruentAngles)
             {
                 return algCongAngles.Contains(c as AlgebraicCongruentAngles);
+            }
+            else if (c is AlgebraicCongruentArcs)
+            {
+                return algCongArcs.Contains(c as AlgebraicCongruentArcs);
             }
             else if (c is GeometricSegmentRatioEquation)
             {

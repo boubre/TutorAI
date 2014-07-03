@@ -105,6 +105,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, SegmentBisectorDefinition.Instantiate(clause));
                 }
+                else if (clause is ArcInMiddle)
+                {
+                    HandleDeducedClauses(worklist, ArcAdditionAxiom.Instantiate(clause));
+                }
                 else if (clause is Intersection)
                 {
                     HandleDeducedClauses(worklist, AltitudeDefinition.Instantiate(clause));
@@ -286,7 +290,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                     // Circles
                     HandleDeducedClauses(worklist, CongruentCircleDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, CongruentArcsHaveCongruentChords.Instantiate(clause));     
+                    HandleDeducedClauses(worklist, CongruentArcsHaveCongruentChords.Instantiate(clause));
                 }
                 else if (clause is Triangle)
                 {
@@ -315,7 +319,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, MedianDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, CongruentSegmentsImplySegmentRatioDefinition.Instantiate(clause));
-                    
+
                     if (clause is IsoscelesTriangle)
                     {
                         HandleDeducedClauses(worklist, IsoscelesTriangleTheorem.Instantiate(clause));
@@ -482,6 +486,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is CongruentArcs)
                 {
+                    HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
                     HandleDeducedClauses(worklist, CongruentArcsHaveCongruentChords.Instantiate(clause));
                     HandleDeducedClauses(worklist, MinorArcsCongruentIfCentralAnglesCongruent.Instantiate(clause));
                 }

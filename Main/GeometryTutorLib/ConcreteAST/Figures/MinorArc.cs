@@ -19,8 +19,10 @@ namespace GeometryTutorLib.ConcreteAST
             MinorArc arc = obj as MinorArc;
             if (arc == null) return false;
 
-            return this.theCircle.StructurallyEquals(arc.theCircle) && this.endpoint1.StructurallyEquals(arc.endpoint1)
-                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint2);
+            return this.theCircle.StructurallyEquals(arc.theCircle) && ((this.endpoint1.StructurallyEquals(arc.endpoint1)
+                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint2))
+                                                                    || (this.endpoint1.StructurallyEquals(arc.endpoint2)
+                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint1)));
         }
 
         private void GetStartEndPoints(double angle1, double angle2, out Point start, out Point end, out double angle)
@@ -113,8 +115,10 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Check equality of arc minor / major points?
 
-            return this.theCircle.Equals(arc.theCircle) && this.endpoint1.Equals(arc.endpoint1)
-                                                        && this.endpoint2.Equals(arc.endpoint2);
+            return this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
+                                                        && this.endpoint2.Equals(arc.endpoint2))
+                                                        || (this.endpoint1.Equals(arc.endpoint2)
+                                                        && this.endpoint2.Equals(arc.endpoint1)));
         }
 
         public override string ToString() { return "MinorArc(" + theCircle + "(" + endpoint1.ToString() + ", " + endpoint2.ToString() + "))"; }

@@ -278,8 +278,10 @@ namespace GeometryTutorLib.ConcreteAST
             Arc arc = obj as Arc;
             if (arc == null) return false;
 
-            return this.theCircle.StructurallyEquals(arc.theCircle) && this.endpoint1.StructurallyEquals(arc.endpoint1)
-                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint2);
+            return this.theCircle.StructurallyEquals(arc.theCircle) && ((this.endpoint1.StructurallyEquals(arc.endpoint1)
+                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint2))
+                                                                    || (this.endpoint1.StructurallyEquals(arc.endpoint2)
+                                                                    && this.endpoint2.StructurallyEquals(arc.endpoint1)));
         }
 
         public override bool Equals(Object obj)
@@ -289,8 +291,15 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Check equality of arc minor / major points?
 
-            return this.theCircle.Equals(arc.theCircle) && this.endpoint1.Equals(arc.endpoint1)
-                                                        && this.endpoint2.Equals(arc.endpoint2);
+            return this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
+                                                        && this.endpoint2.Equals(arc.endpoint2))
+                                                        || (this.endpoint1.Equals(arc.endpoint2)
+                                                        && this.endpoint2.Equals(arc.endpoint1)));
+        }
+
+        public override bool Contains(GroundedClause target)
+        {
+            return this.Equals(target);
         }
 
         public override string ToString() { return "Arc(" + theCircle + "(" + endpoint1.ToString() + ", " + endpoint2.ToString() + "))"; }

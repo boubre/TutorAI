@@ -87,6 +87,9 @@
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\AlgebraicSegmentRatioEquation.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\GeometricSegmentRatioEquation.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\SegmentRatioEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\AlgebraicArcEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\ArcEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\GeometricArcEquation.cs" />
     <Compile Include="ConcreteAST\Equations\NumericValue.cs" />
     <Compile Include="ConcreteAST\Figures\ConcavePolygon.cs" />
     <Compile Include="ConcreteAST\Figures\ImaginaryPoint.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Quadrilateral.cs" />
     <Compile Include="EngineUIBridge\HypergraphWrapper.cs" />
     <Compile Include="HintGenerator\HintGenerator.cs" />
+    <Compile Include="Instantiator\Axioms\ArcAdditionAxiom.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CongruentCircleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CircleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\EquilateralTriangleDefinition.cs" />
