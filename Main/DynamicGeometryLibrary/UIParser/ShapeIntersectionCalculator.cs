@@ -131,5 +131,62 @@ namespace LiveGeometry.TutorParser
                 }
             }
         }
+
+        //
+        // Find every point of intersection among segments (if they are not labeled in the UI) -- name them.
+        //
+        public List<CircleSegmentIntersection> FindCircleSegmentIntersections()
+        {
+            List<CircleSegmentIntersection> intersections = new List<CircleSegmentIntersection>();
+
+            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            {
+                foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.maximalSegments)
+                {
+                    //
+                    // Find any intersection points between the circle and the segment;
+                    // the intersection MUST be between the segment endpoints
+                    //
+                    Point inter1 = null;
+                    Point inter2 = null;
+                    circle.FindIntersection(segment, out inter1, out inter2);
+
+                    // Add them to the list (possibly)
+                    List<Point> intersectionPts = new List<Point>();
+                    if (inter1 != null) intersectionPts.Add(inter1);
+                    if (inter2 != null) intersectionPts.Add(inter2);
+
+                    // normalized to drawing point (names)
+                    intersectionPts = implied.NormalizePointsToDrawing(intersectionPts);
+
+                    //
+                    // Construct the intersections
+                    //
+                    CircleSegmentIntersection csInter = null;
+
+                    if (inter1 != null)
+                    {
+                        csInter = new CircleSegmentIntersection(inter1, circle, segment);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(intersections, csInter);
+
+                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
+                        circle.AnalyzeSegment(segment, implied.allFigurePoints);
+                    }
+                    if (inter2 != null)
+                    {
+                        csInter = new CircleSegmentIntersection(inter2, circle, segment);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(intersections, csInter);
+
+                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
+                        circle.AnalyzeSegment(segment, implied.allFigurePoints);
+                    }
+                }
+
+                // Complete any processing attributed to the circle and all the segments.
+                circle.CleanUp();
+            }
+
+            return intersections;
+        }
     }
 }

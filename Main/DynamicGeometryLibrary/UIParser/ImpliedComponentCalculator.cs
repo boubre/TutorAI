@@ -47,7 +47,7 @@ namespace LiveGeometry.TutorParser
         public List<GeometryTutorLib.ConcreteAST.AngleBisector> angleBisectors { get; private set; }
 
         // For private use in constructing intersections only
-        private List<GeometryTutorLib.ConcreteAST.Segment> maximalSegments;
+        public List<GeometryTutorLib.ConcreteAST.Segment> maximalSegments { get; private set; }
 
         // For atomic region id: graph construction.
         public List<GeometryTutorLib.ConcreteAST.Segment> minimalSegments { get; private set; }
@@ -174,6 +174,9 @@ namespace LiveGeometry.TutorParser
 
             // Calculate all (selective) Segment-Segment Intersections
             CalculateIntersections();
+
+            // Find all circle-segment intersection points.
+            csIntersections = shapeIntCalc.FindCircleSegmentIntersections();
 
             // Find all the angles based on intersections; duplicates are removed.
             CalculateAngles();
@@ -328,54 +331,7 @@ namespace LiveGeometry.TutorParser
         //    }
         //}
 
-        ////
-        //// Find every point of intersection among segments (if they are not labeled in the UI) -- name them.
-        ////
-        //private void FindUnlabeledCircleSegmentIntersectionPoints()
-        //{
-        //    foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
-        //    {
-        //        foreach (GeometryTutorLib.ConcreteAST.Segment segment in maximalSegments)
-        //        {
-        //            //
-        //            // Find any intersection points between the circle and the segment;
-        //            // the intersection MUST be between the segment endpoints
-        //            //
-        //            Point inter1 = null;
-        //            Point inter2 = null;
-        //            circle.FindIntersection(segment, out inter1, out inter2);
 
-        //            // Add them to the list (possibly)
-        //            inter1 = HandleIntersectionPoint(points, impliedCirclePoints, segment, inter1);
-        //            inter2 = HandleIntersectionPoint(points, impliedCirclePoints, segment, inter2);
-
-        //            //
-        //            // Construct the intersections
-        //            //
-        //            CircleSegmentIntersection csInter = null;
-
-        //            if (inter1 != null)
-        //            {
-        //                csInter = new CircleSegmentIntersection(inter1, circle, segment);
-        //                GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(csIntersections, csInter);
-
-        //                // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
-        //                circle.AnalyzeSegment(segment, points);
-        //            }
-        //            if (inter2 != null)
-        //            {
-        //                csInter = new CircleSegmentIntersection(inter2, circle, segment);
-        //                GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(csIntersections, csInter);
-
-        //                // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
-        //                circle.AnalyzeSegment(segment, points);
-        //            }
-        //        }
-
-        //        // Complete any processing attributed to the circle and all the segments.
-        //        circle.CleanUp();
-        //    }
-        //}
 
         //
         // Generate all covering intersection clauses; that is, generate maximal intersections (a subset of all intersections)
