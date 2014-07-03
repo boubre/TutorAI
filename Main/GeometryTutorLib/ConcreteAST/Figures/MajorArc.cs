@@ -94,6 +94,18 @@ namespace GeometryTutorLib.ConcreteAST
             return approxSegments;
         }
 
+        public override bool PointLiesOn(Point pt)
+        {
+            return Arc.BetweenMajor(pt, this);
+        }
+
+        public override bool HasSubArc(Arc that)
+        {
+            if (that is MajorArc) return this.HasMajorSubArc(that);
+
+            return !this.HasMinorSubArc(that);
+        }
+
         public override bool Equals(Object obj)
         {
             MajorArc arc = obj as MajorArc;

@@ -6,7 +6,7 @@ namespace GeometryTestbed
     public abstract class ActualShadedAreaProblem : ActualProblem
     {
         // Atomic regions
-        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRegions { get; protected set; }
+        public List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion> goalRegions { get; protected set; }
 
         // Known values stated in the problem.
         public GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known { get; protected set; }
@@ -39,7 +39,7 @@ namespace GeometryTestbed
 
         public ActualShadedAreaProblem(bool runOrNot, bool comp) : base(runOrNot, comp)
         {
-            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion>();
             known = new GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator();
 
             solutionArea = -1;

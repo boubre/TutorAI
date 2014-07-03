@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GeometryTutorLib.Area_Based_Analyses;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 using LiveGeometry.TutorParser;
 
 namespace DynamicGeometry.UI.RegionShading
@@ -54,7 +54,7 @@ namespace DynamicGeometry.UI.RegionShading
                         Drawing.Canvas.Children.Add(img);
                     }
                 }
-                else if (ar is NonShapeAtomicRegion)
+                else if (ar is AtomicRegion)
                 {
                     //Ignore for now
                 }

@@ -44,7 +44,7 @@ namespace GeometryTestbed
             known.AddSegmentLength(ab, 12);
             known.AddSegmentLength((Segment)parser.Get(new Segment(o, m)), 7);
 
-            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>(parser.implied.atomicRegions);
+            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion>(parser.implied.atomicRegions);
 
             SetSolutionArea(190.6355291);
         }

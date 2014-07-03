@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -45,6 +46,37 @@ namespace GeometryTutorLib.ConcreteAST
             return 0.5 * circArea;
         }
 
+        public override bool PointLiesOn(Point pt)
+        {
+            return Arc.BetweenMinor(pt, this);
+        }
+
+        public override bool HasSubArc(Arc that)
+        {
+            if (that is MajorArc) return false;
+
+            return this.HasMinorSubArc(that);
+        }
+
+        /// <summary>
+        /// Make a set of connections for atomic region analysis.
+        /// </summary>
+        /// <returns></returns>
+        public override List<Connection> MakeAtomicConnections()
+        {
+            List<Segment> segments = this.Segmentize();
+            List<Connection> connections = new List<Connection>();
+
+            foreach (Segment approxSide in segments)
+            {
+                connections.Add(new Connection(approxSide.Point1, approxSide.Point2, ConnectionType.ARC,
+                                               new MinorArc(this.theCircle, approxSide.Point1, approxSide.Point2)));
+            }
+
+            connections.Add(new Connection(diameter.Point1, diameter.Point2, ConnectionType.SEGMENT, this));
+
+            return connections;
+        }
 
         public override int GetHashCode() { return base.GetHashCode(); }
 

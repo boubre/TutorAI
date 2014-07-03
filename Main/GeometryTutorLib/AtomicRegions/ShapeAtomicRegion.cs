@@ -4,13 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using GeometryTutorLib.ConcreteAST;
 
-namespace GeometryTutorLib.Area_Based_Analyses
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     public class ShapeAtomicRegion : AtomicRegion
     {
         public Figure shape { get; private set; }
 
-        public ShapeAtomicRegion(Figure f) : base() { shape = f; }
+        public ShapeAtomicRegion(Figure f) : base()
+        {
+            shape = f;
+            connections = f.MakeAtomicConnections();
+        }
 
         // Can the area of this region be calcualted?
         public override bool IsComputableArea() { return true; }
@@ -37,11 +41,11 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return polygonalized;
         }
 
-        public override void AddOwnedFigure(Figure f)
-        {
-            // Ensure we don't say this figure contains itself.
-            if (!this.shape.StructurallyEquals(f)) containingFigures.Add(f);
-        }
+        //public override void AddOwnedFigure(Figure f)
+        //{
+        //    // Ensure we don't say this figure contains itself.
+        //    if (!this.shape.StructurallyEquals(f)) containingFigures.Add(f);
+        //}
 
         public override int GetHashCode() { return base.GetHashCode(); }
 

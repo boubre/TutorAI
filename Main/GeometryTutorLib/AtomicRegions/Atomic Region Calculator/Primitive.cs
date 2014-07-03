@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Threading;
-using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
-using LiveGeometry.TutorParser;
 
-namespace LiveGeometry.AtomicRegionIdentifier
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     public abstract class Primitive
     {

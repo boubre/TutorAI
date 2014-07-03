@@ -4,19 +4,16 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTestbed
 {
-    public class CircCircRegionTester : ActualShadedAreaProblem
+    public class CircCircCircRegionTester : ActualShadedAreaProblem
     {
-        //
-        // Triangle intersecting a circle.
-        //
-        public CircCircRegionTester(bool onoff, bool complete) : base(onoff, complete)
+        public CircCircCircRegionTester(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", -2, 0); points.Add(a);
-            Point b = new Point("B", 1, 0); points.Add(b);
-            Point c = new Point("C", 2, 0); points.Add(c);
-            Point d = new Point("D", -1, 0); points.Add(d);
+            Point b = new Point("B", 2, 0); points.Add(b);
+            Point c = new Point("C", 0, 2 * System.Math.Sqrt(3)); points.Add(c);
 
             circles.Add(new Circle(a, 3.0));
+            circles.Add(new Circle(b, 3.0));
             circles.Add(new Circle(c, 3.0));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);

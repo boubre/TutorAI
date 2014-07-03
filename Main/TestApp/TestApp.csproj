@@ -78,6 +78,10 @@
     <Compile Include="Problems\ProofProblems\Jurgensen Geometry %28Orange%29\Quadrilaterals\Page178SelfTest07.cs" />
     <Compile Include="Problems\ShadedAreaProblems\ActualShadedAreaProblem.cs" />
     <Compile Include="Problems\ShadedAreaProblems\CircCircRegionTester.cs" />
+    <Compile Include="Problems\ShadedAreaProblems\CircCircCircRegionTester.cs" />
+    <Compile Include="Problems\ShadedAreaProblems\ContainmentTester.cs" />
+    <Compile Include="Problems\ShadedAreaProblems\BasicPolygonTester.cs" />
+    <Compile Include="Problems\ShadedAreaProblems\FilamentTester.cs" />
     <Compile Include="Problems\ShadedAreaProblems\Jurgensen\Page2prob18.cs" />
     <Compile Include="Problems\ShadedAreaProblems\Jurgensen\Page2prob17.cs" />
     <Compile Include="Problems\ShadedAreaProblems\Jurgensen\Page2prob15.cs" />

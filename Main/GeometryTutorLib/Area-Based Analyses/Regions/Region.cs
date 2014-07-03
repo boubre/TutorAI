@@ -11,14 +11,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
     public class Region
     {
         // All the individual atomic regions.
-        public List<AtomicRegion> atoms { get; private set; }
+        public List<Atomizer.AtomicRegion> atoms { get; private set; }
 
         public List<Point> ownedPoints { get; protected set; }
 
-        public Region(AtomicRegion atom) : this(Utilities.MakeList<AtomicRegion>(atom)) { }
-        public Region(List<AtomicRegion> ats)
+        public Region(Atomizer.AtomicRegion atom) : this(Utilities.MakeList<Atomizer.AtomicRegion>(atom)) { }
+        public Region(List<Atomizer.AtomicRegion> ats)
         {
-            atoms = new List<AtomicRegion>(ats);
+            atoms = new List<Atomizer.AtomicRegion>(ats);
             ownedPoints = new List<Point>();
             thisArea = -1;
         }
@@ -32,14 +32,11 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public override int GetHashCode() { return base.GetHashCode(); }
 
-        public bool HasAtom(AtomicRegion atom)
-        {
-            return atoms.Contains(atom);
-        }
+        public bool HasAtom(Atomizer.AtomicRegion atom) { return atoms.Contains(atom); }
 
-        public bool RegionDefinedBy(List<AtomicRegion> thatAtoms)
+        public bool RegionDefinedBy(List<Atomizer.AtomicRegion> thatAtoms)
         {
-            return Utilities.EqualSets<AtomicRegion>(atoms, thatAtoms);
+            return Utilities.EqualSets<Atomizer.AtomicRegion>(atoms, thatAtoms);
         }
 
         //
@@ -47,7 +44,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         public virtual bool IsComputableArea()
         {
-            foreach (AtomicRegion atom in atoms)
+            foreach (Atomizer.AtomicRegion atom in atoms)
             {
                 if (!atom.IsComputableArea()) return false;
             }
@@ -66,7 +63,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             // Calculate the area if not memoized.
             double area = 0;
 
-            foreach (AtomicRegion atom in atoms)
+            foreach (Atomizer.AtomicRegion atom in atoms)
             {
                 double currArea = atom.GetArea(known);
 
@@ -85,7 +82,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             if (this.atoms.Count != thatRegion.atoms.Count) return false;
 
-            foreach (AtomicRegion atom in atoms)
+            foreach (Atomizer.AtomicRegion atom in atoms)
             {
                 if (!thatRegion.HasAtom(atom)) return false;
             }

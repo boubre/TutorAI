@@ -68,17 +68,8 @@
     <Compile Include="Actions\RemoveItemAction.cs" />
     <Compile Include="Actions\ReplaceFigureAction.cs" />
     <Compile Include="Actions\SetPropertyAction.cs" />
-    <Compile Include="AtomicRegionIdentifier\AtomicIdentifier.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\PlanarGraphConstructor.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\IsolatedPoint.cs" />
-    <Compile Include="AtomicRegionIdentifier\OrderedPointList\OrderedPointList.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\MinimalCycle.cs" />
-    <Compile Include="AtomicRegionIdentifier\UndirectedPlanarGraph\PlanarGraphEdge.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\Primitive.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\Filament.cs" />
-    <Compile Include="AtomicRegionIdentifier\Basis Calculator\MinimalBasisCalculator.cs" />
-    <Compile Include="AtomicRegionIdentifier\UndirectedPlanarGraph\PlanarGraph.cs" />
-    <Compile Include="AtomicRegionIdentifier\UndirectedPlanarGraph\PlanarGraphNode.cs" />
+    <Compile Include="AtomicRegionIdentifier\AtomicIdentifierMain.cs" />
+    <Compile Include="AtomicRegionIdentifier\ShapeAtomizer.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\Behavior.Design.cs" />
     <Compile Include="Behaviors\BehaviorCategories.cs" />
@@ -108,6 +99,9 @@
     <None Include="Drawing.cd" />
     <Compile Include="Drawing.cs" />
     <Compile Include="UIParser\AbstractParserMain.cs" />
+    <Compile Include="UIParser\DrawingPointCalculator.cs" />
+    <Compile Include="UIParser\ShapeIntersectionCalculator.cs" />
+    <Compile Include="UIParser\PolygonCalculator.cs" />
     <Compile Include="UIParser\HardCodedParserMain.cs" />
     <Compile Include="UIParser\ImpliedComponentCalculator.cs" />
     <Compile Include="UIParser\DirectComponentsFromUI.cs" />
@@ -316,7 +310,6 @@
     <Compile Include="Styles\StyleManager.cs" />
     <Compile Include="Styles\StylePicker.cs" />
     <Compile Include="Styles\TextStyle.cs" />
-    <Compile Include="UIParser\PointFactory.cs" />
     <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />

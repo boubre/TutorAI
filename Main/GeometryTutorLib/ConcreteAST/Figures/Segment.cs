@@ -15,9 +15,6 @@ namespace GeometryTutorLib.ConcreteAST
         public double Length { get; private set; }
         public double Slope { get; private set; }
 
-        // An ORDERED list of collinear points.
-        public List<Point> collinear { get; private set; }
-
         public bool DefinesCollinearity() { return collinear.Count > 2; }
 
         /// <summary>
@@ -43,8 +40,11 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Segment(Segment s) : this(s.Point1, s.Point2) { }
 
-        public void AddCollinearPoint(Point newPt)
+        public override void AddCollinearPoint(Point newPt)
         {
+            // Avoid redundant additions.
+            if (Utilities.HasStructurally<Point>(collinear, newPt)) return;
+
             // Traverse list to find where to insert the new point in the list in the proper order
             for (int p = 0; p < collinear.Count - 1; p++)
             {
@@ -54,6 +54,13 @@ namespace GeometryTutorLib.ConcreteAST
                     return;
                 }
             }
+        }
+
+        public override void ClearCollinear()
+        {
+            collinear.Clear();
+            collinear.Add(Point1);
+            collinear.Add(Point2);
         }
 
         //
@@ -134,11 +141,15 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool PointIsOnAndBetweenEndpoints(Point thatPoint)
         {
+            if (thatPoint == null) return false;
+
             return Segment.Between(thatPoint, Point1, Point2);
         }
 
         public bool PointIsOnAndExactlyBetweenEndpoints(Point thatPoint)
         {
+            if (thatPoint == null) return false;
+
             if (Point1.Equals(thatPoint) || Point2.Equals(thatPoint)) return false;
 
             return Segment.Between(thatPoint, Point1, Point2);
@@ -556,6 +567,15 @@ namespace GeometryTutorLib.ConcreteAST
             double y = determinant(a, e, c, f) / overallDeterminant;
 
             return new Point("Intersection", x, y);
+        }
+
+        public override void FindIntersection(Segment that, out Point inter1, out Point inter2)
+        {
+            inter1 = FindIntersection(that);
+            inter2 = null;
+
+            if (!this.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
+            if (!that.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
         }
 
         private class Vector

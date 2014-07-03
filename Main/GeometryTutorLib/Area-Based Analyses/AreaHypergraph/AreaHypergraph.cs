@@ -19,7 +19,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         private bool[] visited;
 
-        public AreaHypergraph(List<AtomicRegion> atoms, List<Circle> circles, List<Polygon>[] polygons, List<Sector> minorSectors, List<Sector> majorSectors)
+        public AreaHypergraph(List<Atomizer.AtomicRegion> atoms, List<Circle> circles, List<Polygon>[] polygons, List<Sector> minorSectors, List<Sector> majorSectors)
         {
             // Ensure the capacity of the powerset.
             graph = new Hypergraph.Hypergraph<Region, SimpleRegionEquation>((int)Math.Pow(2, atoms.Count));
@@ -44,7 +44,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         // The graph nodes are the powerset of atomic nodes
         //
-        private void BuildNodes(List<AtomicRegion> atoms, List<Circle> circles, List<Polygon>[] polygons, List<Sector> minorSectors, List<Sector> majorSectors)
+        private void BuildNodes(List<Atomizer.AtomicRegion> atoms, List<Circle> circles, List<Polygon>[] polygons, List<Sector> minorSectors, List<Sector> majorSectors)
         {
             // Acquire an integer representation of the powerset of atomic nodes
             List<List<int>> powerset = Utilities.ConstructPowerSetWithNoEmpty(atoms.Count);
@@ -52,7 +52,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             // Construct each element of the powerset
             for (int s = 0; s < powerset.Count; s++)
             {
-                List<AtomicRegion> theseAtoms = new List<AtomicRegion>();
+                List<Atomizer.AtomicRegion> theseAtoms = new List<Atomizer.AtomicRegion>();
 
                 // Construct the individual element (set)
                 foreach (int e in powerset[s])
@@ -85,7 +85,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         // There is one addition edge and two subtraction edges per set of 3 nodes.
         // Build the edges top-down from complete set of atoms down to singletons.
         //
-        private void BuildEdges(List<AtomicRegion> atoms)
+        private void BuildEdges(List<Atomizer.AtomicRegion> atoms)
         {
             // Acquire an integer representation of the powerset of atomic nodes
             // This is memoized so it's fast.
@@ -165,7 +165,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         // There is one addition edge and two subtraction edges per set of 3 nodes.
         // Build the edges top-down from complete set of atoms down to singletons.
         //
-        private void BuildEdges(List<AtomicRegion> atoms, bool[] marked)
+        private void BuildEdges(List<Atomizer.AtomicRegion> atoms, bool[] marked)
         {
             // We don't want edges connecting a singleton region to an 'empty' region.
             if (atoms.Count == 1) return;
@@ -177,9 +177,9 @@ namespace GeometryTutorLib.Area_Based_Analyses
             int nodeIndex = graph.GetNodeIndex(atomsRegion);
             if (marked[nodeIndex]) return;
 
-            foreach (AtomicRegion atom in atoms)
+            foreach (Atomizer.AtomicRegion atom in atoms)
             {
-                List<AtomicRegion> atomsMinusAtom = new List<AtomicRegion>(atoms);
+                List<Atomizer.AtomicRegion> atomsMinusAtom = new List<Atomizer.AtomicRegion>(atoms);
                 atomsMinusAtom.Remove(atom);
 
                 Region aMinus1Region = new Region(atomsMinusAtom);
@@ -350,7 +350,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return true;
         }
 
-        public ComplexRegionEquation TraceRegionArea(List<AtomicRegion> atoms)
+        public ComplexRegionEquation TraceRegionArea(List<Atomizer.AtomicRegion> atoms)
         {
             return TraceRegionArea(new Region(atoms));
         }

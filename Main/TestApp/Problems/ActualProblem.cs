@@ -56,7 +56,7 @@ namespace GeometryTestbed
 
         protected void ConstructIntrinsicSet()
         {
-            parser.implied.allEvidentPoints.ForEach(pt => intrinsic.Add(pt));
+            parser.implied.allFigurePoints.ForEach(pt => intrinsic.Add(pt));
             parser.implied.segments.ForEach(seg => intrinsic.Add(seg));
             parser.implied.inMiddles.ForEach(im => intrinsic.Add(im));
             parser.implied.angles.ForEach(angle => intrinsic.Add(angle));

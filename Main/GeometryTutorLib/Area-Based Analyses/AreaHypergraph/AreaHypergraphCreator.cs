@@ -6,6 +6,7 @@ using System.Text;
 using GeometryTutorLib.ConcreteAST;
 using GeometryTutorLib.GenericInstantiator;
 using GeometryTutorLib.Pebbler;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.Area_Based_Analyses
 {
@@ -73,7 +74,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         }
 
         // Acquire the ShapeRegion, if it exists, based on the set of atoms 
-        public ShapeRegion GetShapeRegion(List<ShapeRegion> shapeRegions, List<AtomicRegion> atoms)
+        public ShapeRegion GetShapeRegion(List<ShapeRegion> shapeRegions, List<Atomizer.AtomicRegion> atoms)
         {
             foreach (ShapeRegion sr in shapeRegions)
             {
@@ -216,7 +217,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         // Dynamic Programming Style Solution Construction; equation and actual area.
         //
-        public KeyValuePair<ComplexRegionEquation, double> Solve(List<AtomicRegion> atoms, KnownMeasurementsAggregator known)
+        public KeyValuePair<ComplexRegionEquation, double> Solve(List<Atomizer.AtomicRegion> atoms, KnownMeasurementsAggregator known)
         {
             // Construct the memoization data structure.
             if (memoizedSolutions == null) memoizedSolutions = new ComplexRegionEquation[graph.Size()];

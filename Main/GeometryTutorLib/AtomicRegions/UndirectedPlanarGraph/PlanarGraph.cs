@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeometryTutorLib.ConcreteAST;
 
-namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph
 {
     public class PlanarGraph
     {

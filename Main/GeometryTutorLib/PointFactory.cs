@@ -1,12 +1,11 @@
 ﻿using System;
 
-//
-// Given a pair of coordinates; generate a unique name for it; return that point object.
-// Names go from A..Z..AA..ZZ..AAA...ZZZ
-//
-
-namespace LiveGeometry.TutorParser
+namespace GeometryTutorLib
 {
+    //
+    // Given a pair of coordinates; generate a unique name for it; return that point object.
+    // Names go from A..Z..AA..ZZ..AAA...ZZZ
+    //
     public static class PointFactory
     {
         private const string prefix = "__";

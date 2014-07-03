@@ -1,6 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 
-namespace LiveGeometry.AtomicRegionIdentifier
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     public class IsolatedPoint : Primitive
     {

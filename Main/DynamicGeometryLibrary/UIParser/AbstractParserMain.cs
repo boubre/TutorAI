@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace LiveGeometry.TutorParser
 {
@@ -15,22 +16,24 @@ namespace LiveGeometry.TutorParser
         // Calculate all of the implied components of the figure.
         //
         public ImpliedComponentCalculator implied { get; protected set; }
-        protected AtomicRegionIdentifier.AtomicIdentifier atomIdentifier;
+        //protected AtomicRegionIdentifier.AtomicIdentifier atomIdentifier;
 
         public AbstractParserMain()
         {
             // Reset the factory so we get points that start back at __A.
-            PointFactory.Reset();
+            GeometryTutorLib.PointFactory.Reset();
         }
 
         //
         // Identify and return all atomic regions
         //
-        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> IdentifyAtomicRegions()
+        public List<AtomicRegion> IdentifyAtomicRegions()
         {
-            atomIdentifier = new AtomicRegionIdentifier.AtomicIdentifier(implied);
+            //atomIdentifier = new AtomicRegionIdentifier.AtomicIdentifier(implied);
 
-            return atomIdentifier.GetAtomicRegions();
+            //return atomIdentifier.GetAtomicRegions();
+
+            return new List<AtomicRegion>();
         }
 
 

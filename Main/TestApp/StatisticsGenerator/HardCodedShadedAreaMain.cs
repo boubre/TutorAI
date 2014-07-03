@@ -14,7 +14,7 @@ namespace StatisticsGenerator
         private List<GeometryTutorLib.ConcreteAST.GroundedClause> figure;
         private List<GeometryTutorLib.ConcreteAST.GroundedClause> given;
         private GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known;
-        private List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRegions;
+        private List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion> goalRegions;
         private LiveGeometry.TutorParser.ImpliedComponentCalculator implied;
 
         //
@@ -38,7 +38,7 @@ namespace StatisticsGenerator
         public HardCodedShadedAreaMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
                                        List<GeometryTutorLib.ConcreteAST.GroundedClause> giv,
                                        GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator kn,
-                                       List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRs,
+                                       List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion> goalRs,
                                        LiveGeometry.TutorParser.ImpliedComponentCalculator impl)
         {
             this.figure = fs;
@@ -56,7 +56,7 @@ namespace StatisticsGenerator
         public HardCodedShadedAreaMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
                                        List<GeometryTutorLib.ConcreteAST.GroundedClause> giv,
                                        GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator kn,
-                                       List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> goalRs,
+                                       List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion> goalRs,
                                        LiveGeometry.TutorParser.ImpliedComponentCalculator impl,
                                        double area) : this(fs, giv, kn, goalRs, impl)
         {

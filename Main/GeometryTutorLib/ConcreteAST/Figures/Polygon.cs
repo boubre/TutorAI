@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -76,18 +77,61 @@ namespace GeometryTutorLib.ConcreteAST
         }
         public override Polygon GetPolygonalized() { return this; }
 
-        ////
-        //// Does this polygon contain all points defined by thatPoly?
-        ////
-        //public override bool Contains(Polygon thatPoly)
-        //{
-        //    foreach (Point thatPt in thatPoly.points)
-        //    {
-        //        if (!IsInPolygon(thatPt)) return false;
-        //    }
+        public override void FindIntersection(Segment that, out Point inter1, out Point inter2)
+        {
+            inter1 = null;
+            inter2 = null;
 
-        //    return true;
-        //}
+            Point foundInter = null;
+            List<Point> intersections = new List<Point>();
+            foreach (Segment side in orderedSides)
+            {
+                foundInter = side.FindIntersection(that);
+
+                // Is the intersection in the middle of the segments?
+                if (side.PointIsOnAndBetweenEndpoints(foundInter) && that.PointIsOnAndBetweenEndpoints(foundInter))
+                {
+                    // A segment may intersect a polygon through up to 2 vertices creating 4 intersections.
+                    if (!Utilities.HasStructurally<Point>(intersections, foundInter)) intersections.Add(foundInter);
+                }
+            }
+            if (intersections.Count > 2)
+            {
+                throw new Exception("A segment intersecting a polygon may have up to 2 intersection points, not: " + intersections.Count);
+            }
+
+            if (intersections.Any()) inter1 = intersections[0];
+            if (intersections.Count > 1) inter2 = intersections[1];
+        }
+
+        //
+        // Return the side that overlaps.
+        //
+        public Segment Overlap(Segment that)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                if (side.CoincidingWithOverlap(that)) return side;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Make a set of connections for atomic region analysis.
+        /// </summary>
+        /// <returns></returns>
+        public override List<Connection> MakeAtomicConnections()
+        {
+            List<Connection> connections = new List<Connection>();
+
+            foreach (Segment side in orderedSides)
+            {
+                connections.Add(new Connection(side.Point1, side.Point2, ConnectionType.SEGMENT, side));
+            }
+
+            return connections;
+        }
 
         /// <summary>
         /// Determines if the given point is inside the polygon; http://alienryderflex.com/polygon/
@@ -334,6 +378,49 @@ namespace GeometryTutorLib.ConcreteAST
 
             return ActuallyConstructThePolygonObject(theseSegs);
         }
+
+        //
+        // Find the points of intersection of two polygons.
+        //
+        public List<Point> FindIntersections(Polygon that)
+        {
+            List<Point> intersections = new List<Point>();
+
+            foreach (Segment thatSide in that.orderedSides)
+            {
+                Point pt1 = null;
+                Point pt2 = null;
+
+                this.FindIntersection(thatSide, out pt1, out pt2);
+
+                if (pt1 != null) Utilities.AddStructurallyUnique<Point>(intersections, pt1);
+                if (pt2 != null) Utilities.AddStructurallyUnique<Point>(intersections, pt2);
+            }
+
+            return intersections;
+        }
+
+        //
+        // Find the points of intersection of a polygon and a circle.
+        //
+        public List<Point> FindIntersections(Circle that)
+        {
+            List<Point> intersections = new List<Point>();
+
+            foreach (Segment side in orderedSides)
+            {
+                Point pt1 = null;
+                Point pt2 = null;
+
+                that.FindIntersection(side, out pt1, out pt2);
+
+                if (pt1 != null && side.PointIsOnAndBetweenEndpoints(pt1)) Utilities.AddStructurallyUnique<Point>(intersections, pt1);
+                if (pt2 != null && side.PointIsOnAndBetweenEndpoints(pt2)) Utilities.AddStructurallyUnique<Point>(intersections, pt2);
+            }
+
+            return intersections;
+        }
+
 
         public override bool StructurallyEquals(Object obj)
         {

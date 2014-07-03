@@ -14,7 +14,11 @@ namespace GeometryTestbed
             //
             // Testing
             //
+            // problems.Add(new BasicPolygonTester(true, false));
+            //problems.Add(new ContainmentTester(true, false));
             // problems.Add(new CircCircRegionTester(true, false));
+            //problems.Add(new CircCircCircRegionTester(true, false));
+            //problems.Add(new FilamentTester(true, false));
 
             //
             // Class X

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph
 {
     //
     // For atomic region identification
@@ -100,7 +100,7 @@ namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
         {
             System.Text.StringBuilder str = new System.Text.StringBuilder();
 
-            str.Append("<" + thePoint.ToString() + ", " /*+ type */ + ">: ");
+            str.Append("<" + thePoint.ToString() + "  (" + edges.Count + "): ");
             foreach (PlanarGraphEdge edge in edges)
             {
                 str.Append(edge.ToString() + "\t");

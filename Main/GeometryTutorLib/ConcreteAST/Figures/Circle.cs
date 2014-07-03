@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -81,6 +82,9 @@ namespace GeometryTutorLib.ConcreteAST
             minorSectors = new List<Sector>();
             majorSectors = new List<Sector>();
 
+            approxPoints = new List<Point>();
+            approxSegments = new List<Segment>();
+
             Utilities.AddUniqueStructurally(this.center.getSuperFigures(), this);
         }
 
@@ -146,7 +150,7 @@ namespace GeometryTutorLib.ConcreteAST
         // For arcs, order the points so that there is a consistency: A, B, C, D-> B between AC, B between AD, etc.
         // Only need to order the points if there are more than three points
         //
-        private void OrderPoints(List<Point> points)
+        public List<Point> OrderPoints(List<Point> points)
         {
             List<KeyValuePair<double, Point>> pointAngleMap = new List<KeyValuePair<double, Point>>();
 
@@ -167,10 +171,13 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Put all the points in the final ordered list
             //
+            List<Point> ordered = new List<Point>();
             foreach (KeyValuePair<double, Point> pair in pointAngleMap)
             {
-                pointsOnCircle.Add(pair.Value);
+                ordered.Add(pair.Value);
             }
+
+            return ordered;
         }
 
         public Segment GetRadius(Segment r)
@@ -180,7 +187,7 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.GetStructurally<Segment>(radii, r);
         }
 
-        public override List<Point> GetApproximatingPoints() { return approxPoints; }
+        //public override List<Point> GetApproximatingPoints() { return approxPoints; }
 
         public override bool PointLiesInside(Point pt) { return PointIsInterior(pt); }
         public override List<Segment> Segmentize()
@@ -225,9 +232,9 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // For each triangle, it is inscribed in the circle? Is it circumscribed.
+        // For each polygon, it is inscribed in the circle? Is it circumscribed?
         //
-        public void AnalyzePolygon(Polygon poly)
+        public void AnalyzePolygonInscription(Polygon poly)
         {
             int index = Polygon.GetPolygonIndex(poly.orderedSides.Count);
 
@@ -285,7 +292,7 @@ namespace GeometryTutorLib.ConcreteAST
             }
             else
             {
-                // Handle secants and diameters (thus radii in special cases)
+                // Atomizer.AtomicRegion secants and diameters (thus radii in special cases)
                 Segment chord;
                 if (IsSecant(thatSegment, out chord))
                 {
@@ -488,7 +495,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Find the points of intersection of two circles; may be 0, 1, or 2.
         //
-        public void FindIntersection(Segment ts, out Point inter1, out Point inter2)
+        public override void FindIntersection(Segment ts, out Point inter1, out Point inter2)
         {
             inter1 = null;
             inter2 = null;
@@ -878,6 +885,188 @@ namespace GeometryTutorLib.ConcreteAST
         public override string ToString()
         {
             return "Circle(" + this.center + ": r = " + this.radius + ")";
+        }
+
+
+        List<Segment> constructedChords = new List<Segment>();
+        List<Segment> constructedRadii = new List<Segment>();
+        List<Point> imagPoints = new List<Point>();
+        public List<Area_Based_Analyses.Atomizer.AtomicRegion> Atomize(List<Point> figurePoints)
+        {
+            List<GeometryTutorLib.ConcreteAST.Point> interPts = GetIntersectingPoints();
+
+            // If there are no points of interest, the circle is the atomic region.
+            if (!interPts.Any())
+            {
+                return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(this));
+            }
+
+            //
+            // Construct the radii
+            //
+            foreach (Point interPt in interPts)
+            {
+                constructedRadii.Add(new GeometryTutorLib.ConcreteAST.Segment(center, interPt));
+            }
+
+            //
+            // Construct the chords
+            //
+            List<Segment> chords = new List<Segment>();
+            for (int p1 = 0; p1 < interPts.Count - 1; p1++)
+            {
+                for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
+                {
+                    constructedChords.Add(new Segment(interPts[p1], interPts[p2]));
+                }
+            }
+
+            //
+            // Do any of the created segments result in imaginary intersection points.
+            //
+            foreach (Segment chord in constructedChords)
+            {
+                foreach (Segment radius in constructedRadii)
+                {
+                    Point inter = Utilities.AcquireRestrictedPoint(figurePoints, chord.FindIntersection(radius), chord, radius);
+                    if (inter != null)
+                    {
+                        chord.AddCollinearPoint(inter);
+                        radius.AddCollinearPoint(inter);
+
+                        if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                    }
+                }
+            }
+
+            for (int c1 = 0; c1 < constructedChords.Count - 1; c1++)
+            {
+                for (int c2 = c1 + 1; c2 < constructedChords.Count; c2++)
+                {
+                    Point inter = constructedChords[c1].FindIntersection(constructedChords[c2]);
+                    inter = Utilities.AcquireRestrictedPoint(figurePoints, inter, constructedChords[c1], constructedChords[c2]);
+                    if (inter != null)
+                    {
+                        constructedChords[c1].AddCollinearPoint(inter);
+                        constructedChords[c2].AddCollinearPoint(inter);
+
+                        if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                    }
+                }
+            }
+
+            //
+            // Construct the Planar graph for atomic region identification.
+            //
+            Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph graph = new Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph();
+
+            //
+            // Add all imaginary points, intersection points, and center.
+            //
+            foreach (Point pt in this.imagPoints)
+            {
+                graph.AddNode(pt);
+            }
+
+            foreach (Point pt in interPts)
+            {
+                graph.AddNode(pt);
+            }
+
+            graph.AddNode(this.center);
+
+            //
+            // Add all chords and radii as edges.
+            //
+            foreach (Segment chord in constructedChords)
+            {
+                for (int p = 0; p < chord.collinear.Count - 1; p++)
+                {
+                    graph.AddUndirectedEdge(chord.collinear[p], chord.collinear[p + 1],
+                                            new Segment(chord.collinear[p], chord.collinear[p + 1]).Length,
+                                            Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
+                }
+            }
+
+            foreach (Segment radius in constructedRadii)
+            {
+                for (int p = 0; p < radius.collinear.Count - 1; p++)
+                {
+                    graph.AddUndirectedEdge(radius.collinear[p], radius.collinear[p + 1],
+                                            new Segment(radius.collinear[p], radius.collinear[p + 1]).Length,
+                                            Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
+                }
+            }
+
+            //
+            // Add all arcs
+            //
+            interPts = this.OrderPoints(interPts);
+            for (int p = 0; p < interPts.Count; p++)
+            {
+                graph.AddUndirectedEdge(interPts[p], interPts[(p + 1) % interPts.Count],
+                                        new Segment(interPts[p], interPts[(p + 1) % interPts.Count]).Length,
+                                        Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
+            }
+
+            //
+            // Convert the planar graph to atomic regions.
+            //
+            Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph copy = new Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph(graph);
+            FacetCalculator atomFinder = new FacetCalculator(copy);
+            List<Primitive> primitives = atomFinder.GetPrimitives();
+            List<AtomicRegion> atoms = PrimitiveToRegionConverter.Convert(graph, primitives, Utilities.MakeList<Circle>(this));
+
+            //
+            // It is possible that the circle has not been covered completely.
+            // Therefore, construct any sectors that have not been accounted for with this circle. 
+            // There is only one such region that meets this criteria and it is based on the 'outermost' intersection points on the circle.
+            //
+
+            // The two points of interest are not included as an arc in the atoms.
+            foreach (AtomicRegion atom in atoms)
+            {
+            }
+
+            // 
+            // Get the central angle measurements so we know if it is a major / minor arc.
+            //
+            double measure = 0;
+            for (int p = 0; p < interPts.Count - 1; p++)
+            {
+                measure += CentralAngleMeasure(interPts[p], interPts[p+1]);
+            }
+
+            Sector newSector = null;
+            if (measure < 180) newSector = new Sector(new MajorArc(this, interPts[0], interPts[interPts.Count - 1]));
+            else newSector = new Sector(new MajorArc(this, interPts[0], interPts[interPts.Count - 1]));
+
+            atoms.Add(new ShapeAtomicRegion(newSector));
+
+            return atoms;
+        }
+
+        private double CentralAngleMeasure(Point pt1, Point pt2)
+        {
+            return (new MinorArc(this, pt1, pt2)).GetMinorArcMeasureDegrees();
+        }
+
+        /// <summary>
+        /// Make a set of connections for atomic region analysis.
+        /// </summary>
+        /// <returns></returns>
+        public override List<Connection> MakeAtomicConnections()
+        {
+            List<Segment> segments = this.Segmentize();
+            List<Connection> connections = new List<Connection>();
+
+            foreach (Segment approxSide in segments)
+            {
+                connections.Add(new Connection(approxSide.Point1, approxSide.Point2, ConnectionType.ARC,
+                                new MinorArc(this, approxSide.Point1, approxSide.Point2)));
+            }
+
+            return connections;
         }
     }
 }

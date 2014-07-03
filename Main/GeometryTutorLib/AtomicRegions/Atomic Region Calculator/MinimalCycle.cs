@@ -2,16 +2,14 @@
 using System.Diagnostics;
 using System.Windows.Threading;
 using System.Linq;
-using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
-using LiveGeometry.TutorParser;
 using System;
 
-namespace LiveGeometry.AtomicRegionIdentifier
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     public class MinimalCycle : Primitive
     {
-        // These points were ordered by the minimal basis algorithm.
+        // These points were ordered by the minimal basis algorithm; calculates facets.
         public List<Point> points;
 
         public MinimalCycle()
@@ -34,20 +32,20 @@ namespace LiveGeometry.AtomicRegionIdentifier
             return GetExtendedSegment(graph) != null;
         }
 
-        public GeometryTutorLib.ConcreteAST.Segment GetExtendedSegment(UndirectedPlanarGraph.PlanarGraph graph)
+        public Segment GetExtendedSegment(UndirectedPlanarGraph.PlanarGraph graph)
         {
             for (int p = 0; p < points.Count; p++)
             {
                 if (graph.GetEdgeType(points[p], points[(p + 1) % points.Count]) == UndirectedPlanarGraph.EdgeType.EXTENDED_SEGMENT)
                 {
-                    return new GeometryTutorLib.ConcreteAST.Segment(points[p], points[p + 1 < points.Count ? p + 1 : 0]);
+                    return new Segment(points[p], points[p + 1 < points.Count ? p + 1 : 0]);
                 }
             }
 
             return null;
         }
 
-        public bool HasThisExtendedSegment(UndirectedPlanarGraph.PlanarGraph graph, GeometryTutorLib.ConcreteAST.Segment segment)
+        public bool HasThisExtendedSegment(UndirectedPlanarGraph.PlanarGraph graph, Segment segment)
         {
             if (!points.Contains(segment.Point1)) return false;
             if (!points.Contains(segment.Point2)) return false;
@@ -55,7 +53,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             return graph.GetEdgeType(segment.Point1, segment.Point2) == UndirectedPlanarGraph.EdgeType.EXTENDED_SEGMENT;
         }
 
-        private List<Point> GetPointsBookEndedBySegment(GeometryTutorLib.ConcreteAST.Segment segment)
+        private List<Point> GetPointsBookEndedBySegment(Segment segment)
         {
             int index1 = points.IndexOf(segment.Point1);
             int index2 = points.IndexOf(segment.Point2);
@@ -99,7 +97,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             return ordered;
         }
 
-        public MinimalCycle Compose(MinimalCycle thatCycle, GeometryTutorLib.ConcreteAST.Segment extended)
+        public MinimalCycle Compose(MinimalCycle thatCycle, Segment extended)
         {
             MinimalCycle composed = new MinimalCycle();
 
@@ -140,16 +138,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //   We need to check to see if any of the cycle segments are based on arcs.
         //   We have to handle the degree of each segment: do many circles intersect at these points?
         //
-        public List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> ConstructAtomicRegions(ImpliedComponentCalculator implied, UndirectedPlanarGraph.PlanarGraph graph)
+        public List<Atomizer.AtomicRegion> ConstructAtomicRegions(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
         {
-            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> regions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            List<Atomizer.AtomicRegion> regions = new List<Atomizer.AtomicRegion>();
 
-            GeometryTutorLib.Area_Based_Analyses.AtomicRegion region = null;
+            Atomizer.AtomicRegion region = null;
 
             //
             // Check for a direct polygon (no arcs).
             //
-            region = PolygonDefinesRegion(implied, graph);
+            region = PolygonDefinesRegion(graph);
             if (region != null)
             {
                 regions.Add(region);
@@ -159,7 +157,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             //
             // Does this region define a sector? 
             //
-            region = SectorDefinesRegion(implied, graph);
+            region = SectorDefinesRegion(circles, graph);
             if (region != null)
             {
                 regions.Add(region);
@@ -169,18 +167,18 @@ namespace LiveGeometry.AtomicRegionIdentifier
             //
             // Do we have a set of regions defined by a polygon in which circle(s) cut out some of that region? 
             //
-            regions.AddRange(MixedArcChordedRegion(implied, graph));
+            regions.AddRange(MixedArcChordedRegion(circles, graph));
 
             return regions;
         }
 
-        private GeometryTutorLib.Area_Based_Analyses.AtomicRegion PolygonDefinesRegion(ImpliedComponentCalculator implied, UndirectedPlanarGraph.PlanarGraph graph)
+        private Atomizer.AtomicRegion PolygonDefinesRegion(UndirectedPlanarGraph.PlanarGraph graph)
         {
-            List<GeometryTutorLib.ConcreteAST.Segment> sides = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            List<Segment> sides = new List<Segment>();
 
             for (int p = 0; p < points.Count; p++)
             {
-                GeometryTutorLib.ConcreteAST.Segment segment = new GeometryTutorLib.ConcreteAST.Segment(points[p], points[(p + 1) % points.Count]);
+                Segment segment = new Segment(points[p], points[(p + 1) % points.Count]);
 
                 sides.Add(segment);
 
@@ -190,23 +188,23 @@ namespace LiveGeometry.AtomicRegionIdentifier
             //
             // Make the Polygon
             //
-            GeometryTutorLib.ConcreteAST.Polygon poly = GeometryTutorLib.ConcreteAST.Polygon.MakePolygon(sides);
+            Polygon poly = Polygon.MakePolygon(sides);
 
             if (poly == null) throw new ArgumentException("Real segments should define a polygon; they did not.");
             
-            return new GeometryTutorLib.Area_Based_Analyses.ShapeAtomicRegion(poly);
+            return new ShapeAtomicRegion(poly);
         }
 
-        private GeometryTutorLib.Area_Based_Analyses.AtomicRegion SectorDefinesRegion(ImpliedComponentCalculator implied, UndirectedPlanarGraph.PlanarGraph graph)
+        private Atomizer.AtomicRegion SectorDefinesRegion(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
         {
-            Dictionary<GeometryTutorLib.ConcreteAST.Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, UndirectedPlanarGraph.PlanarGraphEdge>();
+            Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges = new Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge>();
 
             List<MinorArc> realArcs = new List<MinorArc>();
             for (int p = 0; p < points.Count; p++)
             {
                 UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
 
-                GeometryTutorLib.ConcreteAST.Segment segment = new GeometryTutorLib.ConcreteAST.Segment(points[p], points[(p + 1) % points.Count]);
+                Segment segment = new Segment(points[p], points[(p + 1) % points.Count]);
                 edges.Add(segment, edge);
 
                 //
@@ -215,8 +213,8 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_ARC)
                 {
                     // Find the applicable circle.
-                    GeometryTutorLib.ConcreteAST.Circle theCircle = null;
-                    foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+                    Circle theCircle = null;
+                    foreach (Circle circle in circles)
                     {
                         if (circle.HasArc(points[p], points[(p + 1) % points.Count]))
                         {
@@ -238,16 +236,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
             return ConvertToSector(edges, realArcs);
         }
 
-        private List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> MixedArcChordedRegion(ImpliedComponentCalculator implied, UndirectedPlanarGraph.PlanarGraph graph)
+        private List<Atomizer.AtomicRegion> MixedArcChordedRegion(List<Circle> thatCircles, UndirectedPlanarGraph.PlanarGraph graph)
         {
-            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> regions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            List<Atomizer.AtomicRegion> regions = new List<Atomizer.AtomicRegion>();
 
             // Every segment may be have a set of circles. (on each side) surrounding it.
             // Keep parallel lists of: (1) segments, (2) (real) arcs, (3) left outer circles, and (4) right outer circles
-            GeometryTutorLib.ConcreteAST.Segment[] regionsSegments = new GeometryTutorLib.ConcreteAST.Segment[points.Count];
-            GeometryTutorLib.ConcreteAST.MinorArc[] arcSegments = new GeometryTutorLib.ConcreteAST.MinorArc[points.Count];
-            GeometryTutorLib.ConcreteAST.Circle[] leftOuterCircles = new GeometryTutorLib.ConcreteAST.Circle[points.Count];
-            GeometryTutorLib.ConcreteAST.Circle[] rightOuterCircles = new GeometryTutorLib.ConcreteAST.Circle[points.Count];
+            Segment[] regionsSegments = new Segment[points.Count];
+            MinorArc[] arcSegments = new MinorArc[points.Count];
+            Circle[] leftOuterCircles = new Circle[points.Count];
+            Circle[] rightOuterCircles = new Circle[points.Count];
 
             //
             // Populate the parallel arrays.
@@ -257,7 +255,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
 
                 // Always put a segment into the collection so we may create a polygon.
-                regionsSegments[p] = new GeometryTutorLib.ConcreteAST.Segment(points[p], points[(p + 1) % points.Count]);
+                regionsSegments[p] = new Segment(points[p], points[(p + 1) % points.Count]);
 
                 // If a known segment, just add it directly, no circles.
                 if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_SEGMENT)
@@ -267,21 +265,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 // If we have an arc / chord situation, handle it. This method will return the outermost circle.
                 else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_DUAL)
                 {
-                    regionsSegments[p] = new GeometryTutorLib.ConcreteAST.Segment(points[p], points[(p + 1) % points.Count]);
+                    regionsSegments[p] = new Segment(points[p], points[(p + 1) % points.Count]);
 
                     //
                     // Get the exact chord and set of circles
                     //
-                    GeometryTutorLib.ConcreteAST.Segment chord = null;
-                    List<GeometryTutorLib.ConcreteAST.Circle> circles = null;
-                    foreach (KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>> chordPair in implied.impliedChords)
+                    Segment chord = regionsSegments[p];
+                    List<Circle> circles = new List<Circle>();
+                    foreach (Circle circle in thatCircles)
                     {
-                        if (chordPair.Key.StructurallyEquals(regionsSegments[p]))
-                        {
-                            chord = chordPair.Key;
-                            circles = chordPair.Value;
-                            break;
-                        }
+                        if (circle.PointIsOn(points[p]) && circle.PointIsOn(points[(p + 1) % points.Count])) circles.Add(circle);
                     }
 
                     regions.AddRange(ConvertToCircleCircle(chord, circles, out leftOuterCircles[p], out rightOuterCircles[p]));
@@ -290,8 +283,8 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 {
                     // Find the unique circle that contains these two points.
                     // (if more than one circle has these points, we would have had more intersections and it would be a direct chorded region)
-                    GeometryTutorLib.ConcreteAST.Circle theCircle = null;
-                    foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+                    Circle theCircle = null;
+                    foreach (Circle circle in thatCircles)
                     {
                         if (circle.PointIsOn(points[p]) && circle.PointIsOn(points[(p + 1) % points.Count]))
                         {
@@ -300,16 +293,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
                         }
                     }
 
-                    arcSegments[p] = new GeometryTutorLib.ConcreteAST.MinorArc(theCircle, points[p], points[(p + 1) % points.Count]);
+                    arcSegments[p] = new MinorArc(theCircle, points[p], points[(p + 1) % points.Count]);
                 }
             }
 
             // Construct a polygon out of the straight-up segments
             // This might be a polygon that defines a pathological region.
-            GeometryTutorLib.ConcreteAST.Polygon poly = GeometryTutorLib.ConcreteAST.Polygon.MakePolygon(new List<GeometryTutorLib.ConcreteAST.Segment>(regionsSegments));
+            Polygon poly = Polygon.MakePolygon(new List<Segment>(regionsSegments));
 
             // Determine which outermost circles apply inside of this polygon.
-            GeometryTutorLib.ConcreteAST.Circle[] circlesCutInsidePoly = new GeometryTutorLib.ConcreteAST.Circle[points.Count];
+            Circle[] circlesCutInsidePoly = new Circle[points.Count];
             for (int p = 0; p < points.Count; p++)
             {
                 if (leftOuterCircles[p] != null && rightOuterCircles[p] == null)
@@ -356,7 +349,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             // This is just a normal shape region: polygon.
             if (isStrictPoly)
             {
-                regions.Add(new GeometryTutorLib.Area_Based_Analyses.ShapeAtomicRegion(poly));
+                regions.Add(new ShapeAtomicRegion(poly));
             }
             // A circle cuts into the polygon.
             else
@@ -364,7 +357,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 //
                 // Now that all interior arcs have been identified, construct the atomic (probably pathological) region
                 //
-                GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion pathological = new GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion();
+                AtomicRegion pathological = new AtomicRegion();
                 for (int p = 0; p < points.Count; p++)
                 {
                     //
@@ -372,7 +365,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     //
                     if (circlesCutInsidePoly[p] != null) pathological.AddConnection(regionsSegments[p].Point1,
                                                                                     regionsSegments[p].Point2,
-                                                                                    GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.ARC,
+                                                                                    ConnectionType.ARC,
                                                                                     new MinorArc(circlesCutInsidePoly[p], regionsSegments[p].Point1, regionsSegments[p].Point2));
                     
                     //
@@ -383,7 +376,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                         {
                             pathological.AddConnection(regionsSegments[p].Point1,
                                                        regionsSegments[p].Point2,
-                                                       GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.ARC,
+                                                       ConnectionType.ARC,
                                                        arcSegments[p]);
                         }
                         // Use the segment
@@ -391,7 +384,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                         {
                             pathological.AddConnection(regionsSegments[p].Point1,
                                                        regionsSegments[p].Point2,
-                                                       GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.SEGMENT,
+                                                       ConnectionType.SEGMENT,
                                                        regionsSegments[p]);
                         }
                     }
@@ -404,14 +397,14 @@ namespace LiveGeometry.AtomicRegionIdentifier
             return regions;
         }
 
-        private GeometryTutorLib.Area_Based_Analyses.AtomicRegion ConvertToSector(Dictionary<GeometryTutorLib.ConcreteAST.Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges, List<MinorArc> arcs)
+        private Atomizer.AtomicRegion ConvertToSector(Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges, List<MinorArc> arcs)
         {
             //
             // Verify that all the arcs belong to the same circle.
             // Add all of the arc measures together for later reference
             //
             double arcMeasure = arcs[0].minorMeasure;
-            GeometryTutorLib.ConcreteAST.Circle refCircle = arcs[0].theCircle;
+            Circle refCircle = arcs[0].theCircle;
             for (int a = 1; a < arcs.Count; a++)
             {
                 if (!refCircle.StructurallyEquals(arcs[a].theCircle))
@@ -425,7 +418,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             // Identify the segments which will be constructed into two radii; All we care about are the endpoints on the circle and the center.
             //
             List<Point> ptsOnCircle = new List<Point>();
-            foreach (KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, UndirectedPlanarGraph.PlanarGraphEdge> edgePair in edges)
+            foreach (KeyValuePair<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edgePair in edges)
             {
                 if (edgePair.Value.edgeType != UndirectedPlanarGraph.EdgeType.REAL_ARC)
                 {
@@ -442,7 +435,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             if (arcMeasure < 180) theArc = new MinorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
             else theArc = new MajorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
 
-            return new GeometryTutorLib.Area_Based_Analyses.ShapeAtomicRegion(new Sector(theArc));
+            return new ShapeAtomicRegion(new Sector(theArc));
         }
 
         //
@@ -456,12 +449,12 @@ namespace LiveGeometry.AtomicRegionIdentifier
         // Note: There will always be a chord because of our implied construction.
         // We are interested in only minor arcs of the given circles.
         //
-        private List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> ConvertToCircleCircle(GeometryTutorLib.ConcreteAST.Segment chord,
-                                                                                              List<GeometryTutorLib.ConcreteAST.Circle> circles,
-                                                                                              out GeometryTutorLib.ConcreteAST.Circle leftOuterCircle,
-                                                                                              out GeometryTutorLib.ConcreteAST.Circle rightOuterCircle)
+        private List<Atomizer.AtomicRegion> ConvertToCircleCircle(Segment chord,
+                                                                                              List<Circle> circles,
+                                                                                              out Circle leftOuterCircle,
+                                                                                              out Circle rightOuterCircle)
         {
-            List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> regions = new List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion>();
+            List<Atomizer.AtomicRegion> regions = new List<Atomizer.AtomicRegion>();
             leftOuterCircle = null;
             rightOuterCircle = null;
 
@@ -479,14 +472,14 @@ namespace LiveGeometry.AtomicRegionIdentifier
             }
 
             // All circles that are on each side of the chord 
-            List<GeometryTutorLib.ConcreteAST.Circle> leftSide = new List<GeometryTutorLib.ConcreteAST.Circle>();
-            List<GeometryTutorLib.ConcreteAST.Circle> rightSide = new List<GeometryTutorLib.ConcreteAST.Circle>();
+            List<Circle> leftSide = new List<Circle>();
+            List<Circle> rightSide = new List<Circle>();
 
             // For now, assume max, one circle per side.
             // Construct a collinear list of points that includes all circle centers as well as the single intersection point between the chord and the line passing through all circle centers.
             // This orders the sides and provides implied sizes.
 
-            GeometryTutorLib.ConcreteAST.Segment centerLine = new GeometryTutorLib.ConcreteAST.Segment(circles[0].center, circles[1].center);
+            Segment centerLine = new Segment(circles[0].center, circles[1].center);
             for (int c = 2; c < circles.Count; c++)
             {
                 centerLine.AddCollinearPoint(circles[c].center);
@@ -553,13 +546,13 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //   ( |
         //    (|
         //
-        private GeometryTutorLib.Area_Based_Analyses.AtomicRegion ConstructBasicLineCircleRegion(GeometryTutorLib.ConcreteAST.Segment chord, GeometryTutorLib.ConcreteAST.Circle circle)
+        private Atomizer.AtomicRegion ConstructBasicLineCircleRegion(Segment chord, Circle circle)
         {
-            GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion region = new GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion();
+            AtomicRegion region = new AtomicRegion();
 
-            region.AddConnection(chord.Point1, chord.Point2, GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.ARC, new MinorArc(circle, chord.Point1, chord.Point2));
+            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, new MinorArc(circle, chord.Point1, chord.Point2));
 
-            region.AddConnection(chord.Point1, chord.Point2, GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.SEGMENT, chord);
+            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.SEGMENT, chord);
 
             return region;
         }
@@ -572,16 +565,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
         //   ( ( 
         //    ( (
         //     --
-        private GeometryTutorLib.Area_Based_Analyses.AtomicRegion ConstructBasicCircleCircleRegion(GeometryTutorLib.ConcreteAST.Segment chord, GeometryTutorLib.ConcreteAST.Circle c1, GeometryTutorLib.ConcreteAST.Circle c2)
+        private Atomizer.AtomicRegion ConstructBasicCircleCircleRegion(Segment chord, Circle c1, Circle c2)
         {
-            GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion region = new GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion();
+            AtomicRegion region = new AtomicRegion();
 
             MinorArc arc1 = new MinorArc(c1, chord.Point1, chord.Point2);
             MinorArc arc2 = new MinorArc(c2, chord.Point1, chord.Point2);
 
-            region.AddConnection(chord.Point1, chord.Point2, GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.ARC, arc1);
+            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, arc1);
 
-            region.AddConnection(chord.Point1, chord.Point2, GeometryTutorLib.Area_Based_Analyses.NonShapeAtomicRegion.ConnectionType.ARC, arc2);
+            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, arc2);
 
             return region;
         }

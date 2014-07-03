@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Threading;
-using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
-using LiveGeometry.TutorParser;
 
-namespace LiveGeometry.AtomicRegionIdentifier
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     /// <summary>
     /// Identifies all atomic regions in the figure.
     /// </summary>
-    public class MinimalBasisCalculator
+    public class FacetCalculator
     {
         // The graph we use as the basis for region identification.
         private UndirectedPlanarGraph.PlanarGraph graph;
@@ -19,9 +17,11 @@ namespace LiveGeometry.AtomicRegionIdentifier
         private List<Primitive> primitives;
         public List<Primitive> GetPrimitives() { return primitives; }
 
-        public MinimalBasisCalculator(UndirectedPlanarGraph.PlanarGraph g)
+        public FacetCalculator(UndirectedPlanarGraph.PlanarGraph g)
         {
             graph = g;
+
+            Debug.WriteLine(graph);
 
             primitives = new List<Primitive>();
 

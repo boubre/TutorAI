@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
@@ -44,6 +45,22 @@ namespace GeometryTutorLib.ConcreteAST
             polygonalized = Polygon.MakePolygon(sides);
 
             return polygonalized;
+        }
+
+        /// <summary>
+        /// Make a set of connections for atomic region analysis.
+        /// </summary>
+        /// <returns></returns>
+        public override List<Connection> MakeAtomicConnections()
+        {
+            List<Connection> connections = new List<Connection>();
+
+            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint1, ConnectionType.SEGMENT, new Segment(theArc.theCircle.center, theArc.endpoint1)));
+            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint2, ConnectionType.SEGMENT, new Segment(theArc.theCircle.center, theArc.endpoint2)));
+
+            connections.Add(new Connection(theArc.endpoint1, theArc.endpoint2, ConnectionType.ARC, this.theArc));
+
+            return connections;
         }
 
         public override List<Segment> Segmentize()

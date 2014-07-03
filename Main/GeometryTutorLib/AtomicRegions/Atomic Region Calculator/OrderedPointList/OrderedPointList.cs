@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeometryTutorLib.ConcreteAST;
 
-namespace LiveGeometry.AtomicRegionIdentifier
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     //
     // A lexicographic ordering of a list of points.

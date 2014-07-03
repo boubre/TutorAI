@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LiveGeometry.AtomicRegionIdentifier.UndirectedPlanarGraph
+namespace GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph
 {
     //
     // For atomic region identification

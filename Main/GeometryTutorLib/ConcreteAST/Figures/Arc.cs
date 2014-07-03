@@ -58,6 +58,23 @@ namespace GeometryTutorLib.ConcreteAST
             return approxSegments;
         }
 
+        public abstract bool PointLiesOn(Point pt);
+        public abstract bool HasSubArc(Arc that);
+
+        public override void AddCollinearPoint(Point newPt)
+        {
+            collinear.Add(newPt);
+
+            collinear = theCircle.OrderPoints(collinear);
+        }
+
+        public override void ClearCollinear()
+        {
+            collinear.Clear();
+            collinear.Add(endpoint1);
+            collinear.Add(endpoint2);
+        }
+
         //
         // Calculate the length of the arc: s = r * theta (radius * central angle)
         //
@@ -306,6 +323,8 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static bool BetweenMinor(Point m, Arc originalArc)
         {
+            if (m == null) return false;
+
             // Is the point on this circle?
             if (!originalArc.theCircle.PointIsOn(m)) return false;
 
@@ -319,6 +338,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static bool StrictlyBetweenMinor(Point m, Arc originalArc)
         {
+            if (m == null) return false;
+
             if (originalArc.HasEndpoint(m)) return false;
 
             return BetweenMinor(m, originalArc);
@@ -329,6 +350,8 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static bool BetweenMajor(Point m, Arc originalArc)
         {
+            if (m == null) return false;
+
             // Is the point on this circle?
             if (!originalArc.theCircle.PointIsOn(m)) return false;
 
@@ -340,6 +363,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static bool StrictlyBetweenMajor(Point m, Arc originalArc)
         {
+            if (m == null) return false;
+
             if (originalArc.HasEndpoint(m)) return false;
 
             return BetweenMajor(m, originalArc);
@@ -420,6 +445,69 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 radius1 = radius2;
                 radius2 = null;
+            }
+        }
+
+        public override void FindIntersection(Arc that, out Point inter1, out Point inter2)
+        {
+            // Find the points of intersection
+            this.theCircle.FindIntersection(that.theCircle, out inter1, out inter2);
+
+            // The points must be on this minor arc.
+            if (this is MinorArc)
+            {
+                if (!Arc.BetweenMinor(inter1, this)) inter1 = null;
+                if (!Arc.BetweenMinor(inter2, this)) inter2 = null;
+            }
+            else
+            {
+                if (!Arc.BetweenMajor(inter1, this)) inter1 = null;
+                if (!Arc.BetweenMajor(inter2, this)) inter2 = null;
+            }
+
+            // The points must be on thatArc
+            if (that is MinorArc)
+            {
+                if (!Arc.BetweenMinor(inter1, that)) inter1 = null;
+                if (!Arc.BetweenMinor(inter2, that)) inter2 = null;
+            }
+            else
+            {
+                if (!Arc.BetweenMajor(inter1, that)) inter1 = null;
+                if (!Arc.BetweenMajor(inter2, that)) inter2 = null;
+            }
+
+            if (inter1 == null && inter2 != null)
+            {
+                inter1 = inter2;
+                inter2 = null;
+            }
+        }
+
+        public override void FindIntersection(Segment that, out Point inter1, out Point inter2)
+        {
+            // Find the points of intersection
+            this.theCircle.FindIntersection(that, out inter1, out inter2);
+
+            // The points must be on this minor arc.
+            if (this is MinorArc)
+            {
+                if (!Arc.BetweenMinor(inter1, this)) inter1 = null;
+                if (!Arc.BetweenMinor(inter2, this)) inter2 = null;
+            }
+            else
+            {
+                if (!Arc.BetweenMajor(inter1, this)) inter1 = null;
+                if (!Arc.BetweenMajor(inter2, this)) inter2 = null;
+            }
+
+            if (!that.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
+            if (!that.PointIsOnAndBetweenEndpoints(inter2)) inter2 = null;
+
+            if (inter1 == null && inter2 != null)
+            {
+                inter1 = inter2;
+                inter2 = null;
             }
         }
     }

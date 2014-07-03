@@ -528,6 +528,53 @@ namespace GeometryTutorLib
             foreach (char c in s) intList.Add(Convert.ToInt32(c) - 48);
             return intList;
         }
+
+        //
+        // Get a point in the given list OR create a new list.
+        //
+        public static ConcreteAST.Point AcquirePoint(List<ConcreteAST.Point> points, ConcreteAST.Point that)
+        {
+            if (that == null) return null;
+
+            // Avoid parallel line intersections at infinity
+            if (double.IsInfinity(that.X) || double.IsInfinity(that.Y) || double.IsNaN(that.X) || double.IsNaN(that.Y)) return null;
+
+            ConcreteAST.Point pt = GetStructurally<ConcreteAST.Point>(points, that);
+            if (pt == null) pt = PointFactory.GeneratePoint(that.X, that.Y);
+            return pt;
+        }
+
+        //
+        // Get a point in the given list OR create a new list that is internal to the given segments.
+        //
+        public static ConcreteAST.Point AcquireRestrictedPoint(List<ConcreteAST.Point> points, ConcreteAST.Point that,
+                                                               ConcreteAST.Segment seg1, ConcreteAST.Segment seg2)
+        {
+            ConcreteAST.Point pt = AcquirePoint(points, that);
+
+            if (pt == null) return null;
+
+            return !seg1.PointIsOnAndBetweenEndpoints(pt) || !seg2.PointIsOnAndBetweenEndpoints(pt) ? null : pt;
+        }
+        public static ConcreteAST.Point AcquireRestrictedPoint(List<ConcreteAST.Point> points, ConcreteAST.Point that,
+                                                               ConcreteAST.Arc arc1, ConcreteAST.Arc arc2)
+        {
+            ConcreteAST.Point pt = AcquirePoint(points, that);
+
+            if (pt == null) return null;
+
+            return !arc1.PointLiesOn(pt) || !arc2.PointLiesOn(pt) ? null : pt;
+        }
+
+        public static ConcreteAST.Point AcquireRestrictedPoint(List<ConcreteAST.Point> points, ConcreteAST.Point that,
+                                                               ConcreteAST.Segment seg, ConcreteAST.Arc arc)
+        {
+            ConcreteAST.Point pt = AcquirePoint(points, that);
+
+            if (pt == null) return null;
+
+            return !seg.PointIsOnAndBetweenEndpoints(pt) || !arc.PointLiesOn(pt) ? null : pt;
+        }
     }
 
     public class Stopwatch

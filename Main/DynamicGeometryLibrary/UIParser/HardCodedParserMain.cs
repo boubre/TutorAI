@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
-using LiveGeometry.AtomicRegionIdentifier;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace LiveGeometry.TutorParser
 {
@@ -28,7 +28,7 @@ namespace LiveGeometry.TutorParser
             implied.ConstructAllImplied();
         }
 
-        private void ConstructAreaHypergraph(List<GeometryTutorLib.Area_Based_Analyses.AtomicRegion> atoms)
+        private void ConstructAreaHypergraph(List<AtomicRegion> atoms)
         {
             GeometryTutorLib.Area_Based_Analyses.AreaPowersetHypergraph areaHG = new GeometryTutorLib.Area_Based_Analyses.AreaPowersetHypergraph(atoms, implied.circles,
                                                                                                                                         implied.polygons,

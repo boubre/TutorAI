@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using GeometryTutorLib.Area_Based_Analyses;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace DynamicGeometry.UI.RegionShading
 {
