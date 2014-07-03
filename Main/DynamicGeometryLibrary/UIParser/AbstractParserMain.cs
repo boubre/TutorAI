@@ -16,7 +16,6 @@ namespace LiveGeometry.TutorParser
         // Calculate all of the implied components of the figure.
         //
         public ImpliedComponentCalculator implied { get; protected set; }
-        //protected AtomicRegionIdentifier.AtomicIdentifier atomIdentifier;
 
         public AbstractParserMain()
         {
@@ -27,43 +26,51 @@ namespace LiveGeometry.TutorParser
         //
         // Identify and return all atomic regions
         //
-        public List<AtomicRegion> IdentifyAtomicRegions()
+        public List<AtomicRegion> GetAtomicRegions()
         {
-            //atomIdentifier = new AtomicRegionIdentifier.AtomicIdentifier(implied);
-
-            //return atomIdentifier.GetAtomicRegions();
-
-            return new List<AtomicRegion>();
+            return implied.atomicRegions;
         }
-
-
+        
 
         public GeometryTutorLib.EngineUIBridge.ProblemDescription MakeProblemDescription(List<GroundedClause> givens)
         {
             GeometryTutorLib.EngineUIBridge.ProblemDescription pdesc = new GeometryTutorLib.EngineUIBridge.ProblemDescription();
-            //pdesc.givens = givens;
-            //pdesc.points = Points;
-            //pdesc.collinear = Collinear;
-            //pdesc.triangles = Triangles;
-            //pdesc.segments = Segments;
-            //pdesc.inMiddles = InMiddles;
+
+            pdesc.givens = givens;
+
+            implied.allFigurePoints.ForEach(f => pdesc.figure.Add(f));
+            implied.angles.ForEach(f => pdesc.figure.Add(f));
+            implied.arcInMiddle.ForEach(f => pdesc.figure.Add(f));
+            implied.ccIntersections.ForEach(f => pdesc.figure.Add(f));
+            implied.circles.ForEach(f => pdesc.figure.Add(f));
+            implied.collinear.ForEach(f => pdesc.figure.Add(f));
+            implied.csIntersections.ForEach(f => pdesc.figure.Add(f));
+            implied.inMiddles.ForEach(f => pdesc.figure.Add(f));
+            implied.majorArcs.ForEach(f => pdesc.figure.Add(f));
+            implied.majorSectors.ForEach(f => pdesc.figure.Add(f));
+            implied.minorArcs.ForEach(f => pdesc.figure.Add(f));
+            implied.minorSectors.ForEach(f => pdesc.figure.Add(f));
+            implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX].ForEach(f => pdesc.figure.Add(f));
+            implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.QUADRILATERAL_INDEX].ForEach(f => pdesc.figure.Add(f));
+            implied.segments.ForEach(f => pdesc.figure.Add(f));
+            implied.ssIntersections.ForEach(f => pdesc.figure.Add(f));
 
             return pdesc;
         }
 
-        /// <summary>
-        /// Return clauses that should be passed to the back-end.
-        /// </summary>
-        /// <returns>Back-end input.</returns>
-        public List<GroundedClause> GetIntrinsics()
-        {
-            List<GroundedClause> intrinsic = new List<GroundedClause>();
-            //Points.ForEach((Point p) => intrinsic.Add(p));
-            //Collinear.ForEach((Collinear c) => intrinsic.Add(c));
-            //Triangles.ForEach((Triangle t) => intrinsic.Add(t));
+        ///// <summary>
+        ///// Return clauses that should be passed to the back-end.
+        ///// </summary>
+        ///// <returns>Back-end input.</returns>
+        //public List<GroundedClause> GetIntrinsics()
+        //{
+        //    List<GroundedClause> intrinsic = new List<GroundedClause>();
+        //    //Points.ForEach((Point p) => intrinsic.Add(p));
+        //    //Collinear.ForEach((Collinear c) => intrinsic.Add(c));
+        //    //Triangles.ForEach((Triangle t) => intrinsic.Add(t));
 
-            return intrinsic;
-        }
+        //    return intrinsic;
+        //}
 
         //
         // Given a list of grounded clauses, get the structurally unique.

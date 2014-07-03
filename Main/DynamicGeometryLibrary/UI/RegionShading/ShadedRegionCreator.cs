@@ -41,7 +41,7 @@ namespace DynamicGeometry.UI.RegionShading
             Point pt = new Point(e.GetPosition(Drawing.Canvas).X, e.GetPosition(Drawing.Canvas).Y);
             Point logicalPt = new Point(cs.ToLogical(pt.X - cs.Origin.X), cs.ToLogical(cs.Origin.Y - pt.Y));
 
-            foreach (AtomicRegion ar in parser.IdentifyAtomicRegions())
+            foreach (AtomicRegion ar in parser.GetAtomicRegions())
             {
                 if (ar is ShapeAtomicRegion)
                 {

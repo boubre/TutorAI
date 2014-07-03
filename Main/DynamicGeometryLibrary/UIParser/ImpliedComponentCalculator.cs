@@ -140,6 +140,7 @@ namespace LiveGeometry.TutorParser
             //extendedNonRealRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
             allFigures = new List<Figure>();
             imagPoints = new List<ImaginaryPoint>();
+            atomicRegions = new List<AtomicRegion>();
         }
 
         public void ConstructAllImplied()

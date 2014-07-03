@@ -30,14 +30,7 @@ namespace GeometryTutorLib
 
         public UIFigureAnalyzerMain(EngineUIBridge.ProblemDescription pdesc)
         {
-            //TEMPORARY: Convert pdesc into old intrinsic format
-            figure = new List<ConcreteAST.GroundedClause>();
-            pdesc.points.ForEach((ConcreteAST.Point p) => figure.Add(p));
-            pdesc.inMiddles.ForEach((ConcreteAST.InMiddle im) => figure.Add(im));
-            pdesc.segments.ForEach((ConcreteAST.Segment s) => figure.Add(s));
-            pdesc.triangles.ForEach((ConcreteAST.Triangle t) => figure.Add(t));
-            //END TEMPORARY
-            
+            figure = pdesc.figure;            
             givens = pdesc.givens;
 
             // Create the precomputer object for coordinate-based pre-comutation analysis

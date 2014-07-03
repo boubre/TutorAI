@@ -7,27 +7,44 @@ namespace GeometryTutorLib.Precomputer
 {
     public class CoordinatePrecomputer
     {
+        private List<Circle> circles;
         private List<Quadrilateral> quadrilaterals;
         private List<Triangle> triangles;
         private List<Segment> segments;
         private List<Angle> angles;
+        public List<Collinear> collinear;
 
         private List<InMiddle> inMiddles;
         private List<Intersection> intersections;
         private List<Perpendicular> perpendiculars;
         private List<Parallel> parallels;
 
+        private List<MinorArc> minorArcs;
+        private List<MajorArc> majorArcs;
+        private List<Sector> sectors;
+        private List<ArcInMiddle> arcInMiddle;
+
+        private List<CircleSegmentIntersection> csIntersections;
+        private List<CircleCircleIntersection> ccIntersections;
+
         public CoordinatePrecomputer(List<GroundedClause> figure)
         {
+            circles = new List<Circle>();
             quadrilaterals = new List<Quadrilateral>();
             triangles = new List<Triangle>();
             segments = new List<Segment>();
             angles = new List<Angle>();
+            collinear = new List<Collinear>();
 
             inMiddles = new List<InMiddle>();
             intersections = new List<Intersection>();
             perpendiculars = new List<Perpendicular>();
             parallels = new List<Parallel>();
+
+            minorArcs = new List<MinorArc>();
+            majorArcs = new List<MajorArc>();
+            sectors = new List<Sector>();
+            arcInMiddle = new List<ArcInMiddle>();
 
             FilterClauses(figure);
         }
@@ -39,6 +56,10 @@ namespace GeometryTutorLib.Precomputer
         {
             foreach (GroundedClause clause in figure)
             {
+                if (clause is Circle)
+                {
+                    circles.Add(clause as Circle);
+                }
                 if (clause is Quadrilateral)
                 {
                     quadrilaterals.Add(clause as Quadrilateral);
@@ -59,6 +80,10 @@ namespace GeometryTutorLib.Precomputer
                 {
                     inMiddles.Add(clause as InMiddle);
                 }
+                else if (clause is Collinear)
+                {
+                    collinear.Add(clause as Collinear);
+                }
                 else if (clause is Parallel)
                 {
                     parallels.Add(clause as Parallel);
@@ -73,7 +98,23 @@ namespace GeometryTutorLib.Precomputer
                 }
                 else if (clause is Collinear)
                 {
-                    System.Diagnostics.Debug.WriteLine("CTA: Collinear needs to be precomputed.");
+                    collinear.Add(clause as Collinear);
+                }
+                else if (clause is MinorArc)
+                {
+                    minorArcs.Add(clause as MinorArc);
+                }
+                else if (clause is MajorArc)
+                {
+                    majorArcs.Add(clause as MajorArc);
+                }
+                else if (clause is Sector)
+                {
+                    sectors.Add(clause as Sector);
+                }
+                else if (clause is ArcInMiddle)
+                {
+                    arcInMiddle.Add(clause as ArcInMiddle);
                 }
             }
         }

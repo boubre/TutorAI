@@ -444,7 +444,7 @@ namespace LiveGeometry
             // Execute Front-End Parse
             parser.Parse();
 
-            foreach (GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion ar in parser.IdentifyAtomicRegions())
+            foreach (GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion ar in parser.GetAtomicRegions())
             {
                 UIDebugPublisher.publishString(ar.ToString());
             }
