@@ -592,11 +592,9 @@ namespace LiveGeometry.TutorParser
             {
                 for (int p2 = p1 + 1; p2 < circle.pointsOnCircle.Count; p2++)
                 {
-                    // All points x, from p1 < x < p2, are arc minor points
-                    // All points x, from x < p1 or x > p2, are arc major points
                     List<Point> minorArcPoints;
                     List<Point> majorArcPoints;
-                    PartitionArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
+                    PartitionArcPoints(circle, p1, p2, out minorArcPoints, out majorArcPoints);
 
                     MinorArc newMinorArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
                     MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
@@ -615,32 +613,52 @@ namespace LiveGeometry.TutorParser
                     circle.AddMinorSector(newMinorSector);
                     circle.AddMajorSector(newMajorSector);
 
-                    // Generate ArcInMiddle clauses.
-                    for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
+                    // Generate ArcInMiddle clauses for minor arc and major arc
+                    //for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
+                    //{
+                    //    GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newMinorArc));
+                    //}
+                    for (int imIndex = 0; imIndex < newMinorArc.arcMinorPoints.Count; imIndex++)
                     {
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newMinorArc));
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMinorArc.arcMinorPoints[imIndex], newMinorArc));
+                    }
+                    for (int imIndex = 0; imIndex < newMajorArc.arcMajorPoints.Count; imIndex++)
+                    {
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMajorArc.arcMajorPoints[imIndex], newMajorArc));
                     }
                 }
             }
         }
 
         //
+        // Previous assumptions:
         // All points x, from p1 < x < p2, are arc minor points
         // All points x, from x < p1 or x > p2, are arc major points
         //
+        // The ordered list was not enough to guarantee these assumptions
+        // Consider case of a circle divided into 4 quadrants, with a point defined in each quadrant, such that the order list becomes:
+        //  T (quad 4), U (quad 3), R (quad 2), S (quad 1)
+        //  When endpt1 = 0 (T) and endpt2 = 3 (S), U and R would be classified as minor arc points since their indices fall between
+        //  endpt1 and endpt2. THIS IS NOT CORRECT. Points U and R should be part of the major arc TS
+        //
         // We assume an ordered list of points here.
         //
-        private void PartitionArcPoints(List<Point> points, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
+        private void PartitionArcPoints(GeometryTutorLib.ConcreteAST.Circle circle, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
         {
             minorArcPoints = new List<Point>();
             majorArcPoints = new List<Point>();
+            Point e1 = circle.pointsOnCircle[endpt1];
+            Point e2 = circle.pointsOnCircle[endpt2];
 
-            // Traverse list and add to the appropriate list
-            for (int i = 0; i < points.Count; i++)
+            // Traverse points and add to the appropriate list
+            for (int i = 0; i < circle.pointsOnCircle.Count; i++)
             {
-                if (endpt1 < i && i < endpt2) minorArcPoints.Add(points[i]);
-                else if (i < endpt1 || i > endpt2) majorArcPoints.Add(points[i]);
-                // else i == enpt1 || i == endpt2
+                if (i != endpt1 && i != endpt2)
+                {
+                    Point m = circle.pointsOnCircle[i];
+                    if (Arc.BetweenMinor(m, new MinorArc(circle, e1, e2))) minorArcPoints.Add(m);
+                    else majorArcPoints.Add(m);
+                }
             }
         }
 

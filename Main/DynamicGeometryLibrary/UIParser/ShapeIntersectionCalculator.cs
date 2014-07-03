@@ -150,6 +150,8 @@ namespace LiveGeometry.TutorParser
                     Point inter1 = null;
                     Point inter2 = null;
                     circle.FindIntersection(segment, out inter1, out inter2);
+                    if (!segment.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
+                    if (!segment.PointIsOnAndBetweenEndpoints(inter2)) inter2 = null;
 
                     // Add them to the list (possibly)
                     List<Point> intersectionPts = new List<Point>();
