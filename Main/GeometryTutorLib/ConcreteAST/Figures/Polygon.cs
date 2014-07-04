@@ -95,9 +95,12 @@ namespace GeometryTutorLib.ConcreteAST
                     if (!Utilities.HasStructurally<Point>(intersections, foundInter)) intersections.Add(foundInter);
                 }
             }
-            if (intersections.Count > 2)
+            if (!(this is ConcavePolygon))
             {
-                throw new Exception("A segment intersecting a polygon may have up to 2 intersection points, not: " + intersections.Count);
+                if (intersections.Count > 2)
+                {
+                    throw new Exception("A segment intersecting a polygon may have up to 2 intersection points, not: " + intersections.Count);
+                }
             }
 
             if (intersections.Any()) inter1 = intersections[0];

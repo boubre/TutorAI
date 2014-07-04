@@ -35,8 +35,8 @@ namespace GeometryTestbed
             pts.Add(o);
             pts.Add(j);
             collinear.Add(new Collinear(pts));
-
-                        parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+            
+            parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
             
             given.Add(new GeometricCongruentAngles((Angle)parser.Get(new Angle(o, m, n)),
                                                    (Angle)parser.Get(new Angle(o, n, m))));

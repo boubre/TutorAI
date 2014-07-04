@@ -23,7 +23,7 @@ namespace GeometryTestbed
 
             // Congruent Triangles
             problems.Add(new Page113Problem7(false, true));                  // GTG
-            //problems.Add(new Page134Problem6(false, true));                  // GTG
+            problems.Add(new Page134Problem6(false, true));                  // GTG
             //problems.Add(new Page134Problem7(false, true));                  // GTG
             problems.Add(new Page135Problem21(false, false));                 // GTG
             problems.Add(new Page144ClassroomExercise01(false, false));       // GTG
