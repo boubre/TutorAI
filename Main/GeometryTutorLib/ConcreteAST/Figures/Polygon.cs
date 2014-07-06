@@ -63,11 +63,26 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.HasStructurally<Segment>(orderedSides, thatSegment);
         }
 
-        public override bool PointLiesInside(Point pt) { return IsInPolygon(pt); }
+        public override bool PointLiesInside(Point pt)
+        {
+            if (PointLiesOn(pt)) return false;
+            
+            return IsInPolygon(pt);
+        }
+
         public override bool PointLiesInOrOn(Point pt)
         {
             if (IsInPolygon(pt)) return true;
 
+            foreach (Segment side in orderedSides)
+            {
+                if (side.PointIsOnAndBetweenEndpoints(pt)) return true;
+            }
+
+            return false;
+        }
+        public bool PointLiesOn(Point pt)
+        {
             foreach (Segment side in orderedSides)
             {
                 if (side.PointIsOnAndBetweenEndpoints(pt)) return true;
@@ -86,21 +101,29 @@ namespace GeometryTutorLib.ConcreteAST
             List<Point> intersections = new List<Point>();
             foreach (Segment side in orderedSides)
             {
-                foundInter = side.FindIntersection(that);
-
-                // Is the intersection in the middle of the segments?
-                if (side.PointIsOnAndBetweenEndpoints(foundInter) && that.PointIsOnAndBetweenEndpoints(foundInter))
+                if (side.IsCollinearWith(that))
                 {
-                    // A segment may intersect a polygon through up to 2 vertices creating 4 intersections.
-                    if (!Utilities.HasStructurally<Point>(intersections, foundInter)) intersections.Add(foundInter);
+                    if (that.PointIsOnAndBetweenEndpoints(side.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point1);
+                    if (that.PointIsOnAndBetweenEndpoints(side.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point2);
+
+                    if (side.PointIsOnAndBetweenEndpoints(that.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point1);
+                    if (side.PointIsOnAndBetweenEndpoints(that.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point2);
+                }
+                else
+                {
+                    foundInter = side.FindIntersection(that);
+
+                    // Is the intersection in the middle of the segments?
+                    if (side.PointIsOnAndBetweenEndpoints(foundInter) && that.PointIsOnAndBetweenEndpoints(foundInter))
+                    {
+                        // A segment may intersect a polygon through up to 2 vertices creating 4 intersections.
+                        if (!Utilities.HasStructurally<Point>(intersections, foundInter)) intersections.Add(foundInter);
+                    }
                 }
             }
-            if (!(this is ConcavePolygon))
+            if (!(this is ConcavePolygon) && intersections.Count > 2)
             {
-                if (intersections.Count > 2)
-                {
-                    throw new Exception("A segment intersecting a polygon may have up to 2 intersection points, not: " + intersections.Count);
-                }
+                throw new Exception("A segment intersecting a polygon may have up to 2 intersection points, not: " + intersections.Count);
             }
 
             if (intersections.Any()) inter1 = intersections[0];
@@ -380,6 +403,46 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return ActuallyConstructThePolygonObject(theseSegs);
+        }
+
+        //
+        // The center lies inside the polygon and there are no intersection points with the sides.
+        //
+        public bool ContainsCircle(Circle that)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                Point pt1 = null;
+                Point pt2 = null;
+                that.FindIntersection(side, out pt1, out pt2);
+                if (pt1 != null || pt2 != null) return false;
+            }
+
+            return that.PointLiesInside(that.center);
+        }
+
+        public bool ContainsPolygon(Polygon that)
+        {
+            //
+            // All points are interior to the polygon.
+            //
+            foreach (Point thatPt in that.points)
+            {
+                if (!this.PointLiesInOrOn(thatPt)) return false;
+            }
+
+            //
+            // Check that all intersections so that there are no crossings.
+            //
+            foreach (Segment thisSide in this.orderedSides)
+            {
+                foreach (Segment thatSide in that.orderedSides)
+                {
+                    if (thisSide.Crosses(thatSide)) return false;
+                }
+            }
+
+            return true;
         }
 
         //

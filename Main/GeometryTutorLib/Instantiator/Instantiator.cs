@@ -176,6 +176,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RelationsOfCongruentAnglesAreCongruent.Instantiate(clause));
                     HandleDeducedClauses(worklist, SupplementaryAndCongruentImplyRightAngles.Instantiate(clause));
                 }
+                else if (clause is SegmentRatio)
+                {
+                    HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
+                }
                 else if (clause is Equation)
                 {
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
@@ -229,7 +233,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     HandleDeducedClauses(worklist, SASSimilarity.Instantiate(clause));
                     HandleDeducedClauses(worklist, SSSSimilarity.Instantiate(clause));
-//                    HandleDeducedClauses(worklist, SegmentRatio.InstantiateProportion(clause));
+                    //                    HandleDeducedClauses(worklist, SegmentRatio.InstantiateProportion(clause));
                     HandleDeducedClauses(worklist, TransitiveSubstitution.Instantiate(clause)); // Simplifies as well
                 }
                 else if (clause is ProportionalAngles)
@@ -239,7 +243,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is CongruentTriangles)
                 {
                     HandleDeducedClauses(worklist, CongruentTriangles.Instantiate(clause));
-                    // HandleDeducedClauses(worklist, TransitiveCongruentTriangles.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TransitiveCongruentTriangles.Instantiate(clause));
                 }
                 else if (clause is CongruentAngles)
                 {

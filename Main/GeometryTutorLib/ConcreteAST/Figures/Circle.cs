@@ -122,7 +122,7 @@ namespace GeometryTutorLib.ConcreteAST
             return Area(radius) / Math.PI;
         }
         public override bool IsComputableArea() { return true; }
-        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             // Any Radius known?
             foreach (Segment thisRadius in radii)
@@ -852,6 +852,28 @@ namespace GeometryTutorLib.ConcreteAST
             if (pt2 == null) return pt1;
 
             return Arc.StrictlyBetweenMinor(pt1, new MinorArc(this, a, b)) ? pt1 : pt2;
+        }
+
+        // return the midpoint between these two on the circle.
+        public Point OppositePoint(Point that)
+        {
+            if (!this.PointIsOn(that)) return null;
+
+            // Make the radius
+            Segment radius = new Segment(center, that);
+
+            Point pt1 = null;
+            Point pt2 = null;
+            this.FindIntersection(radius, out pt1, out pt2);
+
+            if (pt2 == null) return null;
+
+            return pt1.StructurallyEquals(that) ? pt2 : pt1;
+        }
+
+        public bool CircleContains(Circle that)
+        {
+            return Point.calcDistance(this.center, that.center) <= Math.Abs(this.radius - that.radius);
         }
 
         public bool HasArc(Arc arc)

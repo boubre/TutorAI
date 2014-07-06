@@ -171,6 +171,11 @@ namespace LiveGeometry.TutorParser
             shapeIntCalc.CalcCirclePolygonIntersectionPoints();
             shapeIntCalc.CalcPolygonPolygonIntersectionPoints();
 
+            // Determine what shapes are contained within what other shapes.
+            ShapeContainmentCalculator shapeContainCalc = new ShapeContainmentCalculator(this);
+            shapeContainCalc.CalcCircleCircleContainment();
+            shapeContainCalc.CalcCirclePolygonContainment();
+            shapeContainCalc.CalcPolygonPolygonContainment();
 
             // Calculate all (selective) Segment-Segment Intersections
             CalculateIntersections();

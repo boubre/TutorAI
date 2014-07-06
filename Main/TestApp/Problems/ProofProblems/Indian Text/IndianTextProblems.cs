@@ -28,7 +28,7 @@ namespace GeometryTestbed
             problems.Add(new JPage135Example4(false, true));   // GTG
 
 
-            //problems.Add(new IPage149TopExercise(false, false)); // Requires implementing a new theorem
+            //problems.Add(new IPage149TopExercise(true, false)); // Requires implementing a new theorem
             // May omit these from study
             // Proportionality problems.Add(new JPage152Problem01());
             // Problems with proportionality problems.Add(new JPage153Problem09());

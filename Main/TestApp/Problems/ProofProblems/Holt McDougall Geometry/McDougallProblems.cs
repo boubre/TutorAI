@@ -38,11 +38,11 @@ namespace GeometryTestbed
 
 
 
-            //problems.Add(new Page168Problem36(false, false));  // Endocing  
-            //problems.Add(new Page168Problem37(false, false));  // Endocing  
-            //problems.Add(new Page197Problem37(false, false));  // Quite algebraic
-            //problems.Add(new Page160Problem43(false, false));  // Encoding; not for this implementation round
-            // problems.Add(new Page301Problem42(false, false));  Can't deduce geometrically; coordinate-based needed
+            //problems.Add(new Page168Problem36(true, false));  // Endocing  
+            //problems.Add(new Page168Problem37(true, false));  // Endocing  
+            //problems.Add(new Page197Problem37(true, false));  // Quite algebraic
+            //problems.Add(new Page160Problem43(true, false));  // Encoding; not for this implementation round
+            // problems.Add(new Page301Problem42(true, false));  Can't deduce geometrically; coordinate-based needed
 
             return problems;
         }

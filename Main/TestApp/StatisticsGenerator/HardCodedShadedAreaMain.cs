@@ -83,6 +83,7 @@ namespace StatisticsGenerator
             // Pebble that hypergraph
             Pebble();
 
+/*
             // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.
             // Determine all the known values in the figure based on the pebbled hypergraph and all the known values stated in the problem.
             List<GeometryTutorLib.ConcreteAST.GroundedClause> reachable = FindReachableCongEquationNodes();
@@ -96,6 +97,7 @@ namespace StatisticsGenerator
 
             // Validate that calculated area value matches the value from the hard-coded problem.
             Validate(result.Key, result.Value);
+*/
 
             // Stop timing before we generate all of the statistics
             figureStats.stopwatch.Stop();

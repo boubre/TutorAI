@@ -51,6 +51,11 @@ namespace GeometryTutorLib.ConcreteAST
             return Arc.BetweenMinor(pt, this);
         }
 
+        public override bool PointLiesStrictlyOn(Point pt)
+        {
+            return Arc.StrictlyBetweenMinor(pt, this);
+        }
+
         public override bool HasSubArc(Arc that)
         {
             if (that is MajorArc) return false;

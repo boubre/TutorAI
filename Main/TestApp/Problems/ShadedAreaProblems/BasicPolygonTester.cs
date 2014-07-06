@@ -11,9 +11,9 @@ namespace GeometryTestbed
             Point a = new Point("A", -2, 0); points.Add(a);
             Point b = new Point("B", 0, 6); points.Add(b);
             Point c = new Point("C", 2, 0); points.Add(c);
-            Point d = new Point("D", 0, 0); points.Add(d);
-            Point e = new Point("E", 1, 3); points.Add(e);
-            Point f = new Point("F", -1, 3); points.Add(f);
+            Point d = new Point("D", 3, 0); points.Add(d);
+            Point e = new Point("E", 0, 0); points.Add(e);
+            Point f = new Point("F", 1, 3); points.Add(f);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment bc = new Segment(b, c); segments.Add(bc);

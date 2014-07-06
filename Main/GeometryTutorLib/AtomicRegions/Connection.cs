@@ -65,7 +65,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             if (this.type == ConnectionType.SEGMENT)
             {
-                return Segment.Between(pt, this.endpoint1, this.endpoint2);
+                return (this.segmentOrArc as Segment).PointIsOnAndBetweenEndpoints(pt);
             }
             else if (this.type == ConnectionType.ARC)
             {
@@ -160,13 +160,30 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
             if (this.type == ConnectionType.ARC)
             {
-                return (this.segmentOrArc as Arc).PointLiesOn(this.endpoint1) ||
-                       (this.segmentOrArc as Arc).PointLiesOn(this.endpoint2);
+                if (!(this.segmentOrArc as Arc).StructurallyEquals(this.segmentOrArc as Arc)) return false;
+
+                // If the arcs just touch, it's not overlap.
+                MinorArc minor = this.segmentOrArc as MinorArc;
+                if (minor != null)
+                {
+                    if (minor.PointLiesStrictlyOn(that.endpoint1) || minor.PointLiesStrictlyOn(that.endpoint2)) return true;
+                }
+                else
+                {
+                    MajorArc major = this.segmentOrArc as MajorArc;
+
+                    if (major.PointLiesStrictlyOn(that.endpoint1) || major.PointLiesStrictlyOn(that.endpoint2)) return true;
+                }
+                return false;
             }
             else if (this.type == ConnectionType.SEGMENT)
             {
-                return Segment.Between(that.endpoint1, this.endpoint1, this.endpoint2) ||
-                       Segment.Between(that.endpoint2, this.endpoint1, this.endpoint2);
+                Segment thisSegment = this.segmentOrArc as Segment;
+                Segment thatSegment = that.segmentOrArc as Segment;
+
+                if (!thisSegment.IsCollinearWith(thatSegment)) return false;
+
+                return thisSegment.CoincidingWithOverlap(thatSegment);
             }
 
             return false;

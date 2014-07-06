@@ -59,6 +59,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         public abstract bool PointLiesOn(Point pt);
+        public abstract bool PointLiesStrictlyOn(Point pt);
         public abstract bool HasSubArc(Arc that);
 
         public override void AddCollinearPoint(Point newPt)

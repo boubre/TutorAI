@@ -14,8 +14,14 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment largerSegment { get; protected set; }
         public KeyValuePair<int, int> proportion { get; protected set; }
         public double dictatedProportion { get; protected set; }
+        protected bool knownProportion;
 
-        public SegmentRatio(Segment segment1, Segment segment2) : base()
+        public bool ProportionValueKnown() { return knownProportion; }
+        public void MakeProportionValueKnown() { knownProportion = true; }
+
+
+        public SegmentRatio(Segment segment1, Segment segment2)
+            : base()
         {
             smallerSegment = segment1.Length < segment2.Length ? segment1 : segment2;
             largerSegment = segment1.Length < segment2.Length ? segment2 : segment1;
@@ -44,6 +50,8 @@ namespace GeometryTutorLib.ConcreteAST
             // Reinit the multipliers to basic values
             smallerSegment.multiplier = 1;
             largerSegment.multiplier = 1;
+
+            knownProportion = false;
         }
 
         // Return the number of shared segments in both congruences
@@ -126,7 +134,12 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "(" + largerSegment.ToString() + " / " + smallerSegment.ToString() + ") ";
+            if (knownProportion)
+            {
+                return largerSegment.ToString() + " / " + smallerSegment.ToString() + " = " + dictatedProportion;
+            }
+
+            return "Ratio(" + largerSegment.ToString() + " / " + smallerSegment.ToString() + ") ";
         }
 
         //
@@ -147,110 +160,102 @@ namespace GeometryTutorLib.ConcreteAST
             Equation copyEq = (Equation)original.DeepCopy();
             FlatEquation flattened = new FlatEquation(copyEq.lhs.CollectTerms(), copyEq.rhs.CollectTerms());
 
-            if (flattened.lhsExps.Count == 1 && flattened.rhsExps.Count == 1)
-            {
-                KeyValuePair<int, int> ratio = Utilities.RationalRatio(flattened.lhsExps[0].multiplier, flattened.rhsExps[0].multiplier);
-                if (ratio.Key != -1)
-                {
-                    if (ratio.Key <= 2 && ratio.Value <= 2)
-                    {
-                        SegmentRatio prop = new SegmentRatio((Segment)flattened.lhsExps[0].DeepCopy(),
-                                                             (Segment)flattened.rhsExps[0].DeepCopy());
+            if (flattened.lhsExps.Count != 1 || flattened.rhsExps.Count != 1) return newGrounded;
 
-                        List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
-                        newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, prop, atomAnnotation));
-                    }
+            KeyValuePair<int, int> ratio = Utilities.RationalRatio(flattened.lhsExps[0].multiplier, flattened.rhsExps[0].multiplier);
+            if (ratio.Key != -1)
+            {
+                if (ratio.Key <= 2 && ratio.Value <= 2)
+                {
+                    SegmentRatio prop = new SegmentRatio((Segment)flattened.lhsExps[0].DeepCopy(),
+                                                         (Segment)flattened.rhsExps[0].DeepCopy());
+                    prop.MakeProportionValueKnown();
+
+                    List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(original);
+                    newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, prop, atomAnnotation));
                 }
             }
 
             return newGrounded;
         }
 
-        //private static readonly string PROP_TRANS_NAME = "Segment Proportional / Congruence Transitivity";
-        //private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
-        //public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveProportion(SegmentRatio pss, CongruentSegments conSegs)
-        //{
-        //    List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
+        private static readonly string PROP_TRANS_NAME = "Segment Proportionality Substitution";
+        private static Hypergraph.EdgeAnnotation propAnnotation = new Hypergraph.EdgeAnnotation(PROP_TRANS_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
+        public static List<GenericInstantiator.EdgeAggregator> CreateProportionEquation(SegmentRatio ratio1, SegmentRatio ratio2)
+        {
+            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
-        //    //// Did either of these proportions come from the other?
-        //    //if (pss.HasRelationPredecessor(conSegs) || conSegs.HasRelationPredecessor(pss)) return newGrounded;
+            // Double-Check that the ratios are, in-fact, known.
+            if (!ratio1.ProportionValueKnown() || !ratio2.ProportionValueKnown()) return newGrounded;
 
-        //    //
-        //    // Create the antecedent clauses
-        //    //
-        //    List<GroundedClause> antecedent = new List<GroundedClause>();
-        //    antecedent.Add(pss);
-        //    antecedent.Add(conSegs);
+            //
+            // Create the antecedent clauses
+            //
+            List<GroundedClause> antecedent = new List<GroundedClause>();
+            antecedent.Add(ratio1);
+            antecedent.Add(ratio2);
 
-        //    //
-        //    // Create the consequent clause
-        //    //
-        //    Segment shared = pss.SegmentShared(conSegs);
+            // Create the consequent proportionality equation.
+            GeometricSegmentRatioEquation gsreq = new GeometricSegmentRatioEquation(ratio1, ratio2);
 
-        //    AlgebraicSegmentRatio newPS = new AlgebraicSegmentRatio(pss.OtherSegment(shared), conSegs.OtherSegment(shared));
+            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, gsreq, propAnnotation));
 
-        //    // Update relationship among the congruence pairs to limit cyclic information generation
-        //    //newPS.AddPredecessor(pss);
-        //    //newPS.AddPredecessor(conSegs);
+            return newGrounded;
+        }
 
-        //    newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newPS, propAnnotation));
+        //        //
+        //        // Convert a proportion to an equation: Proportional(Segment(A, M), Segment(M, C)) -> 2AM = MC
+        //        //
+        //        private static readonly string DEF_NAME = "Defintion of Proportional Segments";
+        //        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
 
-        //    return newGrounded;
-        //}
+        //        public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
+        //        {
+        //            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
-//        //
-//        // Convert a proportion to an equation: Proportional(Segment(A, M), Segment(M, C)) -> 2AM = MC
-//        //
-//        private static readonly string DEF_NAME = "Defintion of Proportional Segments";
-//        private static Hypergraph.EdgeAnnotation defAnnotation = new Hypergraph.EdgeAnnotation(DEF_NAME, EngineUIBridge.JustificationSwitch.SIMILARITY);
+        //            if (!(clause is SegmentRatio)) return newGrounded;
 
-//        public static List<GenericInstantiator.EdgeAggregator> InstantiateProportion(GroundedClause clause)
-//        {
-//            List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
+        //            SegmentRatio propSegs = clause as SegmentRatio;
 
-//            if (!(clause is SegmentRatio)) return newGrounded;
+        //            // Do not generate equations based on 'forced' proportions
+        ////            if (propSegs.proportion.Key == -1 || propSegs.proportion.Value == -1) return newGrounded;
+        //            KeyValuePair<int, int> ratio = Utilities.RationalRatio(propSegs.dictatedProportion);
+        //            if (ratio.Key == -1 || ratio.Value == -1) return newGrounded;
 
-//            SegmentRatio propSegs = clause as SegmentRatio;
+        //            // Avoid generating equation if this is a congruence
+        //            if (ratio.Key == ratio.Value) return newGrounded;
 
-//            // Do not generate equations based on 'forced' proportions
-////            if (propSegs.proportion.Key == -1 || propSegs.proportion.Value == -1) return newGrounded;
-//            KeyValuePair<int, int> ratio = Utilities.RationalRatio(propSegs.dictatedProportion);
-//            if (ratio.Key == -1 || ratio.Value == -1) return newGrounded;
+        //            // Create a product on the left hand side, if it applies.
+        //            GroundedClause lhs = propSegs.smallerSegment.DeepCopy();
+        //            if (ratio.Key > 1)
+        //            {
+        //                lhs = new Multiplication(new NumericValue(ratio.Key), lhs);
+        //            }
 
-//            // Avoid generating equation if this is a congruence
-//            if (ratio.Key == ratio.Value) return newGrounded;
+        //            // Create a product on the right hand side, if it applies.
+        //            GroundedClause rhs = propSegs.largerSegment.DeepCopy();
+        //            if (ratio.Value > 1)
+        //            {
+        //               rhs = new Multiplication(new NumericValue(ratio.Value), rhs);
+        //            }
 
-//            // Create a product on the left hand side, if it applies.
-//            GroundedClause lhs = propSegs.smallerSegment.DeepCopy();
-//            if (ratio.Key > 1)
-//            {
-//                lhs = new Multiplication(new NumericValue(ratio.Key), lhs);
-//            }
+        //            //
+        //            // Create the equation 
+        //            //
+        //            Equation newEquation = null;
+        //            if (propSegs is AlgebraicSegmentRatio)
+        //            {
+        //                newEquation = new AlgebraicSegmentEquation(lhs, rhs);
+        //            }
+        //            else if (propSegs is GeometricSegmentRatio)
+        //            {
+        //                newEquation = new GeometricSegmentEquation(lhs, rhs);
+        //            }
 
-//            // Create a product on the right hand side, if it applies.
-//            GroundedClause rhs = propSegs.largerSegment.DeepCopy();
-//            if (ratio.Value > 1)
-//            {
-//               rhs = new Multiplication(new NumericValue(ratio.Value), rhs);
-//            }
+        //            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(propSegs);
+        //            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newEquation, defAnnotation));
 
-//            //
-//            // Create the equation 
-//            //
-//            Equation newEquation = null;
-//            if (propSegs is AlgebraicSegmentRatio)
-//            {
-//                newEquation = new AlgebraicSegmentEquation(lhs, rhs);
-//            }
-//            else if (propSegs is GeometricSegmentRatio)
-//            {
-//                newEquation = new GeometricSegmentEquation(lhs, rhs);
-//            }
-
-//            List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(propSegs);
-//            newGrounded.Add(new GenericInstantiator.EdgeAggregator(antecedent, newEquation, defAnnotation));
-
-//            return newGrounded;
-//        }
+        //            return newGrounded;
+        //        }
     }
 }

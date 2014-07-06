@@ -122,6 +122,9 @@ namespace GeometryTutorLib.GenericInstantiator
             }
             else if (clause is SegmentRatio)
             {
+                SegmentRatio ratio = clause as SegmentRatio;
+                if (!ratio.ProportionValueKnown()) return newGrounded;
+
                 // Avoid using proportional segments that should really be congruent (they are deduced from similar triangles which are, in fact, congruent)
                 if (Utilities.CompareValues((clause as SegmentRatio).dictatedProportion, 1)) return newGrounded;
 
@@ -202,8 +205,6 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-//            if (pss.HasRelationPredecessor(conSeg) || conSeg.HasRelationPredecessor(pss)) return newGrounded;
-
             int numSharedExps = pss.SharesNumClauses(conSeg);
             switch (numSharedExps)
             {
@@ -213,7 +214,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 case 1:
                     // Expected case to create a new congruence relationship
-//                    return SegmentRatio.CreateTransitiveProportion(pss, conSeg);
+                    //return SegmentRatio.CreateTransitiveProportion(pss, conSeg);
 
                 case 2:
                     // This is either reflexive or the exact same congruence relationship (which shouldn't happen)
@@ -233,8 +234,6 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-//            if (pas.HasRelationPredecessor(conAng) || conAng.HasRelationPredecessor(pas)) return newGrounded;
-
             int numSharedExps = pas.SharesNumClauses(conAng);
             switch (numSharedExps)
             {
@@ -244,7 +243,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 case 1:
                     // Expected case to create a new congruence relationship
-                    return ProportionalAngles.CreateTransitiveProportion(pas, conAng);
+                    //return ProportionalAngles.CreateTransitiveProportion(pas, conAng);
 
                 case 2:
                     // This is either reflexive or the exact same congruence relationship (which shouldn't happen)
@@ -264,8 +263,6 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             EdgeAggregator newEquationEdge;
-
-//            if (segEq.HasRelationPredecessor(congSeg) || congSeg.HasRelationPredecessor(segEq)) return newGrounded;
 
             newEquationEdge = PerformEquationSubstitution(segEq, congSeg, congSeg.cs1, congSeg.cs2);
             if (newEquationEdge != null) newGrounded.Add(newEquationEdge);
@@ -351,24 +348,29 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         // Generate all new relationships from a Geoemetric, Congruent Pair of Segments
         //
-        private static List<EdgeAggregator> HandleNewSegmentRatio(SegmentRatio propSegs)
+        private static List<EdgeAggregator> HandleNewSegmentRatio(SegmentRatio newRatio)
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            // New transitivity? G + G -> A
-            foreach (GeometricCongruentSegments gcs in geoCongSegments)
+            foreach (SegmentRatio old in propSegs)
             {
-                newGrounded.AddRange(CreateSegmentRatio(propSegs, gcs));
+                newGrounded.AddRange(SegmentRatio.CreateProportionEquation(old, newRatio));
             }
 
-            if (propSegs is SegmentRatio)
-            {
-                // New transitivity? G + A -> A
-                foreach (AlgebraicCongruentSegments acs in algCongSegments)
-                {
-                    newGrounded.AddRange(CreateSegmentRatio(propSegs, acs));
-                }
-            }
+            // New transitivity? G + G -> A
+            //foreach (GeometricCongruentSegments gcs in geoCongSegments)
+            //{
+            //    newGrounded.AddRange(CreateSegmentRatio(propSegs, gcs));
+            //}
+
+            //if (propSegs is SegmentRatio)
+            //{
+            //    // New transitivity? G + A -> A
+            //    foreach (AlgebraicCongruentSegments acs in algCongSegments)
+            //    {
+            //        newGrounded.AddRange(CreateSegmentRatio(propSegs, acs));
+            //    }
+            //}
 
             //else if (propSegs is AlgebraicSegmentRatio)
             //{
@@ -1415,7 +1417,7 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 algCongArcs.Add(c as AlgebraicCongruentArcs);
             }
-            else if (c is GeometricSegmentRatioEquation)
+            else if (c is SegmentRatio)
             {
                 propSegs.Add(c as SegmentRatio);
             }

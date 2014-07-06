@@ -11,7 +11,6 @@ namespace GeometryTestbed
     {
         public Page316Problem42(bool onoff, bool complete) : base(onoff, complete)
         {
-
             problemName = "Page 316 Problem 42";
 
 
@@ -28,7 +27,7 @@ namespace GeometryTestbed
             Segment nq = new Segment(n, q); segments.Add(nq);
             Segment pq = new Segment(p, q); segments.Add(pq);
             
-                        parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+            parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
             
             given.Add(new GeometricCongruentAngles((Angle)parser.Get(new Angle(m, l, n)), (Angle)parser.Get(new Angle(n, q, p))));
             given.Add(new GeometricCongruentAngles((Angle)parser.Get(new Angle(n, m, l)), (Angle)parser.Get(new Angle(n, p, q))));

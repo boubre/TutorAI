@@ -14,7 +14,7 @@ namespace GeometryTestbed
             //
             // Testing
             //
-            // problems.Add(new BasicPolygonTester(true, false));
+            problems.Add(new BasicPolygonTester(true, false));
             //problems.Add(new ContainmentTester(true, false));
             // problems.Add(new CircCircRegionTester(true, false));
             //problems.Add(new CircCircCircRegionTester(true, false));
@@ -38,7 +38,7 @@ namespace GeometryTestbed
             // problems.Add(new Page2Col2Prob1(true, false));                             // No solution
 
 
-            //problems.Add(new PathologicalTester(false, false));
+            //problems.Add(new PathologicalTester(true, false));
 
             //
             // Jurgensen

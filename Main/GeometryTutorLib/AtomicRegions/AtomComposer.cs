@@ -8,6 +8,21 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
     public static class AtomComposer
     {
+        ////
+        //// The given atomic region is the 'outside' perimeter.
+        //// All information is based on intersection points inside or on the perimeter.
+        ////
+        //List<AtomicRegion> Compose(List<Point> figurePoints, AtomicRegion theAtom,
+        //                           List<AtomicRegion> intersecting, List<AtomicRegion> contained)
+        //{
+        //    List<AtomicRegion> atoms = new List<AtomicRegion>();
+
+        //    foreach (AtomicRegion 
+
+        //    return atoms;
+        //}
+
+
         //
         // Combine two atoms together into a set of atomic regions.
         // toadd refers to atomic regions that are new / modified. 

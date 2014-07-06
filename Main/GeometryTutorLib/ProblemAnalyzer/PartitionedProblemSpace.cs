@@ -61,11 +61,14 @@ namespace GeometryTutorLib.ProblemAnalyzer
         //
         public List<Problem<Hypergraph.EdgeAnnotation>> ValidateOriginalProblems(List<ConcreteAST.GroundedClause> givens, List<ConcreteAST.GroundedClause> goals)
         {
+#if RELEASE //Define in Properties->Build->Compilation Symbols to turn off this section
+            if (!goals.Any()) return;
+#else
             if (!goals.Any())
             {
                 throw new ArgumentException("Specified problem does not have any goals.");
             }
-
+#endif
             // Acquire the indices of the givens
             List<int> givenIndices = new List<int>();
             foreach (ConcreteAST.GroundedClause given in givens)

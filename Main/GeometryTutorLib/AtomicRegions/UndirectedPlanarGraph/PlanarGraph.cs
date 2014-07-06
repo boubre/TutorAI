@@ -27,6 +27,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph
 
         public void AddNode(Point value) // , NodePointType type)
         {
+            // Avoid redundant additions.
+            if (IndexOf(value) != -1) return;
+
             AddNode(new PlanarGraphNode(value)); // , type));
         }
 

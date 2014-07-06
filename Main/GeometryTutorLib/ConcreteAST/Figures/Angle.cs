@@ -555,7 +555,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString()
         {
-            return "Angle( m" + A.name + B.name + C.name + " = " + measure + ")";
+            return "Angle( m" + A.name + B.name + C.name + " = " + string.Format("{0:N3}", measure) + ")";
         }
     }
 }

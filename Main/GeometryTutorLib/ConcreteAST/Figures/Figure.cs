@@ -10,6 +10,7 @@ namespace GeometryTutorLib.ConcreteAST
     {
         protected Figure()
         {
+            subFigures = new List<Figure>();
             superFigures = new List<Figure>();
             polygonalized = null;
             atoms = new List<AtomicRegion>();
@@ -18,7 +19,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         // Can we compute the area of this figure?
         public virtual bool IsComputableArea() { return false; }
-        public virtual bool CanAreabeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known) { return false; }
+        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known) { return false; }
         public virtual double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known) { return -1; }
 
         public const int NUM_SEGS_TO_APPROX_ARC = 72;
@@ -41,6 +42,9 @@ namespace GeometryTutorLib.ConcreteAST
         public virtual void ClearCollinear() { throw new ArgumentException("Only segments or arcs have 'collinearity'"); }
 
         protected List<Figure> superFigures;
+        protected List<Figure> subFigures;
+        public void AddSuperFigure(Figure f) { if (!Utilities.HasStructurally<Figure>(superFigures, f)) superFigures.Add(f); }
+        public void AddSubFigure(Figure f) { if (!Utilities.HasStructurally<Figure>(subFigures, f)) subFigures.Add(f); }
         public Polygon polygonalized { get; protected set; }
         public List<AtomicRegion> atoms { get; protected set; }
         public virtual Polygon GetPolygonalized() { return null; }

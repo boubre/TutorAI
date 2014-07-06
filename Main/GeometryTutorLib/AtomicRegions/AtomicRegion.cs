@@ -42,6 +42,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             if (pt == null) return false;
 
+            if (PointLiesOn(pt)) return false;
+
             return GetPolygonalized().IsInPolygon(pt);
         }
 
@@ -182,10 +184,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
             foreach (Connection conn in connections)
             {
-                if (!conn.PointLiesOn(pt)) return false;
+                if (conn.PointLiesOn(pt)) return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool PointLiesOnOrInside(Point pt)
@@ -411,6 +413,52 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             }
 
             return true;
+        }
+
+        //
+        // Does this region overlap the other?
+        //
+        public bool OverlapsWith(AtomicRegion that)
+        {
+            //
+            // Check for intersections that cross.
+            //
+            List<IntersectionAgg> intersections = this.GetIntersections(that);
+
+            if (!intersections.Any()) return false;
+
+            foreach (IntersectionAgg agg in intersections)
+            {
+                if (agg.overlap)
+                {
+                    // No-Op
+                }
+                else
+                {
+                    // Crossing like an X
+                    if (agg.thisConn.Crosses(agg.thatConn)) return true;
+
+                    // If the midpoint of the segment or arc is inside this region.
+                    Point midpt = null;
+                    if (agg.thatConn.type == ConnectionType.ARC)
+                    {
+                        Arc arc = agg.thatConn.segmentOrArc as Arc;
+                        midpt = arc.theCircle.Midpoint(arc.endpoint1, arc.endpoint2);
+                        if (agg.thatConn.segmentOrArc is MajorArc)
+                        {
+                            midpt = arc.theCircle.OppositePoint(midpt);
+                        }
+                    }
+                    else
+                    {
+                        midpt = (agg.thatConn.segmentOrArc as Segment).Midpoint();
+                    }
+
+                    if (this.PointLiesInside(midpt)) return true;
+                }
+            }
+
+            return false;
         }
 
         //

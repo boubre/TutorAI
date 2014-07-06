@@ -48,7 +48,7 @@ namespace GeometryTestbed
 			pts.Add(x);
             collinear.Add(new Collinear(pts));
 
-			            parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+            parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
             
             given.Add(new Midpoint((InMiddle)parser.Get(new InMiddle( m, new Segment(x, y)))));
             given.Add(new Midpoint((InMiddle)parser.Get(new InMiddle( n, new Segment(z, y)))));

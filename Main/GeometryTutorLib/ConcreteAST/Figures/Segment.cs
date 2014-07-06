@@ -42,8 +42,22 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override void AddCollinearPoint(Point newPt)
         {
+            if (newPt == null) return;
+
             // Avoid redundant additions.
             if (Utilities.HasStructurally<Point>(collinear, newPt)) return;
+
+            // Check to see if the new point is on either side of the existent endpoints.
+            if (Segment.Between(collinear[0], newPt, collinear[collinear.Count - 1]))
+            {
+                collinear.Insert(0, newPt);
+                return;
+            }
+            if (Segment.Between(collinear[collinear.Count - 1], collinear[0], newPt))
+            {
+                collinear.Add(newPt);
+                return;
+            }
 
             // Traverse list to find where to insert the new point in the list in the proper order
             for (int p = 0; p < collinear.Count - 1; p++)
@@ -55,6 +69,23 @@ namespace GeometryTutorLib.ConcreteAST
                 }
             }
         }
+
+        //public override void AddCollinearPoint(Point newPt)
+        //{
+        //    if (newPt == null) return;
+
+        //    // Avoid redundant additions.
+        //    if (Utilities.HasStructurally<Point>(collinear, newPt)) return;
+
+        //    // Traverse list to find where to insert the new point in the list in the proper order
+        //    int p = 0;
+        //    for (; p < collinear.Count - 1; p++)
+        //    {
+        //        if (Segment.Between(newPt, collinear[p], collinear[p + 1])) break;
+        //    }
+
+        //    collinear.Insert(p + 1, newPt);
+        //}
 
         public override void ClearCollinear()
         {
@@ -247,11 +278,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             Point p = this.FindIntersection(s);
 
-            if (this.PointIsOnAndExactlyBetweenEndpoints(p)) return true;
-
-            if (s.PointIsOnAndExactlyBetweenEndpoints(p)) return true;
-
-            return false;
+            return this.PointIsOnAndExactlyBetweenEndpoints(p) && s.PointIsOnAndExactlyBetweenEndpoints(p);
         }
 
         public Point SharedVertex(Segment s)
