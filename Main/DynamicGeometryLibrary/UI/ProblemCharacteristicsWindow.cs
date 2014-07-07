@@ -228,6 +228,15 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void ManageGivens_Open(object sender, RoutedEventArgs e)
         {
+            ShowManageGivensWindow();
+        }
+
+        /// <summary>
+        /// Open the manage givens window.
+        /// This function is here just to make this functionality publically accessible.
+        /// </summary>
+        public void ShowManageGivensWindow()
+        {
             manageGivensWindow.Show();
         }
     }

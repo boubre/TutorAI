@@ -496,6 +496,11 @@ namespace LiveGeometry
             //Do whatever needs to be done when the problem characteristics window closes
         }
 
+        void DisplayManageGivens()
+        {
+            problemCharacteristicsWindow.ShowManageGivensWindow();
+        }
+
         void DisplayEnterSolution()
         {
             enterSolutionWindow.Show();
