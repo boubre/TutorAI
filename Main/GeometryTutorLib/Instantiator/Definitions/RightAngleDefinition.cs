@@ -16,6 +16,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            defAnnotation.active = EngineUIBridge.JustificationSwitch.RIGHT_ANGLE_DEFINITION;
+            transAnnotation.active = EngineUIBridge.JustificationSwitch.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Strengthened streng = clause as Strengthened;

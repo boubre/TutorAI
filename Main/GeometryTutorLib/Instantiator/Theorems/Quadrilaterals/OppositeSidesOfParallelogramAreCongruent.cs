@@ -21,6 +21,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Parallelogram)

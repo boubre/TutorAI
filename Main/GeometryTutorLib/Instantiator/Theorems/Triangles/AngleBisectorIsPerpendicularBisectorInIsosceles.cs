@@ -40,6 +40,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Strengthened) && !(c is IsoscelesTriangle) && !(c is AngleBisector) && !(c is Intersection)) return newGrounded;

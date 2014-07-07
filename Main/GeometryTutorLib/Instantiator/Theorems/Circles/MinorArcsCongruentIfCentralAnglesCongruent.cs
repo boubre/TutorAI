@@ -49,6 +49,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            forwardAnnotation.active = EngineUIBridge.JustificationSwitch.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT;
+            converseAnnotation.active = EngineUIBridge.JustificationSwitch.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentAngles)

@@ -34,6 +34,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Intersection)

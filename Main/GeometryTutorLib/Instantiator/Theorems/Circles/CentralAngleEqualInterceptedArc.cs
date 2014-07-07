@@ -34,6 +34,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Angle)

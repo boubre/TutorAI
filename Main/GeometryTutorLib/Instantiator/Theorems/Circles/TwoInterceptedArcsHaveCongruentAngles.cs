@@ -24,6 +24,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Circle circle = clause as Circle;

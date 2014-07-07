@@ -32,6 +32,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Quadrilateral)

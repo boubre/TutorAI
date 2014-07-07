@@ -135,7 +135,7 @@ namespace GeometryTutorLib.EngineUIBridge
 
         public static Assumption GetAssumption(DeductionJustType type)
         {
-            if (justMap == null) ConstructJustificationMap();
+            ConstructJustificationMap();
 
             Assumption assumption = null;
             if (justMap.TryGetValue(type, out assumption))
@@ -148,7 +148,9 @@ namespace GeometryTutorLib.EngineUIBridge
 
         public static Dictionary<DeductionJustType, Assumption> GetAssumptions()
         {
-            if (justMap == null) ConstructJustificationMap();
+            ConstructJustificationMap();
+
+            //if (justMap == null) ConstructJustificationMap();
 
             return justMap;
         }
@@ -702,6 +704,306 @@ namespace GeometryTutorLib.EngineUIBridge
                         EngineUIBridge.JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT = false;
                     }
                     else if (assumption.Key == DeductionJustType.VERTICAL_ANGLES) { EngineUIBridge.JustificationSwitch.VERTICAL_ANGLES = false; }
+                }
+
+
+
+                else if (assumption.Value.Enabled)
+                {
+                    //
+                    // Handle general switches first
+                    //
+                    if (assumption.Key == DeductionJustType.CIRCLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.ARC_ADDITION_AXIOM = true;
+                        EngineUIBridge.JustificationSwitch.TANGENT_IS_PERPENDICULAR_TO_RADIUS = true;
+                        EngineUIBridge.JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT = true;
+                        EngineUIBridge.JustificationSwitch.TANGENT_TO_CIRCLE_ARE_CONGRUENT_FROM_SAME_POINT = true;
+                        EngineUIBridge.JustificationSwitch.MINOR_ARCS_CONGRUENT_IF_CENTRAL_ANGLE_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.CENTRAL_ANGLES_CONGRUENT_IF_MINOR_ARCS_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS = true;
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS = true;
+                        EngineUIBridge.JustificationSwitch.DIAMETER_PERPENDICULAR_TO_CHORD_BISECTS_CHORD_AND_ARC = true;
+                        EngineUIBridge.JustificationSwitch.MEASURE_INSCRIBED_ANGLE_EQUAL_HALF_INTERCEPTED_ARC = true;
+                        EngineUIBridge.JustificationSwitch.CIRCLE_CONGRUENCE_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.CIRCLE_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.ANGLE_INSCRIBED_SEMICIRCLE_IS_RIGHT = true;
+                        EngineUIBridge.JustificationSwitch.CENTRAL_ANGLE_EQUAL_MEASURE_INTERCEPTED_ARC = true;
+                        EngineUIBridge.JustificationSwitch.CHORD_AND_TANGENT_ANGLE_IS_HALF_INTERCEPTED_ARC = true;
+                        EngineUIBridge.JustificationSwitch.EXTERIOR_ANGLE_HALF_DIFFERENCE_INTERCEPTED_ARCS = true;
+                        EngineUIBridge.JustificationSwitch.TWO_INTERSECTING_CHORDS_ANGLE_MEASURE_HALF_SUM_INTERCEPTED_ARCS = true;
+                        EngineUIBridge.JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES = true;
+                        EngineUIBridge.JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY = true;
+                    }
+                    if (assumption.Key == DeductionJustType.QUADRILATERALS)
+                    {
+                        EngineUIBridge.JustificationSwitch.QUADRILATERAL_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.KITE_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.PARALLELOGRAM_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.RHOMBUS_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.SQUARE_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.RECTANGLE_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.TRAPEZOID_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.ISOSCELES_TRAPEZOID_DEFINITION = true;
+
+                        // Theorems
+                        EngineUIBridge.JustificationSwitch.OPPOSITE_SIDES_PARALLELOGRAM_ARE_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.OPPOSITE_ANGLES_PARALLELOGRAM_ARE_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_PARALLELOGRAM_BISECT_EACH_OTHER = true;
+                        EngineUIBridge.JustificationSwitch.OPPOSITE_SIDES_CONGRUENT_IMPLIES_PARALLELOGRAM = true;
+                        EngineUIBridge.JustificationSwitch.ONE_PAIR_OPPOSITE_SIDES_CONGRUENT_PARALLEL_IMPLIES_PARALLELOGRAM = true;
+                        EngineUIBridge.JustificationSwitch.OPPOSITE_ANGLES_CONGRUENT_IMPLIES_PARALLELOGRAM = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_BISECT_EACH_OTHER_IMPLY_PARALLELOGRAM = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RECTANGLE_ARE_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_OF_KITE_ARE_PERPENDICULAR = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_ARE_PERPENDICULAR = true;
+                        EngineUIBridge.JustificationSwitch.DIAGONALS_OF_RHOMBUS_BISECT_ANGLES_OF_RHOMBUS = true;
+                        EngineUIBridge.JustificationSwitch.TWO_CONSECUTIVE_SIDES_OF_PARALLELOGRAM_CONGRUENT_IMPLY_RHOMBUS = true;
+                        EngineUIBridge.JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT = true;
+                        EngineUIBridge.JustificationSwitch.MEDIAN_TRAPEZOID_PARALLEL_TO_BASE = true;
+                        EngineUIBridge.JustificationSwitch.MEDIAN_TRAPEZOID_LENGTH_HALF_SUM_BASES = true;
+                        EngineUIBridge.JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY = true;
+                    }
+                    if (assumption.Key == DeductionJustType.TRIANGLE_CONGREUNCE)
+                    {
+                        EngineUIBridge.JustificationSwitch.AAS = true;
+                        EngineUIBridge.JustificationSwitch.ASA = true;
+                        EngineUIBridge.JustificationSwitch.HYPOTENUSE_LEG = true;
+                        EngineUIBridge.JustificationSwitch.SAS_CONGRUENCE = true;
+                        EngineUIBridge.JustificationSwitch.SSS = true;
+                        EngineUIBridge.JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SIMILARITY)
+                    {
+                        EngineUIBridge.JustificationSwitch.AA_SIMILARITY = true;
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.SAS_SIMILARITY = true;
+                        EngineUIBridge.JustificationSwitch.SSS_SIMILARITY = true;
+                        EngineUIBridge.JustificationSwitch.TRIANGLE_PROPORTIONALITY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.AA_SIMILARITY)
+                    {
+                        EngineUIBridge.JustificationSwitch.AA_SIMILARITY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ANGLE_ADDITION_AXIOM)
+                    {
+                        EngineUIBridge.JustificationSwitch.ANGLE_ADDITION_AXIOM = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ASA)
+                    {
+                        EngineUIBridge.JustificationSwitch.ASA = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_CORRESPONDING_ANGLES_IMPLY_PARALLEL)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_CORRESPONDING_ANGLES_IMPLY_PARALLEL = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CORRESPONDING_ANGLES_OF_PARALLEL_LINES)
+                    {
+                        EngineUIBridge.JustificationSwitch.CORRESPONDING_ANGLES_OF_PARALLEL_LINES = true;
+
+                    }
+                    else if (assumption.Key == DeductionJustType.SEGMENT_ADDITION_AXIOM)
+                    {
+                        EngineUIBridge.JustificationSwitch.SEGMENT_ADDITION_AXIOM = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SAS_CONGRUENCE)
+                    {
+                        EngineUIBridge.JustificationSwitch.SAS_CONGRUENCE = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SSS)
+                    {
+                        EngineUIBridge.JustificationSwitch.SSS = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT)
+                    {
+                        EngineUIBridge.JustificationSwitch.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRANSITIVE_CONGRUENT_ANGLE_WITH_RIGHT_ANGLE = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ALTITUDE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.ALTITUDE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ANGLE_BISECTOR_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.COMPLEMENTARY_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.COMPLEMENTARY_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ISOSCELES_TRIANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.EQUILATERAL_TRIANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.EQUILATERAL_TRIANGLE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.MEDIAN_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.MEDIAN_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.MIDPOINT_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.MIDPOINT_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.PERPENDICULAR_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.PERPENDICULAR_DEFINITION = true;
+                        EngineUIBridge.JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.PERPENDICULAR_BISECTOR_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.RIGHT_ANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.RIGHT_ANGLE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.RIGHT_TRIANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.RIGHT_TRIANGLE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SEGMENT_BISECTOR_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.SEGMENT_BISECTOR_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SUPPLEMENTARY_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.SUPPLEMENTARY_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.STRAIGHT_ANGLE_DEFINITION)
+                    {
+                        EngineUIBridge.JustificationSwitch.STRAIGHT_ANGLE_DEFINITION = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.AAS)
+                    {
+                        EngineUIBridge.JustificationSwitch.AAS = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY)
+                    {
+                        EngineUIBridge.JustificationSwitch.ACUTE_ANGLES_IN_RIGHT_TRIANGLE_ARE_COMPLEMENTARY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ADJACENT_ANGLES_PERPENDICULAR_IMPLY_COMPLEMENTARY)
+                    {
+                        EngineUIBridge.JustificationSwitch.ADJACENT_ANGLES_PERPENDICULAR_IMPLY_COMPLEMENTARY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ALT_INT_CONGRUENT_ANGLES_IMPLY_PARALLEL)
+                    {
+                        EngineUIBridge.JustificationSwitch.ALT_INT_CONGRUENT_ANGLES_IMPLY_PARALLEL = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR)
+                    {
+                        EngineUIBridge.JustificationSwitch.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES)
+                    {
+                        EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_IS_PERPENDICULAR_BISECTOR_IN_ISOSCELES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ANGLE_BISECTOR_THEOREM)
+                    {
+                        EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_THEOREM = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_SUPPLEMENTARY_ANGLES_IMPLY_RIGHT_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_ADJACENT_ANGLES_IMPLY_PERPENDICULAR = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_ANGLES_IN_TRIANGLE_IMPLY_CONGRUENT_SIDES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.CONGRUENT_SIDES_IN_TRIANGLE_IMPLY_CONGRUENT_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.EQUILATERAL_TRIANGLE_HAS_SIXTY_DEGREE_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.EQUILATERAL_TRIANGLE_HAS_SIXTY_DEGREE_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.HYPOTENUSE_LEG)
+                    {
+                        EngineUIBridge.JustificationSwitch.HYPOTENUSE_LEG = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.ISOSCELES_TRIANGLE_THEOREM)
+                    {
+                        EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.MIDPOINT_THEOREM)
+                    {
+                        EngineUIBridge.JustificationSwitch.MIDPOINT_THEOREM = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.PARALLEL_IMPLY_SAME_SIDE_INTERIOR_SUPPLEMENTARY)
+                    {
+                        EngineUIBridge.JustificationSwitch.PARALLEL_IMPLY_SAME_SIDE_INTERIOR_SUPPLEMENTARY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.PERPENDICULAR_IMPLY_CONGRUENT_ADJACENT_ANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.PERPENDICULAR_IMPLY_CONGRUENT_ADJACENT_ANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT)
+                    {
+                        EngineUIBridge.JustificationSwitch.RELATIONS_OF_CONGRUENT_ANGLES_ARE_CONGRUENT = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SAME_SIDE_SUPPLE_ANGLES_IMPLY_PARALLEL)
+                    {
+                        EngineUIBridge.JustificationSwitch.SAME_SIDE_SUPPLE_ANGLES_IMPLY_PARALLEL = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SAS_SIMILARITY)
+                    {
+                        EngineUIBridge.JustificationSwitch.SAS_SIMILARITY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SSS_SIMILARITY)
+                    {
+                        EngineUIBridge.JustificationSwitch.SSS_SIMILARITY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.SUM_ANGLES_IN_TRIANGLE_180)
+                    {
+                        EngineUIBridge.JustificationSwitch.SUM_ANGLES_IN_TRIANGLE_180 = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRANSVERSAL_PERPENDICULAR_TO_PARALLEL_IMPLY_BOTH_PERPENDICULAR)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRANSVERSAL_PERPENDICULAR_TO_PARALLEL_IMPLY_BOTH_PERPENDICULAR = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRANSITIVE_CONGRUENT_TRIANGLES)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRANSITIVE_CONGRUENT_TRIANGLES = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRANSITIVE_PARALLEL)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRANSITIVE_PARALLEL = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRANSITIVE_SIMILAR)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRANSITIVE_SIMILAR = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TRIANGLE_PROPORTIONALITY)
+                    {
+                        EngineUIBridge.JustificationSwitch.TRIANGLE_PROPORTIONALITY = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT)
+                    {
+                        EngineUIBridge.JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT = true;
+                    }
+                    else if (assumption.Key == DeductionJustType.VERTICAL_ANGLES) { EngineUIBridge.JustificationSwitch.VERTICAL_ANGLES = true; }
                 }
             }
         }

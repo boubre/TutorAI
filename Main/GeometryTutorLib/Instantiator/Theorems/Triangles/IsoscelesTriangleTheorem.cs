@@ -12,15 +12,14 @@ namespace GeometryTutorLib.GenericInstantiator
         private readonly static string NAME = "Isosceles Triangle Theorem: Base Angles are Congruent";
         private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM);
 
-        private IsoscelesTriangleTheorem() { }
-        private static readonly IsoscelesTriangleTheorem thisDescriptor = new IsoscelesTriangleTheorem();
-
         //
         // In order for two triangles to be isosceles, we require the following:
         //    IsoscelesTriangle(A, B, C) -> \angle BAC \cong \angle BCA
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_THEOREM;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (c is EquilateralTriangle || (c as Strengthened).strengthened is EquilateralTriangle) return newGrounded;

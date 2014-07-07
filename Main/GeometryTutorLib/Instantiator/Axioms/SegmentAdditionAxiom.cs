@@ -13,6 +13,8 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.SEGMENT_ADDITION_AXIOM;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
             InMiddle im = c as InMiddle;
 

@@ -38,6 +38,8 @@ namespace GeometryTutorLib.GenericInstantiator
         private static List<Strengthened> candidateStrengthened = new List<Strengthened>();
         public static List<EdgeAggregator> InstantiateToComplementary(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.COMPLEMENTARY_DEFINITION;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is AngleEquation)

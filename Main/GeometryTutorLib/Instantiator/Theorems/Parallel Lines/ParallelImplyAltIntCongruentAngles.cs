@@ -38,6 +38,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.PARALLEL_IMPLY_ALT_INT_CONGRUENT_ANGLES;
+
             // The list of new grounded clauses if they are deduced
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 

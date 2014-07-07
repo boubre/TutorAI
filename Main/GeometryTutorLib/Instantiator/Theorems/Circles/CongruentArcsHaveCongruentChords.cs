@@ -49,6 +49,9 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            forwardAnnotation.active = EngineUIBridge.JustificationSwitch.CONGRUENT_CHORDS_HAVE_CONGRUENT_ARCS;
+            converseAnnotation.active = EngineUIBridge.JustificationSwitch.CONGRUENT_ARCS_HAVE_CONGRUENT_CHORDS;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CongruentSegments)

@@ -24,6 +24,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ISOSCELES_TRAPEZOID_DEFINITION;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is Trapezoid || clause is Strengthened || clause is CongruentSegments)

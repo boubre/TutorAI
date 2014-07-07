@@ -18,6 +18,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.PERPENDICULAR_BISECTOR_DEFINITION;
+
             if (clause is PerpendicularBisector) return InstantiateFromPerpendicularBisector(clause, clause as PerpendicularBisector);
 
             if ((clause as Strengthened).strengthened is PerpendicularBisector)

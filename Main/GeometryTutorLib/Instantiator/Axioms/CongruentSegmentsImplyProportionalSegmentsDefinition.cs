@@ -34,6 +34,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.CONGRUENT_SEGMENTS_IMPLY_PROPORTIONAL_SEGMENTS_DEFINITION;
+
             // The list of new grounded clauses if they are deduced
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 

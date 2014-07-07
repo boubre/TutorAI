@@ -19,6 +19,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.STRAIGHT_ANGLE_DEFINITION;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Collinear cc = clause as Collinear;

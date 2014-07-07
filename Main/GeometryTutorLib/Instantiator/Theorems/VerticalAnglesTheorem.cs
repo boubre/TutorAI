@@ -17,6 +17,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.VERTICAL_ANGLES;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Intersection inter = c as Intersection;

@@ -21,6 +21,8 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ANGLES_OF_EQUAL_MEASUREARE_CONGRUENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             AngleEquation newAngEq = clause as AngleEquation;

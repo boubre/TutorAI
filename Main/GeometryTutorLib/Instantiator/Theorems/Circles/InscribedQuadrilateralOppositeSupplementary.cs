@@ -23,6 +23,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.INSCRIBED_QUADRILATERAL_OPPOSITE_ANGLES_SUPPLEMENTARY;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Circle circle = clause as Circle;

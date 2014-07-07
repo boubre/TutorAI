@@ -27,6 +27,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.EXTERIOR_ANGLE_EQUAL_SUM_REMOTE_ANGLES;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Triangle) && !(c is Angle)) return newGrounded;

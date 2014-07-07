@@ -87,6 +87,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveParallel(Parallel parallel1, Parallel parallel2)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.TRANSITIVE_PARALLEL;
+
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             //

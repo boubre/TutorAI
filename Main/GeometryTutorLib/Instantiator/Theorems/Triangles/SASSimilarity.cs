@@ -37,6 +37,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.SAS_SIMILARITY;
+
             // The list of new grounded clauses if they are deduced
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 

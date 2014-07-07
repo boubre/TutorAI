@@ -13,6 +13,8 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.CIRCLE_DEFINITION;
+
             if (clause is Circle)
             {
                 return InstantiateFromDefinition(clause as Circle);

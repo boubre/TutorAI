@@ -73,6 +73,8 @@ namespace GeometryTutorLib.ConcreteAST
                                                                                      List<Point> orderedTriOnePts,
                                                                                      List<Point> orderedTriTwoPts)
         {
+            segmentAnnotation.active = EngineUIBridge.JustificationSwitch.SIMILARITY;
+
             //
             // Cycle through the points creating the angles: ABC - DEF ; BCA - EFD ; CAB - FDE
             //
@@ -125,6 +127,8 @@ namespace GeometryTutorLib.ConcreteAST
                                                                                        List<Point> orderedTriOnePts,
                                                                                        List<Point> orderedTriTwoPts)
         {
+            angleAnnotation.active = EngineUIBridge.JustificationSwitch.SIMILARITY;
+
             List<GroundedClause> congAngles = CongruentTriangles.GenerateCPCTCAngles(orderedTriOnePts, orderedTriTwoPts);
 
             //
@@ -156,6 +160,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static List<GenericInstantiator.EdgeAggregator> CreateTransitiveSimilarTriangles(SimilarTriangles simTris1, SimilarTriangles simTris2)
         {
+            transAnnotation.active = EngineUIBridge.JustificationSwitch.TRANSITIVE_SIMILAR;
+
             List<GenericInstantiator.EdgeAggregator> newGrounded = new List<GenericInstantiator.EdgeAggregator>();
 
             // Did either of these congruences come from the other?

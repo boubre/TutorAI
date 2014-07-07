@@ -80,6 +80,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.TRANSITIVE_SUBSTITUTION;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have an equation or congruence?

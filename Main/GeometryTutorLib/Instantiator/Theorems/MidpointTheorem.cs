@@ -16,6 +16,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.MIDPOINT_THEOREM;
+
             if (clause is Midpoint) return InstantiateMidpointTheorem(clause, clause as Midpoint);
 
             if ((clause as Strengthened).strengthened is Midpoint) return InstantiateMidpointTheorem(clause, (clause as Strengthened).strengthened as Midpoint);

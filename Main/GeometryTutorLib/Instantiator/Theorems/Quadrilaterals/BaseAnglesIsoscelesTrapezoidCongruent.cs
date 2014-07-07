@@ -21,6 +21,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.BASE_ANGLES_OF_ISOSCELES_TRAPEZOID_CONGRUENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is IsoscelesTrapezoid)

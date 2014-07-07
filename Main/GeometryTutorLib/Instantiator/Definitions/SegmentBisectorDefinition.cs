@@ -32,6 +32,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.SEGMENT_BISECTOR_DEFINITION;
+
             if (clause is SegmentBisector || clause is Strengthened || clause is InMiddle) return InstantiateFromSegmentBisector(clause);
 
             if (clause is Intersection || clause is CongruentSegments) return InstantiateToSegmentBisector(clause);

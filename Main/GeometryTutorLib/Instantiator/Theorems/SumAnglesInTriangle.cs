@@ -16,6 +16,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.SUM_ANGLES_IN_TRIANGLE_180;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             Triangle tri = c as Triangle;

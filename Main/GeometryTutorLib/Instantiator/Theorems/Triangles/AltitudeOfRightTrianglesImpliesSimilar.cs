@@ -39,6 +39,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ALTITUDE_OF_RIGHT_TRIANGLES_IMPLIES_SIMILAR;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (!(c is Altitude) && !(c is RightTriangle) && !(c is Strengthened)) return newGrounded;

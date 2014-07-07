@@ -38,6 +38,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ISOSCELES_TRIANGLE_DEFINITION;
+
             if (c is IsoscelesTriangle || c is Strengthened) return InstantiateDefinition(c);
 
             // The list of new grounded clauses if they are deduced

@@ -32,6 +32,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.PERPENDICULAR_TO_RADIUS_IS_TANGENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             if (clause is CircleSegmentIntersection)

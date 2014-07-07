@@ -24,6 +24,8 @@ namespace GeometryTutorLib.GenericInstantiator
 
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.EQUILATERAL_TRIANGLE_DEFINITION;
+
             if (clause is EquilateralTriangle || clause is Strengthened)
             {
                 return InstantiateFromDefinition(clause);

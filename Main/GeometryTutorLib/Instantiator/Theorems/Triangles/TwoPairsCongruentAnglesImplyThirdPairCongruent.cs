@@ -35,6 +35,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.TWO_PAIRS_CONGRUENT_ANGLES_IMPLY_THIRD_PAIR_CONGRUENT;
+
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Do we have a segment or triangle?

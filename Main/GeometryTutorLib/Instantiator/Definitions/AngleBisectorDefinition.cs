@@ -24,6 +24,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause c)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.ANGLE_BISECTOR_DEFINITION;
+
             if (c is AngleBisector) return InstantiateBisector(c as AngleBisector);
 
             if (c is CongruentAngles || c is Segment) return InstantiateCongruent(c);

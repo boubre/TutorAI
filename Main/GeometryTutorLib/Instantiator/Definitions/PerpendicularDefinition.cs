@@ -21,6 +21,8 @@ namespace GeometryTutorLib.GenericInstantiator
         //
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
+            annotation.active = EngineUIBridge.JustificationSwitch.PERPENDICULAR_DEFINITION;
+
             // FROM Perpendicular
             if (clause is Perpendicular) return InstantiateFromPerpendicular(clause, clause as Perpendicular);
 
