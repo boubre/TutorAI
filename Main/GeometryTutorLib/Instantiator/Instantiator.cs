@@ -717,6 +717,7 @@ namespace GeometryTutorLib.GenericInstantiator
             TransversalPerpendicularToParallelImplyBothPerpendicular.Clear();
             TriangleProportionality.Clear();
             TwoPairsCongruentAnglesImplyThirdPairCongruent.Clear();
+            SupplementaryAndCongruentImplyRightAngles.Clear();
 
             // Quadrilaterals
             ParallelogramDefinition.Clear();
