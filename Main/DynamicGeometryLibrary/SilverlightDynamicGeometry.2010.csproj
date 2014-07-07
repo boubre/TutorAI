@@ -331,6 +331,7 @@
     <Compile Include="UI\GivenWindow\AddEquilateralTriangle.cs" />
     <Compile Include="UI\GivenWindow\AddGivenWindow.cs" />
     <Compile Include="UI\GivenWindow\AddIsoscelesTriangle.cs" />
+    <Compile Include="UI\GivenWindow\AddMidpoint.cs" />
     <Compile Include="UI\GivenWindow\AddParallelLines.cs" />
     <Compile Include="UI\GivenWindow\AddRightAngle.cs" />
     <Compile Include="UI\GivenWindow\AddCongruentAngles.cs" />

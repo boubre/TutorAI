@@ -65,7 +65,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool Equals(Object obj)
         {
-            if (obj is Midpoint) return (obj as Midpoint).Equals(this);
+            //Causes infinite recursion -> if (obj is Midpoint) return (obj as Midpoint).Equals(this);
 
             InMiddle im = obj as InMiddle;
             if (im == null) return false;

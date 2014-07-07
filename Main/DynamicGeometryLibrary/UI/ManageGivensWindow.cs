@@ -98,7 +98,7 @@ namespace DynamicGeometry.UI
         {
             givenWindows = new Dictionary<string, AddGivenWindow>();
             givenWindows.Add("Congruent Segments", new AddCongruentSegments());
-            // CTA: Need Midpoint
+            givenWindows.Add("Midpoint", new AddMidpoint());
             givenWindows.Add("Congruent Angles", new AddCongruentAngles());
             givenWindows.Add("Segment Bisector", new AddSegmentBisector());
             givenWindows.Add("Angle Bisector", new AddAngleBisector());
