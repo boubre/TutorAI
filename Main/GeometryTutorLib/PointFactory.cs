@@ -8,7 +8,7 @@ namespace GeometryTutorLib
     //
     public static class PointFactory
     {
-        private const string prefix = "__";
+        private const string prefix = "_*_";
         private static string currentName = "A";
         private static int numLetters = 1;
 

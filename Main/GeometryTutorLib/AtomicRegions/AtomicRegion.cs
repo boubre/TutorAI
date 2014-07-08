@@ -481,6 +481,24 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         }
 
         //
+        // Does the given connection pass through the atomic region? Or is, it completely outside of the region?
+        //
+        public bool NotInteriorTo(Connection that)
+        {
+            if (this.PointLiesInside(that.endpoint1)) return false;
+            if (this.PointLiesInside(that.endpoint2)) return false;
+
+            int standOnCount = 0;
+            foreach (Connection thisConn in this.connections)
+            {
+                if (thisConn.Crosses(that)) return false;
+                if (thisConn.StandsOnNotEndpoint(that)) standOnCount++;
+            }
+
+            return standOnCount <= 1;
+        }
+
+        //
         // Acquire the two connections that have the given point.
         //
         private void GetConnections(Point pt, out Connection conn1, out Connection conn2)

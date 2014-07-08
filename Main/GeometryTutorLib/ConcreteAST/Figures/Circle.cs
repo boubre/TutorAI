@@ -910,12 +910,12 @@ namespace GeometryTutorLib.ConcreteAST
             return "Circle(" + this.center + ": r = " + this.radius + ")";
         }
 
-
-        List<Segment> constructedChords = new List<Segment>();
-        List<Segment> constructedRadii = new List<Segment>();
-        List<Point> imagPoints = new List<Point>();
         public List<Area_Based_Analyses.Atomizer.AtomicRegion> Atomize(List<Point> figurePoints)
         {
+            List<Segment> constructedChords = new List<Segment>();
+            List<Segment> constructedRadii = new List<Segment>();
+            List<Point> imagPoints = new List<Point>();
+
             List<GeometryTutorLib.ConcreteAST.Point> interPts = GetIntersectingPoints();
 
             // If there are no points of interest, the circle is the atomic region.
@@ -979,6 +979,11 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             //
+            // Add all imaginary points to the list of figure points.
+            //
+            Utilities.AddUniqueList<Point>(figurePoints, imagPoints);
+
+            //
             // Construct the Planar graph for atomic region identification.
             //
             Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph graph = new Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph();
@@ -986,7 +991,7 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Add all imaginary points, intersection points, and center.
             //
-            foreach (Point pt in this.imagPoints)
+            foreach (Point pt in imagPoints)
             {
                 graph.AddNode(pt);
             }

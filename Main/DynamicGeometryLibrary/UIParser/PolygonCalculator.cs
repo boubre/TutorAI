@@ -198,14 +198,20 @@ namespace LiveGeometry.TutorParser
                         }
                         else
                         {
+                            //
+                            // Coinciding and sharing a vertex, is disallowed by default.
+                            //
                             //                                           __    __
                             // Coinciding ; Can have something like :   |  |__|  |
                             //                                          |________|
                             //
-                            if (segments[s1].CoincidingWithoutOverlap(segments[s2]))
+                            if (segments[s1].SharedVertex(segments[s2]) == null)
                             {
-                                eligible[s1, s2] = true;
-                                eligible[s2, s1] = true;
+                                if (segments[s1].CoincidingWithoutOverlap(segments[s2]))
+                                {
+                                    eligible[s1, s2] = true;
+                                    eligible[s2, s1] = true;
+                                }
                             }
                         }
                     }

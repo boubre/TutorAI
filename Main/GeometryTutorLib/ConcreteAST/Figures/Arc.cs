@@ -58,6 +58,16 @@ namespace GeometryTutorLib.ConcreteAST
             return approxSegments;
         }
 
+        public Point OtherEndpoint(Point that)
+        {
+            if (that == null) return null;
+
+            if (that.StructurallyEquals(endpoint1)) return endpoint2;
+            if (that.StructurallyEquals(endpoint2)) return endpoint1;
+
+            return null;
+        }
+
         public abstract bool PointLiesOn(Point pt);
         public abstract bool PointLiesStrictlyOn(Point pt);
         public abstract bool HasSubArc(Arc that);

@@ -268,7 +268,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (this.PointIsOnAndBetweenEndpoints(thatSegment.Point2)) return false;
 
-            return false;
+            return true;
         }
 
         //

@@ -236,6 +236,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             if (this.HasPoint(pt1)) return false;
             if (that.HasPoint(pt1)) return false;
 
+            if (!this.PointLiesOn(pt1)) return false;
+            if (!that.PointLiesOn(pt1)) return false;
+
             return true;
         }
 

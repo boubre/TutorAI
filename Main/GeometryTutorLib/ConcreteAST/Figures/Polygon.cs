@@ -167,6 +167,12 @@ namespace GeometryTutorLib.ConcreteAST
         /// <returns>true if the point is inside the polygon; otherwise, false</returns>
         public bool IsInPolygon(Point thatPoint)
         {
+            if (thatPoint == null)
+            {
+                System.Diagnostics.Debug.WriteLine(new System.Diagnostics.StackTrace(true).ToString());
+                throw new ArgumentException("Null passed to isInPolygon");
+            }
+
             bool result = false;
             int j = points.Count - 1;
             for (int i = 0; i < points.Count; i++)
@@ -234,7 +240,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (orderedSides.Count != vertices.Count)
             {
-                throw new Exception("Construction new polygon failed.");
+                throw new Exception("Construction of new polygon failed.");
             }
 
             return ActuallyConstructThePolygonObject(orderedSides);
@@ -383,6 +389,26 @@ namespace GeometryTutorLib.ConcreteAST
 
             // We must have the same number of vertices as input segments (ensures degree 2 for all vertices)
             if (vertices.Count != theseSegs.Count) return null;
+
+            //
+            // Walk around the set of ordered sides.
+            // Those sides should not pass through a previous vertex.
+            //
+            //
+            //        /\
+            //       /  \
+            //      /    \____
+            //     /    / \   |
+            //    /____/   \__|
+            //
+            //
+            foreach (Segment side in theseSegs)
+            {
+                foreach (Point vertex in vertices)
+                {
+                    if (side.PointIsOnAndExactlyBetweenEndpoints(vertex)) return null;
+                }
+            }
 
             // If we are given the sides already ordered, just make the polygon straight-away.
             Polygon simple = MakeOrderedPolygon(theseSegs);

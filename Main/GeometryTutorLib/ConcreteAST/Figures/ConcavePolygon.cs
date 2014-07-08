@@ -36,32 +36,42 @@ namespace GeometryTutorLib.ConcreteAST
             // If so, track all the intersection points.
             //
             List<Point> imagPts = new List<Point>();
-            for (int s1 = 0; s1 < orderedSides.Count; s1++)
+            for (int s1 = 0; s1 < orderedSides.Count - 1; s1++)
             {
-                //                                               3 excludes this side and the two adjacent sides
+                // +2 excludes this side and the adjacent side
                 for (int s2 = s1 + 2; s2 < orderedSides.Count; s2++)
                 {
-                    Point intersection = orderedSides[s1].FindIntersection(orderedSides[s2]);
-
-                    intersection = Utilities.AcquirePoint(figurePoints, intersection);
-
-                    // The point of interest must be on the perimeter of the polygon.
-                    if (this.PointLiesOn(intersection))
+                    // Avoid intersecting the first with the last.
+                    if (s1 != 0 || s2 != orderedSides.Count - 1)
                     {
+                        Point intersection = orderedSides[s1].FindIntersection(orderedSides[s2]);
+
+                        intersection = Utilities.AcquirePoint(figurePoints, intersection);
+
                         if (intersection != null)
                         {
-                            orderedSides[s1].AddCollinearPoint(intersection);
-                            orderedSides[s2].AddCollinearPoint(intersection);
- 
-                            // The intersection point may be a vertex; avoid redundant additions.
-                            if (!Utilities.HasStructurally<Point>(imagPts, intersection))
+                            // The point of interest must be on the perimeter of the polygon.
+                            if (this.PointLiesOn(intersection) || this.PointLiesInside(intersection))
                             {
-                                imagPts.Add(intersection);
+                                orderedSides[s1].AddCollinearPoint(intersection);
+                                orderedSides[s2].AddCollinearPoint(intersection);
+
+                                // The intersection point may be a vertex; avoid redundant additions.
+                                if (!Utilities.HasStructurally<Point>(imagPts, intersection))
+                                {
+                                    imagPts.Add(intersection);
+                                }
                             }
                         }
                     }
                 }
             }
+
+            //
+            // Add the imaginary points to the list of figure points;
+            // this is needed for consistency among all regions / polygons.
+            //
+            Utilities.AddUniqueList<Point>(figurePoints, imagPts);
 
             //
             // Construct the Planar graph for atomic region identification.
@@ -135,6 +145,17 @@ namespace GeometryTutorLib.ConcreteAST
             if (thatPoly == null) return false;
 
             return base.Equals(obj);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder str = new StringBuilder();
+
+            str.Append("Concave(");
+            str.Append(base.ToString());
+            str.Append(")");
+
+            return str.ToString();
         }
     }
 }

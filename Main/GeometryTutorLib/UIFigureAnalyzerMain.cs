@@ -65,7 +65,7 @@ namespace GeometryTutorLib
             // Combine the problems together into one list
             List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>> candidateProbs = new List<ProblemAnalyzer.Problem<Hypergraph.EdgeAnnotation>>();
             candidateProbs.AddRange(problems.Key);
-            candidateProbs.AddRange(problems.Value);
+            // candidateProbs.AddRange(problems.Value);
 
             // Determine which, if any, of the problems are interesting (using definition that 100% of the givens are used)
             interestingCalculator = new ProblemAnalyzer.InterestingProblemCalculator(graph, figure, givens);
@@ -88,6 +88,28 @@ namespace GeometryTutorLib
             //        Debug.WriteLine(bookProb.ConstructProblemAndSolution(graph));
             //    }
             //}
+
+            //using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"generatedProblems.txt", true))
+            //{
+            //    //
+            //    // Forward Problems
+            //    //
+            //    foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in interestingProblems)
+            //    {
+            //        file.WriteLine(problem.ConstructProblemAndSolution(graph).ToString());
+            //    }
+
+            //    //
+            //    // Converse Problems
+            //    //
+            //    foreach (GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem in problems.Value)
+            //    {
+            //        file.WriteLine(problem.ConstructProblemAndSolution(graph).ToString());
+            //    }
+            //}
+
+            // Adding all the backward problems to the interesting forward problems.
+            interestingProblems.AddRange(problems.Value);
 
             return interestingProblems;
         }
