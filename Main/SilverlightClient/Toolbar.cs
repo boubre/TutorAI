@@ -64,9 +64,9 @@ namespace LiveGeometry
             drawingHost.AddToolbarButton(CommandParse);
             drawingHost.AddToolbarButton(drawingHost.CommandShowAIDebugWindow);
             drawingHost.AddToolbarButton(CommandParseOptions);
-            drawingHost.AddToolbarButton(CommandProblemCharacteristics);
+            //drawingHost.AddToolbarButton(CommandProblemCharacteristics);
             drawingHost.AddToolbarButton(CommandManageGivens);
-            drawingHost.AddToolbarButton(CommandEnterSolution);
+            //drawingHost.AddToolbarButton(CommandEnterSolution);
 
             drawingHost.Ribbon.GetPanel("Drawing").HeaderContent.Icon = GetImageFromResource("SaveFormDesign.png");
         }

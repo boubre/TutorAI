@@ -34,7 +34,7 @@ namespace DynamicGeometry.UI
         {
             this.Title = "Manage Givens";
             currentGivens = new Dictionary<string, GroundedClause>();
-            this.MaxHeight = 600;
+            this.MaxHeight = 120;
             this.MaxWidth = 800;
         }
 
@@ -53,10 +53,10 @@ namespace DynamicGeometry.UI
             givensList = new ListBox();
             givensList.SelectionMode = SelectionMode.Extended;
             givensList.ItemsSource = currentGivens.Keys;
-            givensList.MinHeight = 600;
-            givensList.MaxHeight = 600;
-            givensList.MinWidth = 400;
-            givensList.MaxWidth = 400;
+            givensList.MinHeight = 120;
+            givensList.MaxHeight = 120;
+            givensList.MinWidth = 1000;
+            givensList.MaxWidth = 1000;
             givensList.Margin = new Thickness(0, 0, 0, 10);
             
             //Set up add and remove panel
@@ -65,7 +65,7 @@ namespace DynamicGeometry.UI
             addSelection.ItemsSource = givenWindows.Keys;
             addSelection.SelectedItem = addSelection.Items[0];
             addSelection.Margin = new Thickness(0, 0, 5, 0);
-            addSelection.MinWidth = 340;
+            addSelection.MinWidth = 940;
             addRemPanel.Children.Add(addSelection);
             Button addBtn = new Button();
             addBtn.Content = "+";
