@@ -104,32 +104,89 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             foreach (Circle circle1 in circles1)
             {
-                // Make an arc out of the chord and circle
-                MinorArc arc1 = new MinorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
-                MajorArc majorArc1 = new MajorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
+                // Create the appropriate type of arcs from the chord and the circle
+                List<Semicircle> c1semi = null;
+                MinorArc c1minor = null;
+                MajorArc c1major = null;
+
+                if (circle1.DefinesDiameter(cas.cs1))
+                {
+                    c1semi = CreateSemiCircles(circle1, cas.cs1);
+                }
+                else
+                {
+                    c1minor = new MinorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
+                    c1major = new MajorArc(circle1, cas.cs1.Point1, cas.cs1.Point2);
+                }
 
                 foreach (Circle circle2 in circles2)
                 {
-                    // Make an arc out of the chord and circle
-                    MinorArc arc2 = new MinorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
-                    MajorArc majorArc2 = new MajorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
-                    
-                    // Construct the congruence
-                    GeometricCongruentArcs gcas = new GeometricCongruentArcs(arc1, arc2);
-                    GeometricCongruentArcs gcas2 = new GeometricCongruentArcs(majorArc1, majorArc2);
+                    //The two circles must be the same or congruent
+                    if (circle1.radius == circle2.radius)
+                    {
+                        List<Semicircle> c2semi = null;
+                        MinorArc c2minor = null;
+                        MajorArc c2major = null;
 
-                    // For hypergraph
-                    List<GroundedClause> antecedent = new List<GroundedClause>();
-                    antecedent.Add(cas.cs1);
-                    antecedent.Add(cas.cs2);
-                    antecedent.Add(cas);
+                        List<GeometricCongruentArcs> congruencies = new List<GeometricCongruentArcs>();
+                        if (circle2.DefinesDiameter(cas.cs2))
+                        {
+                            c2semi = CreateSemiCircles(circle2, cas.cs2);
+                            congruencies.AddRange(EquateSemiCircles(c1semi, c2semi));
+                        }
+                        else
+                        {
+                            c2minor = new MinorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
+                            c2major = new MajorArc(circle2, cas.cs2.Point1, cas.cs2.Point2);
+                            congruencies.Add(new GeometricCongruentArcs(c1minor, c2minor));
+                            congruencies.Add(new GeometricCongruentArcs(c1major, c2major));
+                        }
 
-                    newGrounded.Add(new EdgeAggregator(antecedent, gcas, forwardAnnotation));
-                    newGrounded.Add(new EdgeAggregator(antecedent, gcas2, forwardAnnotation));
+                        // For hypergraph
+                        List<GroundedClause> antecedent = new List<GroundedClause>();
+                        antecedent.Add(cas.cs1);
+                        antecedent.Add(cas.cs2);
+                        antecedent.Add(cas);
+
+                        foreach (GeometricCongruentArcs gcas in congruencies)
+                        {
+                            newGrounded.Add(new EdgeAggregator(antecedent, gcas, forwardAnnotation));
+                        }
+                    }
                 }
             }
 
             return newGrounded;
+        }
+
+        private static List<Semicircle> CreateSemiCircles(Circle circle1, Segment diameter)
+        {
+            int e1 = circle1.pointsOnCircle.IndexOf(diameter.Point1);
+            int e2 = circle1.pointsOnCircle.IndexOf(diameter.Point2);
+
+            List<Semicircle> semis = new List<Semicircle>();
+
+            for (int i = 0; i < circle1.pointsOnCircle.Count; ++i)
+            {
+                if (i != e1 && i != e2) semis.Add(new Semicircle(circle1, diameter.Point1, diameter.Point2, circle1.pointsOnCircle[i], diameter)); 
+            }
+
+            return semis;
+        }
+
+        private static List<GeometricCongruentArcs> EquateSemiCircles(List<Semicircle> s1, List<Semicircle> s2)
+        {
+            List<GeometricCongruentArcs> newCongruencies = new List<GeometricCongruentArcs>();
+
+            foreach (Semicircle semi1 in s1)
+            {
+                foreach (Semicircle semi2 in s2)
+                {
+                    if (!semi1.SameSideSemicircle(semi2)) newCongruencies.Add(new GeometricCongruentArcs(semi1, semi2));
+                }
+            }
+
+            return newCongruencies;
         }
 
         //               A

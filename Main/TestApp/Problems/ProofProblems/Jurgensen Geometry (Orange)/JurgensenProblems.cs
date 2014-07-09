@@ -42,7 +42,7 @@ namespace GeometryTestbed
             problems.Add(new Page146Problem15(false, false));                 // GTG
             //problems.Add(new Page146Problem18(true, false));                 // GTG 1:20 execute
             problems.Add(new Page155Problem14(false, true));                 // GTG
-            problems.Add(new Page175ClassroomExercise12(true, true));       // GTG
+            problems.Add(new Page175ClassroomExercise12(false, true));       // GTG
             problems.Add(new Page223Problem22(false, false));                 // GTG
             problems.Add(new Page223Problem23(false, false));                 // GTG
             problems.Add(new Page242Problem17(false, false));                 // GTG
@@ -53,32 +53,33 @@ namespace GeometryTestbed
             ////
             //// Quadrilaterals
             ////
-            //problems.Add(new Page162Problem20(true, false));          //parallelogram
-            ////problems.Add(new Page166Problem01(true, false));          //parallelogram
-            ////problems.Add(new Page166Problem02(true, false));          //parallelogram
-            ////problems.Add(new Page166Problem03(true, false));          //parallelogram
-            ////problems.Add(new Page166Problem04(true, false));          //parallelogram
-            ////problems.Add(new Page166Problem05(true, false));          //parallelogram
-            //problems.Add(new Page166Problem13(true, false));          //parallelogram
-            //problems.Add(new Page170ClassroomExercise02(true, false)); //rhombus
-            //problems.Add(new Page172Problem19(true, false));          //rhombus
-            //problems.Add(new Page169Theorem413(true, false));          //rectangle
-            //problems.Add(new Page171Problem17(true, false));           //rectangle
-            ////problems.Add(new Page178SelfTest07(true, false));          //rectangle
-            //problems.Add(new Page173Theorem415(true, false));          //trapezoid
-            //problems.Add(new Page174Theorem416_1(true, false));          //trapezoid
-            //problems.Add(new Page174Theorem416_2(true, false));           //trapezoid
-            //problems.Add(new Page170ClassroomExercise05(true, false));      //square
-            ////problems.Add(new ExtraSquareProblem(true, false));                //square
+            //problems.Add(new Page162Problem20(false, false));          //parallelogram
+            //problems.Add(new Page166Problem01(false, false));          //parallelogram
+            //problems.Add(new Page166Problem02(false, false));          //parallelogram
+            //problems.Add(new Page166Problem03(false, false));          //parallelogram
+            //problems.Add(new Page166Problem04(false, false));          //parallelogram
+            //problems.Add(new Page166Problem05(false, false));          //parallelogram
+            //problems.Add(new Page166Problem13(false, false));          //parallelogram
+            //problems.Add(new Page170ClassroomExercise02(false, false)); //rhombus
+            //problems.Add(new Page172Problem19(false, false));          //rhombus
+            //problems.Add(new Page169Theorem413(false, false));          //rectangle
+            //problems.Add(new Page171Problem17(false, false));           //rectangle
+            ////problems.Add(new Page178SelfTest07(false, false));          //rectangle
+            //problems.Add(new Page173Theorem415(false, false));          //trapezoid
+            //problems.Add(new Page174Theorem416_1(false, false));          //trapezoid
+            //problems.Add(new Page174Theorem416_2(false, false));           //trapezoid
+            //problems.Add(new Page170ClassroomExercise05(false, false));      //square
+            //problems.Add(new ExtraSquareProblem(false, false));                //square
 
-            
-            ////Circles
-            
-            //problems.Add(new Page296Theorem7_1(true, false));
-            //problems.Add(new Page296Theorem7_1_Test2(true, false));
-            ////problems.Add(new Page306Theorem7_4_1(true, false));  //goal cannot be validated (congruent arcs)
-            //problems.Add(new Page309Problem09(true, false));
-            //problems.Add(new Page307Theorem7_5(true, false));
+
+            //Circles
+
+            //problems.Add(new Page296Theorem7_1(false, false));
+            //problems.Add(new Page296Theorem7_1_Test2(false, false));
+            //problems.Add(new Page306Theorem7_4_1(true, false));
+            problems.Add(new Page306Theorem7_4_1_Semicircle(true, false)); 
+            problems.Add(new Page309Problem09(false, false));
+            problems.Add(new Page307Theorem7_5(false, false));
 
             //problems.Add(new BackwardPage134Problem7(true, false)); 
 

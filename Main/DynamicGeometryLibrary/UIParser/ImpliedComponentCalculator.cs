@@ -38,6 +38,7 @@ namespace LiveGeometry.TutorParser
         public List<Angle> angles { get; private set; }
         public List<MinorArc> minorArcs { get; private set; }
         public List<MajorArc> majorArcs { get; private set; }
+        public List<Semicircle> semiCircles { get; private set; }
         public List<Sector> minorSectors { get; private set; }
         public List<Sector> majorSectors { get; private set; }
         public List<ArcInMiddle> arcInMiddle { get; private set; }
@@ -122,6 +123,7 @@ namespace LiveGeometry.TutorParser
             angles = new List<Angle>();
             minorArcs = new List<MinorArc>();
             majorArcs = new List<MajorArc>();
+            semiCircles = new List<Semicircle>();
             minorSectors = new List<Sector>();
             majorSectors = new List<Sector>();
             arcInMiddle = new List<ArcInMiddle>();
@@ -209,7 +211,7 @@ namespace LiveGeometry.TutorParser
             //
             // Atomic region identification
             //
-             atomicRegions = AtomicRegionIdentifier.AtomicIdentifierMain.GetAtomicRegions(allFigurePoints, circles, polygons);
+            //atomicRegions = AtomicRegionIdentifier.AtomicIdentifierMain.GetAtomicRegions(allFigurePoints, circles, polygons);
 
 
 
@@ -581,12 +583,91 @@ namespace LiveGeometry.TutorParser
                 circle.SetPointsOnCircle(pointsOnCircle);
 
                 // Since we know all points on this circle, we generate all arc clauses
+                GenerateSemicircleClauses(circle);
                 GenerateArcClauses(circle);
             }
         }
 
         //
-        // Generate all of the Arc and ArcInMiddle clauses; similar to generating for collinear points on segments.
+        // Detect diameters and generate all of the Semicircle Arc and ArcInMiddle clauses
+        //
+        private void GenerateSemicircleClauses(GeometryTutorLib.ConcreteAST.Circle circle)
+        {
+            foreach (GeometryTutorLib.ConcreteAST.Segment seg in segments)
+            {
+                if (circle.DefinesDiameter(seg))
+                {
+                    //Get the endpoints of the diameter and the indices of these endpoints
+                    Point e1 = seg.Point1;
+                    Point e2 = seg.Point2;
+                    int p1 = circle.pointsOnCircle.IndexOf(e1);
+                    int p2 = circle.pointsOnCircle.IndexOf(e2);
+
+                    //For partitioning purposes, order of the endpoints matters. Make sure p1 holds the lower of the two indices
+                    if (p1 > p2)
+                    {
+                        int p3 = p1;
+                        p1 = p2;
+                        p2 = p3;
+                    }
+
+                    // Partition the remaining points on the circle
+                    List<Point> minorArcPoints;
+                    List<Point> majorArcPoints;
+                    PartitionSemiCircleArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
+
+                    // Semicircle requires 3 points to be defined - the two endpoints and a point inbetween
+                    // The minorArcPoints and majorArcPoints lists contain all the potential inbetween points for either side of the diameter
+                    // Handle 'side' 1:
+                    for (int i = 0; i < majorArcPoints.Count; ++i)
+                    {
+                        Semicircle semi = new Semicircle(circle, e1, e2, majorArcPoints[i], minorArcPoints, majorArcPoints, seg);
+                        AddSemicircleClauses(semi);
+                    }
+                    // Handle 'side' 2:
+                    for (int i = 0; i < minorArcPoints.Count; ++i)
+                    {
+                        Semicircle semi = new Semicircle(circle, e1, e2, minorArcPoints[i], majorArcPoints, minorArcPoints, seg);
+                        AddSemicircleClauses(semi);
+                    }
+                }
+            }
+        }
+
+        private void AddSemicircleClauses(GeometryTutorLib.ConcreteAST.Semicircle semi)
+        {
+            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Semicircle>(semiCircles, semi))
+            {
+                semiCircles.Add(semi);
+            }
+
+            //Add arcInMiddle
+            //For semicircles, only considering the defining middle point as an inMiddle point
+            //This is to avoid arc equations such as MinorArc(RX) + MinorArc(XT) = Semicircle(RST), which might not make sense to a user
+            GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(semi.middlePoint, semi));
+        }
+
+        //
+        // All points x, from p1 < x < p2, are arc 'major' points (belong to the semicircle)
+        // All points x, from x < p1 or x > p2, are arc 'minor' points (are outside of the semicircle)
+        //
+        // We assume an ordered list of points here.
+        //
+        private void PartitionSemiCircleArcPoints(List<Point> points, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
+        {
+            minorArcPoints = new List<Point>();
+            majorArcPoints = new List<Point>();
+
+            // Traverse points and add to the appropriate list
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (i > endpt1 && i < endpt2) majorArcPoints.Add(points[i]);
+                else if (i < endpt1 || i > endpt2) minorArcPoints.Add(points[i]);
+            }
+        }
+
+        //
+        // Generate all of the Major/Minor Arc and ArcInMiddle clauses; similar to generating for collinear points on segments.
         //
         private void GenerateArcClauses(GeometryTutorLib.ConcreteAST.Circle circle)
         {
@@ -597,57 +678,51 @@ namespace LiveGeometry.TutorParser
             {
                 for (int p2 = p1 + 1; p2 < circle.pointsOnCircle.Count; p2++)
                 {
-                    List<Point> minorArcPoints;
-                    List<Point> majorArcPoints;
-                    PartitionArcPoints(circle, p1, p2, out minorArcPoints, out majorArcPoints);
-
-                    MinorArc newMinorArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
-                    MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
-                    Sector newMinorSector = new Sector(newMinorArc);
-                    Sector newMajorSector = new Sector(newMajorArc);
-                    if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MinorArc>(minorArcs, newMinorArc))
-                    {
-                        minorArcs.Add(newMinorArc);
-                        majorArcs.Add(newMajorArc);
-                        minorSectors.Add(newMinorSector);
-                        majorSectors.Add(newMajorSector);
-                    }
-
-                    circle.AddMinorArc(newMinorArc);
-                    circle.AddMajorArc(newMajorArc);
-                    circle.AddMinorSector(newMinorSector);
-                    circle.AddMajorSector(newMajorSector);
-
-                    // Generate ArcInMiddle clauses for minor arc and major arc
-                    //for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
-                    //{
-                    //    GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(circle.pointsOnCircle[imIndex], newMinorArc));
-                    //}
-                    for (int imIndex = 0; imIndex < newMinorArc.arcMinorPoints.Count; imIndex++)
-                    {
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMinorArc.arcMinorPoints[imIndex], newMinorArc));
-                    }
-                    for (int imIndex = 0; imIndex < newMajorArc.arcMajorPoints.Count; imIndex++)
-                    {
-                        GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMajorArc.arcMajorPoints[imIndex], newMajorArc));
-                    }
+                    // Do these endpoints form a diameter? If so, the semicircle arcs should have already been handled by GenerateSemicircleClauses()
+                    GeometryTutorLib.ConcreteAST.Segment seg = new GeometryTutorLib.ConcreteAST.Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
+                    if (!circle.DefinesDiameter(seg)) CreateMajorMinorArcs(circle, p1, p2);
                 }
             }
         }
 
-        //
-        // Previous assumptions:
-        // All points x, from p1 < x < p2, are arc minor points
-        // All points x, from x < p1 or x > p2, are arc major points
-        //
-        // The ordered list was not enough to guarantee these assumptions
-        // Consider case of a circle divided into 4 quadrants, with a point defined in each quadrant, such that the order list becomes:
-        //  T (quad 4), U (quad 3), R (quad 2), S (quad 1)
-        //  When endpt1 = 0 (T) and endpt2 = 3 (S), U and R would be classified as minor arc points since their indices fall between
-        //  endpt1 and endpt2. THIS IS NOT CORRECT. Points U and R should be part of the major arc TS
-        //
-        // We assume an ordered list of points here.
-        //
+        private void CreateMajorMinorArcs(GeometryTutorLib.ConcreteAST.Circle circle, int p1, int p2)
+        {
+            List<Point> minorArcPoints;
+            List<Point> majorArcPoints;
+            PartitionArcPoints(circle, p1, p2, out minorArcPoints, out majorArcPoints);
+
+            MinorArc newMinorArc = new MinorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+            MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
+            Sector newMinorSector = new Sector(newMinorArc);
+            Sector newMajorSector = new Sector(newMajorArc);
+            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MinorArc>(minorArcs, newMinorArc))
+            {
+                minorArcs.Add(newMinorArc);
+                minorSectors.Add(newMinorSector);
+                majorSectors.Add(newMajorSector);
+            }
+            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MajorArc>(majorArcs, newMajorArc))
+            {
+                majorArcs.Add(newMajorArc);
+                majorSectors.Add(newMajorSector);
+            }
+
+            circle.AddMinorArc(newMinorArc);
+            circle.AddMajorArc(newMajorArc);
+            circle.AddMinorSector(newMinorSector);
+            circle.AddMajorSector(newMajorSector);
+
+            // Generate ArcInMiddle clauses for minor arc and major arc
+            for (int imIndex = 0; imIndex < newMinorArc.arcMinorPoints.Count; imIndex++)
+            {
+                GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMinorArc.arcMinorPoints[imIndex], newMinorArc));
+            }
+            for (int imIndex = 0; imIndex < newMajorArc.arcMajorPoints.Count; imIndex++)
+            {
+                GeometryTutorLib.Utilities.AddStructurallyUnique<ArcInMiddle>(arcInMiddle, new ArcInMiddle(newMajorArc.arcMajorPoints[imIndex], newMajorArc));
+            }
+        }
+
         private void PartitionArcPoints(GeometryTutorLib.ConcreteAST.Circle circle, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
         {
             minorArcPoints = new List<Point>();

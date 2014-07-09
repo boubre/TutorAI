@@ -9,13 +9,15 @@ namespace GeometryTutorLib.ConcreteAST
     public class Semicircle : Arc
     {
         public Segment diameter { get; private set; }
+        public Point middlePoint { get; private set; }
 
-        public Semicircle(Circle circle, Point e1, Point e2, Segment d) : this(circle, e1, e2, new List<Point>(), new List<Point>(), d) { }
+        public Semicircle(Circle circle, Point e1, Point e2, Point m, Segment d) : this(circle, e1, e2, m, new List<Point>(), new List<Point>(), d) { }
 
-        public Semicircle(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts, Segment d)
+        public Semicircle(Circle circle, Point e1, Point e2, Point m, List<Point> minorPts, List<Point> majorPts, Segment d)
             : base(circle, e1, e2, minorPts, majorPts)
         {
             diameter = d;
+            middlePoint = m;
         }
 
         //
@@ -63,6 +65,17 @@ namespace GeometryTutorLib.ConcreteAST
             return this.HasMinorSubArc(that);
         }
 
+        public bool SameSideSemicircle(Semicircle thatSemi)
+        {
+            // First, the endpoints and the diameter must match
+            if (!(this.diameter.StructurallyEquals(thatSemi.diameter) && base.StructurallyEquals(thatSemi))) return false;
+
+            // 'this' semicircle's included points should be contained in the major arc point list
+            // If thatSemi's middle point is also included in the major arc point list, the two semicircles form the same side
+            if (this.arcMajorPoints.Contains(thatSemi.middlePoint)) return true;
+            else return false;
+        }
+
         /// <summary>
         /// Make a set of connections for atomic region analysis.
         /// </summary>
@@ -91,7 +104,7 @@ namespace GeometryTutorLib.ConcreteAST
             Semicircle semi = obj as Semicircle;
             if (semi == null) return false;
 
-            return this.diameter.StructurallyEquals(semi.diameter) && base.StructurallyEquals(obj);
+            return this.diameter.StructurallyEquals(semi.diameter) && this.middlePoint.StructurallyEquals(semi.middlePoint) && base.StructurallyEquals(obj);
         }
 
         public override bool Equals(object obj)
@@ -99,12 +112,12 @@ namespace GeometryTutorLib.ConcreteAST
             Semicircle semi = obj as Semicircle;
             if (semi == null) return false;
 
-            return this.diameter.Equals(semi.diameter) && base.Equals(obj);
+            return this.diameter.Equals(semi.diameter) && this.middlePoint.Equals(semi.middlePoint) && base.Equals(obj);
         }
 
         public override string ToString()
         {
-            return "SemiCircle(" + theCircle + "(" + endpoint1.ToString() + ", " + endpoint2.ToString() + "), Diameter(" + diameter + "))";
+            return "SemiCircle(" + theCircle + "(" + endpoint1.ToString() + ", " + middlePoint.ToString() + ", " + endpoint2.ToString() + "), Diameter(" + diameter + "))";
         }
     }
 }

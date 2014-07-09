@@ -63,6 +63,7 @@ namespace GeometryTestbed
             parser.implied.ssIntersections.ForEach(inter => intrinsic.Add(inter));
             parser.implied.minorArcs.ForEach(arc => intrinsic.Add(arc));
             parser.implied.majorArcs.ForEach(arc => intrinsic.Add(arc));
+            parser.implied.semiCircles.ForEach(arc => intrinsic.Add(arc));
             parser.implied.circles.ForEach(circ => intrinsic.Add(circ));
             parser.implied.csIntersections.ForEach(inter => intrinsic.Add(inter));
             parser.implied.ccIntersections.ForEach(inter => intrinsic.Add(inter));

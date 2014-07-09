@@ -109,6 +109,10 @@ namespace LiveGeometry.TutorParser
             {
                 return GeometryTutorLib.Utilities.GetStructurally<MinorArc>(implied.minorArcs, clause as MinorArc);
             }
+            else if (clause is Semicircle)
+            {
+                return GeometryTutorLib.Utilities.GetStructurally<Semicircle>(implied.semiCircles, clause as Semicircle);
+            }
             else if (clause is MajorArc)
             {
                 return GeometryTutorLib.Utilities.GetStructurally<MajorArc>(implied.majorArcs, clause as MajorArc);

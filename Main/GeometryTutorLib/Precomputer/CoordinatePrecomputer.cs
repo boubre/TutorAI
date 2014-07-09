@@ -21,6 +21,7 @@ namespace GeometryTutorLib.Precomputer
 
         private List<MinorArc> minorArcs;
         private List<MajorArc> majorArcs;
+        private List<Semicircle> semiCircles;
         private List<Sector> sectors;
         private List<ArcInMiddle> arcInMiddle;
 
@@ -43,6 +44,7 @@ namespace GeometryTutorLib.Precomputer
 
             minorArcs = new List<MinorArc>();
             majorArcs = new List<MajorArc>();
+            semiCircles = new List<Semicircle>();
             sectors = new List<Sector>();
             arcInMiddle = new List<ArcInMiddle>();
 
@@ -108,6 +110,10 @@ namespace GeometryTutorLib.Precomputer
                 {
                     majorArcs.Add(clause as MajorArc);
                 }
+                else if (clause is Semicircle)
+                {
+                    semiCircles.Add(clause as Semicircle);
+                }
                 else if (clause is Sector)
                 {
                     sectors.Add(clause as Sector);
@@ -121,7 +127,7 @@ namespace GeometryTutorLib.Precomputer
 
         //
         // Numerically (via the coordinates from the UI), calculate the relationships among all figures
-        //    1) Congruences (angles, segments, triangles)
+        //    1) Congruences (angles, segments, triangles, arcs)
         //    2) Parallel
         //    3) Equalities
         //    4) Perpendicular
@@ -267,6 +273,13 @@ namespace GeometryTutorLib.Precomputer
             }
 
             //
+            // Arc congruences
+            //
+            CalculateArcCongruences<MinorArc>(minorArcs);
+            CalculateArcCongruences<MajorArc>(majorArcs);
+            CalculateArcCongruences<Semicircle>(semiCircles);
+
+            //
             // Calculate all segment relations to triangles: bisector, median, altitude, perpendicular bisector
             //
             foreach (Triangle tri in triangles)
@@ -312,6 +325,20 @@ namespace GeometryTutorLib.Precomputer
                 foreach (ConcreteAST.Descriptor descriptor in descriptors)
                 {
                     System.Diagnostics.Debug.WriteLine(descriptor.ToString());
+                }
+            }
+        }
+
+        private void CalculateArcCongruences<T>(List<T> arcs) where T : Arc
+        {
+            for (int a1 = 0; a1 < arcs.Count; a1++)
+            {
+                for (int a2 = a1 + 1; a2 < arcs.Count; a2++)
+                {
+                    if (arcs[a1].CoordinateCongruent(arcs[a2]))
+                    {
+                        descriptors.Add(new CongruentArcs(arcs[a1], arcs[a2]));
+                    }
                 }
             }
         }
