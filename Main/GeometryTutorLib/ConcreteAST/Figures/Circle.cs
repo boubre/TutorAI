@@ -775,9 +775,10 @@ namespace GeometryTutorLib.ConcreteAST
             // If the angle has vertex on the circle
             if (!this.PointIsOn(angle.GetVertex())) return false;
 
-            // Do the rays contain chords?
-            Segment chord1 = this.ContainsChord(angle.ray1);
-            Segment chord2 = this.ContainsChord(angle.ray2);
+            // Do the angle rays form or contain chords? 
+            // GetChord() will check if the segment is a chord, and if it is not, it will check if the segment is a secant containing a chord
+            Segment chord1 = this.GetChord(angle.ray1);
+            Segment chord2 = this.GetChord(angle.ray2);
 
             return chord1 != null && chord2 != null;
         }

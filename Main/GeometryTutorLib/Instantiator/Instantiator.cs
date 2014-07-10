@@ -91,6 +91,11 @@ namespace GeometryTutorLib.GenericInstantiator
                 else if (clause is Arc)
                 {
                     Arc.Record(clause);
+
+                    if (clause is Semicircle)
+                    {
+                        HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
+                    }
                 }
                 else if (clause is Segment)
                 {
@@ -476,10 +481,6 @@ namespace GeometryTutorLib.GenericInstantiator
                 {
                     HandleDeducedClauses(worklist, DiameterPerpendicularToChordBisectsChordAndArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, PerpendicularToRadiusIsTangent.Instantiate(clause));
-                }
-                else if (clause is Semicircle)
-                {
-                    HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
                 }
                 else if (clause is Tangent)
                 {

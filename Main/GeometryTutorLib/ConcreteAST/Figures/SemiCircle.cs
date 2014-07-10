@@ -70,10 +70,28 @@ namespace GeometryTutorLib.ConcreteAST
             // First, the endpoints and the diameter must match
             if (!(this.diameter.StructurallyEquals(thatSemi.diameter) && base.StructurallyEquals(thatSemi))) return false;
 
-            // 'this' semicircle's included points should be contained in the major arc point list
-            // If thatSemi's middle point is also included in the major arc point list, the two semicircles form the same side
+            // 'this' semicircle's included points are contained in the major arc point list
+            // If thatSemi's middle is in the major arc point list, the two semicircles form arcs on the same side of the diameter
             if (this.arcMajorPoints.Contains(thatSemi.middlePoint)) return true;
             else return false;
+        }
+
+        public bool AngleIsInscribed(Angle angle)
+        {
+            if (!this.theCircle.IsInscribed(angle)) return false;
+
+            // Verify that angle points match diameter endpoints
+            Point endpt1, endpt2;
+
+            endpt1 = angle.ray1.Point1.StructurallyEquals(angle.GetVertex()) ? angle.ray1.Point2 : angle.ray1.Point1;
+            endpt2 = angle.ray2.Point1.StructurallyEquals(angle.GetVertex()) ? angle.ray2.Point2 : angle.ray2.Point1;
+
+            if (!this.diameter.HasPoint(endpt1) || !this.diameter.HasPoint(endpt2)) return false;
+
+            // Verify that the vertex is within the semicircle
+            if (!this.arcMajorPoints.Contains(angle.GetVertex())) return false;
+
+            return true;
         }
 
         /// <summary>

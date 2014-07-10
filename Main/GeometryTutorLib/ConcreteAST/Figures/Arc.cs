@@ -116,13 +116,16 @@ namespace GeometryTutorLib.ConcreteAST
         {
             figureMinorArcs.Clear();
             figureMajorArcs.Clear();
+            figureSemicircles.Clear();
         }
         public static List<MinorArc> figureMinorArcs = new List<MinorArc>();
         public static List<MajorArc> figureMajorArcs = new List<MajorArc>();
+        public static List<Semicircle> figureSemicircles = new List<Semicircle>();
         public static void Record(GroundedClause clause)
         {
             if (clause is MinorArc) figureMinorArcs.Add(clause as MinorArc);
             if (clause is MajorArc) figureMajorArcs.Add(clause as MajorArc);
+            if (clause is Semicircle) figureSemicircles.Add(clause as Semicircle);
         }
         public static Arc GetFigureMinorArc(Circle circle, Point pt1, Point pt2)
         {
@@ -148,7 +151,18 @@ namespace GeometryTutorLib.ConcreteAST
 
             return null;
         }
+        public static Arc GetFigureSemicircle(Circle circle, Point pt1, Point pt2, Point middle)
+        {
+            Segment diameter = new Segment(pt1, pt2);
+            Semicircle candArc = new Semicircle(circle, pt1, pt2, middle, diameter);
 
+            foreach (Semicircle arc in figureSemicircles)
+            {
+                if (arc.StructurallyEquals(candArc)) return arc;
+            }
+
+            return null;
+        }
         private static Arc GetInscribedInterceptedArc(Circle circle, Angle angle)
         {
             Point endpt1, endpt2;
@@ -174,6 +188,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             return intercepted.Key;
         }
+
 
         //
         // Acquires one or two intercepted arcs from an exterior or interior angle vertex.

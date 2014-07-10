@@ -48,6 +48,7 @@ namespace LiveGeometry.TutorParser
             implied.inMiddles.ForEach(f => pdesc.figure.Add(f));
             implied.majorArcs.ForEach(f => pdesc.figure.Add(f));
             implied.majorSectors.ForEach(f => pdesc.figure.Add(f));
+            implied.semiCircles.ForEach(f => pdesc.figure.Add(f));
             implied.minorArcs.ForEach(f => pdesc.figure.Add(f));
             implied.minorSectors.ForEach(f => pdesc.figure.Add(f));
             implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX].ForEach(f => pdesc.figure.Add(f));

@@ -101,14 +101,14 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            //
-            // The angle needs to be inscribed in the circle that defines the semicircle.
-            //
-            if (!semi.theCircle.IsInscribed(angle)) return newGrounded;
+            // The angle needs to be inscribed in the given semicircle
 
-            // The angle needs to intersect the circle at the endpoints of the diameter that defines the semicircle.
-            Arc intercepted = Arc.GetInterceptedArc(semi.theCircle, angle);
-            if (!semi.diameter.HasPoint(intercepted.endpoint1) || !semi.diameter.HasPoint(intercepted.endpoint2)) return newGrounded;
+            // Note: Previously this was checked indirectly by verifying that the angle intercepts a semicircle, but since semicircles now 
+            // require 3 points to be defined, it is safer to directly verify that the angle is inscribed in the semicircle.
+            // (There may not have been any points defined on the other side of the diameter,
+            // meaning there would not actually be any defined semicircles which the angle intercepts). 
+
+            if (!semi.AngleIsInscribed(angle)) return newGrounded;
 
             Strengthened newRight = new Strengthened(angle, new RightAngle(angle));
 

@@ -71,15 +71,19 @@ namespace GeometryTestbed
             //problems.Add(new Page170ClassroomExercise05(false, false));      //square
             //problems.Add(new ExtraSquareProblem(false, false));                //square
 
-
+            //
             //Circles
-
-            //problems.Add(new Page296Theorem7_1(false, false));
-            //problems.Add(new Page296Theorem7_1_Test2(false, false));
-            //problems.Add(new Page306Theorem7_4_1(true, false));
-            problems.Add(new Page306Theorem7_4_1_Semicircle(true, false)); 
+            //
+            problems.Add(new Page296Theorem7_1(false, false));
+            problems.Add(new Page296Theorem7_1_Test2(false, false));
+            problems.Add(new Page306Theorem7_4_1(true, false));
+            problems.Add(new Page306Theorem7_4_1_Semicircle(false, false));
             problems.Add(new Page309Problem09(false, false));
             problems.Add(new Page307Theorem7_5(false, false));
+            problems.Add(new Page312Theorem7_7_Semicircle(false, false)); //This problem will work, but since it involves both angles and arcs,
+                                                                          //any theorem which tries to create an equation relating angle measure and 
+                                                                          //arc measure must first be commented out in the instantiator until the
+                                                                          //equation issue is resolved
 
             //problems.Add(new BackwardPage134Problem7(true, false)); 
 
