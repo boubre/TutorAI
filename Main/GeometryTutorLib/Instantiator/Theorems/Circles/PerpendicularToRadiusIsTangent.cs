@@ -95,10 +95,12 @@ namespace GeometryTutorLib.GenericInstantiator
             // The intersection points must be the same.
             if (!inter.intersect.StructurallyEquals(perp.intersect)) return newGrounded;
 
-            // Get the radius
+            // Get the radius - if it exists
             Segment radius = null;
             Segment garbage = null;
             inter.GetRadii(out radius, out garbage);
+
+            if (radius == null) return newGrounded;
 
             // Two intersections, not a tangent situation.
             if (garbage != null) return newGrounded;

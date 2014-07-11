@@ -36,16 +36,16 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             foreach (Quadrilateral quad in circle.inscribedPolys[Polygon.QUADRILATERAL_INDEX])
             {
-                GeometricCongruentAngles gcas1 = new GeometricCongruentAngles(quad.topLeftAngle, quad.bottomRightAngle);
-                GeometricCongruentAngles gcas2 = new GeometricCongruentAngles(quad.bottomLeftAngle, quad.topRightAngle);
+                Supplementary supp1 = new Supplementary(quad.topLeftAngle, quad.bottomRightAngle);
+                Supplementary supp2 = new Supplementary(quad.bottomLeftAngle, quad.topRightAngle);
 
                 // For hypergraph
                 List<GroundedClause> antecedent = new List<GroundedClause>();
                 antecedent.Add(circle);
                 antecedent.Add(quad);
 
-                newGrounded.Add(new EdgeAggregator(antecedent, gcas1, annotation));
-                newGrounded.Add(new EdgeAggregator(antecedent, gcas2, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, supp1, annotation));
+                newGrounded.Add(new EdgeAggregator(antecedent, supp2, annotation));
             }
 
             return newGrounded;
