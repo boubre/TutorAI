@@ -250,6 +250,8 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (!IsCollinearWith(thatSegment)) return false;
 
+            if (this.StructurallyEquals(thatSegment)) return true;
+
             if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point1)) return true;
 
             if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point2)) return true;
@@ -554,6 +556,10 @@ namespace GeometryTutorLib.ConcreteAST
         }
         public Point FindIntersection(Segment thatSegment)
         {
+            // Special Case: Intersect at an endpoint
+            Point shared = this.SharedVertex(thatSegment);
+            if (shared != null) return shared;
+
             double a, b, c, d, e, f;
 
             if (this.IsVertical() && thatSegment.IsHorizontal()) return new Point(null, this.Point1.X, thatSegment.Point1.Y);

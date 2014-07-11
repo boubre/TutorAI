@@ -57,6 +57,8 @@ namespace GeometryTestbed
         {
             if (!problemIsOn) return;
 
+            else System.Diagnostics.Debug.WriteLine("----------------------------- " + this.problemName + " -----------------------------");
+
             // Map the set of clauses from parser to one set of intrinsic clauses.
             ConstructIntrinsicSet();
 

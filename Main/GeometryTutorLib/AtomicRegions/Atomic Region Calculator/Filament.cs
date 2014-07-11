@@ -88,7 +88,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             Circle outerCircle = null;
             foreach (Circle circle in circles)
             {
-                if (circle.PointIsOn(points[beginIndex]) && circle.PointIsOn(points[endIndex])) outerCircle = null;
+                if (circle.PointIsOn(points[beginIndex]) && circle.PointIsOn(points[endIndex])) outerCircle = circle;
             }
 
             //
@@ -96,7 +96,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             //
             if (endIndex - beginIndex == 1)
             {
-                HandleConnection(graph, circles, points[beginIndex], points[endIndex]);
+                return new Agg(beginIndex, endIndex, -1, outerCircle, HandleConnection(graph, circles, points[beginIndex], points[endIndex]));
+
             }
 
             //

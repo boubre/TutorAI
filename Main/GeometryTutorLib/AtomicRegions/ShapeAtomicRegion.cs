@@ -27,7 +27,14 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return thisArea;
         }
 
-        public override bool PointLiesInside(Point pt) { return shape.PointLiesInside(pt); }
+        public override bool PointLiesInside(Point pt)
+        {
+            if (pt == null) return false;
+
+            if (this.PointLiesOn(pt)) return false;
+
+            return shape.PointLiesInside(pt);
+        }
         //
         // Takes a shape turns it into an approximate polygon (if needed)
         // by converting all arcs into approximated arcs using many line segments.

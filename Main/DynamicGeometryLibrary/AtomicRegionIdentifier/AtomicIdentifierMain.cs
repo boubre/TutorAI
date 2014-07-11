@@ -18,7 +18,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                                                           List<GeometryTutorLib.ConcreteAST.Circle> circles,
                                                           List<GeometryTutorLib.ConcreteAST.Polygon>[] polygons)
         {
-            List<AtomicRegion> atoms = new List<AtomicRegion>();
+            List<AtomicRegion> originalAtoms = new List<AtomicRegion>();
 
             //
             // Convert all circles to atomic regions identifying their chord / radii substructure.
@@ -32,7 +32,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 {
                     atom.AddOwner(circle);
                 }
-                atoms.AddRange(circleAtoms);
+                originalAtoms.AddRange(circleAtoms);
             }
 
             //
@@ -48,7 +48,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     if (concave != null)
                     {
                         List<AtomicRegion> concaveAtoms = concave.Atomize(figurePoints);
-                        atoms.AddRange(concaveAtoms);
+                        originalAtoms.AddRange(concaveAtoms);
                     }
 
                     // Basic polygon: make it a shape atomic region.
@@ -56,7 +56,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     {
                         ShapeAtomicRegion shapeAtom = new ShapeAtomicRegion(poly);
                         shapeAtom.AddOwner(poly);
-                        atoms.Add(shapeAtom);
+                        originalAtoms.Add(shapeAtom);
                     }
                 }
             }
@@ -64,19 +64,49 @@ namespace LiveGeometry.AtomicRegionIdentifier
             //
             // Since circles and Concave Polygons were atomized, there may be duplicate atomic regions.
             //
-            atoms = RemoveDuplicates(atoms);
+            originalAtoms = RemoveDuplicates(originalAtoms);
+            List<AtomicRegion> workingAtoms = new List<AtomicRegion>(originalAtoms);
 
             //
             // Combine all of the atomic regions together.
             //
-            atoms = ComposeAllRegions(figurePoints, atoms);
+            List<AtomicRegion> composed = ComposeAllRegions(figurePoints, workingAtoms);
 
             //
             // Run the graph-based algorithm one last time to identify any pathological regions (exterior to all shapes).
             //
-            atoms = IdentifyPathological(figurePoints, atoms, circles);
+            // Identify those pathological regions as well as any lost (major arcs).
+            //
+            List<AtomicRegion> lost = new List<AtomicRegion>();
+            List<AtomicRegion> pathological = new List<AtomicRegion>();
+            List<AtomicRegion> pathologicalID = IdentifyPathological(figurePoints, composed, circles);
+            foreach (AtomicRegion atom in originalAtoms)
+            {
+                if (!pathologicalID.Contains(atom))
+                {
+                    bool containment = false;
+                    foreach (AtomicRegion pathAtom in pathologicalID)
+                    {
+                        if (atom.Contains(pathAtom))
+                        {
+                            containment = true;
+                            break;
+                        }
+                    }
+                    if (!containment) lost.Add(atom);
+                }
+            }
 
-            return atoms;
+            foreach (AtomicRegion atom in pathologicalID)
+            {
+                if (!originalAtoms.Contains(atom)) pathological.Add(atom);
+            }
+
+            List<AtomicRegion> finalAtomSet = new List<AtomicRegion>();
+            finalAtomSet.AddRange(lost);
+            finalAtomSet.AddRange(pathologicalID);
+
+            return finalAtomSet;
         }
 
         //
@@ -344,6 +374,10 @@ namespace LiveGeometry.AtomicRegionIdentifier
             {
                 segment.ClearCollinear();
             }
+            foreach (GeometryTutorLib.ConcreteAST.Arc arc in arcs)
+            {
+                arc.ClearCollinear();
+            }
 
             // Segment-Segment
             for (int s1 = 0; s1 < segments.Count - 1; s1++)
@@ -353,13 +387,16 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point intersection = segments[s1].FindIntersection(segments[s2]);
                     intersection = GeometryTutorLib.Utilities.AcquirePoint(figurePoints, intersection);
 
-                    if (outerBounds.PointLiesOnOrInside(intersection))
+                    if (intersection != null)
                     {
-                        segments[s1].AddCollinearPoint(intersection);
-                        segments[s2].AddCollinearPoint(intersection);
+                        if (outerBounds.PointLiesOnOrInside(intersection))
+                        {
+                            segments[s1].AddCollinearPoint(intersection);
+                            segments[s2].AddCollinearPoint(intersection);
 
-                        // It may be the case that this intersection was due to a completely contained region.
-                        GeometryTutorLib.Utilities.AddUnique<Point>(points, intersection);
+                            // It may be the case that this intersection was due to a completely contained region.
+                            GeometryTutorLib.Utilities.AddUnique<Point>(points, intersection);
+                        }
                     }
                 }
             }

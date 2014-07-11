@@ -50,12 +50,16 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool PointLiesOn(Point pt)
         {
-            return Arc.BetweenMinor(pt, this);
+            return Arc.BetweenMinor(pt, new MinorArc(theCircle, endpoint1, middlePoint)) ||
+                   Arc.BetweenMinor(pt, new MinorArc(theCircle, endpoint2, middlePoint));
         }
 
         public override bool PointLiesStrictlyOn(Point pt)
         {
-            return Arc.StrictlyBetweenMinor(pt, this);
+            if (pt.StructurallyEquals(middlePoint)) return true;
+
+            return Arc.StrictlyBetweenMinor(pt, new MinorArc(theCircle, endpoint1, middlePoint)) ||
+                   Arc.StrictlyBetweenMinor(pt, new MinorArc(theCircle, endpoint2, middlePoint));
         }
 
         public override bool HasSubArc(Arc that)
@@ -92,6 +96,15 @@ namespace GeometryTutorLib.ConcreteAST
             if (!this.arcMajorPoints.Contains(angle.GetVertex())) return false;
 
             return true;
+        }
+
+        public override Point Midpoint()
+        {
+            Point midpt = theCircle.Midpoint(endpoint1, endpoint2);
+
+            if (!this.PointLiesOn(midpt)) midpt = theCircle.OppositePoint(midpt);
+
+            return midpt;
         }
 
         /// <summary>

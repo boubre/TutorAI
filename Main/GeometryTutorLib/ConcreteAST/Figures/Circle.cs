@@ -190,7 +190,14 @@ namespace GeometryTutorLib.ConcreteAST
 
         //public override List<Point> GetApproximatingPoints() { return approxPoints; }
 
-        public override bool PointLiesInside(Point pt) { return PointIsInterior(pt); }
+        public override bool PointLiesInside(Point pt)
+        {
+            if (pt == null) return false;
+
+            if (PointIsOn(pt)) return false;
+
+            return PointIsInterior(pt);
+        }
         public override List<Segment> Segmentize()
         {
             if (approxSegments.Any()) return approxSegments;
@@ -593,7 +600,20 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             // Put the intersection into inter1 if there is only one intersection.
-            if (inter1 == null && inter2 != null) inter1 = inter2;
+            if (inter1 == null && inter2 != null)
+            {
+                inter1 = inter2;
+                inter2 = null;
+            }
+
+            //
+            // Are the circles close enough to merit one intersection point instead of two?
+            // That is, are the intersection points the same (within epsilon)?
+            //
+            if (inter1 != null && inter2 != null)
+            {
+                if (inter1.StructurallyEquals(inter2)) inter2 = null;
+            }
         }
 
         //
@@ -851,8 +871,17 @@ namespace GeometryTutorLib.ConcreteAST
             this.FindIntersection(radius, out pt1, out pt2);
 
             if (pt2 == null) return pt1;
+            
+            Point theMidpoint = Arc.StrictlyBetweenMinor(pt1, new MinorArc(this, a, b)) ? pt1 : pt2;
 
-            return Arc.StrictlyBetweenMinor(pt1, new MinorArc(this, a, b)) ? pt1 : pt2;
+            double angle1 = new Angle(a, center, theMidpoint).measure;
+            double angle2 = new Angle(b, center, theMidpoint).measure;
+            if (!Utilities.CompareValues(angle1, angle2))
+            {
+                throw new ArgumentException("Midpoint is incorrect; angles do not equate: " + angle1 + " " + angle2);
+            }
+
+            return theMidpoint;
         }
 
         // return the midpoint between these two on the circle.
@@ -958,7 +987,8 @@ namespace GeometryTutorLib.ConcreteAST
                         chord.AddCollinearPoint(inter);
                         radius.AddCollinearPoint(inter);
 
-                        if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                        // if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                        Utilities.AddUnique<Point>(imagPoints, inter);
                     }
                 }
             }
@@ -974,7 +1004,8 @@ namespace GeometryTutorLib.ConcreteAST
                         constructedChords[c1].AddCollinearPoint(inter);
                         constructedChords[c2].AddCollinearPoint(inter);
 
-                        if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                        //if (!Utilities.HasStructurally<Point>(figurePoints, inter)) imagPoints.Add(inter);
+                        Utilities.AddUnique<Point>(imagPoints, inter);
                     }
                 }
             }
@@ -1047,30 +1078,69 @@ namespace GeometryTutorLib.ConcreteAST
             List<AtomicRegion> atoms = PrimitiveToRegionConverter.Convert(graph, primitives, Utilities.MakeList<Circle>(this));
 
             //
-            // It is possible that the circle has not been covered completely.
-            // Therefore, construct any sectors that have not been accounted for with this circle. 
-            // There is only one such region that meets this criteria and it is based on the 'outermost' intersection points on the circle.
+            // A special case where there are only two points of intersection: the major arc sector is lost.
             //
-
-            // The two points of interest are not included as an arc in the atoms.
-            foreach (AtomicRegion atom in atoms)
+            if (interPts.Count == 2)
             {
-            }
+                Sector newSector = null;
+                //
+                // Major sector
+                //
+                if (!this.DefinesDiameter(new Segment(interPts[0], interPts[1])))
+                {
+                    newSector = new Sector(new MajorArc(this, interPts[0], interPts[1]));
+                }
+                //
+                // Semi-circle
+                //
+                else
+                {
+                    throw new ArgumentException("Need to handle semi-circle in Circle Atomizer.");
+                    // newSector = new Sector(new Semicircle(this, interPts[0], interPts[1], , new Segment(interPts[0], interPts[1])));
+                }
 
-            // 
-            // Get the central angle measurements so we know if it is a major / minor arc.
+                atoms.Add(new ShapeAtomicRegion(newSector));
+            }
             //
-            double measure = 0;
-            for (int p = 0; p < interPts.Count - 1; p++)
+            // A filament may result in the creation of a major AND minor arc; both are not required.
+            // Figure out which one to omit.
+            //
+            else
             {
-                measure += CentralAngleMeasure(interPts[p], interPts[p+1]);
+                bool containsFilament = false;
+                foreach (Primitive primitive in primitives)
+                {
+                    if (primitive is Filament)
+                    {
+                        containsFilament = true;
+                        break;
+                    }
+                }
+
+                if (containsFilament)
+                {
+                    int index = -1;
+                    for (int a1 = 0; a1 < atoms.Count; a1++)
+                    {
+                        if (atoms[a1] is ShapeAtomicRegion)
+                        {
+                            if ((atoms[a1] as ShapeAtomicRegion).shape is Sector)
+                            {
+                                for (int a2 = 0; a2 < atoms.Count; a2++)
+                                {
+                                    if (atoms[a1].Contains(atoms[a2]))
+                                    {
+                                        index = a1;
+                                        break;
+                                    }
+                                }
+                                if (index != -1) break;
+                            }
+                        }
+                    }
+                    if (index != -1) atoms.RemoveAt(index);
+                }
             }
-
-            Sector newSector = null;
-            if (measure < 180) newSector = new Sector(new MajorArc(this, interPts[0], interPts[interPts.Count - 1]));
-            else newSector = new Sector(new MajorArc(this, interPts[0], interPts[interPts.Count - 1]));
-
-            atoms.Add(new ShapeAtomicRegion(newSector));
 
             return atoms;
         }

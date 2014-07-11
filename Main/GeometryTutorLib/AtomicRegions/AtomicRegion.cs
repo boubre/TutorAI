@@ -220,12 +220,24 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             }
 
             //
+            // Check all midpoints of conenctions are on the interior.
+            //
+            foreach (Connection thatConn in that.connections)
+            {
+                if (!this.PointLiesOnOrInside(thatConn.Midpoint())) return false;
+            }
+
+            //
             // For any intersections between the atomic regions, the resultant points of intersection must be on the perimeter.
             //
             List<IntersectionAgg> intersections = this.GetIntersections(that);
             foreach (IntersectionAgg agg in intersections)
             {
-                if (!agg.overlap)
+                if (agg.overlap)
+                {
+                    // No-Op
+                }
+                else
                 {
                     if (!this.PointLiesOn(agg.intersection1)) return false;
                     if (agg.intersection2 != null)
@@ -439,22 +451,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                     if (agg.thisConn.Crosses(agg.thatConn)) return true;
 
                     // If the midpoint of the segment or arc is inside this region.
-                    Point midpt = null;
-                    if (agg.thatConn.type == ConnectionType.ARC)
-                    {
-                        Arc arc = agg.thatConn.segmentOrArc as Arc;
-                        midpt = arc.theCircle.Midpoint(arc.endpoint1, arc.endpoint2);
-                        if (agg.thatConn.segmentOrArc is MajorArc)
-                        {
-                            midpt = arc.theCircle.OppositePoint(midpt);
-                        }
-                    }
-                    else
-                    {
-                        midpt = (agg.thatConn.segmentOrArc as Segment).Midpoint();
-                    }
-
-                    if (this.PointLiesInside(midpt)) return true;
+                    if (this.PointLiesInside(agg.thatConn.Midpoint())) return true;
                 }
             }
 

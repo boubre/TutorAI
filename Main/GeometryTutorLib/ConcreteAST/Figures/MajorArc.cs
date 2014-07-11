@@ -25,6 +25,11 @@ namespace GeometryTutorLib.ConcreteAST
                                                                     && this.endpoint2.StructurallyEquals(arc.endpoint1)));
         }
 
+        public override Point Midpoint()
+        {
+            return theCircle.OppositePoint(theCircle.Midpoint(endpoint1, endpoint2));
+        }
+
         private void GetStartEndPoints(double angle1, double angle2, out Point start, out Point end, out double angle)
         {
             start = null;

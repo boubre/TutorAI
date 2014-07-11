@@ -75,6 +75,20 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return false;
         }
 
+        public Point Midpoint()
+        {
+            if (this.type == ConnectionType.SEGMENT)
+            {
+                return (this.segmentOrArc as Segment).Midpoint();
+            }
+            else if (this.type == ConnectionType.ARC)
+            {
+                return (segmentOrArc as Arc).Midpoint();
+            }
+
+            return null;
+        }
+
         //
         // Find the intersection points between this conenction and that; 2 points may result. (2 with arc / segment)
         //

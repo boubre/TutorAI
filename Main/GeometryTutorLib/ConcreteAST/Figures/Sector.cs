@@ -77,7 +77,7 @@ namespace GeometryTutorLib.ConcreteAST
             return segments;
         }
 
-        private bool AreClockwise(Point v1, Point v2) { return -v1.X * v2.Y + v1.Y * v2.X > 0; }
+        //private bool AreClockwise(Point v1, Point v2) { return -v1.X * v2.Y + v1.Y * v2.X > 0; }
 
         //
         // Point must be in the given circle and then, specifically in the specified angle
@@ -87,23 +87,42 @@ namespace GeometryTutorLib.ConcreteAST
             // Is the point in the sector's circle?
             if (!theArc.theCircle.PointLiesInside(pt)) return false;
 
-            Point relPoint = Point.MakeVector(theArc.theCircle.center, pt);
-
-            if (theArc is MinorArc)
-            {
-                return !AreClockwise(theArc.endpoint1, relPoint) && AreClockwise(theArc.endpoint2, relPoint);
-            }
-
-            // Negation of MinorArc
-            if (theArc is MajorArc)
-            {
-                return !AreClockwise(theArc.endpoint1, relPoint) && !AreClockwise(theArc.endpoint2, relPoint);
-            }
-
+            // Radii
             if (new Segment(theArc.theCircle.center, theArc.endpoint1).PointIsOnAndBetweenEndpoints(pt)) return false;
             if (new Segment(theArc.theCircle.center, theArc.endpoint2).PointIsOnAndBetweenEndpoints(pt)) return false;
 
+            //
+            // For the Minor Arc, create two angles.
+            // The sum must equal the measure of the angle created by the endpoints.
+            //
+            double originalMinorMeasure = theArc.minorMeasure;
+            double centralAngle1 = new Angle(theArc.endpoint1, theArc.theCircle.center, pt).measure;
+            double centralAngle2 = new Angle(theArc.endpoint2, theArc.theCircle.center, pt).measure;
+
+            bool isInMinorArc = Utilities.CompareValues(theArc.minorMeasure, centralAngle1 + centralAngle2);
+
+            if (theArc is MinorArc) return isInMinorArc;
+
+            if (theArc is MajorArc) return !isInMinorArc;
+
+            if (theArc is Semicircle) throw new Exception("Semicircle containment to be handled.");
+
             return false;
+
+            //Point relPoint = Point.MakeVector(theArc.theCircle.center, pt);
+
+            //if (theArc is MinorArc)
+            //{
+            //    return !AreClockwise(theArc.endpoint1, relPoint) && AreClockwise(theArc.endpoint2, relPoint);
+            //}
+
+            //// Negation of MinorArc
+            //if (theArc is MajorArc)
+            //{
+            //    return AreClockwise(theArc.endpoint1, relPoint) && !AreClockwise(theArc.endpoint2, relPoint);
+            //}
+
+            //return false;
         }
 
         //

@@ -64,8 +64,10 @@
     <Compile Include="Area-Based Analyses\Area Equations\ComplexRegionEquation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\SimpleRegionEquation.cs" />
     <Compile Include="Area-Based Analyses\Area Equations\AreaSubtraction.cs" />
-    <Compile Include="Area-Based Analyses\AreaHypergraph\AreaHypergraph.cs" />
-    <Compile Include="Area-Based Analyses\AreaHypergraph\AreaHypergraphCreator.cs" />
+    <Compile Include="Area-Based Analyses\General Area Hypergraph\AreaHypergraph.cs" />
+    <Compile Include="Area-Based Analyses\General Area Hypergraph\AreaHypergraphCreator.cs" />
+    <Compile Include="Area-Based Analyses\Solution Hypergraph\SolutionAreaHypergraphCreator.cs" />
+    <Compile Include="Area-Based Analyses\Synthesis Hypergraph\SynthesisAreaHypergraphCreator.cs" />
     <Compile Include="AtomicRegions\Atomic Region Calculator\PrimitiveToRegionConverter.cs" />
     <Compile Include="AtomicRegions\Connection.cs" />
     <Compile Include="AtomicRegions\AtomComposer.cs" />
@@ -95,7 +97,7 @@
     <Compile Include="ConcreteAST\Figures\ImaginaryPoint.cs" />
     <Compile Include="ConcreteAST\Figures\Polygon.cs" />
     <Compile Include="AtomicRegions\AtomicRegion.cs" />
-    <Compile Include="Area-Based Analyses\AreaHypergraph\AreaPowersetHypergraph.cs" />
+    <Compile Include="Area-Based Analyses\General Area Hypergraph\AreaPowersetHypergraph.cs" />
     <Compile Include="EngineUIBridge\Assumption.cs" />
     <Compile Include="Area-Based Analyses\AST\FigureNode.cs" />
     <Compile Include="Area-Based Analyses\AST\Copy of OperationNode.cs" />

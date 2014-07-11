@@ -35,7 +35,14 @@ namespace GeometryTutorLib.ConcreteAST
             length = CalculateArcMinorLength();
             approxPoints = new List<Point>();
             approxSegments = new List<Segment>();
+
+            collinear = new List<Point>();
+            // We add the two points arbitrarily since this list is vacuously ordered.
+            collinear.Add(endpoint1);
+            collinear.Add(endpoint2);
         }
+
+        public abstract Point Midpoint();
 
         public KeyValuePair<Segment, Segment> GetRadii()
         {
