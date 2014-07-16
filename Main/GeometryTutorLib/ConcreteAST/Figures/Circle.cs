@@ -353,6 +353,9 @@ namespace GeometryTutorLib.ConcreteAST
             // Acquire the line perpendicular to the segment that passes through the center of the circle.
             Segment perpendicular = segment.GetPerpendicular(this.center);
 
+            // If the segment was found to pass through the center, it is not a tangent
+            if (perpendicular.Equals(segment)) return null;
+
             // Is this perpendicular segment a radius? Check length
             //if (!Utilities.CompareValues(perpendicular.Length, this.radius)) return null;
 
@@ -528,11 +531,13 @@ namespace GeometryTutorLib.ConcreteAST
                 // Compute distance from t to circle intersection point
                 double dt = System.Math.Sqrt(System.Math.Pow(this.radius, 2) - System.Math.Pow(lengthEC, 2));
 
-                // First intersection
-                inter1 = new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y);
+                // First intersection - find and verify that the point lies on the segment
+                Point possibleInter1 = new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y);
+                if (ts.PointIsOnAndBetweenEndpoints(possibleInter1)) inter1 = possibleInter1;
 
-                // Second intersection
-                inter2 = new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y);
+                // Second intersection - find and verify that the point lies on the segment
+                Point possibleInter2 = new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y);
+                if (ts.PointIsOnAndBetweenEndpoints(possibleInter2)) inter2 = possibleInter2;
             }
             //
             // Tangent point (E)
@@ -544,7 +549,7 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             // Put the intersection into inter1 if there is only one intersection.
-            if (inter1 == null && inter2 != null) inter1 = inter2;
+            if (inter1 == null && inter2 != null) { inter1 = inter2; inter2 = null; }
         }
 
         //

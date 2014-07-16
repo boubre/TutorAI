@@ -122,10 +122,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Check equality of arc minor / major points?
 
-            return this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
-                                                        && this.endpoint2.Equals(arc.endpoint2))
-                                                        || (this.endpoint1.Equals(arc.endpoint2)
-                                                        && this.endpoint2.Equals(arc.endpoint1)));
+            return base.Equals(obj);
         }
 
         public override string ToString() { return "MinorArc(" + theCircle + "(" + endpoint1.ToString() + ", " + endpoint2.ToString() + "))"; }

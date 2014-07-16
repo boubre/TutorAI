@@ -125,10 +125,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Check equality of MajorArc Major / major points?
 
-            return this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
-                                                        && this.endpoint2.Equals(arc.endpoint2))
-                                                        || (this.endpoint1.Equals(arc.endpoint2)
-                                                        && this.endpoint2.Equals(arc.endpoint1)));
+            return base.Equals(obj);
         }
 
         public override string ToString() { return "MajorArc(" + theCircle + "(" + endpoint1.ToString() + ", " + endpoint2.ToString() + "))"; }

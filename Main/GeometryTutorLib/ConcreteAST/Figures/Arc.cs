@@ -216,7 +216,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             Point interRay21 = null;
             Point interRay22 = null;
-            circle.FindIntersection(angle.ray1, out interRay21, out interRay22);
+            circle.FindIntersection(angle.ray2, out interRay21, out interRay22);
 
             // non-intersection
             if (interRay21 == null && interRay22 == null) return nullPair;
@@ -324,10 +324,14 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Check equality of arc minor / major points?
 
-            return this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
-                                                        && this.endpoint2.Equals(arc.endpoint2))
-                                                        || (this.endpoint1.Equals(arc.endpoint2)
-                                                        && this.endpoint2.Equals(arc.endpoint1)));
+            // Verify that the arcs match
+            bool arcsMatch = this.theCircle.Equals(arc.theCircle) && ((this.endpoint1.Equals(arc.endpoint1)
+                                                                  && this.endpoint2.Equals(arc.endpoint2))
+                                                                  || (this.endpoint1.Equals(arc.endpoint2)
+                                                                  && this.endpoint2.Equals(arc.endpoint1)));
+
+            // Verify that the multipliers match
+            return arcsMatch && base.Equals(obj);
         }
 
         public override bool Contains(GroundedClause target)
