@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; ATOMIC_REGION_OFF</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -99,6 +99,7 @@
     <None Include="Drawing.cd" />
     <Compile Include="Drawing.cs" />
     <Compile Include="UIParser\AbstractParserMain.cs" />
+    <Compile Include="UIParser\AreaBasedCalculator.cs" />
     <Compile Include="UIParser\ShapeContainmentCalculator.cs" />
     <Compile Include="UIParser\DrawingPointCalculator.cs" />
     <Compile Include="UIParser\ShapeIntersectionCalculator.cs" />

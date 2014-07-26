@@ -13,13 +13,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
         // All the individual atomic regions.
         public List<Atomizer.AtomicRegion> atoms { get; private set; }
 
-        public List<Point> ownedPoints { get; protected set; }
+//        public List<Point> ownedPoints { get; protected set; }
 
+        public Region(Region that) : this(that.atoms) { }
         public Region(Atomizer.AtomicRegion atom) : this(Utilities.MakeList<Atomizer.AtomicRegion>(atom)) { }
         public Region(List<Atomizer.AtomicRegion> ats)
         {
             atoms = new List<Atomizer.AtomicRegion>(ats);
-            ownedPoints = new List<Point>();
+            // ownedPoints = new List<Point>();
             thisArea = -1;
         }
 
@@ -37,6 +38,21 @@ namespace GeometryTutorLib.Area_Based_Analyses
         public bool RegionDefinedBy(List<Atomizer.AtomicRegion> thatAtoms)
         {
             return Utilities.EqualSets<Atomizer.AtomicRegion>(atoms, thatAtoms);
+        }
+
+        //
+        // Remove the given set of atomic regions from this region.
+        //
+        public bool Remove(List<Atomizer.AtomicRegion> atomsToRemove)
+        {
+            bool removedAll = true;
+
+            foreach(Atomizer.AtomicRegion atomToRemove in atomsToRemove)
+            {
+                if (!atoms.Remove(atomToRemove)) removedAll = false;
+            }
+
+            return removedAll;
         }
 
         //

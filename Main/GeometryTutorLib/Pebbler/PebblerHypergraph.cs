@@ -27,6 +27,21 @@ namespace GeometryTutorLib.Pebbler
         // The main graph data structure
         public PebblerHyperNode<T, A>[] vertices { get; private set; }
 
+        public List<int> GetPebbledNodes()
+        {
+            List<int> indices = new List<int>();
+
+            for (int n = 0 ; n < vertices.Length; n++)
+            {
+                if (vertices[n].pebbled)
+                {
+                    indices.Add(n);
+                }
+            }
+
+            return indices;
+        }
+
         // The actual hypergraph for reference purposes only
         //private Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> graph;
         //public void SetOriginalHypergraph(Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, Hypergraph.EdgeAnnotation> g)

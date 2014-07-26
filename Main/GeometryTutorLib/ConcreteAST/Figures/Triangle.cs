@@ -105,6 +105,49 @@ namespace GeometryTutorLib.ConcreteAST
         public void SetProvenToBeEquilateral() { provenEquilateral = true; }
 
         //
+        // Given known values, can the third side be determined.
+        //
+        public KeyValuePair<Segment, double> PythagoreanTheoremApplies(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            KeyValuePair<Segment, double> nullPair = new KeyValuePair<Segment, double>(null, -1);
+
+            if (!(this is RightTriangle) || !this.provenRight) return nullPair;
+
+            // Acquire the known lengths and determine if 2 of 3 are known (1 unknown).
+            Segment hypotenuse = GetHypotenuse();
+            Segment otherSeg1, otherSeg2;
+            Segment unknown = null;
+            GetOtherSides(hypotenuse, out otherSeg1, out otherSeg2);
+
+            int knownCount = 0;
+            double hypLength = known.GetSegmentLength(hypotenuse);
+            if (hypLength > 0) knownCount++;
+            else unknown = hypotenuse;
+
+            double other1Length = known.GetSegmentLength(otherSeg1);
+            if (other1Length > 0) knownCount++;
+            else unknown = otherSeg1;
+
+            double other2Length = known.GetSegmentLength(otherSeg2);
+            if (other2Length > 0) knownCount++;
+            else unknown = otherSeg2;
+
+            if (knownCount != 2) return nullPair;
+
+            // Which side don't we know?
+            // Hypotenuse unknown.
+            if (hypLength < 0)
+            {
+                return new KeyValuePair<Segment, double>(unknown, Math.Sqrt(Math.Pow(other1Length, 2) + Math.Pow(other2Length, 2)));
+            }
+            else
+            {
+                double otherKnown = other1Length < 0 ? other2Length : other1Length;
+                return new KeyValuePair<Segment, double>(unknown, Math.Sqrt(Math.Pow(hypLength, 2) - Math.Pow(otherKnown, 2)));
+            }
+        }
+
+        //
         // Maintain a public repository of all triangles objects in the figure.
         //
         public static void Clear()
@@ -184,6 +227,28 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        public void GetOtherSides(Segment s, out Segment outSeg1, out Segment outSeg2)
+        {
+            outSeg1 = null;
+            outSeg2 = null;
+
+            if (s.StructurallyEquals(SegmentA))
+            {
+                outSeg1 = SegmentB;
+                outSeg2 = SegmentC;
+            }
+            else if (s.StructurallyEquals(SegmentB))
+            {
+                outSeg1 = SegmentA;
+                outSeg2 = SegmentC;
+            }
+            else if (s.StructurallyEquals(SegmentC))
+            {
+                outSeg1 = SegmentA;
+                outSeg2 = SegmentB;
+            }
+        }
+
         public Segment GetOppositeSide(Angle angle)
         {
             Point vertex = angle.GetVertex();
@@ -217,9 +282,9 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Segment GetSegmentWithPointOnOrExtends(Point pt)
         {
-            if (SegmentA.PointIsOn(pt)) return SegmentA;
-            if (SegmentB.PointIsOn(pt)) return SegmentB;
-            if (SegmentC.PointIsOn(pt)) return SegmentC;
+            if (SegmentA.PointLiesOn(pt)) return SegmentA;
+            if (SegmentB.PointLiesOn(pt)) return SegmentB;
+            if (SegmentC.PointLiesOn(pt)) return SegmentC;
 
             return null;
         }
@@ -816,14 +881,14 @@ namespace GeometryTutorLib.ConcreteAST
             if (midptIntersection.X == double.NaN || midptIntersection.Y == double.NaN) return false;
 
             // The intersection must be on the potential median
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(coincidingIntersection)) return false;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(coincidingIntersection)) return false;
 
             // The midpoint intersection must be on the potential median
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(midptIntersection)) return false;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(midptIntersection)) return false;
 
             if (!Segment.Between(coincidingIntersection, thatSegment.Point1, thatSegment.Point2)) return false;
 
-            if (!oppSide.PointIsOnAndBetweenEndpoints(midptIntersection)) return false;
+            if (!oppSide.PointLiesOnAndBetweenEndpoints(midptIntersection)) return false;
 
             // Midpoint of the remaining side needs to align
             return midptIntersection.Equals(oppSide.Midpoint());
@@ -879,8 +944,8 @@ namespace GeometryTutorLib.ConcreteAST
             // |  \
             //     \
             // Need to make sure 'this' and the the 'other' intersection is actually on the potential altitude segment
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(thisIntersection)) return false;
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(otherIntersection)) return false;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(thisIntersection)) return false;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(otherIntersection)) return false;
 
             // We require a perpendicular intersection
             return Utilities.CompareValues((new Angle(thisIntersection, otherIntersection, oppSide.Point1)).measure, 90);
@@ -995,7 +1060,7 @@ namespace GeometryTutorLib.ConcreteAST
             return -1;
         }
 
-        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             if (ClassicArea(known) > 0) return true;
 
@@ -1069,14 +1134,6 @@ namespace GeometryTutorLib.ConcreteAST
             }
             str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") " + justification);
             return str.ToString();
-        }
-
-        /// <summary>
-        /// Can we calculate the area of this triangle from the known information?
-        /// </summary>
-        public void AreaLogic()
-        {
-
         }
     }
 }

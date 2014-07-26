@@ -335,7 +335,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment crossingTester = new Segment(offRightEnd, parallelStands.Point1);
             Point intersection = transversal.FindIntersection(crossingTester);
 
-            Point sameSide = transversal.PointIsOnAndBetweenEndpoints(intersection) ? parallelStands.Point2 : parallelStands.Point1;
+            Point sameSide = transversal.PointLiesOnAndBetweenEndpoints(intersection) ? parallelStands.Point2 : parallelStands.Point1;
 
             //
             // Generate the new congruence
@@ -394,7 +394,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment crossingTester = new Segment(offStands, parallelCrossing.Point1);
             Point intersection = transversal.FindIntersection(crossingTester);
 
-            Point rightCrossing = transversal.PointIsOnAndBetweenEndpoints(intersection) ? parallelCrossing.Point2 : parallelCrossing.Point1;
+            Point rightCrossing = transversal.PointLiesOnAndBetweenEndpoints(intersection) ? parallelCrossing.Point2 : parallelCrossing.Point1;
 
             //
             // Generate the new congruence
@@ -453,7 +453,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             Segment crossingTester = new Segment(leftStands, parallelCrossing.Point1);
             Point intersection = transversal.FindIntersection(crossingTester);
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection))
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection))
             {
                 leftCross = parallelCrossing.Point2;
                 rightCross = parallelCrossing.Point1;
@@ -518,7 +518,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment crossingTester = new Segment(offStands, parallelCrossing.Point1);
             Point intersection = transversal.FindIntersection(crossingTester);
 
-            Point sameSide = transversal.PointIsOnAndBetweenEndpoints(intersection) ? parallelCrossing.Point2 : parallelCrossing.Point1;
+            Point sameSide = transversal.PointLiesOnAndBetweenEndpoints(intersection) ? parallelCrossing.Point2 : parallelCrossing.Point1;
 
             //
             // Generate the new congruence
@@ -555,14 +555,14 @@ namespace GeometryTutorLib.GenericInstantiator
             Intersection leftInter = null;
             Intersection bottomInter = null;
 
-            if (transversal.PointIsOn(tipOfT1))
+            if (transversal.PointLiesOn(tipOfT1))
             {
                 leftInter = inter1;
                 bottomInter = inter2;
                 leftTip = tipOfT1;
             }
             // thatInter is leftInter
-            else if (transversal.PointIsOn(tipOfT2))
+            else if (transversal.PointLiesOn(tipOfT2))
             {
                 leftInter = inter2;
                 bottomInter = inter1;
@@ -612,7 +612,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Segment crossingTester = new Segment(parallel1.Point1, parallel2.Point1);
             Point intersection = transversal.FindIntersection(crossingTester);
             // opposite sides
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection))
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection))
             {
                 otherTop = parallel2.Point2;
                 otherBottom = parallel2.Point1;
@@ -777,7 +777,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             Point crossingRightTop = null;
             Point crossingRightBottom = null;
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection))
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection))
             {
                 crossingRightTop = crossingRightParallel.Point2;
                 crossingRightBottom = crossingRightParallel.Point1;

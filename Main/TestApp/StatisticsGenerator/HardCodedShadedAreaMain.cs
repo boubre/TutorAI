@@ -5,8 +5,9 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using System.Xml;
+using StatisticsGenerator;
 
-namespace StatisticsGenerator
+namespace LiveGeometry.TutorParser
 {
     public class HardCodedShadedAreaMain
     {
@@ -29,8 +30,8 @@ namespace StatisticsGenerator
         //
         // Area-based Hypergraph
         //
-        private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.Area_Based_Analyses.Region, GeometryTutorLib.Area_Based_Analyses.SimpleRegionEquation> areaGraph;
-        private GeometryTutorLib.Area_Based_Analyses.AreaHypergraphCreator agCreator;
+//        private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.Area_Based_Analyses.Region, GeometryTutorLib.Area_Based_Analyses.SimpleRegionEquation> areaGraph;
+        private GeometryTutorLib.Area_Based_Analyses.AreaSolutionGenerator solutionAreaGenerator;
 
         // The area dictated from the problem for validation purposes.
         private double area;
@@ -49,8 +50,6 @@ namespace StatisticsGenerator
             this.implied = impl;
 
             instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
-
-            agCreator = new GeometryTutorLib.Area_Based_Analyses.AreaHypergraphCreator(implied.allFigures);
         }
 
         public HardCodedShadedAreaMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
@@ -83,21 +82,40 @@ namespace StatisticsGenerator
             // Pebble that hypergraph
             Pebble();
 
-/*
+// Define in Properties->Build->Compilation Symbols to turn off this section
+#if ATOMIC_REGION_OFF
+
+            //
+            // Acquire the list of strengthened (pebbled) polygon nodes.
+            //
+            List<int> pebbledIndices = pebblerGraph.GetPebbledNodes();
+            List<GeometryTutorLib.ConcreteAST.Strengthened> strengthenedNodes = deductiveGraph.GetStrengthenedNodes(pebbledIndices);
+
+            // Perform any calculations required for shaded-area solution synthesis: strengthening, hierarchy construction, etc.
+            AreaBasedCalculator areaCal = new AreaBasedCalculator(implied, strengthenedNodes);
+            areaCal.PrepareAreaBasedCalculations();
+
             // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.
             // Determine all the known values in the figure based on the pebbled hypergraph and all the known values stated in the problem.
-            List<GeometryTutorLib.ConcreteAST.GroundedClause> reachable = FindReachableCongEquationNodes();
-            known = GeometryTutorLib.Area_Based_Analyses.KnownValueAcquisition.AcquireAllKnownValues(known, reachable);
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> reachableConEqs = FindReachableCongEquationNodes();
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> triangles = FindReachableTriangles();
+            known = GeometryTutorLib.Area_Based_Analyses.KnownValueAcquisition.AcquireAllKnownValues(known, reachableConEqs, triangles);
 
-            // Find the equation of the given atomic regions.
-            areaGraph = agCreator.ConstructHypergraph();
-            KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = agCreator.Solve(goalRegions, known);
+            //
+            // Find the set of all equations for the shapes in this figure.
+            //
+            solutionAreaGenerator = new GeometryTutorLib.Area_Based_Analyses.AreaSolutionGenerator(areaCal.GetShapeHierarchy(), areaCal.GetUpdatedAtomicRegions());
+            solutionAreaGenerator.SolveAll(known);
+
+            // Acquire a single solution for this specific problem for validation purposes.
+            KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = solutionAreaGenerator.GetSolution(goalRegions);
+
             Debug.WriteLine(result.Key.ToString());
             Debug.WriteLine(" = " + result.Value);
 
             // Validate that calculated area value matches the value from the hard-coded problem.
             Validate(result.Key, result.Value);
-*/
+#endif
 
             // Stop timing before we generate all of the statistics
             figureStats.stopwatch.Stop();
@@ -213,6 +231,34 @@ namespace StatisticsGenerator
                         deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Equation)
                     {
                         nodes.Add(deductiveGraph.vertices[node.id].data);
+                    }
+                }
+            }
+
+            return nodes;
+        }
+
+        //
+        // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.
+        //
+        private List<GeometryTutorLib.ConcreteAST.GroundedClause> FindReachableTriangles()
+        {
+            List<GeometryTutorLib.ConcreteAST.GroundedClause> nodes = new List<GeometryTutorLib.ConcreteAST.GroundedClause>();
+
+            foreach (GeometryTutorLib.Pebbler.PebblerHyperNode<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> node in pebblerGraph.vertices)
+            {
+                if (node.pebbled)
+                {
+                    if (deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Triangle)
+                    {
+                        nodes.Add(deductiveGraph.vertices[node.id].data);
+                    }
+                    else if (deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Strengthened)
+                    {
+                        if ((deductiveGraph.vertices[node.id].data as GeometryTutorLib.ConcreteAST.Strengthened).original is GeometryTutorLib.ConcreteAST.Triangle)
+                        {
+                            nodes.Add(deductiveGraph.vertices[node.id].data);
+                        }
                     }
                 }
             }

@@ -70,14 +70,14 @@ namespace GeometryTutorLib.ConcreteAST
         public override bool StandsOn()
         {
             // Is one endpoint of the segment on the circle?
-            return theCircle.PointIsOn(segment.Point1) || theCircle.PointIsOn(segment.Point2);
+            return theCircle.PointLiesOn(segment.Point1) || theCircle.PointLiesOn(segment.Point2);
         }
 
         // Is Chord?
         public bool IsChord()
         {
             // Are both endpoints of the segment on the circle?
-            return theCircle.PointIsOn(segment.Point1) && theCircle.PointIsOn(segment.Point2);
+            return theCircle.PointLiesOn(segment.Point1) && theCircle.PointLiesOn(segment.Point2);
         }
 
         // If the segment / arc passes through this arc and extends outward.
@@ -90,7 +90,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public bool HasSegment(Segment thatSegment)
         {
-            return segment.HasSubSegment(thatSegment) && thatSegment.PointIsOnAndBetweenEndpoints(intersect);
+            return segment.HasSubSegment(thatSegment) && thatSegment.PointLiesOnAndBetweenEndpoints(intersect);
         }
 
         public override bool StructurallyEquals(Object obj)

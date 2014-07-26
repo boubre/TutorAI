@@ -29,6 +29,16 @@ namespace GeometryTutorLib.ConcreteAST
             return true;
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is Kite) return false;
+            if (that is Trapezoid) return true;
+            if (that is Parallelogram) return false;
+            if (that is Quadrilateral) return true;
+
+            return false;
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             Parallelogram thatPara = obj as Parallelogram;

@@ -372,7 +372,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (m == null) return false;
 
             // Is the point on this circle?
-            if (!originalArc.theCircle.PointIsOn(m)) return false;
+            if (!originalArc.theCircle.PointLiesOn(m)) return false;
 
             // Create two arcs from this new point to the endpoints; just like with segments,
             // the sum of the arc measures must equate to the overall arc measure.
@@ -399,7 +399,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (m == null) return false;
 
             // Is the point on this circle?
-            if (!originalArc.theCircle.PointIsOn(m)) return false;
+            if (!originalArc.theCircle.PointLiesOn(m)) return false;
 
             // Is it on the arc minor?
             if (BetweenMinor(m, originalArc)) return false;
@@ -547,8 +547,8 @@ namespace GeometryTutorLib.ConcreteAST
                 if (!Arc.BetweenMajor(inter2, this)) inter2 = null;
             }
 
-            if (!that.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
-            if (!that.PointIsOnAndBetweenEndpoints(inter2)) inter2 = null;
+            if (!that.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;
+            if (!that.PointLiesOnAndBetweenEndpoints(inter2)) inter2 = null;
 
             if (inter1 == null && inter2 != null)
             {

@@ -28,6 +28,16 @@ namespace GeometryTutorLib.ConcreteAST
             rightAngle = Utilities.CompareValues(AngleC.measure, 90) ? AngleC : rightAngle;
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is EquilateralTriangle) return false;
+            if (that is IsoscelesTriangle) return false;
+            if (that is RightTriangle) return false;
+            if (that is Triangle) return true;
+
+            return false;
+        }
+
         //
         // Is this triangle encased in the given, larger triangle.
         // That is, two sides are defined by the larger triangle and one side by the altitude

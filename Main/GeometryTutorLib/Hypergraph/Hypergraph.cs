@@ -73,6 +73,18 @@ namespace GeometryTutorLib.Hypergraph
             return new PebblerHypergraph<T, A>(pebblerNodes);
         }
 
+        public List<Strengthened> GetStrengthenedNodes(List<int> indices)
+        {
+            List<Strengthened> strengList = new List<Strengthened>();
+
+            foreach (int index in indices)
+            {
+                if (vertices[index].data is Strengthened) strengList.Add(vertices[index].data as Strengthened);
+            }
+
+            return strengList;
+        }
+
         //
         // Check if the graph contains this specific grounded clause
         //

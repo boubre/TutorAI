@@ -31,6 +31,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                 foreach (AtomicRegion atom in circleAtoms)
                 {
                     atom.AddOwner(circle);
+                    circle.AddAtomicRegion(atom);
                 }
                 originalAtoms.AddRange(circleAtoms);
             }
@@ -49,6 +50,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     {
                         List<AtomicRegion> concaveAtoms = concave.Atomize(figurePoints);
                         originalAtoms.AddRange(concaveAtoms);
+                        poly.AddAtomicRegions(concaveAtoms);
                     }
 
                     // Basic polygon: make it a shape atomic region.
@@ -71,6 +73,8 @@ namespace LiveGeometry.AtomicRegionIdentifier
             // Combine all of the atomic regions together.
             //
             List<AtomicRegion> composed = ComposeAllRegions(figurePoints, workingAtoms);
+
+
 
             //
             // Run the graph-based algorithm one last time to identify any pathological regions (exterior to all shapes).
@@ -99,12 +103,12 @@ namespace LiveGeometry.AtomicRegionIdentifier
 
             foreach (AtomicRegion atom in pathologicalID)
             {
-                if (!originalAtoms.Contains(atom)) pathological.Add(atom);
+                if (!composed.Contains(atom)) pathological.Add(atom);
             }
 
             List<AtomicRegion> finalAtomSet = new List<AtomicRegion>();
-            finalAtomSet.AddRange(lost);
-            finalAtomSet.AddRange(pathologicalID);
+            finalAtomSet.AddRange(composed);
+            finalAtomSet.AddRange(pathological);
 
             return finalAtomSet;
         }
@@ -533,6 +537,13 @@ namespace LiveGeometry.AtomicRegionIdentifier
             foreach (AtomicRegion boundedAtom in boundedAtoms)
             {
                 boundedAtom.AddOwners(outerBounds.owners);
+                
+                // Indicate that the given boundary shape owns all of the new regions within.
+                ShapeAtomicRegion shapeAtom = outerBounds as ShapeAtomicRegion;
+                if (shapeAtom != null)
+                {
+                    shapeAtom.shape.AddAtomicRegion(boundedAtom);
+                }
             }
 
             return boundedAtoms;

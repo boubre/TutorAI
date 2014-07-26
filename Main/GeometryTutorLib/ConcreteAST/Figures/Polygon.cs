@@ -49,6 +49,8 @@ namespace GeometryTutorLib.ConcreteAST
 
             points = pair.Key;
             angles = pair.Value;
+
+            thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
         protected Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
@@ -56,6 +58,8 @@ namespace GeometryTutorLib.ConcreteAST
             orderedSides = segs;
             points = pts;
             angles = angs;
+
+            thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
         public bool HasSegment(Segment thatSegment)
@@ -65,6 +69,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool PointLiesInside(Point pt)
         {
+            if (pt == null) return false;
+
             if (PointLiesOn(pt)) return false;
             
             return IsInPolygon(pt);
@@ -76,7 +82,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             foreach (Segment side in orderedSides)
             {
-                if (side.PointIsOnAndBetweenEndpoints(pt)) return true;
+                if (side.PointLiesOnAndBetweenEndpoints(pt)) return true;
             }
 
             return false;
@@ -85,7 +91,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             foreach (Segment side in orderedSides)
             {
-                if (side.PointIsOnAndBetweenEndpoints(pt)) return true;
+                if (side.PointLiesOnAndBetweenEndpoints(pt)) return true;
             }
 
             return false;
@@ -103,18 +109,18 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 if (side.IsCollinearWith(that))
                 {
-                    if (that.PointIsOnAndBetweenEndpoints(side.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point1);
-                    if (that.PointIsOnAndBetweenEndpoints(side.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point2);
+                    if (that.PointLiesOnAndBetweenEndpoints(side.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point1);
+                    if (that.PointLiesOnAndBetweenEndpoints(side.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, side.Point2);
 
-                    if (side.PointIsOnAndBetweenEndpoints(that.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point1);
-                    if (side.PointIsOnAndBetweenEndpoints(that.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point2);
+                    if (side.PointLiesOnAndBetweenEndpoints(that.Point1)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point1);
+                    if (side.PointLiesOnAndBetweenEndpoints(that.Point2)) Utilities.AddStructurallyUnique<Point>(intersections, that.Point2);
                 }
                 else
                 {
                     foundInter = side.FindIntersection(that);
 
                     // Is the intersection in the middle of the segments?
-                    if (side.PointIsOnAndBetweenEndpoints(foundInter) && that.PointIsOnAndBetweenEndpoints(foundInter))
+                    if (side.PointLiesOnAndBetweenEndpoints(foundInter) && that.PointLiesOnAndBetweenEndpoints(foundInter))
                     {
                         // A segment may intersect a polygon through up to 2 vertices creating 4 intersections.
                         if (!Utilities.HasStructurally<Point>(intersections, foundInter)) intersections.Add(foundInter);
@@ -190,6 +196,12 @@ namespace GeometryTutorLib.ConcreteAST
             }
             return result;
         }
+
+        //
+        // Is this polygon stronger than that?
+        // That is, triangle -> isosceles -> equilateral.
+        //
+        public virtual bool IsStrongerThan(Polygon that) { return false; }
 
         public override string ToString()
         {
@@ -406,7 +418,10 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 foreach (Point vertex in vertices)
                 {
-                    if (side.PointIsOnAndExactlyBetweenEndpoints(vertex)) return null;
+                    if (side.PointLiesOnAndExactlyBetweenEndpoints(vertex))
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -434,7 +449,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // The center lies inside the polygon and there are no intersection points with the sides.
         //
-        public bool ContainsCircle(Circle that)
+        private bool ContainsCircle(Circle that)
         {
             foreach (Segment side in orderedSides)
             {
@@ -447,7 +462,7 @@ namespace GeometryTutorLib.ConcreteAST
             return that.PointLiesInside(that.center);
         }
 
-        public bool ContainsPolygon(Polygon that)
+        private bool ContainsPolygon(Polygon that)
         {
             //
             // All points are interior to the polygon.
@@ -469,6 +484,31 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return true;
+        }
+
+        //
+        // that Polygon lies within this circle.
+        //
+        private bool ContainsSector(Sector that)
+        {
+            if (!this.PointLiesInOrOn(that.theArc.endpoint1)) return false;
+            if (!this.PointLiesInOrOn(that.theArc.endpoint2)) return false;
+
+            if (!this.PointLiesInOrOn(that.theArc.theCircle.center)) return false;
+
+            return thisAtomicRegion.Contains(that.GetFigureAsAtomicRegion());
+        }
+
+        //
+        // A shape within this shape?
+        //
+        public override bool Contains(Figure that)
+        {
+            if (that is Circle) return ContainsCircle(that as Circle);
+            if (that is Polygon) return ContainsPolygon(that as Polygon);
+            if (that is Sector) return ContainsSector(that as Sector);
+
+            return false;
         }
 
         //
@@ -506,8 +546,8 @@ namespace GeometryTutorLib.ConcreteAST
 
                 that.FindIntersection(side, out pt1, out pt2);
 
-                if (pt1 != null && side.PointIsOnAndBetweenEndpoints(pt1)) Utilities.AddStructurallyUnique<Point>(intersections, pt1);
-                if (pt2 != null && side.PointIsOnAndBetweenEndpoints(pt2)) Utilities.AddStructurallyUnique<Point>(intersections, pt2);
+                if (pt1 != null && side.PointLiesOnAndBetweenEndpoints(pt1)) Utilities.AddStructurallyUnique<Point>(intersections, pt1);
+                if (pt2 != null && side.PointLiesOnAndBetweenEndpoints(pt2)) Utilities.AddStructurallyUnique<Point>(intersections, pt2);
             }
 
             return intersections;

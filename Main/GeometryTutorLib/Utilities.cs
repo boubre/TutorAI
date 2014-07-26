@@ -90,11 +90,13 @@ namespace GeometryTutorLib
         //
         // Given a list of grounded clauses, add a new value which is structurally unique.
         //
-        public static void AddStructurallyUnique<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
+        public static bool AddStructurallyUnique<T>(List<T> list, T t) where T : ConcreteAST.GroundedClause
         {
-            if (HasStructurally<T>(list, t)) return;
+            if (HasStructurally<T>(list, t)) return false;
 
             list.Add(t);
+
+            return true;
         }
 
         //
@@ -272,6 +274,106 @@ namespace GeometryTutorLib
             return true;
         }
 
+        // Are the sets disjoint? Like the merge part of a merge-sort.
+        public static List<int> DifferenceIfSubsetOrderedSets(List<int> set1, List<int> set2)
+        {
+            if (EqualOrderedSets(set1, set2)) return null;
+
+            //
+            // Acquire the larger set of integer values.
+            //
+            List<int> larger = null;
+            List<int> smaller = null;
+
+            if (set1.Count < set2.Count)
+            {
+                larger = set2;
+                smaller = set1;
+            }
+            else
+            {
+                larger = set1;
+                smaller = set2;
+            }
+
+            //
+            // Find the difference of the larger minus the smaller.
+            //
+            List<int> diff = new List<int>();
+
+            int s = 0;
+            int ell = 0;
+            for (int d = 0; s < smaller.Count && d < larger.Count; d++)
+            {
+                if (smaller[s] < larger[ell])
+                {
+                    return null;
+                }
+                else if (larger[ell] < smaller[s])
+                {
+                    diff.Add(larger[ell]);
+                    ell++;
+                }
+                else if (smaller[s] == larger[ell])
+                {
+                    // NO-OP: omit the shared value from the difference.
+                    s++;
+                    ell++;
+                }
+            }
+
+            if (s < smaller.Count) return null;
+
+            // Pick up the rest of the larger set.
+            for ( ; ell < larger.Count; ell++)
+            {
+                diff.Add(larger[ell]);
+            }
+
+            return diff;
+        }
+
+
+        // Are the sets disjoint? Like the merge part of a merge-sort.
+        public static List<int> UnionIfDisjointOrderedSets(List<int> set1, List<int> set2)
+        {
+            if (EqualOrderedSets(set1, set2)) return null;
+
+            List<int> union = new List<int>();
+
+            int s1 = 0;
+            int s2 = 0;
+            for (int u = 0; s1 < set1.Count && s2 < set2.Count && u < set1.Count + set2.Count; u++)
+            {
+                if (set1[s1] < set2[s2])
+                {
+                    union.Add(set1[s1]);
+                    s1++;
+                }
+                else if (set2[s2] < set1[s1])
+                {
+                    union.Add(set2[s2]);
+                    s2++;
+                }
+                else if (set1[s1] == set2[s2]) return null;
+            }
+
+            //
+            // Pick up remainder of values from one of the lists.
+            //
+            for ( ; s1 < set1.Count; s1++)
+            {
+                union.Add(set1[s1]);
+            }
+
+            for ( ; s2 < set2.Count; s2++)
+            {
+                union.Add(set2[s2]);
+            }
+
+            return union;
+        }
+
         // Makes a list containing a single element
         public static void AddUniqueList<T>(List<T> list, List<T> objList)
         {
@@ -343,7 +445,8 @@ namespace GeometryTutorLib
             return b == 0 ? a : GCD(b, a % b);
         }
 
-        public static readonly double EPSILON = 0.0001;
+        public static readonly double EPSILON = 0.000001;
+        // Due to issues with polygons, there are two levels of precision needed to discriminate equality.
         public static bool CompareValues(double a, double b)
         {
             return Math.Abs(a - b) < EPSILON;
@@ -554,7 +657,7 @@ namespace GeometryTutorLib
 
             if (pt == null) return null;
 
-            return !seg1.PointIsOnAndBetweenEndpoints(pt) || !seg2.PointIsOnAndBetweenEndpoints(pt) ? null : pt;
+            return !seg1.PointLiesOnAndBetweenEndpoints(pt) || !seg2.PointLiesOnAndBetweenEndpoints(pt) ? null : pt;
         }
         public static ConcreteAST.Point AcquireRestrictedPoint(List<ConcreteAST.Point> points, ConcreteAST.Point that,
                                                                ConcreteAST.Arc arc1, ConcreteAST.Arc arc2)
@@ -573,7 +676,7 @@ namespace GeometryTutorLib
 
             if (pt == null) return null;
 
-            return !seg.PointIsOnAndBetweenEndpoints(pt) || !arc.PointLiesOn(pt) ? null : pt;
+            return !seg.PointLiesOnAndBetweenEndpoints(pt) || !arc.PointLiesOn(pt) ? null : pt;
         }
     }
 

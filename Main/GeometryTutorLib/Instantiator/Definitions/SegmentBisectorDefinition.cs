@@ -206,8 +206,8 @@ namespace GeometryTutorLib.GenericInstantiator
             // Check if the bisected segment extends is the exact same segment as the overall segment AB
             if (!bisectedSegment.StructurallyEquals(overallSegment))
             {
-                if (overallSegment.PointIsOnAndBetweenEndpoints(bisectedSegment.Point1) &&
-                    overallSegment.PointIsOnAndBetweenEndpoints(bisectedSegment.Point2)) return newGrounded;
+                if (overallSegment.PointLiesOnAndBetweenEndpoints(bisectedSegment.Point1) &&
+                    overallSegment.PointLiesOnAndBetweenEndpoints(bisectedSegment.Point2)) return newGrounded;
             }
 
             SegmentBisector newSB = new SegmentBisector(inter, bisector);

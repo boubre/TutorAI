@@ -18,6 +18,8 @@ namespace GeometryTutorLib.ConcreteAST
         {
             diameter = d;
             middlePoint = m;
+
+            thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
         //
@@ -32,7 +34,7 @@ namespace GeometryTutorLib.ConcreteAST
             return Area(radius) / Math.PI;
         }
         public override bool IsComputableArea() { return true; }
-        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             // Radius / Circle 
             return theCircle.CanAreaBeComputed(known);

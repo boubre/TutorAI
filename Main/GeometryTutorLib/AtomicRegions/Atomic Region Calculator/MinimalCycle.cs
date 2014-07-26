@@ -274,7 +274,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                     List<Circle> circles = new List<Circle>();
                     foreach (Circle circle in thatCircles)
                     {
-                        if (circle.PointIsOn(points[p]) && circle.PointIsOn(points[(p + 1) % points.Count])) circles.Add(circle);
+                        if (circle.PointLiesOn(points[p]) && circle.PointLiesOn(points[(p + 1) % points.Count])) circles.Add(circle);
                     }
 
                     regions.AddRange(ConvertToCircleCircle(chord, circles, out leftOuterCircles[p], out rightOuterCircles[p]));
@@ -286,7 +286,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                     Circle theCircle = null;
                     foreach (Circle circle in thatCircles)
                     {
-                        if (circle.PointIsOn(points[p]) && circle.PointIsOn(points[(p + 1) % points.Count]))
+                        if (circle.PointLiesOn(points[p]) && circle.PointLiesOn(points[(p + 1) % points.Count]))
                         {
                             theCircle = circle;
                             break;
@@ -422,8 +422,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             {
                 if (edgePair.Value.edgeType != UndirectedPlanarGraph.EdgeType.REAL_ARC)
                 {
-                    if (refCircle.PointIsOn(edgePair.Key.Point1)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point1);
-                    if (refCircle.PointIsOn(edgePair.Key.Point2)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point2);
+                    if (refCircle.PointLiesOn(edgePair.Key.Point1)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point1);
+                    if (refCircle.PointLiesOn(edgePair.Key.Point2)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point2);
                 }
             }
 

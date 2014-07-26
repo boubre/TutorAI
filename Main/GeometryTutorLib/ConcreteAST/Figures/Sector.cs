@@ -13,24 +13,11 @@ namespace GeometryTutorLib.ConcreteAST
         public Sector(Arc a)
         {
             theArc = a;
+
+            thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
-        public override bool PointLiesInOrOn(Point pt)
-        {
-            // Radii
-            KeyValuePair<Segment, Segment> radii = theArc.GetRadii();
-            if (radii.Key.PointIsOnAndBetweenEndpoints(pt) || radii.Value.PointIsOnAndBetweenEndpoints(pt)) return true;
-
-            // Interior
-            if (this.PointLiesInside(pt)) return true;
-
-            // Arc
-            if (theArc is MajorArc) return Arc.BetweenMajor(pt, theArc as MajorArc);
-            else if (theArc is MinorArc) return Arc.BetweenMinor(pt, theArc as MinorArc);
-
-            return false;
-        }
-        public override List<Point> GetApproximatingPoints() { return theArc.GetApproximatingPoints(); }
+//        public override List<Point> GetApproximatingPoints() { return theArc.GetApproximatingPoints(); }
 
         public override Polygon GetPolygonalized()
         {
@@ -77,8 +64,6 @@ namespace GeometryTutorLib.ConcreteAST
             return segments;
         }
 
-        //private bool AreClockwise(Point v1, Point v2) { return -v1.X * v2.Y + v1.Y * v2.X > 0; }
-
         //
         // Point must be in the given circle and then, specifically in the specified angle
         //
@@ -88,8 +73,8 @@ namespace GeometryTutorLib.ConcreteAST
             if (!theArc.theCircle.PointLiesInside(pt)) return false;
 
             // Radii
-            if (new Segment(theArc.theCircle.center, theArc.endpoint1).PointIsOnAndBetweenEndpoints(pt)) return false;
-            if (new Segment(theArc.theCircle.center, theArc.endpoint2).PointIsOnAndBetweenEndpoints(pt)) return false;
+            if (new Segment(theArc.theCircle.center, theArc.endpoint1).PointLiesOnAndBetweenEndpoints(pt)) return false;
+            if (new Segment(theArc.theCircle.center, theArc.endpoint2).PointLiesOnAndBetweenEndpoints(pt)) return false;
 
             //
             // For the Minor Arc, create two angles.
@@ -108,21 +93,116 @@ namespace GeometryTutorLib.ConcreteAST
             if (theArc is Semicircle) throw new Exception("Semicircle containment to be handled.");
 
             return false;
+        }
 
-            //Point relPoint = Point.MakeVector(theArc.theCircle.center, pt);
+        //
+        // Point is on the perimeter?
+        //
+        public override bool PointLiesOn(Point pt)
+        {
+            if (pt == null) return false;
 
-            //if (theArc is MinorArc)
-            //{
-            //    return !AreClockwise(theArc.endpoint1, relPoint) && AreClockwise(theArc.endpoint2, relPoint);
-            //}
+            // Radii
+            KeyValuePair<Segment, Segment> radii = theArc.GetRadii();
+            if (radii.Key.PointLiesOnAndBetweenEndpoints(pt) || radii.Value.PointLiesOnAndBetweenEndpoints(pt)) return true;
 
-            //// Negation of MinorArc
-            //if (theArc is MajorArc)
-            //{
-            //    return AreClockwise(theArc.endpoint1, relPoint) && !AreClockwise(theArc.endpoint2, relPoint);
-            //}
+            // Arc
+            if (theArc is MajorArc) return Arc.BetweenMajor(pt, theArc as MajorArc);
+            else if (theArc is MinorArc) return Arc.BetweenMinor(pt, theArc as MinorArc);
 
-            //return false;
+            return false;
+        }
+
+        public virtual bool PointLiesInOrOn(Point pt)
+        {
+            if (pt == null) return false;
+
+            return PointLiesOn(pt) || PointLiesInside(pt);
+        }
+
+        //
+        // The center lies inside the polygon and there are no intersection points with the sides.
+        //
+        private bool ContainsCircle(Circle that)
+        {
+            // Center lies (strictly) inside of this sector
+            if (!this.PointLiesInside(that.center)) return false;
+            
+            // As a simple heuristic, the radii lengths must support inclusion.
+            if (Point.calcDistance(this.theArc.theCircle.center, that.center) + that.radius > this.theArc.theCircle.radius) return false;
+
+            //
+            // Any intersections between the sides of the sector and the circle must be tangent.
+            //
+            Segment radius1 = new Segment(theArc.theCircle.center, theArc.endpoint1);
+            Segment radius2 = new Segment(theArc.theCircle.center, theArc.endpoint2);
+
+            Point pt1 = null;
+            Point pt2 = null;
+            that.FindIntersection(radius1, out pt1, out pt2);
+            if (pt2 != null) return false;
+
+            that.FindIntersection(radius2, out pt1, out pt2);
+            if (pt2 != null) return false;
+
+            that.FindIntersection(this.theArc, out pt1, out pt2);
+            if (pt2 != null) return false;
+
+            return true;
+        }
+
+        //
+        // All points of the polygon are on or in the sector.
+        // No need to check that any sides of the polygon pass
+        // through the sector since that implies a vertex exterior to the sector.
+        //
+        private bool ContainsPolygon(Polygon that)
+        {
+            foreach (Point thatPt in that.points)
+            {
+                if (!this.PointLiesInOrOn(thatPt)) return false;
+            }
+
+            foreach (Segment side in that.orderedSides)
+            {
+                if (!this.PointLiesInOrOn(side.Midpoint())) return false;
+            }
+
+            return true;
+        }
+
+        //
+        // that Sector lies within this sector
+        //
+        private bool ContainsSector(Sector that)
+        {
+            // this radius must be longer than that.
+            if (Utilities.GreaterThan(that.theArc.theCircle.radius, this.theArc.theCircle.radius)) return false;
+
+            //
+            // Check containment of the points of that sector.
+            //
+            if (!this.PointLiesInOrOn(that.theArc.endpoint1)) return false;
+            if (!this.PointLiesInOrOn(that.theArc.endpoint2)) return false;
+
+            if (!this.PointLiesInOrOn(that.theArc.theCircle.center)) return false;
+
+            // Check midpoint is also within the sector.
+            if (!this.PointLiesInOrOn(that.theArc.Midpoint())) return false;
+
+            return true;
+        }
+
+        //
+        // A shape within this shape?
+        //
+        public override bool Contains(Figure that)
+        {
+            if (that is Circle) return ContainsCircle(that as Circle);
+            if (that is Polygon) return ContainsPolygon(that as Polygon);
+            if (that is Sector) return ContainsSector(that as Sector);
+
+            return false;
         }
 
         //
@@ -137,7 +217,7 @@ namespace GeometryTutorLib.ConcreteAST
             return Area(radAngleMeasure, radius) / Math.PI;
         }
         public override bool IsComputableArea() { return true; }
-        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             // Central Angle
             if (known.GetAngleMeasure(this.theArc.GetCentralAngle()) < 0) return false;

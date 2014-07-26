@@ -150,7 +150,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Use point-slope form to determine if the given point is on the line
         //
-        public bool PointIsOn(Point thatPoint)
+        public bool PointLiesOn(Point thatPoint)
         {
             // If the segments are vertical, just compare the X values of one point of each
             if (this.IsVertical())
@@ -170,14 +170,14 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Use point-slope form to determine if the given point is on the line
         //
-        public bool PointIsOnAndBetweenEndpoints(Point thatPoint)
+        public bool PointLiesOnAndBetweenEndpoints(Point thatPoint)
         {
             if (thatPoint == null) return false;
 
             return Segment.Between(thatPoint, Point1, Point2);
         }
 
-        public bool PointIsOnAndExactlyBetweenEndpoints(Point thatPoint)
+        public bool PointLiesOnAndExactlyBetweenEndpoints(Point thatPoint)
         {
             if (thatPoint == null) return false;
 
@@ -191,13 +191,13 @@ namespace GeometryTutorLib.ConcreteAST
         // A subsegment is: AB, AC, AD, BC, BD, CD
         public bool HasSubSegment(Segment possSubSegment)
         {
-            return this.PointIsOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointIsOnAndBetweenEndpoints(possSubSegment.Point2);
+            return this.PointLiesOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointLiesOnAndBetweenEndpoints(possSubSegment.Point2);
         }
 
         public bool HasStrictSubSegment(Segment possSubSegment)
         {
-            return (this.PointIsOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointIsOnAndExactlyBetweenEndpoints(possSubSegment.Point2)) ||
-                   (this.PointIsOnAndBetweenEndpoints(possSubSegment.Point2) && this.PointIsOnAndExactlyBetweenEndpoints(possSubSegment.Point1));
+            return (this.PointLiesOnAndBetweenEndpoints(possSubSegment.Point1) && this.PointLiesOnAndExactlyBetweenEndpoints(possSubSegment.Point2)) ||
+                   (this.PointLiesOnAndBetweenEndpoints(possSubSegment.Point2) && this.PointLiesOnAndExactlyBetweenEndpoints(possSubSegment.Point1));
         }
 
         public bool IsVertical()
@@ -228,7 +228,7 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return Utilities.CompareValues(this.Slope, otherSegment.Slope) &&
-                   this.PointIsOn(otherSegment.Point1) && this.PointIsOn(otherSegment.Point2); // Check both endpoints just to be sure
+                   this.PointLiesOn(otherSegment.Point1) && this.PointLiesOn(otherSegment.Point2); // Check both endpoints just to be sure
         }
 
         //
@@ -252,9 +252,9 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (this.StructurallyEquals(thatSegment)) return true;
 
-            if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point1)) return true;
+            if (this.PointLiesOnAndExactlyBetweenEndpoints(thatSegment.Point1)) return true;
 
-            if (this.PointIsOnAndExactlyBetweenEndpoints(thatSegment.Point2)) return true;
+            if (this.PointLiesOnAndExactlyBetweenEndpoints(thatSegment.Point2)) return true;
 
             return false;
         }
@@ -266,9 +266,9 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (!IsCollinearWith(thatSegment)) return false;
 
-            if (this.PointIsOnAndBetweenEndpoints(thatSegment.Point1)) return false;
+            if (this.PointLiesOnAndBetweenEndpoints(thatSegment.Point1)) return false;
 
-            if (this.PointIsOnAndBetweenEndpoints(thatSegment.Point2)) return false;
+            if (this.PointLiesOnAndBetweenEndpoints(thatSegment.Point2)) return false;
 
             return true;
         }
@@ -280,7 +280,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             Point p = this.FindIntersection(s);
 
-            return this.PointIsOnAndExactlyBetweenEndpoints(p) && s.PointIsOnAndExactlyBetweenEndpoints(p);
+            return this.PointLiesOnAndExactlyBetweenEndpoints(p) && s.PointLiesOnAndExactlyBetweenEndpoints(p);
         }
 
         public Point SharedVertex(Segment s)
@@ -421,8 +421,8 @@ namespace GeometryTutorLib.ConcreteAST
             //
             Point intersection = this.FindIntersection(thatSegment);
 
-            if (!this.PointIsOnAndBetweenEndpoints(intersection)) return null;
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(intersection)) return null;
+            if (!this.PointLiesOnAndBetweenEndpoints(intersection)) return null;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(intersection)) return null;
 
             //
             // Special Case
@@ -441,8 +441,8 @@ namespace GeometryTutorLib.ConcreteAST
             // Do these segments intersect within both sets of stated endpoints?
             Point intersection = this.FindIntersection(thatSegment);
 
-            if (!this.PointIsOnAndExactlyBetweenEndpoints(intersection)) return null;
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(intersection)) return null;
+            if (!this.PointLiesOnAndExactlyBetweenEndpoints(intersection)) return null;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(intersection)) return null;
 
             // Do they intersect in the middle of this segment
             return Utilities.CompareValues(Point.calcDistance(this.Point1, intersection), Point.calcDistance(this.Point2, intersection)) ? intersection : null;
@@ -485,7 +485,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Point SameSidePoint(Segment otherSegment, Point pt)
         {
             // Is the given point on other? If so, we cannot make a determination.
-            if (otherSegment.PointIsOn(pt)) return null;
+            if (otherSegment.PointLiesOn(pt)) return null;
 
             // Make a vector out of this vector as well as the vector connecting one of the points to the given pt
             Vector thisVector = new Vector(Point1, Point2);
@@ -499,7 +499,7 @@ namespace GeometryTutorLib.ConcreteAST
             // Find the intersection between the two lines
             Point intersection = FindIntersection(otherSegment);
 
-            if (this.PointIsOn(projectedEndpoint))
+            if (this.PointLiesOn(projectedEndpoint))
             {
                 System.Diagnostics.Debug.WriteLine("Unexpected: Projection does not lie on this line. " + this + " " + projectedEndpoint);
             }
@@ -607,8 +607,8 @@ namespace GeometryTutorLib.ConcreteAST
             inter1 = FindIntersection(that);
             inter2 = null;
 
-            if (!this.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
-            if (!that.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
+            if (!this.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;
+            if (!that.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;
         }
 
         private class Vector
@@ -731,7 +731,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Segment GetPerpendicular(Point pt)
         {
             // If the given point is already on the line, projection does not create new information.
-            if (this.PointIsOnAndBetweenEndpoints(pt)) return this;
+            if (this.PointLiesOnAndBetweenEndpoints(pt)) return this;
 
             Point projection = ProjectOnto(pt);
 

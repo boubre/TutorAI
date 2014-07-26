@@ -79,13 +79,13 @@ namespace GeometryTutorLib.GenericInstantiator
                 Point center = perp.intersect;
                 Point left = perp.rhs.Point1;
                 Point right = perp.rhs.Point2;
-                if (perp.lhs.PointIsOnAndExactlyBetweenEndpoints(perp.intersect))
+                if (perp.lhs.PointLiesOnAndExactlyBetweenEndpoints(perp.intersect))
                 {
                     left = perp.lhs.Point1;
                     right = perp.lhs.Point2;
                     top = perp.rhs.OtherPoint(perp.intersect);
                 }
-                else if (perp.rhs.PointIsOnAndExactlyBetweenEndpoints(perp.intersect))
+                else if (perp.rhs.PointLiesOnAndExactlyBetweenEndpoints(perp.intersect))
                 {
                     left = perp.rhs.Point1;
                     right = perp.rhs.Point2;

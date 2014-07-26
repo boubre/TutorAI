@@ -417,8 +417,8 @@ namespace GeometryTutorLib
         //            {
         //                // The point must be 'between' both segment endpoints
         //                ConcreteAST.Point numericInter = maximalSegments[s1].FindIntersection(maximalSegments[s2]);
-        //                if (maximalSegments[s1].PointIsOnAndBetweenEndpoints(numericInter) &&
-        //                    maximalSegments[s2].PointIsOnAndBetweenEndpoints(numericInter))
+        //                if (maximalSegments[s1].PointLiesOnAndBetweenEndpoints(numericInter) &&
+        //                    maximalSegments[s2].PointLiesOnAndBetweenEndpoints(numericInter))
         //                {
         //                    // Find the actual point for which there is an intersection between the segments
         //                    ConcreteAST.Point actualInter = null;

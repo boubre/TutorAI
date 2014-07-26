@@ -189,7 +189,7 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // The point opposite the base of the triangle must be within the endpoints of the bisector
             Point oppPoint = tri.OtherPoint(triangleBase);
-            if (!sb.bisector.PointIsOnAndBetweenEndpoints(oppPoint)) return newGrounded;
+            if (!sb.bisector.PointLiesOnAndBetweenEndpoints(oppPoint)) return newGrounded;
 
             // -> Median(Segment(V, C), Triangle(A, B, C))
             Median newMedian = new Median(sb.bisector, tri);

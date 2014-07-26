@@ -11,6 +11,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         private bool ordered; // Are the connections ordered?
         public List<Connection> connections { get; protected set; }
         public List<Figure> owners { get; protected set; }
+        private Figure topOwner;
+        //public List<AtomicRegion> contained { get; protected set; }
 
         // A version of this region that is an approximate polygon.
         public Polygon polygonalized { get; protected set; }
@@ -20,13 +22,45 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             ordered = false;
             connections = new List<Connection>();
             owners = new List<Figure>();
+            topOwner = null;
+            //contained = new List<AtomicRegion>();
             polygonalized = null;
             thisArea = -1;
         }
 
+        public Figure GetTopMostShape() { return topOwner; }
+
         // Add a shape to the list which contains this region.
-        public virtual void AddOwner(Figure f) { Utilities.AddStructurallyUnique<Figure>(owners, f); }
-        public virtual void AddOwners(List<Figure> fs) { Utilities.AddUniqueList<Figure>(owners, fs); }
+        public virtual void AddOwner(Figure f)
+        {
+            if (!Utilities.AddStructurallyUnique<Figure>(owners, f)) return;
+
+            // Check if this new atomic region is the outermost owner.
+            if (topOwner == null || f.Contains(topOwner)) topOwner = f;
+        }
+
+        public virtual void AddOwners(List<Figure> fs)
+        {
+            foreach (Figure f in fs) AddOwner(f);
+        }
+
+        public void ClearOwners()
+        {
+            owners.Clear();
+            topOwner = null;
+        }
+
+        //public virtual void AddContained(AtomicRegion atom)
+        //{
+        //    if (!contained.Contains(atom)) contained.Add(atom);
+        //}
+        //public virtual void AddContained(List<AtomicRegion> atoms)
+        //{
+        //    foreach (AtomicRegion atom in atoms)
+        //    {
+        //        AddContained(atom);
+        //    }
+        //}
 
         //// Compose this atomic region with another atomic region (resulting in a set of regions).
         //public List<AtomicRegion> Compose(AtomicRegion that)

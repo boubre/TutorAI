@@ -112,6 +112,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
             if (clause is Triangle)
             {
+                // Avoid strengthening an equilateral triangle to an equilateral triangle.
+                if (clause is EquilateralTriangle || (clause as Triangle).provenEquilateral) return newGrounded;
+
                 candTriangles.Add(clause as Triangle);
             }
             else if (clause is CongruentSegments)
@@ -128,6 +131,8 @@ namespace GeometryTutorLib.GenericInstantiator
                         }
                     }
                 }
+
+                candCongruent.Add(cs);
             }
             
             return newGrounded;

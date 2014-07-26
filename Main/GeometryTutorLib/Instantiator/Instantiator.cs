@@ -48,6 +48,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Process all new clauses until the worklist is empty
             //
+            int numSequentialEquations = 0;
             while (worklist.Any())
             {
                 // Acquire the first element from the list for processing
@@ -55,6 +56,16 @@ namespace GeometryTutorLib.GenericInstantiator
                 worklist.RemoveAt(0);
 
                 if (Utilities.DEBUG) Debug.WriteLine("Working on: " + clause.clauseId + " " + clause.ToString());
+
+                //
+                // Cutoff counter; seek a bunch of equations in sequence.
+                //
+                int NUMEQUATIONS_FOR_CUTOFF = 30;
+
+                if (clause is Equation || clause.IsAlgebraic()) numSequentialEquations++;
+                else numSequentialEquations = 0;
+
+                if (numSequentialEquations >= NUMEQUATIONS_FOR_CUTOFF) return graph;
 
                 //
                 // Apply the clause to all applicable instantiators
@@ -501,9 +512,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
                     HandleDeducedClauses(worklist, CircleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
-                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
-                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
-                    HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
                 }
                 else if (clause is CongruentCircles)

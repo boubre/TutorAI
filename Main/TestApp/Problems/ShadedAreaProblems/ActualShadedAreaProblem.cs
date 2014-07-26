@@ -1,5 +1,6 @@
 ﻿using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
+using LiveGeometry.TutorParser;
 
 namespace GeometryTestbed
 {
@@ -53,7 +54,7 @@ namespace GeometryTestbed
             ConstructIntrinsicSet();
 
             // Create the analyzer
-            StatisticsGenerator.HardCodedShadedAreaMain analyzer = new StatisticsGenerator.HardCodedShadedAreaMain(intrinsic, given, known, goalRegions, this.parser.implied, GetSolutionArea());
+            HardCodedShadedAreaMain analyzer = new HardCodedShadedAreaMain(intrinsic, given, known, goalRegions, this.parser.implied, GetSolutionArea());
 
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();

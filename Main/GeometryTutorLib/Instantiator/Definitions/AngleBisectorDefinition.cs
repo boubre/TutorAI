@@ -129,7 +129,7 @@ namespace GeometryTutorLib.GenericInstantiator
             if (!segment.IsCollinearWith(shared)) return newGrounded;
 
             // We need a true bisector in which the shared vertex of the angles in between the endpoints of this segment
-            if (!segment.PointIsOnAndBetweenEndpoints(cas.ca1.GetVertex())) return newGrounded;
+            if (!segment.PointLiesOnAndBetweenEndpoints(cas.ca1.GetVertex())) return newGrounded;
 
             //
             // Create the overall angle which is being bisected

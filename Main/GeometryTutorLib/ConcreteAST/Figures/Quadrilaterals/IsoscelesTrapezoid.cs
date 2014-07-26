@@ -17,6 +17,16 @@ namespace GeometryTutorLib.ConcreteAST
             }
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is Kite) return false;
+            if (that is Parallelogram) return false;
+            if (that is Trapezoid) return true;
+            if (that is Quadrilateral) return true;
+
+            return false;
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             IsoscelesTrapezoid thatTrap = obj as IsoscelesTrapezoid;

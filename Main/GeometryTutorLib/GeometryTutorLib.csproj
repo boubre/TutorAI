@@ -66,7 +66,12 @@
     <Compile Include="Area-Based Analyses\Area Equations\AreaSubtraction.cs" />
     <Compile Include="Area-Based Analyses\General Area Hypergraph\AreaHypergraph.cs" />
     <Compile Include="Area-Based Analyses\General Area Hypergraph\AreaHypergraphCreator.cs" />
-    <Compile Include="Area-Based Analyses\Solution Hypergraph\SolutionAreaHypergraphCreator.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\AreaSolutionGenerator.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\Copy of Forest.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\SolutionAgg.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\SolutionDatabase.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\IndexList.cs" />
+    <Compile Include="Area-Based Analyses\Solution Generation\TreeNode.cs" />
     <Compile Include="Area-Based Analyses\Synthesis Hypergraph\SynthesisAreaHypergraphCreator.cs" />
     <Compile Include="AtomicRegions\Atomic Region Calculator\PrimitiveToRegionConverter.cs" />
     <Compile Include="AtomicRegions\Connection.cs" />

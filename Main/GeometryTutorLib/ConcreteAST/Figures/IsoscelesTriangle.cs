@@ -72,6 +72,24 @@ namespace GeometryTutorLib.ConcreteAST
             return vertexAngle;
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is EquilateralTriangle) return false;
+            if (that is RightTriangle) return true;
+            if (that is Triangle)
+            {
+                Triangle tri = that as Triangle;
+
+                if (tri.provenIsosceles) return false;
+                if (tri.provenEquilateral) return false;
+                if (tri.provenRight) return true;
+
+                return true;
+            }
+
+            return false;
+        }
+
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override bool Equals(Object obj)

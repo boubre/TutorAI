@@ -80,7 +80,7 @@ namespace LiveGeometry.TutorParser
                     // Avoid parallel line intersections at infinity
                     if (inter != null && !double.IsInfinity(inter.X) && !double.IsInfinity(inter.Y) && !double.IsNaN(inter.X) && !double.IsNaN(inter.Y))
                     {
-                        if (segments[s1].PointIsOnAndExactlyBetweenEndpoints(inter) && segments[s2].PointIsOnAndExactlyBetweenEndpoints(inter))
+                        if (segments[s1].PointLiesOnAndExactlyBetweenEndpoints(inter) && segments[s2].PointLiesOnAndExactlyBetweenEndpoints(inter))
                         {
                             HandleIntersectionPoint(knownPoints, unlabeled, inter);
                         }
@@ -124,7 +124,7 @@ namespace LiveGeometry.TutorParser
             if (pt == null) return null;
 
             // The point must be between the endpoints of the segment
-            if (!segment.PointIsOnAndBetweenEndpoints(pt)) return null;
+            if (!segment.PointLiesOnAndBetweenEndpoints(pt)) return null;
 
             return HandleIntersectionPoint(containment, toAdd, pt);
         }

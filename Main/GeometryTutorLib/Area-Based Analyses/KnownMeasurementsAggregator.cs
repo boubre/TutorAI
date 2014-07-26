@@ -32,6 +32,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
             units = UNITS.CM;
         }
 
+        public List<KeyValuePair<Segment, double>> GetKnownSegments() { return segments; }
+
         public double GetSegmentLength(Segment thatSeg)
         {
             foreach (KeyValuePair<Segment, double> segPair in segments)

@@ -15,13 +15,18 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         public Figure shape { get; private set; }
 
-        public ShapeRegion(List<Atomizer.AtomicRegion> ats) : base(ats)
+        //public ShapeRegion(List<Atomizer.AtomicRegion> ats) : base(ats)
+        //{
+        //}
+
+        public ShapeRegion(ShapeRegion that) : base(that.atoms)
         {
+            this.shape = that.shape;
         }
 
-        public ShapeRegion(Atomizer.AtomicRegion atom) : this(Utilities.MakeList<Atomizer.AtomicRegion>(atom)) { }
+        //public ShapeRegion(Atomizer.AtomicRegion atom) : this(Utilities.MakeList<Atomizer.AtomicRegion>(atom)) { }
 
-        public ShapeRegion(List<Atomizer.AtomicRegion> atoms, Figure theShape) : base(atoms) { shape = theShape; }
+        public ShapeRegion(Figure theShape) : base(theShape.atoms) { shape = theShape; }
 
         //
         // The area of this region can only be calculated if all of the atomic regions can be calculated.

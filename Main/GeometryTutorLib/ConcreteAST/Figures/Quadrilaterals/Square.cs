@@ -81,9 +81,17 @@ namespace GeometryTutorLib.ConcreteAST
             return base.GetArea(known);
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is Trapezoid) return false;
+            if (that is Kite) return false;
+            if (that is Rectangle) return true;
+            if (that is Rhombus) return true;
+            if (that is Parallelogram) return true;
+            if (that is Quadrilateral) return true;
 
-
-
+            return false;
+        }
 
         public override bool StructurallyEquals(Object obj)
         {

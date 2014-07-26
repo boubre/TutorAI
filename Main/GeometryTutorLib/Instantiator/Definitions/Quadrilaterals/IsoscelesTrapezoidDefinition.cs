@@ -159,7 +159,7 @@ namespace GeometryTutorLib.GenericInstantiator
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             // Does this paralle set apply to this triangle?
-            if (!trapezoid.CreateCongruentLegs(css)) return newGrounded;
+            if (!trapezoid.CreatesCongruentLegs(css)) return newGrounded;
 
             //
             // Create the new IsoscelesTrapezoid object

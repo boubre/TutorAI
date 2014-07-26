@@ -119,7 +119,7 @@ namespace GeometryTutorLib.GenericInstantiator
             Point fourthPoint2 = parallelCand2.OtherPoint(inter2.intersect);
             if (fourthPoint1 != null && fourthPoint2 != null)
             {
-                if (parallelCand1.PointIsOn(fourthPoint2) || parallelCand2.PointIsOn(fourthPoint1)) return newGrounded;
+                if (parallelCand1.PointLiesOn(fourthPoint2) || parallelCand2.PointLiesOn(fourthPoint1)) return newGrounded;
             }
 
             // Are the angles within the interior 

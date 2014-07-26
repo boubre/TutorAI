@@ -37,7 +37,7 @@ namespace GeometryTestbed
             wanted.Add(new Point("", 0, -10));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(161.4369261);
+            SetSolutionArea(406.87385231);
         }
     }
 }

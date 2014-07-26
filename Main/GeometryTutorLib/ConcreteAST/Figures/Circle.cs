@@ -86,6 +86,8 @@ namespace GeometryTutorLib.ConcreteAST
             approxSegments = new List<Segment>();
 
             Utilities.AddUniqueStructurally(this.center.getSuperFigures(), this);
+
+            thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
         public void AddMinorArc(MinorArc mArc) { minorArcs.Add(mArc); }
@@ -94,20 +96,19 @@ namespace GeometryTutorLib.ConcreteAST
         public void AddMajorSector(Sector mSector) { majorSectors.Add(mSector); }
 
         public void SetPointsOnCircle(List<Point> pts) { OrderPoints(pts); }
-        public override bool PointLiesInOrOn(Point pt) { return PointIsOn(pt) || PointIsInterior(pt); }
 
         public bool DefinesRadius(Segment seg)
         {
-            if (center.StructurallyEquals(seg.Point1) && this.PointIsOn(seg.Point2)) return true;
+            if (center.StructurallyEquals(seg.Point1) && this.PointLiesOn(seg.Point2)) return true;
 
-            return center.StructurallyEquals(seg.Point1) && this.PointIsOn(seg.Point2);
+            return center.StructurallyEquals(seg.Point1) && this.PointLiesOn(seg.Point2);
         }
 
         public bool DefinesDiameter(Segment seg)
         {
-            if (!seg.PointIsOnAndExactlyBetweenEndpoints(center)) return false;
+            if (!seg.PointLiesOnAndExactlyBetweenEndpoints(center)) return false;
 
-            return this.PointIsOn(seg.Point1) && this.PointIsOn(seg.Point2);
+            return this.PointLiesOn(seg.Point1) && this.PointLiesOn(seg.Point2);
         }
 
         //
@@ -188,16 +189,22 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.GetStructurally<Segment>(radii, r);
         }
 
-        //public override List<Point> GetApproximatingPoints() { return approxPoints; }
+        public override bool PointLiesInOrOn(Point pt)
+        {
+            if (pt == null) return false;
+
+            return PointLiesOn(pt) || PointLiesInside(pt);
+        }
 
         public override bool PointLiesInside(Point pt)
         {
             if (pt == null) return false;
 
-            if (PointIsOn(pt)) return false;
+            if (PointLiesOn(pt)) return false;
 
             return PointIsInterior(pt);
         }
+
         public override List<Segment> Segmentize()
         {
             if (approxSegments.Any()) return approxSegments;
@@ -327,7 +334,7 @@ namespace GeometryTutorLib.ConcreteAST
             foreach (Segment chord in chords)
             {
                 // The center needs to be the midpoint, but verifying the center is on the chord suffices in this context.
-                if (chord.PointIsOnAndExactlyBetweenEndpoints(this.center))
+                if (chord.PointLiesOnAndExactlyBetweenEndpoints(this.center))
                 {
                     // Add to diameters....
                     Utilities.AddUnique<Segment>(diameters, chord);
@@ -361,10 +368,10 @@ namespace GeometryTutorLib.ConcreteAST
 
             // Is the perpendicular a radius? Check that the intersection of the segment and the perpendicular is on the circle
             Point intersection = segment.FindIntersection(perpendicular);
-            if (!this.PointIsOn(intersection)) return null;
+            if (!this.PointLiesOn(intersection)) return null;
 
             // The intersection between the perpendicular and the segment must be within the endpoints of the segment.
-            return segment.PointIsOnAndBetweenEndpoints(intersection) ? perpendicular : null;
+            return segment.PointLiesOnAndBetweenEndpoints(intersection) ? perpendicular : null;
         }
 
         //
@@ -372,7 +379,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         private bool ContainsDiameter(Segment segment)
         {
-            if (!segment.PointIsOnAndBetweenEndpoints(this.center)) return false;
+            if (!segment.PointLiesOnAndBetweenEndpoints(this.center)) return false;
 
             // the endpoints of the segment must be on or outside the circle.
             double distance = Point.calcDistance(this.center, segment.Point1);
@@ -483,7 +490,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point nonCenterPt = segment.OtherPoint(this.center);
 
             // Check for a direct radius.
-            if (this.PointIsOn(nonCenterPt)) return segment;
+            if (this.PointLiesOn(nonCenterPt)) return segment;
 
             //
             // Check for an extended segment.
@@ -533,11 +540,11 @@ namespace GeometryTutorLib.ConcreteAST
 
                 // First intersection - find and verify that the point lies on the segment
                 Point possibleInter1 = new Point("", (t - dt) * D[0] + ts.Point1.X, (t - dt) * D[1] + ts.Point1.Y);
-                if (ts.PointIsOnAndBetweenEndpoints(possibleInter1)) inter1 = possibleInter1;
+                /* if (ts.PointLiesOnAndBetweenEndpoints(possibleInter1)) */ inter1 = possibleInter1;
 
                 // Second intersection - find and verify that the point lies on the segment
                 Point possibleInter2 = new Point("", (t + dt) * D[0] + ts.Point1.X, (t + dt) * D[1] + ts.Point1.Y);
-                if (ts.PointIsOnAndBetweenEndpoints(possibleInter2)) inter2 = possibleInter2;
+                /* if (ts.PointLiesOnAndBetweenEndpoints(possibleInter2)) */ inter2 = possibleInter2;
             }
             //
             // Tangent point (E)
@@ -626,13 +633,13 @@ namespace GeometryTutorLib.ConcreteAST
         //
         private bool IsChord(Segment segment)
         {
-            return this.PointIsOn(segment.Point1) && this.PointIsOn(segment.Point2);
+            return this.PointLiesOn(segment.Point1) && this.PointLiesOn(segment.Point2);
         }
 
         //
         // Determine if the given point is on the circle via substitution into (x1 - x2)^2 + (y1 - y2)^2 = r^2
         //
-        public bool PointIsOn(Point pt)
+        public bool PointLiesOn(Point pt)
         {
             return Utilities.CompareValues(Math.Pow(center.X - pt.X, 2) + Math.Pow(center.Y - pt.Y, 2), Math.Pow(this.radius, 2));
         }
@@ -798,7 +805,7 @@ namespace GeometryTutorLib.ConcreteAST
         public bool IsInscribed(Angle angle)
         {
             // If the angle has vertex on the circle
-            if (!this.PointIsOn(angle.GetVertex())) return false;
+            if (!this.PointLiesOn(angle.GetVertex())) return false;
 
             // Do the angle rays form or contain chords? 
             // GetChord() will check if the segment is a chord, and if it is not, it will check if the segment is a secant containing a chord
@@ -862,17 +869,29 @@ namespace GeometryTutorLib.ConcreteAST
         // return the midpoint between these two on the circle.
         public Point Midpoint(Point a, Point b)
         {
-            if (!this.PointIsOn(a)) return null;
-            if (!this.PointIsOn(b)) return null;
+            if (!this.PointLiesOn(a)) return null;
+            if (!this.PointLiesOn(b)) return null;
 
             // Make the chord.
             Segment chord = new Segment(a, b);
 
+            Point pt1 = null;
+            Point pt2 = null;
+
+            // Is this a diameter? If so, quickly return a point perpendicular to the diameter
+            if (DefinesDiameter(chord))
+            {
+                Segment perp = chord.GetPerpendicular(center);
+
+                this.FindIntersection(chord, out pt1, out pt2);
+
+                // Arbitrarily choose one of the points.
+                return pt1 != null ? pt1 : pt2;
+            }
+
             // Make radius through the midpoint of the chord.
             Segment radius = new Segment(center, chord.Midpoint());
 
-            Point pt1 = null;
-            Point pt2 = null;
             this.FindIntersection(radius, out pt1, out pt2);
 
             if (pt2 == null) return pt1;
@@ -892,7 +911,7 @@ namespace GeometryTutorLib.ConcreteAST
         // return the midpoint between these two on the circle.
         public Point OppositePoint(Point that)
         {
-            if (!this.PointIsOn(that)) return null;
+            if (!this.PointLiesOn(that)) return null;
 
             // Make the radius
             Segment radius = new Segment(center, that);
@@ -918,7 +937,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public bool HasArc(Point p1, Point p2)
         {
-            return this.PointIsOn(p1) && this.PointIsOn(p2);
+            return this.PointLiesOn(p1) && this.PointLiesOn(p2);
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
@@ -1150,9 +1169,55 @@ namespace GeometryTutorLib.ConcreteAST
             return atoms;
         }
 
-        private double CentralAngleMeasure(Point pt1, Point pt2)
+        //private double CentralAngleMeasure(Point pt1, Point pt2)
+        //{
+        //    return (new MinorArc(this, pt1, pt2)).GetMinorArcMeasureDegrees();
+        //}
+
+        public void ConstructImpliedAreaBasedSectors(out List<Sector> minorSectors,
+                                             out List<Sector> majorSectors,
+                                             out List<Semicircle> semicircles)
         {
-            return (new MinorArc(this, pt1, pt2)).GetMinorArcMeasureDegrees();
+            minorSectors = new List<Sector>();
+            majorSectors = new List<Sector>();
+            semicircles = new List<Semicircle>();
+
+            // Points of interest for atomic region identification (and thus arc / sectors).
+            List<Point> interPts = this.OrderPoints(GetIntersectingPoints());
+
+            // If there are no points of interest, the circle is the atomic region.
+            if (!interPts.Any()) return;
+
+            // Cycle through all n C 2 intersection points and resultant arcs / sectors.
+            for (int p1 = 0; p1 < interPts.Count - 1; p1++)
+            {
+                for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
+                {
+                    //
+                    // Do we have a diameter?
+                    //
+                    Segment diameter = new Segment(interPts[p1], interPts[p2]);
+                    if (this.DefinesDiameter(diameter))
+                    {
+                        // Create two semicircles; for simplicity, we choose the points on the semi-circle to be midpoints o neither, respective side.
+                        Point midpoint = this.Midpoint(interPts[p1], interPts[p2]);
+                        Point oppMidpoint = this.OppositePoint(midpoint);
+
+                        // Altogether, these 4 points define 4 quadrants (with the center).
+                        semicircles.Add(new Semicircle(this, interPts[p1], interPts[p2], midpoint, diameter));
+                        semicircles.Add(new Semicircle(this, interPts[p1], interPts[p2], oppMidpoint, diameter));
+                    }
+
+                    //
+                    // Normal major / minor sector construction.
+                    //
+                    else
+                    {
+                        minorSectors.Add(new Sector(new MinorArc(this, interPts[p1], interPts[p2])));
+                        majorSectors.Add(new Sector(new MajorArc(this, interPts[p1], interPts[p2])));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1171,6 +1236,56 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return connections;
+        }
+
+        //
+        // that circle lies within this circle.
+        //
+        private bool ContainsCircle(Circle that)
+        {
+            return Point.calcDistance(this.center, that.center) <= Math.Abs(this.radius - that.radius);
+        }
+
+        //
+        // that Polygon lies within this circle.
+        //
+        private bool ContainsPolygon(Polygon that)
+        {
+            //
+            // All points are interior to the polygon.
+            //
+            foreach (Point thatPt in that.points)
+            {
+                if (!this.PointLiesInOrOn(thatPt)) return false;
+            }
+
+            return true;
+        }
+
+        //
+        // that Polygon lies within this circle.
+        //
+        private bool ContainsSector(Sector that)
+        {
+            if (!this.PointLiesInOrOn(that.theArc.endpoint1)) return false;
+            if (!this.PointLiesInOrOn(that.theArc.endpoint2)) return false;
+
+            if (!this.PointLiesInOrOn(that.theArc.theCircle.center)) return false;
+            if (!this.PointLiesInOrOn(that.theArc.Midpoint())) return false;
+
+            return true;
+        }
+
+        //
+        // A shape within this shape?
+        //
+        public override bool Contains(Figure that)
+        {
+            if (that is Circle) return ContainsCircle(that as Circle);
+            if (that is Polygon) return ContainsPolygon(that as Polygon);
+            if (that is Sector) return ContainsSector(that as Sector);
+
+            return false;
         }
     }
 }

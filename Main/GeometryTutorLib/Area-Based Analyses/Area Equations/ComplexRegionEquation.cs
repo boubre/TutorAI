@@ -39,6 +39,33 @@ namespace GeometryTutorLib.Area_Based_Analyses
             thisArea = -1;
         }
 
+        public ComplexRegionEquation(Region tar, Expr exp) : base()
+        {
+            target = tar;
+
+            expr = exp;
+
+            thisArea = -1;
+        }
+
+        public void SetTarget(Region targ)
+        {
+            this.target = targ;
+        }
+
+        public void AppendSubtraction(Region r)
+        {
+            this.expr = new Binary(this.expr, OperationT.SUBTRACTION, new Unary(r));
+        }
+
+        //
+        // Large - x_1 - x_2 - ... - x_3 = atom   =>  Large - atom = x_1 + x_2 + ... + x_3
+        //
+        public void ChangePolarity()
+        {
+            throw new ArgumentException("Not implemented.");
+        }
+
         public void Substitute(Region toFind, Expr toSub)
         {
             expr.Substitute(toFind, toSub);
@@ -53,6 +80,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             get
             {
+                if (!IsComplete()) return int.MaxValue;
+
                 // If this is an indentity equation (base case in other code),
                 // indicate a length of infinity.
                 if (IsIdentity()) return int.MaxValue;
@@ -60,6 +89,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
                 // Otherwise, count the number of regions.
                 return expr.NumRegions();
             }
+        }
+
+        //
+        // Does this equation define both sides of the equation?
+        //
+        public bool IsComplete()
+        {
+            return target != null && expr != null;
         }
 
         // Is this an equation of the form x = x?
@@ -80,7 +117,6 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             return thisArea;
         }
-
 
         //
         // Class hierarchy to handle expressions (one side of an equation).

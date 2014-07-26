@@ -99,7 +99,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //    //
         //    foreach (Point thePoint in allPoints)
         //    {
-        //        if (copy.PointIsOnAndExactlyBetweenEndpoints(thePoint))
+        //        if (copy.PointLiesOnAndExactlyBetweenEndpoints(thePoint))
         //        {
         //            copy.AddCollinearPoint(thePoint);
         //        }
@@ -186,12 +186,12 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //    //            if (segmentsAndTypes[s1].Key.SharedVertex(segmentsAndTypes[s2].Key) == null)
         //    //            {
         //    //                // Is there an overlap?
-        //    //                if (segmentsAndTypes[s1].Key.PointIsOnAndExactlyBetweenEndpoints(segmentsAndTypes[s2].Key.Point1))
+        //    //                if (segmentsAndTypes[s1].Key.PointLiesOnAndExactlyBetweenEndpoints(segmentsAndTypes[s2].Key.Point1))
         //    //                {
         //    //                    intPoint = segmentsAndTypes[s2].Key.Point1;
         //    //                    s2Index = s2;
         //    //                }
-        //    //                else if (segmentsAndTypes[s1].Key.PointIsOnAndExactlyBetweenEndpoints(segmentsAndTypes[s2].Key.Point2))
+        //    //                else if (segmentsAndTypes[s1].Key.PointLiesOnAndExactlyBetweenEndpoints(segmentsAndTypes[s2].Key.Point2))
         //    //                {
         //    //                    intPoint = segmentsAndTypes[s2].Key.Point2;
         //    //                    s2Index = s2;
@@ -249,7 +249,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //    //    // Find the subset of applicable points; ensure they are ordered.
         //    //    foreach (Point impliedCircPt in implied.impliedCirclePoints)
         //    //    {
-        //    //        if (segment.PointIsOnAndExactlyBetweenEndpoints(impliedCircPt)) segment.AddCollinearPoint(impliedCircPt);
+        //    //        if (segment.PointLiesOnAndExactlyBetweenEndpoints(impliedCircPt)) segment.AddCollinearPoint(impliedCircPt);
         //    //    }
 
         //    //    // Generate the actual minimal segments.
@@ -288,7 +288,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //        //
         //        foreach (Point extendedPt in implied.extendedCirclePoints)
         //        {
-        //            if (copy.PointIsOn(extendedPt)) pts.Add(extendedPt);
+        //            if (copy.PointLiesOn(extendedPt)) pts.Add(extendedPt);
         //        }
 
         //        // The setting of points orders them appropriately.

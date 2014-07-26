@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeometryTutorLib.Pebbler
+namespace GeometryTutorLib.Area_Based_Analyses
 {
     //
     // Implements a forest of k-ary trees
@@ -21,17 +21,17 @@ namespace GeometryTutorLib.Pebbler
         // Adds a treenode as a leaf, if possible
         // Counts the number of successful additions
         //
-        public int AddToLeaf(T rootVal, List<T> children)
-        {
-            int numAdditions = 0;
+        //public int AddToLeaf(T rootVal, List<T> children)
+        //{
+        //    int numAdditions = 0;
 
-            foreach (TreeNode<T> tree in treeList)
-            {
-                numAdditions += tree.AddToLeaf(rootVal, children) ? 1 : 0;
-            }
+        //    foreach (TreeNode<T> tree in treeList)
+        //    {
+        //        numAdditions += tree.AddToLeaf(rootVal, children) ? 1 : 0;
+        //    }
 
-            return numAdditions;
-        }
+        //    return numAdditions;
+        //}
 
         //
         // Strictly adds one new tree consisting of a root node with specified children
@@ -41,13 +41,13 @@ namespace GeometryTutorLib.Pebbler
             treeList.Add(new TreeNode<T>(rootVal, children));
         }
 
-        public void GenerateAllPaths()
-        {
-            foreach (TreeNode<T> tree in treeList)
-            {
-                tree.GenerateAllProblemsAndSolutions();
-            }
-        }
+        //public void GenerateAllPaths()
+        //{
+        //    foreach (TreeNode<T> tree in treeList)
+        //    {
+        //        tree.GenerateAllProblemsAndSolutions();
+        //    }
+        //}
 
         public override string ToString()
         {

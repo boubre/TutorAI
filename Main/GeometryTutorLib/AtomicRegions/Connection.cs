@@ -65,7 +65,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             if (this.type == ConnectionType.SEGMENT)
             {
-                return (this.segmentOrArc as Segment).PointIsOnAndBetweenEndpoints(pt);
+                return (this.segmentOrArc as Segment).PointLiesOnAndBetweenEndpoints(pt);
             }
             else if (this.type == ConnectionType.ARC)
             {

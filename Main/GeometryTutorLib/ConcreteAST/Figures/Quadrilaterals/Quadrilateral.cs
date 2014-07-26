@@ -682,7 +682,7 @@ namespace GeometryTutorLib.ConcreteAST
             return -1;
         }
 
-        public virtual bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        public override bool CanAreaBeComputed(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             return SplitTriangleArea(known) > 0;
         }

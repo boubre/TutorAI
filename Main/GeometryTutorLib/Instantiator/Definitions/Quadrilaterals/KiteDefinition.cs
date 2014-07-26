@@ -145,6 +145,9 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
+            // The congruences should not share a side.
+            if (cs1.SharedSegment(cs2) != null) return newGrounded;
+
             // Does both set of congruent segments apply to the quadrilateral?
             if (!quad.HasAdjacentCongruentSides(cs1)) return newGrounded;
             if (!quad.HasAdjacentCongruentSides(cs2)) return newGrounded;

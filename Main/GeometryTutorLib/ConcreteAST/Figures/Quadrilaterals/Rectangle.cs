@@ -27,6 +27,18 @@ namespace GeometryTutorLib.ConcreteAST
             this.SetIntersection(inter);
         }
 
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is Trapezoid) return false;
+            if (that is Kite) return false;
+            if (that is Rectangle) return false;
+            if (that is Rhombus) return false;
+            if (that is Parallelogram) return true;
+            if (that is Quadrilateral) return true;
+
+            return false;
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             Rectangle thatRect = obj as Rectangle;

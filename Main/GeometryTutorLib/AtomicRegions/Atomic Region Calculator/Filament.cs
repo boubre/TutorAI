@@ -88,7 +88,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             Circle outerCircle = null;
             foreach (Circle circle in circles)
             {
-                if (circle.PointIsOn(points[beginIndex]) && circle.PointIsOn(points[endIndex])) outerCircle = circle;
+                if (circle.PointLiesOn(points[beginIndex]) && circle.PointLiesOn(points[endIndex])) outerCircle = circle;
             }
 
             //
@@ -180,7 +180,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             Circle theCircle = null;
             foreach (Circle circle in circles)
             {
-                if (circle.PointIsOn(pt1) && circle.PointIsOn(pt2)) theCircle = circle;
+                if (circle.PointLiesOn(pt1) && circle.PointLiesOn(pt2)) theCircle = circle;
             }
 
             switch (edge.edgeType)

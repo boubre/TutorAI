@@ -22,6 +22,7 @@ namespace LiveGeometry.TutorParser
 
         /// <summary>
         /// Calculate all points of intersection between circles.
+        /// Updates segments by creating segments.
         /// </summary>
         public void CalcCircleCircleIntersections(out List<GeometryTutorLib.ConcreteAST.CircleCircleIntersection> ccIntersections)
         {
@@ -65,6 +66,56 @@ namespace LiveGeometry.TutorParser
                         ccInter = new CircleCircleIntersection(inter2, implied.circles[c1], implied.circles[c2]);
                         GeometryTutorLib.Utilities.AddStructurallyUnique<CircleCircleIntersection>(ccIntersections, ccInter);
                     }
+
+                    // Add an implied collinear relationship so that the appropriate segments are generated.
+                    // ONLY for tangent situations.
+                    if (inter1 != null && inter2 == null)
+                    {
+                        List<Point> pts = new List<Point>();
+                        pts.Add(implied.circles[c1].center);
+                        pts.Add(inter1);
+                        pts.Add(implied.circles[c2].center);
+                        implied.collinear.Add(new Collinear(pts));
+                    }
+                }
+            }
+
+            // Construct any radii and chords.
+            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            {
+                AddImpliedSegments(circle);
+            }
+
+        }
+
+        //
+        // If no radii are drawn, construct them as well as the chords connecting them.
+        //
+        private void AddImpliedSegments(GeometryTutorLib.ConcreteAST.Circle circle)
+        {
+            List<GeometryTutorLib.ConcreteAST.Segment> constructedChords = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            List<GeometryTutorLib.ConcreteAST.Segment> constructedRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            List<Point> imagPoints = new List<Point>();
+
+            List<GeometryTutorLib.ConcreteAST.Point> interPts = circle.GetIntersectingPoints();
+
+            // If there are no points of interest, the circle is the atomic region.
+            if (!interPts.Any()) return;
+
+            // Construct the radii
+            foreach (Point interPt in interPts)
+            {
+                GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(implied.segments,
+                                                                                                       new GeometryTutorLib.ConcreteAST.Segment(circle.center, interPt));
+            }
+
+            // Construct the chords
+            for (int p1 = 0; p1 < interPts.Count - 1; p1++)
+            {
+                for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
+                {
+                    GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(implied.segments,
+                                                                                                           new GeometryTutorLib.ConcreteAST.Segment(interPts[p1], interPts[p2]));
                 }
             }
         }
@@ -150,8 +201,8 @@ namespace LiveGeometry.TutorParser
                     Point inter1 = null;
                     Point inter2 = null;
                     circle.FindIntersection(segment, out inter1, out inter2);
-                    if (!segment.PointIsOnAndBetweenEndpoints(inter1)) inter1 = null;
-                    if (!segment.PointIsOnAndBetweenEndpoints(inter2)) inter2 = null;
+                    if (!segment.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;
+                    if (!segment.PointLiesOnAndBetweenEndpoints(inter2)) inter2 = null;
 
                     // Add them to the list (possibly)
                     List<Point> intersectionPts = new List<Point>();
@@ -179,8 +230,8 @@ namespace LiveGeometry.TutorParser
                         csInter = new CircleSegmentIntersection(inter2, circle, segment);
                         GeometryTutorLib.Utilities.AddStructurallyUnique<CircleSegmentIntersection>(intersections, csInter);
 
-                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord.
-                        circle.AnalyzeSegment(segment, implied.allFigurePoints);
+                        // Analyze this segment w.r.t. to this circle: tangent, secant, chord; ONLY analyze once.
+                        if (inter1 == null) circle.AnalyzeSegment(segment, implied.allFigurePoints);
                     }
                 }
 

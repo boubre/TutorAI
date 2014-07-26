@@ -36,12 +36,12 @@ namespace GeometryTutorLib.ConcreteAST
 
             foreach (Point pt in points)
             {
-                if (!line.PointIsOn(pt))
+                if (!line.PointLiesOn(pt))
                 {
                     throw new ArgumentException("Point " + pt + " is not collinear with line " + line.ToString());
                 }
 
-                if (!line.PointIsOnAndBetweenEndpoints(pt))
+                if (!line.PointLiesOnAndBetweenEndpoints(pt))
                 {
                     throw new ArgumentException("Point " + pt + " is not between the endpoints of segment " + line.ToString());
                 }

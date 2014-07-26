@@ -45,10 +45,10 @@ namespace GeometryTutorLib.ConcreteAST
             if (StandsOnEndpoint()) return null;
 
             // Find the non-collinear end-point
-            if (lhs.PointIsOnAndBetweenEndpoints(rhs.Point1)) return rhs.Point2;
-            if (lhs.PointIsOnAndBetweenEndpoints(rhs.Point2)) return rhs.Point1;
-            if (rhs.PointIsOnAndBetweenEndpoints(lhs.Point1)) return lhs.Point2;
-            if (rhs.PointIsOnAndBetweenEndpoints(lhs.Point2)) return lhs.Point1;
+            if (lhs.PointLiesOnAndBetweenEndpoints(rhs.Point1)) return rhs.Point2;
+            if (lhs.PointLiesOnAndBetweenEndpoints(rhs.Point2)) return rhs.Point1;
+            if (rhs.PointLiesOnAndBetweenEndpoints(lhs.Point1)) return lhs.Point2;
+            if (rhs.PointLiesOnAndBetweenEndpoints(lhs.Point2)) return lhs.Point1;
 
             return null;
         }
@@ -125,7 +125,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point intersection = transversal.FindIntersection(crossingTester);
 
                                                                        // S-shape    // PI-Shape
-            return transversal.PointIsOnAndBetweenEndpoints(intersection) ? nullPair : new KeyValuePair<Point, Point>(offEndpoint, offStands);
+            return transversal.PointLiesOnAndBetweenEndpoints(intersection) ? nullPair : new KeyValuePair<Point, Point>(offEndpoint, offStands);
         }
 
         //
@@ -194,8 +194,8 @@ namespace GeometryTutorLib.ConcreteAST
             Segment parallelEndPt = endpt.OtherSegment(transversal);
             Segment parallelStands = standsOn.OtherSegment(transversal);
 
-            Point offEnd = transversal.PointIsOn(parallelEndPt.Point1) ? parallelEndPt.Point2 : parallelEndPt.Point1;
-            Point offStands = transversal.PointIsOn(parallelStands.Point1) ? parallelStands.Point2 : parallelStands.Point1;
+            Point offEnd = transversal.PointLiesOn(parallelEndPt.Point1) ? parallelEndPt.Point2 : parallelEndPt.Point1;
+            Point offStands = transversal.PointLiesOn(parallelStands.Point1) ? parallelStands.Point2 : parallelStands.Point1;
 
             // Check this is not a crazy F
             //        _____
@@ -205,7 +205,7 @@ namespace GeometryTutorLib.ConcreteAST
             //       | 
             Point intersection = transversal.FindIntersection(new Segment(offEnd, offStands));
 
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // Return in the order of 'off' points: <this, that>
             return this.Equals(endpt) ? new KeyValuePair<Point, Point>(offEnd, offStands) : new KeyValuePair<Point, Point>(offStands, offEnd);
@@ -242,8 +242,8 @@ namespace GeometryTutorLib.ConcreteAST
             Segment nonTransversalThis = this.OtherSegment(transversal);
             Segment nonTransversalThat = thatInter.OtherSegment(transversal);
 
-            if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThis.Point1) ||
-                transversal.PointIsOnAndBetweenEndpoints(nonTransversalThis.Point2))
+            if (transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThis.Point1) ||
+                transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThis.Point2))
             {
                 //             |
                 //         ____|                <--- Stands on
@@ -251,14 +251,14 @@ namespace GeometryTutorLib.ConcreteAST
                 //             |_____ off       <--- Stands on 
                 //             |
                 //             | 
-                if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
-                    transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point2)) return nullPair;
+                if (transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
+                    transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThat.Point2)) return nullPair;
 
                 standsOnBottom = this;
                 standsOnTop = thatInter;
             }
-            else if (transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
-                     transversal.PointIsOnAndBetweenEndpoints(nonTransversalThat.Point2))
+            else if (transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThat.Point1) ||
+                     transversal.PointLiesOnAndBetweenEndpoints(nonTransversalThat.Point2))
             {
                 standsOnBottom = this;
                 standsOnTop = thatInter;
@@ -302,7 +302,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point intersection = transversal.FindIntersection(new Segment(thisNonCollinear, thatNonCollinear));
 
             // S-shape
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // PI-Shape
             return new KeyValuePair<Point, Point>(thisNonCollinear, thatNonCollinear);            
@@ -351,7 +351,7 @@ namespace GeometryTutorLib.ConcreteAST
             Segment crossingTester = new Segment(offStands, offEndpoint);
             Point intersection = transversal.FindIntersection(crossingTester);
             
-            return transversal.PointIsOnAndBetweenEndpoints(intersection) ? new KeyValuePair<Point, Point>(offEndpoint, offStands) : nullPair;
+            return transversal.PointLiesOnAndBetweenEndpoints(intersection) ? new KeyValuePair<Point, Point>(offEndpoint, offStands) : nullPair;
         }
 
         //
@@ -404,7 +404,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point intersection = transversal.FindIntersection(crossingTester);
 
             // F-Shape
-            if (!transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (!transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // Desired Leaner shape
             return new KeyValuePair<Point, Point>(tipEndpoint, tipStands);
@@ -439,7 +439,7 @@ namespace GeometryTutorLib.ConcreteAST
             Point intersection = transversal.FindIntersection(new Segment(thisNonCollinear, thatNonCollinear));
 
             // PI-shape
-            if (!transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (!transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // S-Shape
             return new KeyValuePair<Point, Point>(thisNonCollinear, thatNonCollinear);
@@ -471,15 +471,15 @@ namespace GeometryTutorLib.ConcreteAST
             Segment parallelThis = this.OtherSegment(transversal);
             Segment parallelThat = thatInter.OtherSegment(transversal);
 
-            Point offThis = transversal.PointIsOnAndBetweenEndpoints(parallelThis.Point1) ? parallelThis.Point2 : parallelThis.Point1;
-            Point offThat = transversal.PointIsOnAndBetweenEndpoints(parallelThat.Point1) ? parallelThat.Point2 : parallelThat.Point1;
+            Point offThis = transversal.PointLiesOnAndBetweenEndpoints(parallelThis.Point1) ? parallelThis.Point2 : parallelThis.Point1;
+            Point offThat = transversal.PointLiesOnAndBetweenEndpoints(parallelThat.Point1) ? parallelThat.Point2 : parallelThat.Point1;
 
             // Avoid C-like scenario
             Segment crossingTester = new Segment(offThis, offThat);
             Point intersection = transversal.FindIntersection(crossingTester);
 
             // C-shape
-            if (!transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (!transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // S-Shape
             return new KeyValuePair<Point, Point>(offThis, offThat);
@@ -511,8 +511,8 @@ namespace GeometryTutorLib.ConcreteAST
             Segment parallelThis = this.OtherSegment(transversal);
             Segment parallelThat = thatInter.OtherSegment(transversal);
 
-            Point offThis = transversal.PointIsOnAndBetweenEndpoints(parallelThis.Point1) ? parallelThis.Point2 : parallelThis.Point1;
-            Point offThat = transversal.PointIsOnAndBetweenEndpoints(parallelThat.Point1) ? parallelThat.Point2 : parallelThat.Point1;
+            Point offThis = transversal.PointLiesOnAndBetweenEndpoints(parallelThis.Point1) ? parallelThis.Point2 : parallelThis.Point1;
+            Point offThat = transversal.PointLiesOnAndBetweenEndpoints(parallelThat.Point1) ? parallelThat.Point2 : parallelThat.Point1;
 
             // Avoid S-shape scenario
             Segment crossingTester = new Segment(offThis, offThat);
@@ -522,7 +522,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (crossingTester.IsParallelWith(transversal)) return new KeyValuePair<Point, Point>(offThis, offThat);
 
             // S-shape
-            if (transversal.PointIsOnAndBetweenEndpoints(intersection)) return nullPair;
+            if (transversal.PointLiesOnAndBetweenEndpoints(intersection)) return nullPair;
 
             // C-Shape
             return new KeyValuePair<Point, Point>(offThis, offThat);
@@ -568,18 +568,18 @@ namespace GeometryTutorLib.ConcreteAST
             // |     |
             // this is leftInter
             Point bottomTip = null;
-            if (transversal.PointIsOn(thisTipOfT))
+            if (transversal.PointLiesOn(thisTipOfT))
             {
-                if (transversal.PointIsOnAndBetweenEndpoints(thisTipOfT)) return nullPair;
+                if (transversal.PointLiesOnAndBetweenEndpoints(thisTipOfT)) return nullPair;
 
                 leftInter = this;
                 bottomInter = thatInter;
                 bottomTip = thisTipOfT;
             }
             // thatInter is leftInter
-            else if (transversal.PointIsOn(thatTipOfT))
+            else if (transversal.PointLiesOn(thatTipOfT))
             {
-                if (transversal.PointIsOnAndBetweenEndpoints(thatTipOfT)) return nullPair;
+                if (transversal.PointLiesOnAndBetweenEndpoints(thatTipOfT)) return nullPair;
 
                 leftInter = thatInter;
                 bottomInter = this;
@@ -595,7 +595,7 @@ namespace GeometryTutorLib.ConcreteAST
             Segment crossingTester = new Segment(parallelLeft.Point1, bottomTip);
             Point intersection = transversal.FindIntersection(crossingTester);
 
-            Point off = transversal.PointIsOnAndBetweenEndpoints(intersection) ? parallelLeft.Point2 : parallelLeft.Point1;
+            Point off = transversal.PointLiesOnAndBetweenEndpoints(intersection) ? parallelLeft.Point2 : parallelLeft.Point1;
 
             return new KeyValuePair<Point, Point>(off, bottomTip);
         }
@@ -623,8 +623,8 @@ namespace GeometryTutorLib.ConcreteAST
             Segment transversal = this.AcquireTransversal(thatInter);
 
             // The tips of the intersections must be within the transversal (at the endpoint) for an H
-            if (!transversal.PointIsOnAndBetweenEndpoints(thisTipOfT)) return false;
-            if (!transversal.PointIsOnAndBetweenEndpoints(thatTipOfT)) return false;
+            if (!transversal.PointLiesOnAndBetweenEndpoints(thisTipOfT)) return false;
+            if (!transversal.PointLiesOnAndBetweenEndpoints(thatTipOfT)) return false;
 
             return true;
         }
@@ -656,11 +656,11 @@ namespace GeometryTutorLib.ConcreteAST
             Segment transversal = this.AcquireTransversal(thatInter);
 
             // We have an H-Shape if the tips of the intersections are at the endpoints of the transversal
-            if (transversal.PointIsOnAndBetweenEndpoints(thisTipOfT) && transversal.PointIsOnAndBetweenEndpoints(thatTipOfT)) return nullPair;
+            if (transversal.PointLiesOnAndBetweenEndpoints(thisTipOfT) && transversal.PointLiesOnAndBetweenEndpoints(thatTipOfT)) return nullPair;
 
             Intersection retInter = null;
             Point off = null;
-            if (transversal.PointIsOnAndBetweenEndpoints(thisTipOfT))
+            if (transversal.PointLiesOnAndBetweenEndpoints(thisTipOfT))
             {
                 retInter = thatInter;
                 off = thatTipOfT;
@@ -716,8 +716,8 @@ namespace GeometryTutorLib.ConcreteAST
             Segment transversal = this.AcquireTransversal(thatInter);
             Segment transversalEndpoint = endpointInter.GetCollinearSegment(transversal);
 
-            if (transversal.PointIsOnAndBetweenEndpoints(transversalEndpoint.Point1) &&
-                transversal.PointIsOnAndBetweenEndpoints(transversalEndpoint.Point2)) return nullPair;
+            if (transversal.PointLiesOnAndBetweenEndpoints(transversalEndpoint.Point1) &&
+                transversal.PointLiesOnAndBetweenEndpoints(transversalEndpoint.Point2)) return nullPair;
 
             //
             // Acquire the returning points
@@ -769,7 +769,7 @@ namespace GeometryTutorLib.ConcreteAST
             Segment transversal = this.AcquireTransversal(thatInter);
 
             Segment parallelStands = standsInter.OtherSegment(transversal);
-            Point offStands = transversal.PointIsOn(parallelStands.Point1) ? parallelStands.Point2 : parallelStands.Point1;
+            Point offStands = transversal.PointLiesOn(parallelStands.Point1) ? parallelStands.Point2 : parallelStands.Point1;
 
             Segment transversalCross = crossingInter.GetCollinearSegment(transversal);
             Point offCross = Segment.Between(crossingInter.intersect, transversalCross.Point1, standsInter.intersect) ? transversalCross.Point1 : transversalCross.Point2; 
@@ -821,7 +821,7 @@ namespace GeometryTutorLib.ConcreteAST
             //        |_____
             //        |
             //        |
-            if (!transversal.PointIsOn(standsInter.CreatesTShape())) return null;
+            if (!transversal.PointLiesOn(standsInter.CreatesTShape())) return null;
             
             // Success, we have the desired shape
             // Acquire return point: offCross
@@ -875,7 +875,7 @@ namespace GeometryTutorLib.ConcreteAST
             //  ______|______
             //        |
             //   _____|_____
-            if (transversal.PointIsOn(standsInter.CreatesTShape())) return null;
+            if (transversal.PointLiesOn(standsInter.CreatesTShape())) return null;
 
             // Success, we have the desired shape
             // Acquire return point
@@ -972,7 +972,7 @@ namespace GeometryTutorLib.ConcreteAST
             else if (this.StandsOn())
             {
                 Point off = this.CreatesTShape();
-                Segment baseSegment = lhs.PointIsOnAndExactlyBetweenEndpoints(off) ? lhs : rhs;
+                Segment baseSegment = lhs.PointLiesOnAndExactlyBetweenEndpoints(off) ? lhs : rhs;
 
                 if (thatAngle.Equates(new Angle(baseSegment.Point1, intersect, off))) return true;
                 if (thatAngle.Equates(new Angle(baseSegment.Point2, intersect, off))) return true;

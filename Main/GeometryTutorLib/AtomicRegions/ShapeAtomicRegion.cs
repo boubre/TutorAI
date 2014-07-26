@@ -16,6 +16,11 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             connections = f.MakeAtomicConnections();
         }
 
+        public void ReshapeForStrenghthening(Figure f)
+        {
+            shape = f;
+        }
+
         // Can the area of this region be calcualted?
         public override bool IsComputableArea() { return true; }
         public override double GetArea(KnownMeasurementsAggregator known)

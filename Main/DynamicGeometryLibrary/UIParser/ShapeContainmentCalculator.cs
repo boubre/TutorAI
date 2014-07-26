@@ -62,7 +62,7 @@ namespace LiveGeometry.TutorParser
                             circle.AddSubFigure(poly);
                             poly.AddSuperFigure(circle);
                         }
-                        else if (poly.ContainsCircle(circle))
+                        else if (poly.Contains(circle))
                         {
                             poly.AddSubFigure(circle);
                             circle.AddSuperFigure(poly);
@@ -91,12 +91,12 @@ namespace LiveGeometry.TutorParser
                         {
                             if (s1 != s2 || p1 != p2)
                             {
-                                if (implied.polygons[s1][p1].ContainsPolygon(implied.polygons[s2][p2]))
+                                if (implied.polygons[s1][p1].Contains(implied.polygons[s2][p2]))
                                 {
                                     implied.polygons[s1][p1].AddSubFigure(implied.polygons[s2][p2]);
                                     implied.polygons[s2][p2].AddSuperFigure(implied.polygons[s1][p1]);
                                 }
-                                else if (implied.polygons[s2][p2].ContainsPolygon(implied.polygons[s1][p1]))
+                                else if (implied.polygons[s2][p2].Contains(implied.polygons[s1][p1]))
                                 {
                                     implied.polygons[s2][p2].AddSubFigure(implied.polygons[s1][p1]);
                                     implied.polygons[s1][p1].AddSuperFigure(implied.polygons[s2][p2]);

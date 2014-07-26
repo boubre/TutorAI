@@ -36,7 +36,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             // Add all the shapes to the worklist.
             foreach(Figure fig in figures)
             {
-                ShapeRegion r = new ShapeRegion(fig.atoms, fig);
+                ShapeRegion r = new ShapeRegion(fig);
 
                 shapeRegions.Add(r);
 

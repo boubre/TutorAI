@@ -10,7 +10,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
     /// </summary>
     public static class KnownValueAcquisition
     {
-        public static KnownMeasurementsAggregator AcquireAllKnownValues(KnownMeasurementsAggregator known, List<GroundedClause> clauses)
+        public static KnownMeasurementsAggregator AcquireAllKnownValues(KnownMeasurementsAggregator known, List<GroundedClause> congsEqs, List<GroundedClause> triangles)
         {
             //
             // Fixed-point acquisition of values using congruences and equations.
@@ -18,9 +18,12 @@ namespace GeometryTutorLib.Area_Based_Analyses
             bool change = true;
             while(change)
             {
-                change = AcquireCongruences(known, clauses);
+                change = AcquireCongruences(known, congsEqs);
 
-                change = AcquireViaEquations(known, clauses) || change;
+                // Pythagorean Theorem
+                change = AcquireViaTriangles(known, triangles) || change;
+
+                change = AcquireViaEquations(known, congsEqs) || change;
             }
 
             return known;
@@ -64,6 +67,46 @@ namespace GeometryTutorLib.Area_Based_Analyses
                         if (known.AddAngleMeasureDegree(cas.ca1, measure2)) addedKnown = true;
                     }
                     // else: both known
+                }
+            }
+
+            return addedKnown;
+        }
+
+        //
+        // A right triangle means we can apply the pythagorean theorem to acquire an unknown.
+        //
+        private static bool HandleTriangle(KnownMeasurementsAggregator known, Triangle tri)
+        {
+            if (tri == null) return false; 
+
+            KeyValuePair<Segment, double> pair = tri.PythagoreanTheoremApplies(known);
+
+            if (pair.Value > 0)
+            {
+                known.AddSegmentLength(pair.Key, pair.Value);
+                return true;
+            }
+
+            return false;
+        }
+        private static bool AcquireViaTriangles(KnownMeasurementsAggregator known, List<GroundedClause> triangles)
+        {
+            bool addedKnown = false;
+
+            foreach (GroundedClause clause in triangles)
+            {
+                if (clause is Triangle)
+                {
+                    addedKnown = HandleTriangle(known, clause as Triangle) || addedKnown;
+                }
+                else if (clause is Strengthened)
+                {
+                    Strengthened streng = clause as Strengthened;
+                    if (streng.strengthened is Triangle)
+                    {
+                        addedKnown = HandleTriangle(known, streng.strengthened as Triangle) || addedKnown;
+                    }
                 }
             }
 

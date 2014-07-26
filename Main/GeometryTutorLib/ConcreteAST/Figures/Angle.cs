@@ -185,8 +185,8 @@ namespace GeometryTutorLib.ConcreteAST
             //     |
             //  x  |_____
             // Is the point on either ray such that it is outside the angle? (x in the image above)
-            if (ray1.PointIsOn(pt) && Segment.Between(pt, GetVertex(), ray1.OtherPoint(GetVertex()))) return true;
-            if (ray2.PointIsOn(pt) && Segment.Between(pt, GetVertex(), ray2.OtherPoint(GetVertex()))) return true;
+            if (ray1.PointLiesOn(pt) && Segment.Between(pt, GetVertex(), ray1.OtherPoint(GetVertex()))) return true;
+            if (ray2.PointLiesOn(pt) && Segment.Between(pt, GetVertex(), ray2.OtherPoint(GetVertex()))) return true;
 
             Angle newAngle1 = new Angle(A, GetVertex(), pt);
             Angle newAngle2 = new Angle(C, GetVertex(), pt);
@@ -202,8 +202,8 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool IsOnInteriorExplicitly(Point pt)
         {
-            if (ray1.PointIsOn(pt)) return false;
-            if (ray2.PointIsOn(pt)) return false;
+            if (ray1.PointLiesOn(pt)) return false;
+            if (ray2.PointLiesOn(pt)) return false;
 
             Angle newAngle1 = new Angle(A, GetVertex(), pt);
             Angle newAngle2 = new Angle(C, GetVertex(), pt);
@@ -230,9 +230,9 @@ namespace GeometryTutorLib.ConcreteAST
             if (seg.HasPoint(A) && seg.HasPoint(C)) return B;
             if (seg.HasPoint(B) && seg.HasPoint(C)) return A;
 
-            if (seg.PointIsOn(A) && seg.PointIsOn(B)) return C;
-            if (seg.PointIsOn(A) && seg.PointIsOn(C)) return B;
-            if (seg.PointIsOn(B) && seg.PointIsOn(C)) return A;
+            if (seg.PointLiesOn(A) && seg.PointLiesOn(B)) return C;
+            if (seg.PointLiesOn(A) && seg.PointLiesOn(C)) return B;
+            if (seg.PointLiesOn(B) && seg.PointLiesOn(C)) return A;
 
             return null;
         }
@@ -495,7 +495,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public bool CoordinateAngleBisector(Segment thatSegment)
         {
-            if (!thatSegment.PointIsOnAndBetweenEndpoints(this.GetVertex())) return false;
+            if (!thatSegment.PointLiesOnAndBetweenEndpoints(this.GetVertex())) return false;
 
             if (thatSegment.IsCollinearWith(this.ray1) || thatSegment.IsCollinearWith(this.ray2)) return false;
 

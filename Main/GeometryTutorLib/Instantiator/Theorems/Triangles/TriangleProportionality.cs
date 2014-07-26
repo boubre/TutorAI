@@ -181,8 +181,8 @@ namespace GeometryTutorLib.GenericInstantiator
             else return newGrounded;
 
             // Verify the opposing parts of the T are on the opposite sides of the triangle
-            if (!triangleSide1.PointIsOnAndExactlyBetweenEndpoints(off2)) return newGrounded;
-            if (!triangleSide2.PointIsOnAndExactlyBetweenEndpoints(off1)) return newGrounded;
+            if (!triangleSide1.PointLiesOnAndExactlyBetweenEndpoints(off2)) return newGrounded;
+            if (!triangleSide2.PointLiesOnAndExactlyBetweenEndpoints(off1)) return newGrounded;
 
             //
             // Construct the new proprtional relationship and resultant equation

@@ -37,10 +37,33 @@ namespace GeometryTutorLib.ConcreteAST
 
             provenIsosceles = true;
             provenEquilateral = true;
+
+            // Need to capture all owners as well; if a triangle is strengthened.
+            this.AddAtomicRegions(t.atoms);
+            this.GetFigureAsAtomicRegion().AddOwners(t.GetFigureAsAtomicRegion().owners);
         }
         public EquilateralTriangle(List<Segment> segs) : this(segs[0], segs[1], segs[2])
         {
             if (segs.Count != 3) throw new ArgumentException("Equilateral Triangle constructed with " + segs.Count + " segments.");
+        }
+
+        public override bool IsStrongerThan(Polygon that)
+        {
+            if (that is EquilateralTriangle) return false;
+            if (that is IsoscelesTriangle) return true;
+            if (that is RightTriangle) return false;
+            if (that is Triangle)
+            {
+                Triangle tri = that as Triangle;
+
+                if (tri.provenIsosceles) return true;
+                if (tri.provenEquilateral) return false;
+                if (tri.provenRight) return false;
+
+                return true;
+            }
+
+            return false;
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
