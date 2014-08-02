@@ -165,15 +165,10 @@ namespace DynamicGeometry.UI.RegionShading
             }
 
             Point logical = ToLogical(cs, pt);
-            // public virtual bool PointLiesInOrOn(Point pt)
-            //FOR NOW: USE THIS
-            ShapeAtomicRegion sar = Region as ShapeAtomicRegion;
-            GeometryTutorLib.ConcreteAST.Polygon shape = sar.shape as GeometryTutorLib.ConcreteAST.Polygon;
-            if (shape == null || !shape.IsInPolygon(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
+            if (!Region.PointLiesOnOrInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
             {
                 return false;
             }
-            //END FOR NOW
 
             return true;
         }
