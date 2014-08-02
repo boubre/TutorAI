@@ -73,5 +73,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             return "ShapeAtom: (" + shape.ToString() + ")";
         }
+
+        public override string CheapPrettyString()
+        {
+            return shape.CheapPrettyString();
+        }
     }
 }

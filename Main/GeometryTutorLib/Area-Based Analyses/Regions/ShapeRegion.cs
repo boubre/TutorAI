@@ -65,5 +65,10 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             return str + " } }";
         }
+
+        public override string CheapPrettyString()
+        {
+            return shape.CheapPrettyString();
+        }
     }
 }

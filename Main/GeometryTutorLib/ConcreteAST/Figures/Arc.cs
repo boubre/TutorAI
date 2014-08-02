@@ -75,7 +75,6 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
-        public abstract bool PointLiesOn(Point pt);
         public abstract bool PointLiesStrictlyOn(Point pt);
         public abstract bool HasSubArc(Arc that);
 

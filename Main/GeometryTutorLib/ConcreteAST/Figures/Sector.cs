@@ -113,7 +113,7 @@ namespace GeometryTutorLib.ConcreteAST
             return false;
         }
 
-        public virtual bool PointLiesInOrOn(Point pt)
+        public override bool PointLiesInOrOn(Point pt)
         {
             if (pt == null) return false;
 
@@ -264,5 +264,11 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         public override string ToString() { return "Sector(" + theArc + ")"; }
+
+        public override string CheapPrettyString()
+        {
+            return (theArc is MajorArc ? "Major" : "Minor") + "Sector(" +
+                   theArc.endpoint1.SimpleToString() + theArc.theCircle.center.CheapPrettyString() + theArc.endpoint2.SimpleToString() + ")";
+        }
     }
 }
