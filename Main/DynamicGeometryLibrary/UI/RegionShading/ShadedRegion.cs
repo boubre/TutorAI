@@ -165,7 +165,7 @@ namespace DynamicGeometry.UI.RegionShading
             }
 
             Point logical = ToLogical(cs, pt);
-            if (!Region.PointLiesOnOrInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
+            if (!Region.PointLiesInOrOn(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
             {
                 return false;
             }
