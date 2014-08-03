@@ -167,6 +167,37 @@ namespace DynamicGeometry
             }
         }
 
+        private bool mEnabled = true;
+        public bool Enabled
+        {
+            get
+            {
+                return mEnabled;
+            }
+            set
+            {
+                if (mEnabled == value)
+                {
+                    return;
+                }
+                else
+                {
+                    mEnabled = value;
+                }
+
+                if (mEnabled)
+                {
+                    //icon
+                    icon.Opacity = 1.0;
+                }
+                else
+                {
+                    //gray icon
+                    icon.Opacity = .2;
+                }
+            }
+        }
+
         public virtual object PropertyBag
         {
             get
@@ -266,7 +297,7 @@ namespace DynamicGeometry
         {
             try
             {
-                KeyDown(sender, e);
+                if (Enabled) KeyDown(sender, e);
             }
             catch (Exception ex)
             {
@@ -278,7 +309,7 @@ namespace DynamicGeometry
         {
             try
             {
-                KeyUp(sender, e);
+                if (Enabled) KeyUp(sender, e);
             }
             catch (Exception ex)
             {
@@ -290,7 +321,7 @@ namespace DynamicGeometry
         {
             try
             {
-                MouseDown(sender, e);
+                if (Enabled) MouseDown(sender, e);
             }
             catch (Exception ex)
             {
@@ -307,7 +338,7 @@ namespace DynamicGeometry
             }
             try
             {
-                MouseMove(sender, e);
+                if (Enabled) MouseMove(sender, e);
             }
             catch (Exception ex)
             {
@@ -321,7 +352,7 @@ namespace DynamicGeometry
             errorHappened = false;
             try
             {
-                MouseUp(sender, e);
+                if (Enabled) MouseUp(sender, e);
             }
             catch (Exception ex)
             {
