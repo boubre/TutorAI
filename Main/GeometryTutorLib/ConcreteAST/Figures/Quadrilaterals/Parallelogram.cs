@@ -67,12 +67,5 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         public override int GetHashCode() { return base.GetHashCode(); }
-
-        public override string CheapPrettyString()
-        {
-            StringBuilder str = new StringBuilder();
-            foreach (Point pt in points) str.Append(pt.CheapPrettyString());
-            return "Parallelogram(" + str.ToString() + ")";
-        }
     }
 }

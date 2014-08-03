@@ -60,7 +60,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 // Cutoff counter; seek a bunch of equations in sequence.
                 //
-                int NUMEQUATIONS_FOR_CUTOFF = 50;
+                int NUMEQUATIONS_FOR_CUTOFF = 30;
 
                 if (clause is Equation || clause.IsAlgebraic()) numSequentialEquations++;
                 else numSequentialEquations = 0;

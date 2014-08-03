@@ -87,7 +87,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             return false;
         }
-        public override bool PointLiesOn(Point pt)
+        public bool PointLiesOn(Point pt)
         {
             foreach (Segment side in orderedSides)
             {
@@ -212,20 +212,6 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 str.Append(points[p].ToString());
                 if (p < points.Count - 1) str.Append(", ");
-            }
-            str.Append(")");
-
-            return str.ToString();
-        }
-
-        public override string CheapPrettyString()
-        {
-            StringBuilder str = new StringBuilder();
-
-            str.Append("Polygon(");
-            for (int p = 0; p < points.Count; p++)
-            {
-                str.Append(points[p].CheapPrettyString());
             }
             str.Append(")");
 

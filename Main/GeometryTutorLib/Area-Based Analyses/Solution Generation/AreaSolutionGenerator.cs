@@ -39,22 +39,6 @@ namespace GeometryTutorLib.Area_Based_Analyses
         }
 
         //
-        // Count the number of calculable regions.
-        //
-        public int GetNumComputable()
-        {
-            return solutions.GetNumComputable();
-        }
-
-        //
-        // Count the number of calculable regions.
-        //
-        public int GetNumIncomputable()
-        {
-            return solutions.GetNumIncomputable();
-        }
-
-        //
         // Catalyst routine to the recursive solver: returns solution equation and actual area.
         //
         public void SolveAll(KnownMeasurementsAggregator known)

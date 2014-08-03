@@ -150,13 +150,8 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Do these congruences apply to this triangle?
             //
-            if (!tri.HasSegment(cs1.cs1) || !tri.HasSegment(cs1.cs2)) return newGrounded;
-            if (!tri.HasSegment(cs2.cs1) || !tri.HasSegment(cs2.cs2)) return newGrounded;
-
-            //
-            // These cannot be reflexive congruences.
-            //
-            if (cs1.IsReflexive() || cs2.IsReflexive()) return newGrounded;
+            if (!tri.HasSegment(cs1.cs1) && !tri.HasSegment(cs1.cs2)) return newGrounded;
+            if (!tri.HasSegment(cs2.cs1) && !tri.HasSegment(cs2.cs2)) return newGrounded;
 
             //
             // Are the non-shared segments unique?

@@ -4,9 +4,9 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTestbed
 {
-    public class Page2Prob15 : ActualShadedAreaProblem
+    public class Page2prob15 : ActualShadedAreaProblem
     {
-        public Page2Prob15(bool onoff, bool complete) : base(onoff, complete)
+        public Page2prob15(bool onoff, bool complete) : base(onoff, complete)
         {
             Point o = new Point("O", 0, 0); points.Add(o);
             Point a = new Point("A", 0, 4); points.Add(a);
@@ -14,8 +14,6 @@ namespace GeometryTestbed
 
             Segment oa = new Segment(o, a); segments.Add(oa);
             Segment ob = new Segment(o, b); segments.Add(ob);
-
-            Segment ab = new Segment(a, b); segments.Add(ab);
 
             circles.Add(new Circle(o, 4.0));
 

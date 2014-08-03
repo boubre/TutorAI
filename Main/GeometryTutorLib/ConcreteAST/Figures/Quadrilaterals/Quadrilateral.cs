@@ -691,12 +691,5 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return SplitTriangleArea(known);
         }
-
-        public override string CheapPrettyString()
-        {
-            StringBuilder str = new StringBuilder();
-            foreach (Point pt in points) str.Append(pt.CheapPrettyString());
-            return "Quad(" + str.ToString() + ")";
-        }
     }
 }

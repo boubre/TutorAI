@@ -862,22 +862,5 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
             return str.ToString();
         }
-
-        public virtual string CheapPrettyString()
-        {
-            StringBuilder str = new StringBuilder();
-
-            str.Append("{");
-
-            for (int c = 0; c < connections.Count; c++)
-            {
-                str.Append(connections[c].CheapPrettyString());
-                if (c < connections.Count - 1) str.Append(", ");
-            }
-
-            str.Append("}");
-
-            return str.ToString();
-        }
     }
 }

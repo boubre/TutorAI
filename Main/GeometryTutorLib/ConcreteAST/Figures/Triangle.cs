@@ -1132,30 +1132,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 str.Append("Right ");
             }
-            str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") ");
-            return str.ToString();
-        }
-
-        public override string CheapPrettyString()
-        {
-            StringBuilder str = new StringBuilder();
-
-            if (provenEquilateral || this is EquilateralTriangle)
-            {
-                str.Append("Eq");
-            }
-            else if (provenIsosceles || this is IsoscelesTriangle)
-            {
-                str.Append("Iso");
-            }
-
-            if (provenRight || this is RightTriangle)
-            {
-                str.Append("Right");
-            }
-
-            str.Append("Tri(" + Point1.CheapPrettyString() + Point2.CheapPrettyString() + Point3.CheapPrettyString() + ")");
-
+            str.Append("Triangle(" + Point1.ToString() + ", " + Point2.ToString() + ", " + Point3.ToString() + ") " + justification);
             return str.ToString();
         }
     }

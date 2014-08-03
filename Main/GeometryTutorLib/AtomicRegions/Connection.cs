@@ -42,11 +42,6 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return "< " + endpoint1.name + ", " + endpoint2.name + "(" + type + ") >";
         }
 
-        public string CheapPrettyString()
-        {
-            return (type == ConnectionType.SEGMENT ? "Seg(" : "Arc(") + endpoint1.CheapPrettyString() + endpoint2.SimpleToString() + ")";
-        }
-
         public bool StructurallyEquals(Connection that)
         {
             if (!this.HasPoint(that.endpoint1) || !this.HasPoint(that.endpoint2)) return false;

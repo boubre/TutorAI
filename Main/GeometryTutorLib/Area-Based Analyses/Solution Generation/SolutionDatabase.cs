@@ -61,37 +61,6 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return new List<SolutionAgg>(extendedSolutions.Values);
         }
 
-        public int GetNumComputable()
-        {
-            int computable = 0;
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in rootSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE) computable++;
-            }
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in extendedSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE) computable++;
-            }
-
-            return computable;
-        }
-
-        public int GetNumIncomputable()
-        {
-            int incomputable = 0;
-
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in rootSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.INCOMPUTABLE) incomputable++;
-            }
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in extendedSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.INCOMPUTABLE) incomputable++;
-            }
-
-            return incomputable;
-        }
-
         //
         // Acquire a single solution equation and area value.
         //
