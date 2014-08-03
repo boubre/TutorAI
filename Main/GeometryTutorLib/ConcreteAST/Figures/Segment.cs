@@ -150,7 +150,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Use point-slope form to determine if the given point is on the line
         //
-        public bool PointLiesOn(Point thatPoint)
+        public override bool PointLiesOn(Point thatPoint)
         {
             // If the segments are vertical, just compare the X values of one point of each
             if (this.IsVertical())

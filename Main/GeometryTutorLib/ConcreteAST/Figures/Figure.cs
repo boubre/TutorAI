@@ -54,7 +54,7 @@ namespace GeometryTutorLib.ConcreteAST
         public Polygon polygonalized { get; protected set; }
         public List<AtomicRegion> atoms { get; protected set; }
         public virtual Polygon GetPolygonalized() { return null; }
-
+        public virtual string CheapPrettyString() { return "TBD"; }
 
         //
         // Shape hierarchy for shaded region solution / problem synthesis.

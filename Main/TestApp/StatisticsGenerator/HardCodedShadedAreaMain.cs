@@ -83,7 +83,7 @@ namespace LiveGeometry.TutorParser
             Pebble();
 
 // Define in Properties->Build->Compilation Symbols to turn off this section
-#if ATOMIC_REGION_OFF
+#if !ATOMIC_REGION_OFF
 
             //
             // Acquire the list of strengthened (pebbled) polygon nodes.
@@ -110,11 +110,17 @@ namespace LiveGeometry.TutorParser
             // Acquire a single solution for this specific problem for validation purposes.
             KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = solutionAreaGenerator.GetSolution(goalRegions);
 
-            Debug.WriteLine(result.Key.ToString());
-            Debug.WriteLine(" = " + result.Value);
+            Debug.WriteLine("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
 
             // Validate that calculated area value matches the value from the hard-coded problem.
             Validate(result.Key, result.Value);
+
+            figureStats.numCalculableRegions = solutionAreaGenerator.GetNumComputable();
+            figureStats.numIncalculableRegions = solutionAreaGenerator.GetNumIncomputable();
+
+            Debug.WriteLine("Calculable Regions: " + figureStats.numCalculableRegions);
+            Debug.WriteLine("Incalculable Regions: " + figureStats.numIncalculableRegions);
+            Debug.WriteLine("Total:                " + (figureStats.numCalculableRegions +  figureStats.numIncalculableRegions));
 #endif
 
             // Stop timing before we generate all of the statistics

@@ -639,7 +639,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Determine if the given point is on the circle via substitution into (x1 - x2)^2 + (y1 - y2)^2 = r^2
         //
-        public bool PointLiesOn(Point pt)
+        public override bool PointLiesOn(Point pt)
         {
             return Utilities.CompareValues(Math.Pow(center.X - pt.X, 2) + Math.Pow(center.Y - pt.Y, 2), Math.Pow(this.radius, 2));
         }
@@ -962,6 +962,11 @@ namespace GeometryTutorLib.ConcreteAST
         public override string ToString()
         {
             return "Circle(" + this.center + ": r = " + this.radius + ")";
+        }
+
+        public override string CheapPrettyString()
+        {
+            return "Circle(" + this.center.SimpleToString() + ")";
         }
 
         public List<Area_Based_Analyses.Atomizer.AtomicRegion> Atomize(List<Point> figurePoints)

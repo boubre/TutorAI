@@ -118,5 +118,18 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             return str + " }";
         }
+
+        public virtual string CheapPrettyString()
+        {
+            string str = "{ ";
+
+            for (int a = 0; a < atoms.Count; a++)
+            {
+                str += atoms[a].CheapPrettyString();
+                if (a < atoms.Count - 1) str += ", ";
+            }
+
+            return str + " }";
+        }
     }
 }

@@ -76,6 +76,11 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return target.ToString() + " = \n" + expr.ToString();
         }
 
+        public string CheapPrettyString()
+        {
+            return target.CheapPrettyString() + " = " + expr.CheapPrettyString();
+        }
+
         public int Length
         {
             get
@@ -128,6 +133,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             public abstract Expr Substitute(Region toFind, Expr toSub);
             public abstract int NumRegions();
             public abstract double GetArea();
+            public abstract string CheapPrettyString();
         }
 
         public class Unary : Expr
@@ -139,6 +145,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             public override Expr Copy() { return new Unary(this); }
             public override Expr Substitute(Region toFind, Expr toSub) { return theRegion.Equals(toFind) ? toSub : this; }
             public override string ToString() { return theRegion.ToString(); }
+            public override string CheapPrettyString() { return theRegion.CheapPrettyString(); }
             public override int NumRegions() { return 1; }
             public override double GetArea() { return theRegion.GetKnownArea(); }
         }
@@ -169,7 +176,13 @@ namespace GeometryTutorLib.Area_Based_Analyses
             {
                 string operation = op == OperationT.ADDITION ? "+" : "-";
 
-                return "(" + leftExp.ToString() + operation + "\n" + rightExp.ToString() + ")"; 
+                return "(" + leftExp.ToString() + operation + rightExp.ToString() + ")"; 
+            }
+            public override string CheapPrettyString()
+            {
+                string operation = op == OperationT.ADDITION ? "+" : "-";
+
+                return "(" + leftExp.CheapPrettyString() + " " + operation + " " + rightExp.CheapPrettyString() + ")";
             }
             public override int NumRegions() { return leftExp.NumRegions() + rightExp.NumRegions(); }
 

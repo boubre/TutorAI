@@ -152,5 +152,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "SemiCircle(" + theCircle + "(" + endpoint1.ToString() + ", " + middlePoint.ToString() + ", " + endpoint2.ToString() + "), Diameter(" + diameter + "))";
         }
+
+        public override string CheapPrettyString()
+        {
+            return "Semicircle(" + endpoint1.SimpleToString() + middlePoint.SimpleToString() + endpoint2.SimpleToString() + ")";
+        }
     }
 }

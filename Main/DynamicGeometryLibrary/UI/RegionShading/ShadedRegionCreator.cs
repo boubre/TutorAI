@@ -36,6 +36,7 @@ namespace DynamicGeometry.UI.RegionShading
             return new Image() { Source = source, Stretch = Stretch.None };
         }
 
+        private System.Collections.Generic.List<AtomicRegion> atoms = null;
         public override void MouseDown(object sender, MouseButtonEventArgs e)
         {
             //
@@ -57,11 +58,32 @@ namespace DynamicGeometry.UI.RegionShading
 
             foreach (AtomicRegion ar in atoms)
             {
+<<<<<<< HEAD
                 if (ar.PointLiesInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
                 {
                     ShadedRegion sr = ShadedRegion.CreateAndAdd(ar, logicalPt);
                     Image img = sr.Draw(Drawing, ShadedRegion.COLORS[0], ShadedRegion.COLORS[1]);
                     Drawing.Canvas.Children.Add(img);
+=======
+                ShapeAtomicRegion sar = ar as ShapeAtomicRegion;
+                if (sar != null)
+                {
+                    if (sar.PointLiesInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
+                    {
+                        ShadedRegion sr = ShadedRegion.CreateAndAdd(sar, logicalPt);
+                        Image img = sr.Draw(Drawing, ShadedRegion.COLORS[0], ShadedRegion.COLORS[1]);
+                        Drawing.Canvas.Children.Add(img);
+                    }
+                }
+                else // (ar is AtomicRegion)
+                {
+                    if (ar.PointLiesInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
+                    {
+                        ShadedRegion sr = ShadedRegion.CreateAndAdd(sar, logicalPt);
+                        Image img = sr.Draw(Drawing, ShadedRegion.COLORS[0], ShadedRegion.COLORS[1]);
+                        Drawing.Canvas.Children.Add(img);
+                    }
+>>>>>>> parent of 1707faf... Revert "General Shaded Solution Generator Updates"
                 }
             }
         }
