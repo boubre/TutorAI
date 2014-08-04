@@ -197,6 +197,12 @@ namespace LiveGeometry.TutorParser
             // Atomic region identification
             //
             atomicRegions = AtomicRegionIdentifier.AtomicIdentifierMain.GetAtomicRegions(allFigurePoints, circles, polygons);
+
+            foreach (AtomicRegion atom in atomicRegions)
+            {
+                GeometryTutorLib.ConcreteAST.Polygon poly = atom.GetPolygonalized();
+                Debug.WriteLine(poly);
+            }
 #endif
         }        
 

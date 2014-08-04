@@ -212,7 +212,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return false;
         }
 
-        public bool PointLiesOn(Point pt)
+        public virtual bool PointLiesOn(Point pt)
         {
             if (pt == null) return false;
 

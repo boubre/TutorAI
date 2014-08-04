@@ -36,7 +36,7 @@ namespace GeometryTestbed
             // Class X
             //
             //problems.Add(new Page1Col2Prob3(true, false));         // GTG
-            //problems.Add(new Page2Col1Prob2(true, false));         // GTG
+            problems.Add(new Page2Col1Prob2(true, false));         // GTG
             //problems.Add(new Page2Col2Prob2(true, false));         // GTG
 
             // problems.Add(new Page1Col1Prob5(true, false));

@@ -93,8 +93,8 @@ namespace DynamicGeometry.UI.RegionShading
         public Image Draw(Drawing drawing, int color1, int color2)
         {
             //These next two lines are temporary
-            ShapeAtomicRegion sar = Region as ShapeAtomicRegion;
-            if (sar == null) return null;
+            //AtomicRegion sar = Region as AtomicRegion;
+            //if (sar == null) return null;
 
             CoordinateSystem cs = drawing.CoordinateSystem;
             WriteableBitmap bmp = new WriteableBitmap((int)cs.PhysicalSize.X, (int)cs.PhysicalSize.Y);
@@ -127,23 +127,43 @@ namespace DynamicGeometry.UI.RegionShading
              * NOTE: May be able to speed up by reducing the number of isInRegion tests.
              */
             Stack<Point> toCheck = new Stack<Point>();
+            List<Point> checkedPoints = new List<Point>();
+
             toCheck.Push(start);
 
             while (toCheck.Count > 0) //Simulated Recursion
             {
                 Point pt = toCheck.Pop();
 
+                checkedPoints.Add(pt);
+
                 if (Test(bmp, pt, cs))
                 {
                     //Color the pixel and add its neighbors to the stack.
                     bmp.Pixels[ToPixel(bmp, pt)] = Color(pt, color1, color2);
 
-                    toCheck.Push(new Point(pt.X - 1, pt.Y));
-                    toCheck.Push(new Point(pt.X + 1, pt.Y));
-                    toCheck.Push(new Point(pt.X, pt.Y - 1));
-                    toCheck.Push(new Point(pt.X, pt.Y + 1));
+                    AddPointToStack(toCheck, checkedPoints, new Point(pt.X - 1, pt.Y));
+                    AddPointToStack(toCheck, checkedPoints, new Point(pt.X + 1, pt.Y));
+                    AddPointToStack(toCheck, checkedPoints, new Point(pt.X, pt.Y - 1));
+                    AddPointToStack(toCheck, checkedPoints, new Point(pt.X, pt.Y + 1));
                 }
             }
+        }
+
+        /// <summary>
+        /// Avoid additions of points to the stack that have already been verified. This is required for concave polygons and approximations.
+        /// </summary>
+        /// <param name="theStack">Stack of points to verify (with flood-filling)</param>
+        /// <param name="checkedPts">Points we have already processed.</param>
+        /// <param name="newPt">The new candidate point to add to the stack.</param>
+        /// <returns>T/F if added to the stack.</returns>
+        private bool AddPointToStack(Stack<Point> theStack, List<Point> checkedPts, Point newPt)
+        {
+            if (theStack.Contains(newPt)) return false;
+            // if (checkedPts.Contains(newPt)) return false;
+
+            theStack.Push(newPt);
+            return true;
         }
 
         /// <summary>

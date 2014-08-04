@@ -32,6 +32,13 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return thisArea;
         }
 
+        public override bool PointLiesOn(Point pt)
+        {
+            if (pt == null) return false;
+
+            return shape.PointLiesOn(pt);
+        }
+
         public override bool PointLiesInside(Point pt)
         {
             if (pt == null) return false;
