@@ -60,9 +60,9 @@ namespace DynamicGeometry.UI.RegionShading
             {
                 if (ar.PointLiesInside(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logicalPt.X, logicalPt.Y)))
                 {
-                    ShadedRegion sr = ShadedRegion.CreateAndAdd(ar, logicalPt);
-                    Image img = sr.Draw(Drawing, ShadedRegion.COLORS[0], ShadedRegion.COLORS[1]);
-                    Drawing.Canvas.Children.Add(img);
+                    ShadedRegion sr = new ShadedRegion(ar);
+                    var shading = sr.Draw(Drawing, ShadedRegion.BRUSHES[0]);
+                    Drawing.Canvas.Children.Add(shading);
                 }
             }
         }

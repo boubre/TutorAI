@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
@@ -8,55 +9,25 @@ namespace DynamicGeometry.UI.RegionShading
 {
     public class ShadedRegion
     {
-        public readonly static int[] COLORS = 
+        public static readonly Brush[] BRUSHES = 
         {
-            //ARGB integer colors
-            unchecked((int)0xFFFF0000), //red
-            unchecked((int)0xFF800000), //maroon
-            unchecked((int)0xFF00FF00), //lime
-            unchecked((int)0xFF008000), //green
-            unchecked((int)0xFF0000FF), //blue
-            unchecked((int)0xFF000080), //navy
-            unchecked((int)0xFF00FFFF), //aqua
-            unchecked((int)0xFF008080), //teal
-            unchecked((int)0xFFFF00FF), //fuchsia
-            unchecked((int)0xFF800080) //purple
+            MakeHatchBrush(Color.FromArgb(0xFF, 0xFF, 0x00, 0x00), Color.FromArgb(0xFF, 0x80, 0x00, 0x00)), // red & maroon
+            MakeHatchBrush(Color.FromArgb(0xFF, 0x00, 0xFF, 0x00), Color.FromArgb(0xFF, 0x00, 0x80, 0x00)), // lime & green
+            MakeHatchBrush(Color.FromArgb(0xFF, 0x00, 0x00, 0xFF), Color.FromArgb(0xFF, 0x00, 0x00, 0x80)), // blue & navy
+            MakeHatchBrush(Color.FromArgb(0xFF, 0x00, 0xFF, 0xFF), Color.FromArgb(0xFF, 0x00, 0x80, 0x80)), // aqua & teal
+            MakeHatchBrush(Color.FromArgb(0xFF, 0xFF, 0x00, 0xFF), Color.FromArgb(0xFF, 0x80, 0x00, 0x80))  // fuschia & purple
         };
 
-        public static List<ShadedRegion> ShadedRegions { get; private set; }
 
         public AtomicRegion Region { get; private set; }
-        public Point PointInShape { get; private set; }
 
         /// <summary>
         /// Create a new ShadedRegion
         /// </summary>
         /// <param name="region">The region to shade</param>
-        /// <param name="pt">A point in the region</param>
-        private ShadedRegion(AtomicRegion region, Point pt)
+        public ShadedRegion(AtomicRegion region)
         {
             Region = region;
-            PointInShape = pt;
-        }
-
-        /// <summary>
-        /// Create a new ShadedRegion and add it to the current list of ShadedRegions
-        /// </summary>
-        /// <param name="ar">The region to shade</param>
-        /// <param name="pt">A point in the region</param>
-        /// <returns>The created ShadedRegion</returns>
-        public static ShadedRegion CreateAndAdd(AtomicRegion ar, Point pt)
-        {
-            ShadedRegion region = new ShadedRegion(ar, pt);
-
-            if (ShadedRegions == null)
-            {
-                ShadedRegions = new List<ShadedRegion>();
-            }
-
-            ShadedRegions.Add(region);
-
-            return region;
         }
 
         /// <summary>
@@ -82,143 +53,56 @@ namespace DynamicGeometry.UI.RegionShading
         }
 
         /// <summary>
-        /// Draw the shaded region and return the corresponding image.
-        /// The image will be the size of the canvas, but transparent where the region is not.
+        /// Draw the shaded region as an approximated polygon and return the polygon
         /// The Zindex, Top, and Left attributes will also be set.
         /// </summary>
         /// <param name="drawing">The current drawing</param>
-        /// <param name="color1">The first color (ARGB) to shade with</param>
-        /// <param name="color2">The second color (ARGB) to shadw with</param>
-        /// <returns>The image, with the ShadedRegion drawn</returns>
-        public Image Draw(Drawing drawing, int color1, int color2)
+        /// <param name="shadingBrush">The brush to shade the region with</param>
+        /// <returns>The graphical representation of the region.</returns>
+        public UIElement Draw(Drawing drawing, Brush shadingBrush)
         {
             CoordinateSystem cs = drawing.CoordinateSystem;
-            WriteableBitmap bmp = new WriteableBitmap((int)cs.PhysicalSize.X, (int)cs.PhysicalSize.Y);
-            Point start = ToPhysical(cs, PointInShape);
 
-            FloodFill(bmp, start, cs, color1, color2);
-
-            Image img = new Image();
-            img.Source = bmp;
-            Canvas.SetTop(img, 0);
-            Canvas.SetLeft(img, 0);
-            Canvas.SetZIndex(img, (int)ZOrder.Shading);
-            return img;
-        }
-
-        /// <summary>
-        /// Using the flood fill algorithm, shade the region.
-        /// http://en.wikipedia.org/wiki/Flood_fill#Alternative_implementations
-        /// </summary>
-        /// <param name="bmp">The bitmap to color</param>
-        /// <param name="start">The starting physical point (pixel). Should be inside the region.</param>
-        /// <param name="cs">The current coordinate system</param>
-        /// <param name="color1">The first color (ARGB) to shade with</param>
-        /// <param name="color2">The second color (ARGB) to shade with</param>
-        private void FloodFill(WriteableBitmap bmp, Point start, CoordinateSystem cs, int color1, int color2)
-        {
-            Queue<Point> toCheck = new Queue<Point>();
-
-            toCheck.Enqueue(start);
-            while (toCheck.Count > 0)
+            var shading = new System.Windows.Shapes.Polygon();
+            PointCollection points = new PointCollection();
+            foreach (GeometryTutorLib.ConcreteAST.Point p in Region.GetPolygonalized().points)
             {
-                Point pt = toCheck.Dequeue();
-                if (Test(bmp, pt, cs))
-                {
-                    //Find west-east points to color
-                    Point west = pt, east = pt;
-                    while (Test(bmp, west, cs))
-                    {
-                        west.X -= 1;
-                    }
-                    while (Test(bmp, east, cs))
-                    {
-                        east.X += 1;
-                    }
-
-                    //Color all points in between west and east...
-                    west.X += 1;
-                    while (west.X < east.X)
-                    {
-                        //Color the pixel
-                        bmp.Pixels[ToPixel(bmp, west)] = Color(west, color1, color2);
-
-                        //Check north
-                        Point north = new Point(west.X, west.Y - 1);
-                        if (Test(bmp, north, cs))
-                        {
-                            toCheck.Enqueue(north);
-                        }
-
-                        //Check south
-                        Point south = new Point(west.X, west.Y + 1);
-                        if (Test(bmp, south, cs))
-                        {
-                            toCheck.Enqueue(south);
-                        }
-
-                        //Advance east
-                        west.X += 1;
-                    }
-                }
+                points.Add(ToPhysical(cs, new Point(p.X, p.Y)));
             }
+            shading.Points = points;
+
+            shading.Fill = shadingBrush;
+            shading.Stroke = new SolidColorBrush(Colors.DarkGray);
+            shading.StrokeThickness = 1;
+            Canvas.SetTop(shading, 0);
+            Canvas.SetLeft(shading, 0);
+            Canvas.SetZIndex(shading, (int)ZOrder.Shading);
+            return shading;
         }
 
-        /// <summary>
-        /// Helper to FloodFill:
-        /// Test a pixel to see if we should color it and add its neighbors to the stack.
-        /// </summary>
-        /// <param name="bmp">The bitmap we are coloring</param>
-        /// <param name="pt">The physical point (pixel) to test</param>
-        /// <param name="cs">The current coordinate system</param>
-        /// <returns>TRUE if we should color this pixel</returns>
-        private bool Test(WriteableBitmap bmp, Point pt, CoordinateSystem cs)
+        public static Brush MakeHatchBrush(Color c1, Color c2)
         {
-            int pixel = ToPixel(bmp, pt);
-            System.Diagnostics.Debug.Assert(pixel >= 0);
-
-            if (bmp.Pixels[pixel] != 0) //Pixel is colored, we have visited it
-            {
-                return false;
-            }
-
-            Point logical = ToLogical(cs, pt);
-            if (!Region.PointLiesInOrOn(new GeometryTutorLib.ConcreteAST.Point("shadingtest", logical.X, logical.Y))) //Not in shape
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Helper to FloodFill:
-        /// Figure out which color a pixel should be.
-        /// </summary>
-        /// <param name="pt">The physical point (pixel)</param>
-        /// <param name="color1">The first color (ARGB) to shade with</param>
-        /// <param name="color2">The second color (ARGB) to shade with</param>
-        /// <returns></returns>
-        private int Color(Point pt, int color1, int color2)
-        {
-            int x = (int)pt.X;
-            int y = (int)pt.Y;
-
-            if ((x + y) % 6 <= 2) //Will result in diagonal stripes
-                return color1;
-            else
-                return color2;
-        }
-
-        /// <summary>
-        /// Convert a physical point (pixel) into an integer representing the corresponding pixel in the bitmap.
-        /// </summary>
-        /// <param name="bmp">The bitmap used to determine the pixel's value</param>
-        /// <param name="pt">The physical point (pixel) to convert</param>
-        /// <returns></returns>
-        private int ToPixel(WriteableBitmap bmp, Point pt)
-        {
-            return (int)pt.Y * bmp.PixelWidth + (int)pt.X;
+            LinearGradientBrush brush = new LinearGradientBrush();
+            brush.MappingMode = BrushMappingMode.Absolute;
+            brush.SpreadMethod = GradientSpreadMethod.Repeat;
+            brush.StartPoint = new Point(0, 0);
+            brush.EndPoint = new Point(6, 6);
+            GradientStop gs = new GradientStop();
+            gs.Color = c1;
+            brush.GradientStops.Add(gs);
+            gs = new GradientStop();
+            gs.Color = c1;
+            gs.Offset = 0.5;
+            brush.GradientStops.Add(gs);
+            gs = new GradientStop();
+            gs.Color = c2;
+            gs.Offset = .5;
+            brush.GradientStops.Add(gs);
+            gs = new GradientStop();
+            gs.Color = c2;
+            gs.Offset = 1;
+            brush.GradientStops.Add(gs);
+            return brush;
         }
     }
 }
