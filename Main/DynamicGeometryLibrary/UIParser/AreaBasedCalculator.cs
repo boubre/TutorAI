@@ -84,7 +84,7 @@ namespace LiveGeometry.TutorParser
             // Strengthen any polygons 
             StrengthenPolygons();
 
-            // Put all the figures into a single list: sectors, circles, polygons
+            // Put all the figures into a single list: sectors, circles, polygons; omit concave polygons
             ComposeAllShapesIntoSingleList();
 
             // Now that we have all polygons and circles, associate the atomic regions with those shapes (and vice versa)
@@ -106,7 +106,13 @@ namespace LiveGeometry.TutorParser
             majorSectors.ForEach(s => tempList.Add(s));
             foreach (List<GeometryTutorLib.ConcreteAST.Polygon> polys in polygons)
             {
-                polys.ForEach(p => tempList.Add(p));
+                foreach (GeometryTutorLib.ConcreteAST.Polygon poly in polys)
+                {
+                    if (!(poly is ConcavePolygon))
+                    {
+                        tempList.Add(poly);
+                    }
+                }
             }
 
             // Add any shapes from atomic region identification
@@ -148,7 +154,7 @@ namespace LiveGeometry.TutorParser
 
             for (int p = 0; p < polygons[polyIndex].Count; p++)
             {
-                if (polygons[polyIndex][p].StructurallyEquals(streng.original))
+                if (polygons[polyIndex][p].HasSamePoints(streng.original as GeometryTutorLib.ConcreteAST.Polygon))
                 {
                     // Is this the strongest class for this particular shape?
                     // For example, Quadrilateral -> Trapezoid -> Isosceles Trapezoid
@@ -191,6 +197,8 @@ namespace LiveGeometry.TutorParser
 
             foreach (Figure fig in allFigures)
             {
+                fig.atoms.Clear();
+
                 foreach (AtomicRegion atom in atomicRegions)
                 {
                     if (fig.Contains(figurePoints, atom))

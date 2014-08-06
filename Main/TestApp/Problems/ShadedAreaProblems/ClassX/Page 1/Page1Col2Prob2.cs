@@ -38,6 +38,9 @@ namespace GeometryTestbed
             goalRegions.AddRange(parser.implied.GetAllAtomicRegionsWithoutPoints(unwanted));
 
             SetSolutionArea(6.121127502);
+
+            problemName = "Page 1 Col 2 Problem 2";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

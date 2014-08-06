@@ -309,7 +309,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 // Atomizer.AtomicRegion secants and diameters (thus radii in special cases)
                 Segment chord;
-                if (IsSecant(thatSegment, out chord))
+                if (IsSecant(thatSegment, figPoints, out chord))
                 {
                     // Add to the secants for this circle.
                     secants.Add(thatSegment, chord);
@@ -397,7 +397,7 @@ namespace GeometryTutorLib.ConcreteAST
         // find the two points of intersection between the secant and the circle.
         // Return the resultant chord segment.
         //
-        private Segment ConstructChord(Segment secantSegment, Point midpt, double distance)
+        private Segment ConstructChord(Segment secantSegment, Point midpt, double distance, List<Point> figPoints)
         {
             //                distance
             //      circPt1    _____   circPt2
@@ -421,19 +421,19 @@ namespace GeometryTutorLib.ConcreteAST
                 deltaX = Math.Sqrt(Math.Pow(distance, 2) / (1 + Math.Pow(secantSegment.Slope, 2)));
                 deltaY = secantSegment.Slope * deltaX;
             }
-            Point circPt1 = Point.GetFigurePoint(new Point("", midpt.X + deltaX, midpt.Y + deltaY));
+            Point circPt1 = Utilities.AcquirePoint(figPoints, new Point("", midpt.X + deltaX, midpt.Y + deltaY));
 
             // intersection is the midpoint of circPt1 and pt2.
-            Point circPt2 = Point.GetFigurePoint(new Point("", 2 * midpt.X - circPt1.X, 2 * midpt.Y - circPt1.Y));
+            Point circPt2 = Utilities.AcquirePoint(figPoints, new Point("", 2 * midpt.X - circPt1.X, 2 * midpt.Y - circPt1.Y));
 
             // Create the actual chord
-            return Segment.GetFigureSegment(circPt1, circPt2);
+            return new Segment(circPt1, circPt2);
         }
 
         //
         // Determine if the segment passes through the circle (we know it is not a chord since they have been filtered).
         //
-        private bool IsSecant(Segment segment, out Segment chord)
+        private bool IsSecant(Segment segment, List<Point> figPoints, out Segment chord)
         {
             // Make it null and overwrite when necessary.
             chord = null;
@@ -443,7 +443,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (ContainsDiameter(segment))
             {
-                chord = ConstructChord(segment, this.center, this.radius);
+                chord = ConstructChord(segment, this.center, this.radius, figPoints);
 
                 // Add radii to the list.
                 radii.Add(new Segment(this.center, chord.Point1));
@@ -471,7 +471,7 @@ namespace GeometryTutorLib.ConcreteAST
             // Determine the half-chord length via Pyhtagorean Theorem.
             double halfChordLength = Math.Sqrt(Math.Pow(this.radius, 2) - Math.Pow(perpendicular.Length, 2));
 
-            chord = ConstructChord(segment, perpendicular.OtherPoint(this.center), halfChordLength);
+            chord = ConstructChord(segment, perpendicular.OtherPoint(this.center), halfChordLength, figPoints);
 
             return true;
         }
@@ -883,7 +883,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 Segment perp = chord.GetPerpendicular(center);
 
-                this.FindIntersection(chord, out pt1, out pt2);
+                this.FindIntersection(perp, out pt1, out pt2);
 
                 // Arbitrarily choose one of the points.
                 return pt1 != null ? pt1 : pt2;

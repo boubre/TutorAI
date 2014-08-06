@@ -730,8 +730,22 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public Segment GetPerpendicular(Point pt)
         {
-            // If the given point is already on the line, projection does not create new information.
-            if (this.PointLiesOnAndBetweenEndpoints(pt)) return this;
+            // If the given point is already on the line.
+            if (this.PointLiesOnAndBetweenEndpoints(pt))
+            {
+                if (this.IsVertical())
+                {
+                    return new Segment(pt, new Point("", pt.X + 1, pt.Y));
+                }
+                else if (this.IsHorizontal())
+                {
+                    return new Segment(pt, new Point("", pt.X, pt.Y + 1));
+                }
+                else
+                {
+                    return new Segment(pt, new Point("", pt.X + 1, (- 1 / this.Slope) + pt.Y));
+                }
+            }
 
             Point projection = ProjectOnto(pt);
 

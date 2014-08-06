@@ -212,6 +212,9 @@ namespace LiveGeometry.TutorParser
                     // normalized to drawing point (names)
                     intersectionPts = implied.NormalizePointsToDrawing(intersectionPts);
 
+                    // and add to each figure (circle and polygon).
+                    circle.AddIntersectingPoints(intersectionPts);
+
                     //
                     // Construct the intersections
                     //

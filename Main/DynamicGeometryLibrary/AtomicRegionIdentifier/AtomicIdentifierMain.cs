@@ -73,8 +73,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
             // Combine all of the atomic regions together.
             //
             List<AtomicRegion> composed = ComposeAllRegions(figurePoints, workingAtoms);
-
-
+            composed = RemoveRedundantSemicircle(composed);
 
             //
             // Run the graph-based algorithm one last time to identify any pathological regions (exterior to all shapes).
@@ -84,7 +83,8 @@ namespace LiveGeometry.AtomicRegionIdentifier
             List<AtomicRegion> lost = new List<AtomicRegion>();
             List<AtomicRegion> pathological = new List<AtomicRegion>();
             List<AtomicRegion> pathologicalID = IdentifyPathological(figurePoints, composed, circles);
-            foreach (AtomicRegion atom in originalAtoms)
+            pathologicalID = RemoveRedundantSemicircle(pathologicalID);
+            foreach (AtomicRegion atom in composed)
             {
                 if (!pathologicalID.Contains(atom))
                 {
@@ -111,6 +111,39 @@ namespace LiveGeometry.AtomicRegionIdentifier
             finalAtomSet.AddRange(pathological);
 
             return finalAtomSet;
+        }
+
+        //
+        // Remove any semicircles that are not truly atomic.
+        //
+        private static List<AtomicRegion> RemoveRedundantSemicircle(List<AtomicRegion> originalAtoms)
+        {
+            List<AtomicRegion> trueAtoms = new List<AtomicRegion>();
+            foreach (AtomicRegion atom in originalAtoms)
+            {
+                bool add = true;
+
+                ShapeAtomicRegion shapeAtom = atom as ShapeAtomicRegion;
+                if (shapeAtom != null)
+                {
+                    Sector sector = shapeAtom.shape as Sector;
+                    if (sector != null && sector.theArc is Semicircle)
+                    {
+                        foreach (AtomicRegion checkAtom in originalAtoms)
+                        {
+                            if (!atom.Equals(checkAtom) && shapeAtom.Contains(checkAtom))
+                            {
+                                add = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (add) trueAtoms.Add(atom);
+            }
+
+            return trueAtoms;
         }
 
         //
@@ -413,8 +446,10 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point pt1 = null;
                     Point pt2 = null;
                     arc.theCircle.FindIntersection(segment, out pt1, out pt2);
+                    pt1 = GeometryTutorLib.Utilities.AcquirePoint(figurePoints, pt1);
+                    pt2 = GeometryTutorLib.Utilities.AcquirePoint(figurePoints, pt2);
 
-                    if (pt1 == null)
+                    if (pt1 != null)
                     {
                         if (outerBounds.PointLiesOnOrInside(pt1))
                         {
@@ -425,7 +460,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                             GeometryTutorLib.Utilities.AddUnique<Point>(points, pt1);
                         }
                     }
-                    if (pt2 == null)
+                    if (pt2 != null)
                     {
                         if (outerBounds.PointLiesOnOrInside(pt2))
                         {
@@ -447,8 +482,10 @@ namespace LiveGeometry.AtomicRegionIdentifier
                     Point pt1 = null;
                     Point pt2 = null;
                     arcs[a1].theCircle.FindIntersection(arcs[a2].theCircle, out pt1, out pt2);
+                    pt1 = GeometryTutorLib.Utilities.AcquirePoint(figurePoints, pt1);
+                    pt2 = GeometryTutorLib.Utilities.AcquirePoint(figurePoints, pt2);
 
-                    if (pt1 == null)
+                    if (pt1 != null)
                     {
                         if (outerBounds.PointLiesOnOrInside(pt1))
                         {
@@ -459,7 +496,7 @@ namespace LiveGeometry.AtomicRegionIdentifier
                             GeometryTutorLib.Utilities.AddUnique<Point>(points, pt1);
                         }
                     }
-                    if (pt2 == null)
+                    if (pt2 != null)
                     {
                         if (outerBounds.PointLiesOnOrInside(pt2))
                         {
@@ -503,12 +540,18 @@ namespace LiveGeometry.AtomicRegionIdentifier
 
             foreach (Arc arc in arcs)
             {
-                for (int p = 0; p < arc.collinear.Count - 1; p++)
+                List<Point> applicCollinear = arc.GetOrderedCollinearPointsByEndpoints();
+
+                int upperBound = applicCollinear.Count - 1;
+                if (arc is Semicircle) upperBound = applicCollinear.Count;
+
+                for (int p = 0; p < upperBound; p++)
                 {
-                    if (outerBounds.PointLiesInOrOn(arc.collinear[p]) && outerBounds.PointLiesInOrOn(arc.collinear[p + 1]))
+                    int nextindex = (p+1) == applicCollinear.Count ? 0 : (p+1);
+                    if (outerBounds.PointLiesInOrOn(applicCollinear[p]) && outerBounds.PointLiesInOrOn(applicCollinear[nextindex]))
                     {
-                        graph.AddUndirectedEdge(arc.collinear[p], arc.collinear[p + 1],
-                                                new GeometryTutorLib.ConcreteAST.Segment(arc.collinear[p], arc.collinear[p + 1]).Length,
+                        graph.AddUndirectedEdge(applicCollinear[p], applicCollinear[nextindex],
+                                                new GeometryTutorLib.ConcreteAST.Segment(applicCollinear[p], applicCollinear[nextindex]).Length,
                                                 GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
                     }
                 }
@@ -551,31 +594,160 @@ namespace LiveGeometry.AtomicRegionIdentifier
 
         private static List<AtomicRegion> IdentifyPathological(List<Point> figurePoints, List<AtomicRegion> atoms, List<GeometryTutorLib.ConcreteAST.Circle> circles)
         {
-            GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph graph = new GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph();
+            List<GeometryTutorLib.ConcreteAST.Point> points = new List<GeometryTutorLib.ConcreteAST.Point>();
+            List<GeometryTutorLib.ConcreteAST.Segment> segments = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            List<GeometryTutorLib.ConcreteAST.Arc> arcs = new List<GeometryTutorLib.ConcreteAST.Arc>();
 
-            //
-            // Traverse the connections and add vertices / edges 
-            //
+            // Collect segments and arcs.
             foreach (AtomicRegion atom in atoms)
             {
                 foreach (Connection conn in atom.connections)
                 {
-                    graph.AddNode(conn.endpoint1);
-                    graph.AddNode(conn.endpoint2);
-
-                    graph.AddUndirectedEdge(conn.endpoint1, conn.endpoint2,
-                                            new GeometryTutorLib.ConcreteAST.Segment(conn.endpoint1, conn.endpoint2).Length,
-                                            conn.type == ConnectionType.ARC ? GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC :
-                                                                              GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
+                    if (conn.type == ConnectionType.SEGMENT)
+                    {
+                        GeometryTutorLib.ConcreteAST.Segment seg = conn.segmentOrArc as GeometryTutorLib.ConcreteAST.Segment;
+                        if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Segment>(segments, seg))
+                        {
+                            seg.ClearCollinear();
+                            segments.Add(seg);
+                            GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, seg.Point1);
+                            GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, seg.Point2);
+                        }
+                    }
+                    else if (conn.type == ConnectionType.ARC)
+                    {
+                        GeometryTutorLib.ConcreteAST.Arc arc = conn.segmentOrArc as GeometryTutorLib.ConcreteAST.Arc;
+                        if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Arc>(arcs, arc))
+                        {
+                            arc.ClearCollinear();
+                            arcs.Add(arc);
+                            GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, arc.endpoint1);
+                            GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, arc.endpoint2);
+                        }
+                    }
                 }
             }
 
+            // Combine all points into a single list.
+            GeometryTutorLib.Utilities.AddUniqueList<Point>(points, figurePoints);
+
+            //
+            //
+            // Find all intersections...among segments and arcs.
+            //
+            //
+            // Segment-Segment
+            for (int s1 = 0; s1 < segments.Count - 1; s1++)
+            {
+                for (int s2 = s1 + 1; s2 < segments.Count; s2++)
+                {
+                    Point intersection = segments[s1].FindIntersection(segments[s2]);
+                    intersection = GeometryTutorLib.Utilities.AcquireRestrictedPoint(points, intersection, segments[s1], segments[s2]);
+
+                    if (intersection != null)
+                    {
+                        segments[s1].AddCollinearPoint(intersection);
+                        segments[s2].AddCollinearPoint(intersection);
+                    }
+                }
+            }
+
+            // Segment-Arc
+            foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
+            {
+                foreach (GeometryTutorLib.ConcreteAST.Arc arc in arcs)
+                {
+                    Point pt1 = null;
+                    Point pt2 = null;
+                    arc.theCircle.FindIntersection(segment, out pt1, out pt2);
+                    pt1 = GeometryTutorLib.Utilities.AcquireRestrictedPoint(points, pt1, segment, arc);
+                    pt2 = GeometryTutorLib.Utilities.AcquireRestrictedPoint(points, pt2, segment, arc);
+
+                    if (pt1 != null)
+                    {
+                        segment.AddCollinearPoint(pt1);
+                        arc.AddCollinearPoint(pt1);
+                    }
+                    if (pt2 != null)
+                    {
+                        segment.AddCollinearPoint(pt2);
+                        arc.AddCollinearPoint(pt2);
+                    }
+                }
+            }
+
+            // Arc-Arc
+            for (int a1 = 0; a1 < arcs.Count - 1; a1++)
+            {
+                for (int a2 = a1 + 1; a2 < arcs.Count; a2++)
+                {
+                    Point pt1 = null;
+                    Point pt2 = null;
+                    arcs[a1].theCircle.FindIntersection(arcs[a2].theCircle, out pt1, out pt2);
+                    pt1 = GeometryTutorLib.Utilities.AcquireRestrictedPoint(points, pt1, arcs[a1], arcs[a2]);
+                    pt2 = GeometryTutorLib.Utilities.AcquireRestrictedPoint(points, pt2, arcs[a1], arcs[a2]);
+
+                    if (pt1 != null)
+                    {
+                        arcs[a1].AddCollinearPoint(pt1);
+                        arcs[a2].AddCollinearPoint(pt1);
+                    }
+                    if (pt2 != null)
+                    {
+                        arcs[a1].AddCollinearPoint(pt2);
+                        arcs[a2].AddCollinearPoint(pt2);
+                    }
+                }
+            }
+
+            return AcquireAtomicRegionsFromGraph(points, segments, arcs, circles);
+        }
+
+        private static List<AtomicRegion> AcquireAtomicRegionsFromGraph(List<Point> points, List<GeometryTutorLib.ConcreteAST.Segment> segments,
+                                                                        List<Arc> arcs, List<GeometryTutorLib.ConcreteAST.Circle> circles)
+        {
+            //
+            // Construct the Planar graph for atomic region identification.
+            //
+            GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph graph = new GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph();
+
+            // Add the points as nodes in the graph.
+            foreach (Point pt in points)
+            {
+                graph.AddNode(pt);
+            }
+
+            //
+            // Edges are based on all the collinear relationships.
+            //
+            foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
+            {
+                for (int p = 0; p < segment.collinear.Count - 1; p++)
+                {
+                    graph.AddUndirectedEdge(segment.collinear[p], segment.collinear[p + 1],
+                                            new GeometryTutorLib.ConcreteAST.Segment(segment.collinear[p], segment.collinear[p + 1]).Length,
+                                            GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_SEGMENT);
+                }
+            }
+
+            foreach (Arc arc in arcs)
+            {
+                for (int p = 0; p < arc.collinear.Count - 1; p++)
+                {
+                    graph.AddUndirectedEdge(arc.collinear[p], arc.collinear[p + 1],
+                                            new GeometryTutorLib.ConcreteAST.Segment(arc.collinear[p], arc.collinear[p + 1]).Length,
+                                            GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
+                }
+            }
+
+            //
+            // Convert the planar graph to atomic regions.
+            //
             GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph copy = new GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.PlanarGraph(graph);
             FacetCalculator atomFinder = new FacetCalculator(copy);
             List<Primitive> primitives = atomFinder.GetPrimitives();
 
             return PrimitiveToRegionConverter.Convert(graph, primitives, circles);
         }
-
     }
 }

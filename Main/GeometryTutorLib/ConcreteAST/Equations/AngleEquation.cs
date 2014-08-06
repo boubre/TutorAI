@@ -33,6 +33,14 @@ namespace GeometryTutorLib.ConcreteAST
                 {
                     sum += clause.multiplier * (clause as Angle).measure;
                 }
+                else if (clause is MinorArc)
+                {
+                    sum += clause.multiplier * (clause as MinorArc).GetMinorArcMeasureDegrees();
+                }
+                else if (clause is MajorArc)
+                {
+                    sum += clause.multiplier * (clause as MajorArc).GetMajorArcMeasureDegrees();
+                }
             }
             return sum;
         }

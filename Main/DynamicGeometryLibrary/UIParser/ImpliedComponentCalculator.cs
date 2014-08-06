@@ -158,6 +158,7 @@ namespace LiveGeometry.TutorParser
             CalculateIntersections();
 
             // Find all circle-segment intersection points.
+            // Segments (which are not part of a polygon) may intersect a circle; these are also added to the circle's interesting points.
             csIntersections = shapeIntCalc.FindCircleSegmentIntersections();
 
             // Find all the angles based on intersections; duplicates are removed.
@@ -671,6 +672,8 @@ namespace LiveGeometry.TutorParser
                 minorArcs.Add(newMinorArc);
                 minorSectors.Add(newMinorSector);
                 majorSectors.Add(newMajorSector);
+
+                angles.Add(new Angle(circle.pointsOnCircle[p1], circle.center, circle.pointsOnCircle[p2]));
             }
             if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MajorArc>(majorArcs, newMajorArc))
             {
@@ -779,14 +782,10 @@ namespace LiveGeometry.TutorParser
                 //... and see if a segment passes through point B of the angle.
                 foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
                 {
-                    if (segment.PointLiesOnAndBetweenEndpoints(a.GetVertex()))
+                    if (a.CoordinateAngleBisector(segment))
                     {
-                        // Create new angles with this segment and see if they are the same measure
-                        if (GeometryTutorLib.Utilities.CompareValues(new Angle(a.A, a.GetVertex(), segment.Point1).measure, new Angle(a.C, a.GetVertex(), segment.Point1).measure))
-                        {
-                            // We found an angle bisector!
-                            angleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, segment));
-                        }
+                        // We found an angle bisector!
+                        angleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, segment));
                     }
                 }
             }
@@ -801,14 +800,12 @@ namespace LiveGeometry.TutorParser
 
             foreach (Point pt in original)
             {
-                Point normed = GeometryTutorLib.Utilities.GetStructurally<Point>(allFigurePoints, pt);
-                if (normed == null)
-                {
-                    throw new ArgumentException("Point not find in dictionary of points: " + pt);
-                }
-
+                Point normed = GeometryTutorLib.Utilities.AcquirePoint(allFigurePoints, pt);
                 normalized.Add(normed);
             }
+
+            GeometryTutorLib.Utilities.AddUniqueList<GeometryTutorLib.ConcreteAST.Point>(allFigurePoints, normalized);
+
             return normalized;
         }
 

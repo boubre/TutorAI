@@ -80,9 +80,24 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override void AddCollinearPoint(Point newPt)
         {
+            if (Utilities.HasStructurally<Point>(collinear, newPt)) return;
+
             collinear.Add(newPt);
 
             collinear = theCircle.OrderPoints(collinear);
+        }
+
+        public List<Point> GetOrderedCollinearPointsByEndpoints()
+        {
+            // Find only the points on this arc.
+            List<Point> applicable = new List<Point>();
+
+            foreach (Point pt in collinear)
+            {
+                if (this.PointLiesOn(pt)) applicable.Add(pt);
+            }
+
+            return theCircle.OrderPoints(applicable);
         }
 
         public override void ClearCollinear()

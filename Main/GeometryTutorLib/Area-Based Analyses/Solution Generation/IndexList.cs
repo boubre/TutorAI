@@ -56,14 +56,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
         // If more than 8 indices, overlay the values: 0 1 2 3 4 5 6 7  8 9 10  becomes 76543210 + 1098 =  
         public override int GetHashCode()
         {
-            const int NUM_VALUES_BEFORE_CUT = 8;
+            // const int NUM_VALUES_BEFORE_CUT = 8;
             int runningHashCode = 0;
 
             string hashcode = "";
             for (int i = 0; i < orderedIndices.Count; i++)
             {
                 // A reset
-                if (i > 0 && i % NUM_VALUES_BEFORE_CUT == 0)
+                if (hashcode.Length > 7) // i > 0 && i % NUM_VALUES_BEFORE_CUT == 0)
                 {
                     runningHashCode += Int32.Parse(hashcode);
                     hashcode = "";
@@ -75,7 +75,6 @@ namespace GeometryTutorLib.Area_Based_Analyses
                 }
             }
 
-            // if (orderedIndices.Count % NUM_VALUES_BEFORE_CUT != 0)
             if (hashcode != "")
             {
                 runningHashCode += Int32.Parse(hashcode);

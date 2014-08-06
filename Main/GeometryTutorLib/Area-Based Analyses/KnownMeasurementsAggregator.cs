@@ -23,12 +23,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         private List<KeyValuePair<Segment, double>> segments;
         private List<KeyValuePair<Angle, double>> angles;
+        private List<KeyValuePair<Arc, double>> arcs;
         private UNITS units;
 
         public KnownMeasurementsAggregator()
         {
             segments = new List<KeyValuePair<Segment, double>>();
             angles = new List<KeyValuePair<Angle, double>>();
+            arcs = new List<KeyValuePair<Arc, double>>();
             units = UNITS.CM;
         }
 
@@ -36,6 +38,12 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public double GetSegmentLength(Segment thatSeg)
         {
+            if (thatSeg == null)
+            {
+                // throw new ArgumentException("Why is the angle null?");
+                return -1;
+            }
+
             foreach (KeyValuePair<Segment, double> segPair in segments)
             {
                 if (thatSeg.StructurallyEquals(segPair.Key)) return segPair.Value;
@@ -51,9 +59,31 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public double GetAngleMeasure(Angle thatAngle)
         {
+            if (thatAngle == null)
+            {
+                // throw new ArgumentException("Why is the angle null?");
+                return -1;
+            }
+
             foreach (KeyValuePair<Angle, double> anglePair in angles)
             {
                 if (thatAngle.Equates(anglePair.Key)) return anglePair.Value;
+            }
+
+            return -1;
+        }
+
+        public double GetArcMeasure(Arc thatArc)
+        {
+            if (thatArc == null)
+            {
+                // throw new ArgumentException("Why is the angle null?");
+                return -1;
+            }
+
+            foreach (KeyValuePair<Arc, double> arcPair in arcs)
+            {
+                if (thatArc.StructurallyEquals(arcPair.Key)) return arcPair.Value;
             }
 
             return -1;
@@ -69,6 +99,20 @@ namespace GeometryTutorLib.Area_Based_Analyses
             if (AngleMeasureKnown(thatAngle)) return false;
 
             angles.Add(new KeyValuePair<Angle, double>(thatAngle, measure));
+
+            return true;
+        }
+
+        public bool ArcMeasureKnown(Arc thatArc)
+        {
+            return GetArcMeasure(thatArc) > 0;
+        }
+
+        public bool AddArcMeasureDegree(Arc thatArc, double measure)
+        {
+            if (ArcMeasureKnown(thatArc)) return false;
+
+            arcs.Add(new KeyValuePair<Arc, double>(thatArc, measure));
 
             return true;
         }

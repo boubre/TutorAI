@@ -40,6 +40,9 @@ namespace GeometryTestbed
             goalRegions.Add(parser.implied.GetAtomicRegionByPoint(new Point("", -4, 1)));
 
             SetSolutionArea(6.128872498);
+
+            problemName = "Page 1 Col 2 Problem 3";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

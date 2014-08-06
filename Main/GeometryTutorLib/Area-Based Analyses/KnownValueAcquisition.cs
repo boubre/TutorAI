@@ -84,8 +84,46 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             if (pair.Value > 0)
             {
+                // Do we know this already?
+                if (known.GetSegmentLength(pair.Key) > 0) return false;
+
+                // We don't know it, we add it.
                 known.AddSegmentLength(pair.Key, pair.Value);
                 return true;
+            }
+            else
+            {
+                List<KeyValuePair<Segment, double>> pairs = tri.IsoscelesRightApplies(known);
+                if (pairs.Any())
+                {
+                    bool change = false;
+                    foreach (KeyValuePair<Segment, double> isoPair in pairs)
+                    {
+                        // Do we know this already?
+                        if (known.GetSegmentLength(isoPair.Key) < 0)
+                        {
+                            change = true;
+                            known.AddSegmentLength(isoPair.Key, isoPair.Value);
+                        }
+                    }
+                    return change;
+                }
+
+                pairs = tri.RightTriangleTrigApplies(known);
+                if (pairs.Any())
+                {
+                    bool change = false;
+                    foreach (KeyValuePair<Segment, double> rightPair in pairs)
+                    {
+                        // Do we know this already?
+                        if (known.GetSegmentLength(rightPair.Key) < 0)
+                        {
+                            change = true;
+                            known.AddSegmentLength(rightPair.Key, rightPair.Value);
+                        }
+                    }
+                    return change;
+                }
             }
 
             return false;
@@ -145,6 +183,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             if (theEq is AngleEquation) return HandleAngleEquation(known, clauses, theEq as AngleEquation);
             if (theEq is SegmentEquation) return HandleSegmentEquation(known, clauses, theEq as SegmentEquation);
+            if (theEq is ArcEquation) return HandleArcEquation(known, clauses, theEq as ArcEquation);
 
             return false;
         }
@@ -238,6 +277,113 @@ namespace GeometryTutorLib.Area_Based_Analyses
             // (7) Add to the list of knowns
             //
             return known.AddAngleMeasureDegree(unknownAngle, angleValue);
+        }
+
+        //
+        // (1) Make a copy
+        // (2) Collect the equation terms.
+        // (3) Are all but one known?
+        // (4) Substitute
+        // (5) Simplify
+        // (6) Acquire the unknown and its value.
+        // (7) Add to the list of knowns.
+        //
+        private static bool HandleArcEquation(KnownMeasurementsAggregator known, List<GroundedClause> clauses, ArcEquation theEq)
+        {
+            if (theEq.GetAtomicity() == Equation.BOTH_ATOMIC) return HandleSimpleArcEquation(known, theEq);
+
+            // CTA: Verify this calls the correct Equation deep copy mechanism.
+            // (1) Make a copy
+            ArcEquation copy = (ArcEquation)theEq.DeepCopy();
+
+            // (2) Collect the equation terms.
+            List<GroundedClause> left = copy.lhs.CollectTerms();
+            double[] leftVal = new double[left.Count];
+            List<GroundedClause> right = copy.rhs.CollectTerms();
+            double[] rightVal = new double[right.Count];
+
+            // (3) Are all but one term known?
+            int unknownCount = 0;
+            for (int ell = 0; ell < left.Count; ell++)
+            {
+                if (left[ell] is NumericValue) leftVal[ell] = (left[ell] as NumericValue).DoubleValue;
+                else
+                {
+                    if (left[ell] is Angle)
+                    {
+                        leftVal[ell] = known.GetAngleMeasure(left[ell] as Angle);
+                        if (leftVal[ell] <= 0) unknownCount++;
+                    }
+                    else if (left[ell] is Arc)
+                    {
+                        leftVal[ell] = known.GetArcMeasure(left[ell] as Arc);
+                        if (leftVal[ell] <= 0) unknownCount++;
+                    }
+                }
+            }
+            for (int r = 0; r < right.Count; r++)
+            {
+                if (right[r] is NumericValue) rightVal[r] = (right[r] as NumericValue).DoubleValue;
+                else
+                {
+                    if (right[r] is Angle)
+                    {
+                        rightVal[r] = known.GetAngleMeasure(right[r] as Angle);
+                        if (rightVal[r] <= 0) unknownCount++;
+                    }
+                    else if (right[r] is Arc)
+                    {
+                        rightVal[r] = known.GetArcMeasure(right[r] as Arc);
+                        if (rightVal[r] <= 0) unknownCount++;
+                    }
+                }
+            }
+
+            // We can't solve for more or less than one unknown.
+            if (unknownCount != 1) return false;
+
+            //
+            // (4) Substitute
+            //
+            for (int ell = 0; ell < left.Count; ell++)
+            {
+                if (leftVal[ell] > 0) copy.Substitute(left[ell], new NumericValue(leftVal[ell]));
+            }
+            for (int r = 0; r < right.Count; r++)
+            {
+                if (rightVal[r] > 0) copy.Substitute(right[r], new NumericValue(rightVal[r]));
+            }
+
+            //
+            // (5) Simplify
+            //
+            ArcEquation simplified = (ArcEquation)GenericInstantiator.Simplification.Simplify(copy);
+
+            return HandleSimpleArcEquation(known, simplified);
+        }
+
+        private static bool HandleSimpleArcEquation(KnownMeasurementsAggregator known, ArcEquation theEq)
+        {
+            if (theEq.GetAtomicity() != Equation.BOTH_ATOMIC) return false;
+
+            Arc unknownArc = null;
+            double measure = -1;
+            if (theEq.lhs is NumericValue)
+            {
+                unknownArc = theEq.rhs as Arc;
+                measure = (theEq.lhs as NumericValue).DoubleValue;
+            }
+            else if (theEq.rhs is NumericValue)
+            {
+                unknownArc = theEq.lhs as Arc;
+                measure = (theEq.rhs as NumericValue).DoubleValue;
+            }
+            else return false;
+
+            //
+            // (7) Add to the list of knowns
+            //
+            return known.AddArcMeasureDegree(unknownArc, measure);
         }
 
         //

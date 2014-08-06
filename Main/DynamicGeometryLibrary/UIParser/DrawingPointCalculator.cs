@@ -139,9 +139,10 @@ namespace LiveGeometry.TutorParser
             if (uiPoint != null) return uiPoint;
 
             // else create the point.
-            Point newPoint = GeometryTutorLib.PointFactory.GeneratePoint(pt.X, pt.Y);
-            GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Point>(toAdd, newPoint);
-            return newPoint;
+            return GeometryTutorLib.Utilities.AcquirePoint(containment, pt);
+            //Point newPoint = GeometryTutorLib.PointFactory.GeneratePoint(pt.X, pt.Y);
+            //GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Point>(toAdd, newPoint);
+            //return newPoint;
         }
     }
 }

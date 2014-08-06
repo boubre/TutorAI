@@ -199,9 +199,18 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             List<AtomicRegion> atoms = new List<AtomicRegion>();
 
-            atoms.Add(new ShapeAtomicRegion(new Sector(new MinorArc(circle, pt1, pt2))));
-
-            atoms.Add(new ShapeAtomicRegion(new Sector(new MajorArc(circle, pt1, pt2))));
+            Segment diameter = new Segment(pt1, pt2);
+            if (circle.DefinesDiameter(diameter))
+            {
+                Point midpt = circle.Midpoint(pt1, pt2);
+                atoms.Add(new ShapeAtomicRegion(new Sector(new Semicircle(circle, pt1, pt2, midpt, diameter))));
+                atoms.Add(new ShapeAtomicRegion(new Sector(new Semicircle(circle, pt1, pt2, circle.OppositePoint(midpt), diameter))));
+            }
+            else
+            {
+                atoms.Add(new ShapeAtomicRegion(new Sector(new MinorArc(circle, pt1, pt2))));
+                atoms.Add(new ShapeAtomicRegion(new Sector(new MajorArc(circle, pt1, pt2))));
+            }
 
             return atoms;
         }

@@ -90,7 +90,17 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (theArc is MajorArc) return !isInMinorArc;
 
-            if (theArc is Semicircle) throw new Exception("Semicircle containment to be handled.");
+            if (theArc is Semicircle)
+            {
+                Semicircle semi = theArc as Semicircle;
+
+                // The point in question must lie on the same side of the diameter as the middle point
+                Segment candSeg = new Segment(pt, semi.middlePoint);
+
+                Point intersection = semi.diameter.FindIntersection(candSeg);
+
+                return !candSeg.PointLiesOnAndBetweenEndpoints(intersection);
+            }
 
             return false;
         }
@@ -106,9 +116,23 @@ namespace GeometryTutorLib.ConcreteAST
             KeyValuePair<Segment, Segment> radii = theArc.GetRadii();
             if (radii.Key.PointLiesOnAndBetweenEndpoints(pt) || radii.Value.PointLiesOnAndBetweenEndpoints(pt)) return true;
 
+            // This point must lie on the circle in question, minimally.
+            if (!theArc.theCircle.PointLiesOn(pt)) return false;
+
             // Arc
             if (theArc is MajorArc) return Arc.BetweenMajor(pt, theArc as MajorArc);
             else if (theArc is MinorArc) return Arc.BetweenMinor(pt, theArc as MinorArc);
+            else if (theArc is Semicircle)
+            {
+                Semicircle semi = theArc as Semicircle;
+
+                // The point in question must lie on the same side of the diameter as the middle point
+                Segment candSeg = new Segment(pt, semi.middlePoint);
+
+                Point intersection = semi.diameter.FindIntersection(candSeg);
+
+                return !candSeg.PointLiesOnAndBetweenEndpoints(intersection);
+            }
 
             return false;
         }
@@ -227,6 +251,8 @@ namespace GeometryTutorLib.ConcreteAST
         }
         public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
+            if (theArc is Semicircle) return (theArc as Semicircle).GetArea(known);
+
             // Central Angle; this is minor arc measure by default
             double angleMeasure = Angle.toRadians(known.GetAngleMeasure(this.theArc.GetCentralAngle()));
 
@@ -267,7 +293,13 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string CheapPrettyString()
         {
-            return (theArc is MajorArc ? "Major" : "Minor") + "Sector(" +
+            string prefix = "";
+
+            if (theArc is MajorArc) prefix = "Major";
+            if (theArc is MinorArc) prefix = "Minor";
+            if (theArc is Semicircle) prefix = "Semicircle";
+
+            return prefix + "(" +
                    theArc.endpoint1.SimpleToString() + theArc.theCircle.center.CheapPrettyString() + theArc.endpoint2.SimpleToString() + ")";
         }
     }

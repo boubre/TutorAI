@@ -62,10 +62,12 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 int NUMEQUATIONS_FOR_CUTOFF = 50;
 
-                if (clause is Equation || clause.IsAlgebraic()) numSequentialEquations++;
+                if (clause is Equation || clause.IsAlgebraic() || clause is Supplementary) numSequentialEquations++;
                 else numSequentialEquations = 0;
 
                 if (numSequentialEquations >= NUMEQUATIONS_FOR_CUTOFF) return graph;
+
+                if (graph.Size() > 600) return graph;
 
                 //
                 // Apply the clause to all applicable instantiators
@@ -87,7 +89,7 @@ namespace GeometryTutorLib.GenericInstantiator
                         HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
                     }
                     HandleDeducedClauses(worklist, ExteriorAngleEqualSumRemoteAngles.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
+                    // HandleDeducedClauses(worklist, AngleAdditionAxiom.Instantiate(clause));
 
                     //HandleDeducedClauses(worklist, ConcreteAngle.Instantiate(null, clause));
                     //HandleDeducedClauses(worklist, AngleBisector.Instantiate(clause));
@@ -457,6 +459,9 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, ComplementaryDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, RightTriangleDefinition.Instantiate(clause));
 
+                    // Correlating isoceles triangles with right triangles.
+                    CoordinateRightIsoscelesTriangles.Instantiate(clause);
+
                     // For quadrilateral definitions
                     HandleDeducedClauses(worklist, TrapezoidDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, IsoscelesTrapezoidDefinition.Instantiate(clause));
@@ -697,6 +702,7 @@ namespace GeometryTutorLib.GenericInstantiator
             AngleBisectorDefinition.Clear();
             ComplementaryDefinition.Clear();
             CongruentSegmentsImplySegmentRatioDefinition.Clear();
+            CoordinateRightIsoscelesTriangles.Clear();
             EquilateralTriangleDefinition.Clear();
             IsoscelesTriangleDefinition.Clear();
             MedianDefinition.Clear();

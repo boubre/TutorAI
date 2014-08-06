@@ -56,7 +56,13 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static double AngleBetween(Point thisPoint, Point thatPoint)
         {
-            return new Angle(thisPoint, new Point("", 0, 0), thatPoint).measure;
+            Point origin = new Point("", 0, 0);
+
+            if (Segment.Between(origin, thisPoint, thatPoint)) return 180;
+            if (Segment.Between(thisPoint, origin, thatPoint)) return 0;
+            if (Segment.Between(thatPoint, origin, thisPoint)) return 0;
+            
+            return new Angle(thisPoint, origin, thatPoint).measure;
         }
 
         public static Point MakeVector(Point tail, Point head) { return new Point("", head.X - tail.X, head.Y - tail.Y); }

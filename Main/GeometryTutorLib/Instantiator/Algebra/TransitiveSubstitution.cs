@@ -726,6 +726,7 @@ namespace GeometryTutorLib.GenericInstantiator
             // Simplify the equation
             //
             Equation simplified = Simplification.Simplify(newEq);
+            if (simplified == null) return null;
 
             //
             // Create a congruence relationship if it applies
@@ -768,19 +769,23 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             if (EqualLists(lhsTermsEq1, lhsTermsEq2))
             {
-                newRelations.Add(ConstructNewEquation(equationType, eq1.rhs, eq2.rhs));
+                GroundedClause newEq = ConstructNewEquation(equationType, eq1.rhs, eq2.rhs);
+                if (newEq != null) newRelations.Add(newEq);
             }
             if (EqualLists(lhsTermsEq1, rhsTermsEq2))
             {
-                newRelations.Add(ConstructNewEquation(equationType, eq1.rhs, eq2.lhs));
+                GroundedClause newEq = ConstructNewEquation(equationType, eq1.rhs, eq2.lhs);
+                if (newEq != null) newRelations.Add(newEq);
             }
             if (EqualLists(rhsTermsEq1, lhsTermsEq2))
             {
-                newRelations.Add(ConstructNewEquation(equationType, eq1.lhs, eq2.rhs));
+                GroundedClause newEq = ConstructNewEquation(equationType, eq1.lhs, eq2.rhs);
+                if (newEq != null) newRelations.Add(newEq);
             }
             if (EqualLists(rhsTermsEq1, rhsTermsEq2))
             {
-                newRelations.Add(ConstructNewEquation(equationType, eq1.lhs, eq2.lhs));
+                GroundedClause newEq = ConstructNewEquation(equationType, eq1.lhs, eq2.lhs);
+                if (newEq != null) newRelations.Add(newEq);
             }
 
             //

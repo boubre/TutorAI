@@ -35,14 +35,21 @@ namespace GeometryTestbed
             //
             // Class X
             //
-            //problems.Add(new Page1Col2Prob3(true, false));         // GTG
-            problems.Add(new Page2Col1Prob2(true, false));         // GTG
-            //problems.Add(new Page2Col2Prob2(true, false));         // GTG
+            // problems.Add(new Page1Col1Prob1(true, false));         // Infinite loop on solving
+            // problems.Add(new Page1Col1Prob2(true, false));         // Arc equations....
 
-            // problems.Add(new Page1Col1Prob5(true, false));
+            // problems.Add(new Page1Col1Prob3(true, false));        // Arc Equations
 
+            // problems.Add(new Page1Col1Prob5(true, false));        // GTG: Pathological
+            // problems.Add(new Page1Col2Prob1(true, false));        // GTG
+            // problems.Add(new Page1Col2Prob2(true, false));        // GTG
+            // problems.Add(new Page1Col2Prob3(true, false));        // GTG
+            // problems.Add(new Page2Col1Prob1(true, false));        // GTG
+            // problems.Add(new Page2Col1Prob2(true, false));        // GTG
+            // problems.Add(new Page2Col2Prob2(true, false));        // GTG
+            // problems.Add(new Page2Col1Prob3(true, false));        // GTG
+            // problems.Add(new TesterForCircleTriangle(true, false));
 
-            //problems.Add(new Page1Col1Prob1(true, false));
 
             //problems.Add(new Page1Col2Prob1(true, false));
             //problems.Add(new Page1Col2Prob2(true, false));                           // AtomicRegion
@@ -56,8 +63,21 @@ namespace GeometryTestbed
             //
             // Jurgensen
             //
-            // problems.Add(new Page2prob15(true, false));    // GTG
-            // problems.Add(new Page2prob17(true, false)); 
+            // problems.Add(new Page2Prob15(true, false));    // GTG
+            // problems.Add(new Page2Prob17(true, false));    // GTG
+            // problems.Add(new Page2Prob18(true, false));    // Arc equation
+            // problems.Add(new Page2Prob19(true, false));    // GTG
+            // problems.Add(new Page3Prob21(true, false));    // GTG: Takes a while.
+
+            //
+            // Singapore
+            //
+            // problems.Add(new Page205(true, false)); // GTG
+            // problems.Add(new Page207(true, false));       // Takes a long time; eliminate supplementary from parallelograms to speed up ; Angle equation problem.
+            // problems.Add(new Page208(true, false)); // GTG
+            // problems.Add(new Page209(true, false));       // Problem with not calculating area; more deductions needed?
+            // problems.Add(new Page210(true, false));       // Incomputable ; LONG execution need angle addition axiom ; Don't include.
+            // problems.Add(new Page199(true, false));       // FUBAR
 
             return problems;
         }

@@ -88,6 +88,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 return original;
             }
 
+            //
+            // 0 = 0 should not be allowable.
+            //
+            if (inflated.lhs.Equals(new NumericValue(0)) && inflated.rhs.Equals(new NumericValue(0)))
+            {
+                return null;
+            }
+
             return inflated;
         }
 

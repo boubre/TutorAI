@@ -140,7 +140,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 if (streng.strengthened is Parallelogram)
                 {
                     // Don't strengthen a Rectangle to a Rectangle
-                    if (streng.strengthened is Rectangle) return newGrounded;
+                    if (streng.strengthened is Rectangle || streng.strengthened is Square) return newGrounded;
 
                     foreach (RightAngle rightAngle in candidateRightAngle)
                     {

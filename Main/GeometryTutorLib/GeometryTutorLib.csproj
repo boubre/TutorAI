@@ -142,6 +142,7 @@
     <Compile Include="Instantiator\Axioms\ArcAdditionAxiom.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CongruentCircleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\Circles\CircleDefinition.cs" />
+    <Compile Include="Instantiator\Definitions\CoordinateRightIsoscelesTriangles.cs" />
     <Compile Include="Instantiator\Definitions\EquilateralTriangleDefinition.cs" />
     <Compile Include="Instantiator\Definitions\Quadrilaterals\SquareDefinition.cs" />
     <Compile Include="Instantiator\Definitions\Quadrilaterals\RectangleDefinition.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="PointFactory.cs" />
     <Compile Include="ProblemAnalyzer\MultiGoalProblem.cs" />
     <Compile Include="EngineUIBridge\ProblemDescription.cs" />
+    <Compile Include="EngineUIBridge\HardCodedProblemsToUI.cs" />
     <Compile Include="UIFigureAnalyzerMain.cs" />
     <Compile Include="ConcreteAST\Desciptors\Complementary.cs" />
     <Compile Include="ConcreteAST\Desciptors\Bisector.cs" />

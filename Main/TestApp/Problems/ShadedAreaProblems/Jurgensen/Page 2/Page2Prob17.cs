@@ -4,9 +4,9 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTestbed
 {
-    public class Page2prob17 : ActualShadedAreaProblem
+    public class Page2Prob17 : ActualShadedAreaProblem
     {
-        public Page2prob17(bool onoff, bool complete) : base(onoff, complete)
+        public Page2Prob17(bool onoff, bool complete) : base(onoff, complete)
         {
             Point o = new Point("O", 0, 0); points.Add(o);
             Point a = new Point("A", 2.5, 0); points.Add(a);
@@ -29,13 +29,16 @@ namespace GeometryTestbed
             given.Add(new RightAngle((Angle)parser.Get(new Angle(b, p, a))));
 
             known.AddSegmentLength(pb, 3);
-            known.AddSegmentLength(pa, 3);
+            known.AddSegmentLength(pa, 4);
 
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", 0, -1));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(9.817477042);
+
+            problemName = "Jurgensen Page 2 Problem 17";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

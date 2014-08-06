@@ -93,6 +93,7 @@ namespace LiveGeometry.TutorParser
 
             // Perform any calculations required for shaded-area solution synthesis: strengthening, hierarchy construction, etc.
             AreaBasedCalculator areaCal = new AreaBasedCalculator(implied, strengthenedNodes);
+            
             areaCal.PrepareAreaBasedCalculations();
 
             // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.

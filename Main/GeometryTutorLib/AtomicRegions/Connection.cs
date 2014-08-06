@@ -182,15 +182,19 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 if (!(this.segmentOrArc as Arc).StructurallyEquals(this.segmentOrArc as Arc)) return false;
 
                 // If the arcs just touch, it's not overlap.
-                MinorArc minor = this.segmentOrArc as MinorArc;
-                if (minor != null)
+                if (this.segmentOrArc is MinorArc)
                 {
+                    MinorArc minor = this.segmentOrArc as MinorArc;
                     if (minor.PointLiesStrictlyOn(that.endpoint1) || minor.PointLiesStrictlyOn(that.endpoint2)) return true;
                 }
-                else
+                else if (this.segmentOrArc is Semicircle)
+                {
+                    Semicircle semi = this.segmentOrArc as Semicircle;
+                    if (semi.PointLiesStrictlyOn(that.endpoint1) || semi.PointLiesStrictlyOn(that.endpoint2)) return true;
+                }
+                else if (this.segmentOrArc is MajorArc)
                 {
                     MajorArc major = this.segmentOrArc as MajorArc;
-
                     if (major.PointLiesStrictlyOn(that.endpoint1) || major.PointLiesStrictlyOn(that.endpoint2)) return true;
                 }
                 return false;

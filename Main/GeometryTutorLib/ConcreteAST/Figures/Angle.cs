@@ -46,6 +46,12 @@ namespace GeometryTutorLib.ConcreteAST
             ray1 = new Segment(a, b);
             ray2 = new Segment(b, c);
             this.measure = toDegrees(findAngle(A, B, C));
+
+            if (measure <= 0)
+            {
+                //System.Diagnostics.Debug.WriteLine("NO-OP");
+                // throw new ArgumentException("Measure of " + this.ToString() + " is ZERO");
+            }
         }
 
         public Angle(Segment ray1, Segment ray2) : base()
@@ -60,6 +66,12 @@ namespace GeometryTutorLib.ConcreteAST
             this.ray1 = ray1;
             this.ray2 = ray2;
             this.measure = toDegrees(findAngle(A, B, C));
+
+            if (measure <= 0)
+            {
+                //System.Diagnostics.Debug.WriteLine("NO-OP");
+//                throw new ArgumentException("Measure of " + this.ToString() + " is ZERO");
+            }
         }
 
         public Angle(List<Point> pts) : base()
@@ -76,6 +88,11 @@ namespace GeometryTutorLib.ConcreteAST
             ray1 = new Segment(A, B);
             ray2 = new Segment(B, C);
             this.measure = toDegrees(findAngle(A, B, C));
+
+            if (measure <= 0)
+            {
+                //throw new ArgumentException("Measure of " + this.ToString() + " is ZERO");
+            }
         }
 
         /// <summary>
@@ -185,8 +202,20 @@ namespace GeometryTutorLib.ConcreteAST
             //     |
             //  x  |_____
             // Is the point on either ray such that it is outside the angle? (x in the image above)
-            if (ray1.PointLiesOn(pt) && Segment.Between(pt, GetVertex(), ray1.OtherPoint(GetVertex()))) return true;
-            if (ray2.PointLiesOn(pt) && Segment.Between(pt, GetVertex(), ray2.OtherPoint(GetVertex()))) return true;
+            if (ray1.PointLiesOn(pt))
+            {
+                // Point between the endpoints of the ray.
+                if (Segment.Between(pt, GetVertex(), ray1.OtherPoint(GetVertex()))) return true;
+                // Point is on the ray, but extended in the right direction.
+                return Segment.Between(ray1.OtherPoint(GetVertex()), GetVertex(), pt);
+            }
+            if (ray2.PointLiesOn(pt))
+            {
+                // Point between the endpoints of the ray.
+                if (Segment.Between(pt, GetVertex(), ray2.OtherPoint(GetVertex()))) return true;
+                // Point is on the ray, but extended in the right direction.
+                return Segment.Between(ray2.OtherPoint(GetVertex()), GetVertex(), pt);
+            }
 
             Angle newAngle1 = new Angle(A, GetVertex(), pt);
             Angle newAngle2 = new Angle(C, GetVertex(), pt);
@@ -267,6 +296,9 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public bool IsIncludedAngle(Segment seg1, Segment seg2)
         {
+            // Do not allow the same segment.
+            if (seg1.StructurallyEquals(seg2)) return false;
+
             // Check direct inclusion
             if (seg1.Equals(ray1) && seg2.Equals(ray2) || seg1.Equals(ray2) && seg2.Equals(ray1)) return true;
 

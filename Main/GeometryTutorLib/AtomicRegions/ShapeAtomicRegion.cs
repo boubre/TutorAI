@@ -85,5 +85,19 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             return shape.CheapPrettyString();
         }
+
+        public override bool Contains(AtomicRegion that)
+        {
+            ShapeAtomicRegion thatAtom = that as ShapeAtomicRegion;
+
+            if (thatAtom != null)
+            {
+                return this.shape.Contains(thatAtom.shape);
+            }
+            else
+            {
+                return base.Contains(that);
+            }
+        }
     }
 }

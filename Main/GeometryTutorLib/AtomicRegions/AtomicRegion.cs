@@ -242,7 +242,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         // Do all the endpoints in that region lie within this region?
         // And, are all intersection points, if any, on this perimeter?
         //
-        public bool Contains(AtomicRegion that)
+        public virtual bool Contains(AtomicRegion that)
         {
             //
             // Do all vertices of that lie on the interior of this atomic region?

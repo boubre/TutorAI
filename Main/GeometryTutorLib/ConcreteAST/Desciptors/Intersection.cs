@@ -972,7 +972,7 @@ namespace GeometryTutorLib.ConcreteAST
             else if (this.StandsOn())
             {
                 Point off = this.CreatesTShape();
-                Segment baseSegment = lhs.PointLiesOnAndExactlyBetweenEndpoints(off) ? lhs : rhs;
+                Segment baseSegment = lhs.PointLiesOnAndExactlyBetweenEndpoints(intersect) ? lhs : rhs;
 
                 if (thatAngle.Equates(new Angle(baseSegment.Point1, intersect, off))) return true;
                 if (thatAngle.Equates(new Angle(baseSegment.Point2, intersect, off))) return true;

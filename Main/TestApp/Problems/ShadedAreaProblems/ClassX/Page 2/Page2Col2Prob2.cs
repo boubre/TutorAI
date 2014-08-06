@@ -33,11 +33,14 @@ namespace GeometryTestbed
             known.AddSegmentLength(rp, 7);
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", -11.83, -3.2));
+            wanted.Add(new Point("", -12.4, -1));
             wanted.Add(new Point("", 0, -10));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(406.87385231);
+            SetSolutionArea(161.4369261);
+
+            problemName = "Page 2 Col 2 Problem 2";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

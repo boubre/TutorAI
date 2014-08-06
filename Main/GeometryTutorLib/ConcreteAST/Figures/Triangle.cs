@@ -104,6 +104,141 @@ namespace GeometryTutorLib.ConcreteAST
         public void SetProvenToBeIsosceles() { provenIsosceles = true; } 
         public void SetProvenToBeEquilateral() { provenEquilateral = true; }
 
+
+        //
+        //
+        // Given 1 side of a right triangle and an angle, calculate the other 2 sides.
+        //
+        //
+        private List<KeyValuePair<Segment, double>> CalcSidesHypotenuseKnown(RightTriangle tri, Angle knownAngle, double knownAngleVal, Segment hypotenuse, double hypotVal)
+        {
+            List<KeyValuePair<Segment, double>> pairs = new List<KeyValuePair<Segment, double>>();
+
+            double oppSideLength = hypotVal * Math.Sin(Angle.toRadians(knownAngleVal));
+            pairs.Add(new KeyValuePair<Segment,double>(tri.GetOppositeSide(knownAngle), oppSideLength));
+
+            double adjSideLength = hypotVal * Math.Cos(Angle.toRadians(knownAngleVal));
+            pairs.Add(new KeyValuePair<Segment, double>(knownAngle.OtherRay(hypotenuse), adjSideLength));
+
+            return pairs;
+        }
+        private List<KeyValuePair<Segment, double>> CalcSidesHypotenuseUnknown(RightTriangle tri, Angle knownAngle, double knownAngleVal, Segment knownSide, double sideVal)
+        {
+            List<KeyValuePair<Segment, double>> pairs = new List<KeyValuePair<Segment, double>>();
+
+            Segment hypotenuse = tri.GetHypotenuse();
+            Segment oppSideOfAngle = tri.GetOppositeSide(knownAngle);
+            Segment adjacent = knownAngle.OtherRay(hypotenuse);
+
+            if (oppSideOfAngle.StructurallyEquals(knownSide))
+            {
+                double adjVal = sideVal / Math.Tan(Angle.toRadians(knownAngleVal));
+
+                pairs.Add(new KeyValuePair<Segment, double>(adjacent, adjVal));
+                pairs.Add(new KeyValuePair<Segment, double>(hypotenuse, Math.Sqrt(sideVal * sideVal + adjVal * adjVal)));
+            }
+            else if (adjacent.StructurallyEquals(knownSide))
+            {
+                double oppVal = sideVal * Math.Tan(Angle.toRadians(knownAngleVal));
+
+                pairs.Add(new KeyValuePair<Segment, double>(oppSideOfAngle, oppVal));
+                pairs.Add(new KeyValuePair<Segment, double>(hypotenuse, Math.Sqrt(sideVal * sideVal + oppVal * oppVal)));
+            }
+
+            return pairs;
+        }
+        private List<KeyValuePair<Segment, double>> CalcSides(RightTriangle tri, Angle rightAngle, Angle knownAngle, double knownAngleVal, Segment knownSeg, double knownSegVal)
+        {
+            //
+            // Determine the nature of the known Segment w.r.t. to the known angle.
+            //
+            Segment hypotenuse = tri.GetHypotenuse();
+            
+            // Hypotenuse known
+            if (knownSeg.StructurallyEquals(hypotenuse))
+            {
+                return CalcSidesHypotenuseKnown(tri, knownAngle, knownAngleVal, hypotenuse, knownSegVal);
+            }
+            else
+            {
+                return CalcSidesHypotenuseUnknown(tri, knownAngle, knownAngleVal, hypotenuse, knownSegVal);
+            }
+        }
+
+        public List<KeyValuePair<Segment, double>> RightTriangleTrigApplies(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            List<KeyValuePair<Segment, double>> pairs = new List<KeyValuePair<Segment, double>>();
+
+            if (!(this is RightTriangle) && !this.provenRight) return pairs;
+
+            //
+            // Make a right 
+            //
+            RightTriangle rightTri = new RightTriangle(this);
+            Angle otherAngle1, otherAngle2;
+            Angle rightAngle = this.rightAngle;
+            rightTri.GetOtherAngles(rightAngle, out otherAngle1, out otherAngle2);
+
+            double angleMeasure1 = known.GetAngleMeasure(otherAngle1);
+            double angleMeasure2 = known.GetAngleMeasure(otherAngle2);
+
+            // Need to know one side length
+            if (angleMeasure1 < 0 && angleMeasure2 < 0) return pairs;
+
+            double knownSegVal = -1;
+            Segment knownSeg = null;
+            foreach (Segment side in orderedSides)
+            {
+                knownSegVal = known.GetSegmentLength(side);
+                if (knownSegVal > 0)
+                {
+                    knownSeg = side;
+                    break;
+                }
+            }
+
+            // Need to know one side length
+            if (knownSegVal < 0) return pairs;
+
+            // Need at least one measure.
+            if (angleMeasure1 > 0) return CalcSides(rightTri, rightAngle, otherAngle1, angleMeasure1, knownSeg, knownSegVal);
+            if (angleMeasure2 > 0) return CalcSides(rightTri, rightAngle, otherAngle2, angleMeasure2, knownSeg, knownSegVal);
+
+            return pairs;
+        }
+
+        //
+        // Given known values, can the third side be determined: isosceles right triangle (with base known)
+        //
+        public List<KeyValuePair<Segment, double>> IsoscelesRightApplies(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            List<KeyValuePair<Segment, double>> pairs = new List<KeyValuePair<Segment, double>>();
+
+            if (!this.provenIsosceles || !this.provenRight) return pairs;
+
+            //
+            // Make an isosceles triangle to acquire segments.
+            //
+            IsoscelesTriangle isoTri = new IsoscelesTriangle(this);
+            Segment baseSeg = isoTri.baseSegment;
+
+            double baseVal = known.GetSegmentLength(baseSeg);
+
+            if (baseVal < -1) return pairs;
+
+            // Compute the value of the other sides.
+            double otherSideVal = Math.Sqrt(Math.Pow(baseVal, 2) / 2.0);
+
+            // Get the other sides.
+            Segment otherSide1, otherSide2;
+            isoTri.GetOtherSides(baseSeg, out otherSide1, out otherSide2);
+
+            pairs.Add(new KeyValuePair<Segment,double>(otherSide1, otherSideVal));
+            pairs.Add(new KeyValuePair<Segment, double>(otherSide2, otherSideVal));
+
+            return pairs;
+        }
+
         //
         // Given known values, can the third side be determined.
         //
@@ -111,7 +246,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             KeyValuePair<Segment, double> nullPair = new KeyValuePair<Segment, double>(null, -1);
 
-            if (!(this is RightTriangle) || !this.provenRight) return nullPair;
+            if (!(this is RightTriangle) && !this.provenRight) return nullPair;
 
             // Acquire the known lengths and determine if 2 of 3 are known (1 unknown).
             Segment hypotenuse = GetHypotenuse();
@@ -225,6 +360,28 @@ namespace GeometryTutorLib.ConcreteAST
             if (oppVertex.Equals(AngleC.GetVertex())) return AngleC;
 
             return null;
+        }
+
+        public void GetOtherAngles(Angle that, out Angle outAng1, out Angle outAng2)
+        {
+            outAng1 = null;
+            outAng2 = null;
+
+            if (AngleA.StructurallyEquals(that))
+            {
+                outAng1 = AngleB;
+                outAng2 = AngleC;
+            }
+            else if (AngleB.StructurallyEquals(that))
+            {
+                outAng1 = AngleA;
+                outAng2 = AngleC;
+            }
+            else if (AngleC.StructurallyEquals(that))
+            {
+                outAng1 = AngleA;
+                outAng2 = AngleB;
+            }
         }
 
         public void GetOtherSides(Segment s, out Segment outSeg1, out Segment outSeg2)
@@ -987,7 +1144,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             double semip = 0.5 * (s1 + s2 + s3);
 
-            return Math.Sqrt(semip * (s1 - semip) * (s2 - semip) * (s3 - semip));
+            return Math.Sqrt(semip * (semip - s1) * (semip - s2) * (semip - s3));
         }
         // SAS: 1/2 a * b * sin C
         protected double TrigArea(double a, double b, double theta)
@@ -1042,12 +1199,25 @@ namespace GeometryTutorLib.ConcreteAST
         // Does the included Trig Formula apply?
         private double ClassicArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
+            // Right triangle with height being one of the sides.
+            if (this is RightTriangle || this.provenRight)
+            {
+                Segment hypotenuse = GetHypotenuse();
+                Segment otherSeg1, otherSeg2;
+                GetOtherSides(hypotenuse, out otherSeg1, out otherSeg2);
+
+                double b = known.GetSegmentLength(otherSeg1);
+                double h = known.GetSegmentLength(otherSeg2);
+
+                return b > 0 && h > 0 ? Area(b, h) : -1;
+            }
+
             for (int s = 0; s < orderedSides.Count; s++)
             {
                 double b = known.GetSegmentLength(orderedSides[s]);
 
                 //
-                // How to handle heights?
+                // How to handle heights? Need to have altitudes for this triangle saved.
                 //
                 int h = 0;
 

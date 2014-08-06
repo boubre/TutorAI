@@ -29,7 +29,7 @@ namespace GeometryTestbed
             wanted.Add(new Point("", -1.8, 0));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea((4 / 3) * System.Math.PI + 2 * System.Math.Sqrt(3));
+            SetSolutionArea((4.0 / 3.0) * System.Math.PI + 2.0 * System.Math.Sqrt(3.0));
         }
     }
 }

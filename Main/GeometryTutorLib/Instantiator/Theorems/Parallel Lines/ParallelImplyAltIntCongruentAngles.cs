@@ -161,6 +161,15 @@ namespace GeometryTutorLib.GenericInstantiator
             KeyValuePair<Point, Point> fShapePoints = inter1.CreatesFShape(inter2);
             if (fShapePoints.Key != null && fShapePoints.Value != null) return newGrounded;
 
+            // Alt. Int if an H-Shape
+            //
+            // |     |
+            // |_____|
+            // |     |
+            // |     |
+            //
+            if (inter1.CreatesHShape(inter2)) return GenerateH(parallel, inter1, inter2);
+
             // Creates an S-Shape
             //
             //         |______
@@ -174,15 +183,6 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 return GenerateSimpleS(parallel, inter1, standardSShapePoints.Key, inter2, standardSShapePoints.Value);
             }
-
-            // Alt. Int if an H-Shape
-            //
-            // |     |
-            // |_____|
-            // |     |
-            // |     |
-            //
-            if (inter1.CreatesHShape(inter2)) return GenerateH(parallel, inter1, inter2);
 
             // Corresponding if a flying-Shape
             //

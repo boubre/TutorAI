@@ -157,10 +157,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             //
             // Does this region define a sector? 
             //
-            region = SectorDefinesRegion(circles, graph);
-            if (region != null)
+            List<AtomicRegion> sectors = SectorDefinesRegion(circles, graph);
+            if (sectors != null && sectors.Any())
             {
-                regions.Add(region);
+                regions.AddRange(sectors);
                 return regions;
             }
 
@@ -195,7 +195,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return new ShapeAtomicRegion(poly);
         }
 
-        private Atomizer.AtomicRegion SectorDefinesRegion(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
+        private List<Atomizer.AtomicRegion> SectorDefinesRegion(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
         {
             Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges = new Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge>();
 
@@ -397,8 +397,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return regions;
         }
 
-        private Atomizer.AtomicRegion ConvertToSector(Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges, List<MinorArc> arcs)
+        private List<Atomizer.AtomicRegion> ConvertToSector(Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges, List<MinorArc> arcs)
         {
+            List<AtomicRegion> newAtoms = new List<AtomicRegion>();
+
             //
             // Verify that all the arcs belong to the same circle.
             // Add all of the arc measures together for later reference
@@ -433,9 +435,26 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             Arc theArc = null;
             
             if (arcMeasure < 180) theArc = new MinorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
-            else theArc = new MajorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
+            else if (arcMeasure > 180) theArc = new MajorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
 
-            return new ShapeAtomicRegion(new Sector(theArc));
+            if (theArc != null)
+            {
+                newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
+                return newAtoms;
+            }
+
+            //
+            // Semicircles
+            //
+            Point midpt = refCircle.Midpoint(ptsOnCircle[0], ptsOnCircle[1]);
+            
+            theArc = new Semicircle(refCircle, ptsOnCircle[0], ptsOnCircle[1], midpt, new Segment(ptsOnCircle[0], ptsOnCircle[1]));
+            newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
+
+            theArc = new Semicircle(refCircle, ptsOnCircle[0], ptsOnCircle[1], refCircle.OppositePoint(midpt), new Segment(ptsOnCircle[0], ptsOnCircle[1]));
+            newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
+
+            return newAtoms;
         }
 
         //

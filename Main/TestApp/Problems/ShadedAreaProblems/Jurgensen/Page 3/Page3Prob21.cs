@@ -6,8 +6,7 @@ namespace GeometryTestbed
 {
     public class Page3Prob21 : ActualShadedAreaProblem
     {
-        public Page3Prob21(bool onoff, bool complete)
-            : base(onoff, complete)
+        public Page3Prob21(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
             Point b = new Point("B", 0, 4); points.Add(b);
@@ -25,6 +24,7 @@ namespace GeometryTestbed
             pts.Add(b);
             collinear.Add(new Collinear(pts));
 
+            pts = new List<Point>();
             pts.Add(d);
             pts.Add(p);
             pts.Add(c);
@@ -35,20 +35,17 @@ namespace GeometryTestbed
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
+            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral((Segment)parser.Get(new Segment(a, b)),
+                                                                             (Segment)parser.Get(new Segment(c, d)), bc, da));
+            given.Add(new Strengthened(quad, new Square(quad)));
+
             known.AddSegmentLength(da, 4);
             known.AddSegmentLength((Segment)parser.Get(new Segment(o, b)), 2);
             known.AddSegmentLength((Segment)parser.Get(new Segment(p, c)), 2);
 
-            List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 2, 0.5));
-            wanted.Add(new Point("", 2, 3.5));
-            wanted.Add(new Point("", 1, 2));
-            wanted.Add(new Point("", 3, 2));
-            wanted.Add(new Point("", -1, 0));
-            wanted.Add(new Point("", 5, 0));
-            goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
+            goalRegions = parser.implied.GetAllAtomicRegions();
 
-            SetSolutionArea(4 * (4 + System.Math.PI));
+            SetSolutionArea(4.0 * (4.0 + System.Math.PI));
         }
     }
 }

@@ -510,7 +510,16 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (!this.PointLiesInOrOn(that.theArc.theCircle.center)) return false;
 
-            return thisAtomicRegion.Contains(that.GetFigureAsAtomicRegion());
+            if (!this.PointLiesInOrOn(that.theArc.theCircle.Midpoint(that.theArc.endpoint1, that.theArc.endpoint2))) return false;
+
+            // Check all point approximations for containment.
+            //List<Point> approx = that.GetFigureAsAtomicRegion().GetVertices();
+            //foreach (Point pt in approx)
+            //{
+            //    if (!this.PointLiesInOrOn(pt)) return false;
+            //}
+
+            return true;
         }
 
         //
@@ -567,6 +576,14 @@ namespace GeometryTutorLib.ConcreteAST
             return intersections;
         }
 
+        public bool HasSamePoints(Polygon that)
+        {
+            if (that == null) return false;
+
+            if (this.points.Count != that.points.Count) return false;
+
+            return Utilities.EqualSets<Point>(this.points, that.points);
+        }
 
         public override bool StructurallyEquals(Object obj)
         {
