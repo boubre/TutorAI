@@ -167,6 +167,11 @@ namespace DynamicGeometry
             }
         }
 
+        public virtual bool EnabledByDefault
+        {
+            get { return true; }
+        }
+
         private bool mEnabled = true;
         public bool Enabled
         {

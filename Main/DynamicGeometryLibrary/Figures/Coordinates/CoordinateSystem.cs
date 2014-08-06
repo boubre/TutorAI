@@ -89,17 +89,20 @@ namespace DynamicGeometry
         public void ZoomIn()
         {
             UnitLength *= zoomFactor;
+            Drawing.RaiseZoomChanged();
         }
 
         public void ZoomOut()
         {
             UnitLength *= 1 / zoomFactor;
+            Drawing.RaiseZoomChanged();
         }
 
         public void ZoomExtend()
         {
             PointPair bounds = Drawing.Figures.GetLogicalBounds();
             SetViewport(bounds.P1.X - zoomExtendOffset, bounds.P2.X + zoomExtendOffset, bounds.P1.Y - zoomExtendOffset, bounds.P2.Y + zoomExtendOffset);
+            Drawing.RaiseZoomChanged();
         }
 
         //private double mScale = 1.0;

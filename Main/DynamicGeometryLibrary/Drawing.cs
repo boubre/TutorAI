@@ -5,13 +5,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
+using DynamicGeometry.UI.RegionShading;
 using GuiLabs.Undo;
 
 namespace DynamicGeometry
 {
     public partial class Drawing
     {
-
         public Drawing(Canvas canvas)
         {
             Check.NotNull(canvas, "canvas");
@@ -30,6 +30,27 @@ namespace DynamicGeometry
             CoordinateGrid = new CartesianGrid() { Drawing = this, Visible = Settings.Instance.ShowGrid };
             Figures.Add(CoordinateGrid);
             Version = Settings.CurrentDrawingVersion;
+
+            ZoomChanged += () => ZoomRegionShadings();
+        }
+
+        private List<ShadedRegion> RegionShadings = new List<ShadedRegion>();
+
+        public void AddRegionShading(ShadedRegion sr)
+        {
+            RegionShadings.Add(sr);
+            Canvas.Children.Add(sr.Shading);
+        }
+
+        public void ClearRegionShadings()
+        {
+            RegionShadings.ForEach<ShadedRegion>(sr => Canvas.Children.Remove(sr.Shading));
+            RegionShadings.Clear();
+        }
+
+        public void ZoomRegionShadings()
+        {
+            RegionShadings.ForEach<ShadedRegion>(sr => sr.ZoomRedraw(this));
         }
 
         public double Version { get; set; }

@@ -158,6 +158,12 @@
     <Resource Include="..\DynamicGeometryLibrary\Resources\MarkRegion.png">
       <Link>MarkRegion.png</Link>
     </Resource>
+    <Resource Include="..\DynamicGeometryLibrary\Resources\Play.png">
+      <Link>Play.png</Link>
+    </Resource>
+    <Resource Include="..\DynamicGeometryLibrary\Resources\Trash.png">
+      <Link>Trash.png</Link>
+    </Resource>
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,8 @@ namespace LiveGeometry
     {
         private DrawingHost drawingHost;
         private IsolatedStorageSettings isolatedSettings = IsolatedStorageSettings.ApplicationSettings;
+        private IEnumerable<Behavior> Behaviors;
+        private bool ShadingMode = false;
 
         private DrawingControl DrawingControl
         {
@@ -96,12 +98,13 @@ namespace LiveGeometry
 
         private void AddBehaviors()
         {
-            var behaviors = Behavior.LoadBehaviors(typeof(Dragger).Assembly);
-            var dragger = behaviors.First(b => b is Dragger);
+            Behaviors = Behavior.LoadBehaviors(typeof(Dragger).Assembly);
+            var dragger = Behaviors.First(b => b is Dragger);
             Behavior.Default = dragger;
-            foreach (var behavior in behaviors)
+            foreach (var behavior in Behaviors)
             {
                 drawingHost.AddToolButton(behavior);
+                behavior.Enabled = behavior.EnabledByDefault;
             }
         }
 

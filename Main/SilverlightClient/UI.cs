@@ -510,5 +510,39 @@ namespace LiveGeometry
         {
             throw new NotImplementedException();
         }
+
+        void StartRegionShading()
+        {
+            if (!ShadingMode)
+            {
+                //Graphical update
+                ShadingMode = true;
+                CommandStartRegionShading.Icon.Opacity = 0.2;
+                CommandClearRegionShading.Icon.Opacity = 1.0;
+
+                //Disable unncessary behaviors
+                Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
+
+                //Parse and set atoms
+                DrawingParserMain parser = new DrawingParserMain(drawingHost.CurrentDrawing);
+                parser.Parse();
+                DynamicGeometry.UI.RegionShading.ShadedRegionCreator.Atoms = parser.GetAtomicRegions();
+            }
+        }
+
+        void ClearRegionShading()
+        {
+            if (ShadingMode)
+            {
+                //Graphical update
+                ShadingMode = false;
+                CommandStartRegionShading.Icon.Opacity = 1.0;
+                CommandClearRegionShading.Icon.Opacity = 0.2;
+
+                //Discard regions and re-enable behaviors
+                drawingHost.CurrentDrawing.ClearRegionShadings();
+                Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
+            }
+        }
     }
 }

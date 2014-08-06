@@ -22,6 +22,8 @@ namespace LiveGeometry
         Command CommandProblemCharacteristics;
         Command CommandManageGivens;
         Command CommandEnterSolution;
+        Command CommandStartRegionShading;
+        Command CommandClearRegionShading;
 
         public void InitializeToolbar()
         {
@@ -39,6 +41,9 @@ namespace LiveGeometry
             CommandProblemCharacteristics = new Command(DisplayProblemCharacteristics, GetImageFromResource("ParseOptions.png"), "Desired Problem Characteristics", "Parsing");
             CommandEnterSolution = new Command(DisplayEnterSolution, GetImageFromResource("Parse.png"), "Enter Solution", "Parsing");
             CommandManageGivens = new Command(DisplayManageGivens, GetImageFromResource("ParseOptions.png"), "Manage Givens", "Parsing");
+            CommandStartRegionShading = new Command(StartRegionShading, GetImageFromResource("Play.png"), "Start Shading", "Regions");
+            CommandClearRegionShading = new Command(ClearRegionShading, GetImageFromResource("Trash.png"), "Clear Shading", "Regions");
+            CommandClearRegionShading.Icon.Opacity = 0.2;
 
             drawingHost.DrawingControl.CommandUndo.Icon = GetImageFromResource("Undo.png");
             drawingHost.DrawingControl.CommandRedo.Icon = GetImageFromResource("Redo.png");
@@ -67,6 +72,8 @@ namespace LiveGeometry
             //drawingHost.AddToolbarButton(CommandProblemCharacteristics);
             drawingHost.AddToolbarButton(CommandManageGivens);
             //drawingHost.AddToolbarButton(CommandEnterSolution);
+            drawingHost.AddToolbarButton(CommandStartRegionShading);
+            drawingHost.AddToolbarButton(CommandClearRegionShading);
 
             drawingHost.Ribbon.GetPanel("Drawing").HeaderContent.Icon = GetImageFromResource("SaveFormDesign.png");
         }
