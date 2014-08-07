@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace GeometryTestbed
+namespace GeometryTutorLib.GeometryTestbed
 {
     public class MainProgram
     {
-        private static List<GeometryTutorLib.HardCodedProblems.ActualProblem> ConstructAllHardCodedProblems()
+        private static List<GeometryTutorLib.GeometryTestbed.ActualProblem> ConstructAllHardCodedProblems()
         {
-            List<GeometryTutorLib.HardCodedProblems.ActualProblem> problems = new List<GeometryTutorLib.HardCodedProblems.ActualProblem>();
+            List<ActualProblem> problems = new List<ActualProblem>();
 
             //problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
@@ -19,7 +16,7 @@ namespace GeometryTestbed
             //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
-            problems.AddRange(GeometryTutorLib.HardCodedProblems.ShadedAreaProblems.GetProblems());
+            problems.AddRange(ShadedAreaProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
 
             return problems;
@@ -106,8 +103,8 @@ namespace GeometryTestbed
                 {
                     problem.Run();
 
-                    Debug.Write(++problemCount + "\t\t");
-                    Debug.Write(problem.ToString() + "\n");
+                    Debug.WriteLine(++problemCount + "\t\t");
+                    Debug.WriteLine(problem.ToString() + "\n");
                 }
             }
 

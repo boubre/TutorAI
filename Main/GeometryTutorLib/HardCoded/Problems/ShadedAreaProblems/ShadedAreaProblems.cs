@@ -56,7 +56,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page3Prob22(true, false));    // GTG
             // problems.Add(new Page3Prob23(true, false));    // OMIT: Circular filaments.
             // problems.Add(new Page2Prob28(true, false));    // Arc equations needed (as well as work to calculate trapezoid area))  
-            problems.Add(new Page4Prob7(true, false));     // Wrong answer...
+            // problems.Add(new Page4Prob7(true, false));     // GTG
             // problems.Add(new Page4Prob8(true, false));     // GTG
             // problems.Add(new Page4Prob13(true, false));    // GTG
             // problems.Add(new Page4Prob14(true, false));    // Encoding: Points

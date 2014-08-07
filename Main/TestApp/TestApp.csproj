@@ -43,11 +43,6 @@
   <ItemGroup>
     <Compile Include="MainProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatisticsGenerator\ProofProblemFigureStatisticsAggregator.cs" />
-    <Compile Include="StatisticsGenerator\ShadedAreaFigureStatisticsAggregator.cs" />
-    <Compile Include="StatisticsGenerator\HardCodedFigureAnalyzerMain.cs" />
-    <Compile Include="StatisticsGenerator\FigureStatisticsAggregator.cs" />
-    <Compile Include="StatisticsGenerator\HardCodedShadedAreaMain.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
