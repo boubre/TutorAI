@@ -71,27 +71,11 @@ namespace LiveGeometry.TutorParser
                     // ONLY for tangent situations.
                     if (inter1 != null && inter2 == null)
                     {
-                        {
-                            e1 = center1; 
-                            e2 = center2;
-                            m = inter1;
-                        }
-                        else if (GeometryTutorLib.ConcreteAST.Segment.Between(center1, inter1, center2))
-                        {
-                            e1 = inter1;
-                            e2 = center2;
-                            m = center1;
-                        }
-                        else
-                        {
-                            e1 = inter1;
-                            e2 = center1;
-                            m = center2;
-                        }
-
-                        pts.Add(implied.circles[c1].center);
-                        pts.Add(inter1);
-                        pts.Add(implied.circles[c2].center);
+                        Collinear coll = new Collinear();
+                        coll.AddCollinearPoint(implied.circles[c1].center);
+                        coll.AddCollinearPoint(inter1);
+                        coll.AddCollinearPoint(implied.circles[c2].center);
+                        implied.collinear.Add(coll);
                     }
                 }
             }
