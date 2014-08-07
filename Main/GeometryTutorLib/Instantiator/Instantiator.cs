@@ -524,6 +524,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TwoInterceptedArcsHaveCongruentAngles.Instantiate(clause));
                 }
                 else if (clause is CongruentCircles)
                 {

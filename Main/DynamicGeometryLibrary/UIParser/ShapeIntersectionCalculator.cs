@@ -71,10 +71,33 @@ namespace LiveGeometry.TutorParser
                     // ONLY for tangent situations.
                     if (inter1 != null && inter2 == null)
                     {
+                        //Determine the endpoints (the intersection point could be an endpoint if the tangency is internal)
+                        Point e1, e2, m;
+                        Point center1 = implied.circles[c1].center;
+                        Point center2 = implied.circles[c2].center;
+                        if (GeometryTutorLib.ConcreteAST.Segment.Between(inter1, center1, center2))
+                        {
+                            e1 = center1; 
+                            e2 = center2;
+                            m = inter1;
+                        }
+                        else if (GeometryTutorLib.ConcreteAST.Segment.Between(center1, inter1, center2))
+                        {
+                            e1 = inter1;
+                            e2 = center2;
+                            m = center1;
+                        }
+                        else
+                        {
+                            e1 = inter1;
+                            e2 = center1;
+                            m = center2;
+                        }
+
                         List<Point> pts = new List<Point>();
-                        pts.Add(implied.circles[c1].center);
-                        pts.Add(inter1);
-                        pts.Add(implied.circles[c2].center);
+                        pts.Add(e1);
+                        pts.Add(m);
+                        pts.Add(e2);
                         implied.collinear.Add(new Collinear(pts));
                     }
                 }

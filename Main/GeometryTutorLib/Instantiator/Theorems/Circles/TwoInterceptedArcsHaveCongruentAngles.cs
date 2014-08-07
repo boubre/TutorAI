@@ -11,42 +11,77 @@ namespace GeometryTutorLib.GenericInstantiator
         private readonly static string NAME = "If two inscribed angles intercept the same arc, the angles are congruent.";
         private static Hypergraph.EdgeAnnotation annotation = new Hypergraph.EdgeAnnotation(NAME, EngineUIBridge.JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES);
 
+        public static void Clear()
+        {
+            candidateAngles.Clear();
+        }
 
-        //         B ____________________ C
-        //          /                   /
-        //         /                   /
-        //        / Circle (center)   /
-        //       /        O          /
-        //      /                   /
-        //   A /___________________/ D
-        //
-        // Circle(O), Quad(A, B, C, D) -> Supplementary(Angle(ABC), Angle(ADC)), Supplementary(Angle(BAD), Angle(BCD))
-        //
+        private static List<Angle> candidateAngles = new List<Angle>();
+
         public static List<EdgeAggregator> Instantiate(GroundedClause clause)
         {
             annotation.active = EngineUIBridge.JustificationSwitch.TWO_INTERCEPTED_ARCS_HAVE_CONGRUENT_ANGLES;
 
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            Circle circle = clause as Circle;
-            
-            if (circle == null) return newGrounded;
-
-            //
-            // For each inscribed quadrilateral, generate accordingly.
-            //
-            foreach (Quadrilateral quad in circle.inscribedPolys[Polygon.QUADRILATERAL_INDEX])
+            if (clause is Angle)
             {
-                GeometricCongruentAngles gcas1 = new GeometricCongruentAngles(quad.topLeftAngle, quad.bottomRightAngle);
-                GeometricCongruentAngles gcas2 = new GeometricCongruentAngles(quad.bottomLeftAngle, quad.topRightAngle);
+                Angle angle = clause as Angle;
 
-                // For hypergraph
-                List<GroundedClause> antecedent = new List<GroundedClause>();
-                antecedent.Add(circle);
-                antecedent.Add(quad);
+                foreach (Angle candCongruentAngle in candidateAngles)
+                {
+                    newGrounded.AddRange(InstantiateTheorem(angle, candCongruentAngle));
+                }
 
-                newGrounded.Add(new EdgeAggregator(antecedent, gcas1, annotation));
-                newGrounded.Add(new EdgeAggregator(antecedent, gcas2, annotation));
+                candidateAngles.Add(angle);
+            }
+
+            else if (clause is Circle)
+            {
+                Circle circle = clause as Circle;
+
+                for (int i = 0; i < candidateAngles.Count; ++i)
+                {
+                    for (int j = i + 1; j < candidateAngles.Count; ++j)
+                    {
+                        newGrounded.AddRange(InstantiateTheorem(candidateAngles[i], candidateAngles[j]));
+                    }
+                }
+
+            }
+
+            return newGrounded;
+        }
+
+        private static List<EdgeAggregator> InstantiateTheorem(Angle a1, Angle a2)
+        {
+             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            // Acquire all circles in which the angles are inscribed
+            List<Circle> circles1 = Circle.IsInscribedAngle(a1);
+            List<Circle> circles2 = Circle.IsInscribedAngle(a2);
+
+            //Acquire the common circles in which both angles are inscribed
+            List<Circle> circles = (circles1.Intersect(circles2)).ToList();
+
+            //For each common circle, check for equivalent itercepted arcs
+            foreach (Circle c in circles)
+            {
+                Arc i1 = Arc.GetInterceptedArc(c, a1);
+                Arc i2 = Arc.GetInterceptedArc(c, a2);
+
+                if (i1.StructurallyEquals(i2))
+                {
+                    GeometricCongruentAngles gcas = new GeometricCongruentAngles(a1, a2);
+                    
+                    //For hypergraph
+                    List<GroundedClause> antecedent = new List<GroundedClause>();
+                    antecedent.Add(a1);
+                    antecedent.Add(a2);
+                    antecedent.Add(i1);
+
+                    newGrounded.Add(new EdgeAggregator(antecedent, gcas, annotation));
+                }
             }
 
             return newGrounded;
