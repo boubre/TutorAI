@@ -100,7 +100,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Create the equation
             //
-            GeometricAngleEquation gaeq = new GeometricAngleEquation(angle, intercepted);
+            GeometricAngleArcEquation gaeq = new GeometricAngleArcEquation(angle, intercepted);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();

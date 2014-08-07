@@ -94,8 +94,11 @@
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\AlgebraicSegmentRatioEquation.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\GeometricSegmentRatioEquation.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\Proportionalities\SegmentRatioEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\AlgebraicAngleArcEquation.cs" />
     <Compile Include="ConcreteAST\Equations\AlgebraicArcEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\AngleArcEquation.cs" />
     <Compile Include="ConcreteAST\Equations\ArcEquation.cs" />
+    <Compile Include="ConcreteAST\Equations\GeometricAngleArcEquation.cs" />
     <Compile Include="ConcreteAST\Equations\GeometricArcEquation.cs" />
     <Compile Include="ConcreteAST\Equations\NumericValue.cs" />
     <Compile Include="ConcreteAST\Figures\ConcavePolygon.cs" />

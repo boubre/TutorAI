@@ -104,7 +104,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Does this tangent apply to this intersection?
             //
-            if (!inter.intersect.StructurallyEquals(tangent.intersection)) return newGrounded;
+            if (!inter.intersect.StructurallyEquals(tangent.intersection.intersect)) return newGrounded;
 
             Segment secant = null;
             Segment tanSegment = null;
@@ -123,7 +123,9 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Acquire the angle and intercepted arc.
             //
-            Segment chord = tan.theCircle.ContainsChord(secant);
+            Segment chord = tan.theCircle.GetChord(secant);
+            if (chord == null) return newGrounded;
+            //Segment chord = tan.theCircle.ContainsChord(secant);
 
             // Arc
             // We want the MINOR ARC only!
@@ -141,7 +143,8 @@ namespace GeometryTutorLib.GenericInstantiator
             theAngle = Angle.AcquireFigureAngle(theAngle);
 
             Multiplication product = new Multiplication(new NumericValue(2), theAngle);
-            GeometricAngleEquation angEq = new GeometricAngleEquation(product, theArc);
+            //GeometricAngleEquation angEq = new GeometricAngleEquation(product, theArc);
+            GeometricAngleArcEquation angArcEq = new GeometricAngleArcEquation(product, theArc);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -150,7 +153,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(theArc);
             antecedent.Add(theAngle);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, angEq, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, angArcEq, annotation));
 
             return newGrounded;
         }

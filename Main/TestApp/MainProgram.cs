@@ -19,7 +19,8 @@ namespace GeometryTestbed
             //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
-            problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
 
             return problems;
         }

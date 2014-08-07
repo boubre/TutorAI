@@ -517,6 +517,20 @@ namespace GeometryTutorLib.ConcreteAST
                    (angle.A.StructurallyEquals(C) && angle.B.StructurallyEquals(B) && angle.C.StructurallyEquals(A));
         }
 
+        //Checking for equality of angles WITHOUT considering possible overlay of rays (i.e. two angles will be considered NOT equal
+        //if they contain rays that coincide but are not equivalent)
+        public bool EqualRays(object obj)
+        {
+            Angle angle = obj as Angle;
+            if (angle == null) return false;
+
+            // Measures better be the same.
+            if (!Utilities.CompareValues(this.measure, angle.measure)) return false;
+
+            return (angle.A.StructurallyEquals(A) && angle.B.StructurallyEquals(B) && angle.C.StructurallyEquals(C)) ||
+                   (angle.A.StructurallyEquals(C) && angle.B.StructurallyEquals(B) && angle.C.StructurallyEquals(A));
+        }
+
         //
         // Is this angle congruent to the given angle in terms of the coordinatization from the UI?
         //

@@ -456,7 +456,14 @@ namespace GeometryTutorLib.ConcreteAST
             Segment perpendicular = segment.GetPerpendicular(this.center);
 
             // Is this perpendicular segment a radius? If so, it's tangent, not a secant
-            if (Utilities.CompareValues(perpendicular.Length, this.radius)) return false;
+            //if (Utilities.CompareValues(perpendicular.Length, this.radius)) return false;
+
+            // Is the perpendicular a radius? Check if the intersection of the segment and the perpendicular is on the circle. If so, it's tangent
+            Point intersection = segment.FindIntersection(perpendicular);
+            if (this.PointLiesOn(intersection)) return false;
+
+            //Adjust perpendicular segment to include intersection with segment
+            perpendicular = new Segment(intersection, this.center);
 
             // Filter the fact that there are no intersections
             if (perpendicular.Length > this.radius) return false;

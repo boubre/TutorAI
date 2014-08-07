@@ -90,8 +90,8 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Get the chords
             //
-            Segment chord1 = circle.ContainsChord(inter.lhs);
-            Segment chord2 = circle.ContainsChord(inter.rhs);
+            Segment chord1 = circle.GetChord(inter.lhs);
+            Segment chord2 = circle.GetChord(inter.rhs);
 
             if (chord1 == null || chord2 == null) return newGrounded;
 
@@ -118,11 +118,11 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             NumericValue two = new NumericValue(2);
 
-            GeometricAngleEquation gaeq1 = new GeometricAngleEquation(new Multiplication(two, angle1), new Addition(arc1, oppArc1));
-            GeometricAngleEquation gaeq2 = new GeometricAngleEquation(new Multiplication(two, oppAngle1), new Addition(arc1, oppArc1));
+            GeometricAngleArcEquation gaeq1 = new GeometricAngleArcEquation(new Multiplication(two, angle1), new Addition(arc1, oppArc1));
+            GeometricAngleArcEquation gaeq2 = new GeometricAngleArcEquation(new Multiplication(two, oppAngle1), new Addition(arc1, oppArc1));
 
-            GeometricAngleEquation gaeq3 = new GeometricAngleEquation(new Multiplication(two, angle2), new Addition(arc2, oppArc2));
-            GeometricAngleEquation gaeq4 = new GeometricAngleEquation(new Multiplication(two, oppAngle2), new Addition(arc2, oppArc2));
+            GeometricAngleArcEquation gaeq3 = new GeometricAngleArcEquation(new Multiplication(two, angle2), new Addition(arc2, oppArc2));
+            GeometricAngleArcEquation gaeq4 = new GeometricAngleArcEquation(new Multiplication(two, oppAngle2), new Addition(arc2, oppArc2));
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();

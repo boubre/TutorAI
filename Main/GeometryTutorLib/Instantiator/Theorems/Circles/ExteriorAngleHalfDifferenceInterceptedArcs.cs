@@ -196,7 +196,8 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             NumericValue two = new NumericValue(2);
 
-            GeometricAngleEquation gaeq = new GeometricAngleEquation(new Multiplication(two, theAngle), new Subtraction(farArc, closeArc));
+            //GeometricAngleEquation gaeq = new GeometricAngleEquation(new Multiplication(two, theAngle), new Subtraction(farArc, closeArc));
+            GeometricAngleArcEquation gaaeq = new GeometricAngleArcEquation(new Multiplication(two, theAngle), new Subtraction(farArc, closeArc));
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -205,7 +206,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(closeArc);
             antecedent.Add(farArc);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, gaeq, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gaaeq, annotation));
 
             return newGrounded;
         }
@@ -277,7 +278,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             NumericValue two = new NumericValue(2);
 
-            GeometricAngleEquation gaeq = new GeometricAngleEquation(new Multiplication(two, theAngle), new Subtraction(farArc, closeArc));
+            GeometricAngleArcEquation gaaeq = new GeometricAngleArcEquation(new Multiplication(two, theAngle), new Subtraction(farArc, closeArc));
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -286,7 +287,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(closeArc);
             antecedent.Add(farArc);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, gaeq, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gaaeq, annotation));
 
             return newGrounded;
         }
@@ -334,7 +335,7 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             NumericValue two = new NumericValue(2);
 
-            GeometricAngleEquation gaeq = new GeometricAngleEquation(new Multiplication(two, theAngle), new Subtraction(majorArc, minorArc));
+            GeometricAngleArcEquation gaaeq = new GeometricAngleArcEquation(new Multiplication(two, theAngle), new Subtraction(majorArc, minorArc));
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -344,7 +345,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(majorArc);
             antecedent.Add(minorArc);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, gaeq, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gaaeq, annotation));
 
             return newGrounded;
         }

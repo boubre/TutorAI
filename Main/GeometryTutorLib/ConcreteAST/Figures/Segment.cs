@@ -761,6 +761,9 @@ namespace GeometryTutorLib.ConcreteAST
             Point pt1 = null;
             Point pt2 = null;
             circle.FindIntersection(this, out pt1, out pt2);
+            if (!this.PointLiesOnAndBetweenEndpoints(pt1)) pt1 = null;
+            if (!this.PointLiesOnAndBetweenEndpoints(pt2)) pt2 = null;
+
             return pt1 != null && pt2 != null;
         }
     }

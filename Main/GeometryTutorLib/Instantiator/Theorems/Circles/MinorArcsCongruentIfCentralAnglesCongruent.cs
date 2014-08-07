@@ -96,42 +96,59 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Determine if the angles are central angles.
             //
-            Circle circle1 = null;  Circle.IsCentralAngle(cas.ca1);
-            if (circle1 == null) return newGrounded;
+            List<Circle> circles1 = Circle.IsCentralAngle(cas.ca1);
+            //Circle circle1 = null;  Circle.IsCentralAngle(cas.ca1);
+            if (!circles1.Any()) return newGrounded;
 
-            Circle circle2 = null;  Circle.IsCentralAngle(cas.ca2);
-            if (circle2 == null) return newGrounded;
+            List<Circle> circles2 = Circle.IsCentralAngle(cas.ca2);
+            //Circle circle2 = null;  Circle.IsCentralAngle(cas.ca2);
+            if (!circles2.Any()) return newGrounded;
+            
+            //Construct arc congruences between congruent circles
+            foreach (Circle c1 in circles1)
+            {
+                foreach (Circle c2 in circles2)
+                {
+                    if (c1.radius == c2.radius)
+                    {
+                        Arc a1 = Arc.GetInterceptedArc(c1, cas.ca1);
+                        Arc a2 = Arc.GetInterceptedArc(c2, cas.ca2);
+                        if (a1 != null & a2 != null)
+                        {
+                            GeometricCongruentArcs gcas = new GeometricCongruentArcs(a1, a2);
 
+                            // For hypergraph
+                            List<GroundedClause> antecedent = new List<GroundedClause>();
+                            antecedent.Add(a1);
+                            antecedent.Add(a2);
+                            antecedent.Add(cas);
+
+                            newGrounded.Add(new EdgeAggregator(antecedent, gcas, forwardAnnotation));
+                        }
+                    }
+                }
+            }
             //
             // Construct the arc congruence by acquiring the arc endpoints.
             //
-            Point endpt11, endpt12, garbage;
-            circle1.FindIntersection(cas.ca1.ray1, out endpt11, out garbage);
-            if (endpt11 == null) return newGrounded;
+            //Point endpt11, endpt12, garbage;
+            //circle1.FindIntersection(cas.ca1.ray1, out endpt11, out garbage);
+            //if (endpt11 == null) return newGrounded;
 
-            circle1.FindIntersection(cas.ca1.ray2, out endpt12, out garbage);
-            if (endpt12 == null) return newGrounded;
+            //circle1.FindIntersection(cas.ca1.ray2, out endpt12, out garbage);
+            //if (endpt12 == null) return newGrounded;
 
-            Point endpt21, endpt22;
-            circle1.FindIntersection(cas.ca2.ray1, out endpt21, out garbage);
-            if (endpt21 == null) return newGrounded;
+            //Point endpt21, endpt22;
+            //circle1.FindIntersection(cas.ca2.ray1, out endpt21, out garbage);
+            //if (endpt21 == null) return newGrounded;
 
-            circle1.FindIntersection(cas.ca2.ray2, out endpt22, out garbage);
-            if (endpt22 == null) return newGrounded;
+            //circle1.FindIntersection(cas.ca2.ray2, out endpt22, out garbage);
+            //if (endpt22 == null) return newGrounded;
 
-            Arc arc1 = Arc.GetFigureMinorArc(circle1, endpt11, endpt12);
-            Arc arc2 = Arc.GetFigureMinorArc(circle2, endpt21, endpt22);
-            if (arc1 == null || arc2 == null) return newGrounded;
+            //Arc arc1 = Arc.GetFigureMinorArc(circle1, endpt11, endpt12);
+            //Arc arc2 = Arc.GetFigureMinorArc(circle2, endpt21, endpt22);
+            //if (arc1 == null || arc2 == null) return newGrounded;
 
-            GeometricCongruentArcs gcas = new GeometricCongruentArcs(arc1, arc2);
-
-            // For hypergraph
-            List<GroundedClause> antecedent = new List<GroundedClause>();
-            antecedent.Add(arc1);
-            antecedent.Add(arc2);
-            antecedent.Add(cas);
-
-            newGrounded.Add(new EdgeAggregator(antecedent, gcas, forwardAnnotation));
 
             return newGrounded;
         }

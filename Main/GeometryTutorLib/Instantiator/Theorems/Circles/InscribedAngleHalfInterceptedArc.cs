@@ -100,8 +100,8 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Create the equation
             //
-            Multiplication product = new Multiplication(new NumericValue(2), intercepted);
-            GeometricAngleEquation gaeq = new GeometricAngleEquation(angle, product);
+            Multiplication product = new Multiplication(new NumericValue(2), angle);
+            GeometricAngleArcEquation gaaeq = new GeometricAngleArcEquation(product, intercepted);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
@@ -109,7 +109,7 @@ namespace GeometryTutorLib.GenericInstantiator
             antecedent.Add(angle);
             antecedent.Add(intercepted);
  
-            newGrounded.Add(new EdgeAggregator(antecedent, gaeq, annotation));
+            newGrounded.Add(new EdgeAggregator(antecedent, gaaeq, annotation));
 
             return newGrounded;
         }

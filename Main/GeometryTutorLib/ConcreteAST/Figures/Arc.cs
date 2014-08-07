@@ -224,6 +224,9 @@ namespace GeometryTutorLib.ConcreteAST
             Point interRay11 = null;
             Point interRay12 = null;
             circle.FindIntersection(angle.ray1, out interRay11, out interRay12);
+            if (!angle.ray1.PointLiesOnAndBetweenEndpoints(interRay11)) interRay11 = null;
+            if (!angle.ray1.PointLiesOnAndBetweenEndpoints(interRay12)) interRay12 = null;
+            if (interRay11 == null && interRay12 != null) interRay11 = interRay12;
 
             // non-intersection
             if (interRay11 == null && interRay12 == null) return nullPair;
@@ -231,6 +234,9 @@ namespace GeometryTutorLib.ConcreteAST
             Point interRay21 = null;
             Point interRay22 = null;
             circle.FindIntersection(angle.ray2, out interRay21, out interRay22);
+            if (!angle.ray2.PointLiesOnAndBetweenEndpoints(interRay21)) interRay21 = null;
+            if (!angle.ray2.PointLiesOnAndBetweenEndpoints(interRay22)) interRay22 = null;
+            if (interRay21 == null && interRay22 != null) interRay21 = interRay22;
 
             // non-intersection
             if (interRay21 == null && interRay22 == null) return nullPair;

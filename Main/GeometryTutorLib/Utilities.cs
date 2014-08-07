@@ -34,7 +34,7 @@ namespace GeometryTutorLib
                 {
                     for (int j = i + 1; j < list.Count; j++)
                     {
-                        if (list[j] != null && list[i].StructurallyEquals(list[j]))
+                        if (list[j] != null && IsDuplicate<T>(list[i], list[j]))
                         {
                             list[j] = null;
                         }
@@ -51,6 +51,18 @@ namespace GeometryTutorLib
             }
 
             return cleanList;
+        }
+
+        private static bool IsDuplicate<T>(T clause1, T clause2) where T : ConcreteAST.GroundedClause
+        {
+            if (clause1 is GeometryTutorLib.ConcreteAST.Angle)
+            {
+                //Do not want to remove angles that are different but have coinciding rays (would cause problems when trying to find
+                //inscribed and central angles inside circles)
+                GeometryTutorLib.ConcreteAST.Angle angle = clause1 as GeometryTutorLib.ConcreteAST.Angle;
+                return angle.EqualRays(clause2);
+            }
+            else return clause1.StructurallyEquals(clause2);
         }
 
         //
@@ -453,10 +465,12 @@ namespace GeometryTutorLib
         }
         public static bool LessThan(double a, double b)
         {
-            return a - b - EPSILON < 0;
+            if (CompareValues(a, b)) return false;
+            else return a - b - EPSILON < 0;
         }
         public static bool GreaterThan(double a, double b)
         {
+            if (CompareValues(a, b)) return false;
             return a - b + EPSILON > 0;
         }
 

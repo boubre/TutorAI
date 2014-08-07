@@ -100,6 +100,9 @@ namespace GeometryTutorLib.GenericInstantiator
                     // Circle
                     HandleDeducedClauses(worklist, AngleInscribedSemiCircleIsRight.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TwoInterceptedArcsHaveCongruentAngles.Instantiate(clause));
                 }
                 else if (clause is Arc)
                 {
@@ -517,9 +520,9 @@ namespace GeometryTutorLib.GenericInstantiator
 
                     HandleDeducedClauses(worklist, CircleDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
                 }
                 else if (clause is CongruentCircles)
