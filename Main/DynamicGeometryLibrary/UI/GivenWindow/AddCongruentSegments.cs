@@ -87,12 +87,12 @@ namespace DynamicGeometry.UI.GivenWindow
             }
 
             //Pick a first segment...
-            foreach (GeometryTutorLib.ConcreteAST.Segment s1 in parser.implied.segments)
+            foreach (GeometryTutorLib.ConcreteAST.Segment s1 in parser.backendParser.implied.segments)
             {
                 List<GeometryTutorLib.ConcreteAST.Segment> possible = new List<GeometryTutorLib.ConcreteAST.Segment>();
 
                 //... and see what other segments are viable second options.
-                foreach (GeometryTutorLib.ConcreteAST.Segment s2 in parser.implied.segments)
+                foreach (GeometryTutorLib.ConcreteAST.Segment s2 in parser.backendParser.implied.segments)
                 {
                     if (s1.Length == s2.Length)
                     {

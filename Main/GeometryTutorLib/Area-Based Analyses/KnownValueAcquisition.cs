@@ -93,41 +93,30 @@ namespace GeometryTutorLib.Area_Based_Analyses
             }
             else
             {
-                List<KeyValuePair<Segment, double>> pairs = tri.IsoscelesRightApplies(known);
-                if (pairs.Any())
-                {
-                    bool change = false;
-                    foreach (KeyValuePair<Segment, double> isoPair in pairs)
-                    {
-                        // Do we know this already?
-                        if (known.GetSegmentLength(isoPair.Key) < 0)
-                        {
-                            change = true;
-                            known.AddSegmentLength(isoPair.Key, isoPair.Value);
-                        }
-                    }
-                    return change;
-                }
-
-                pairs = tri.RightTriangleTrigApplies(known);
-                if (pairs.Any())
-                {
-                    bool change = false;
-                    foreach (KeyValuePair<Segment, double> rightPair in pairs)
-                    {
-                        // Do we know this already?
-                        if (known.GetSegmentLength(rightPair.Key) < 0)
-                        {
-                            change = true;
-                            known.AddSegmentLength(rightPair.Key, rightPair.Value);
-                        }
-                    }
-                    return change;
-                }
+                if (AddKnowns(known, tri.IsoscelesRightApplies(known))) return true;
+                if (AddKnowns(known, tri.CalculateBaseOfIsosceles(known))) return true;
+                if (AddKnowns(known, tri.RightTriangleTrigApplies(known))) return true;
             }
 
             return false;
         }
+        private static bool AddKnowns(KnownMeasurementsAggregator known, List<KeyValuePair<Segment, double>> pairs)
+        {
+            if (!pairs.Any()) return false;
+
+            bool change = false;
+            foreach (KeyValuePair<Segment, double> rightPair in pairs)
+            {
+                // Do we know this already?
+                if (known.GetSegmentLength(rightPair.Key) < 0)
+                {
+                    change = true;
+                    known.AddSegmentLength(rightPair.Key, rightPair.Value);
+                }
+            }
+            return change;
+        }
+
         private static bool AcquireViaTriangles(KnownMeasurementsAggregator known, List<GroundedClause> triangles)
         {
             bool addedKnown = false;

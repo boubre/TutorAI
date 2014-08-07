@@ -56,8 +56,8 @@ namespace GeometryTestbed
             // problems.Add(new Page3Prob22(true, false));    // GTG
             // problems.Add(new Page3Prob23(true, false));    // OMIT: Circular filaments.
             // problems.Add(new Page2Prob28(true, false));    // Arc equations needed (as well as work to calculate trapezoid area))  
-            // problems.Add(new Page4Prob7(true, false));     // Wrong answer...
-            // problems.Add(new Page4Prob8(true, false));     // Fucked up Atomic region identification.
+            // problems.Add(new Page4Prob7(true, false));     // GTG
+            // problems.Add(new Page4Prob8(true, false));     // GTG
             // problems.Add(new Page4Prob13(true, false));    // GTG
             // problems.Add(new Page4Prob14(true, false));    // Encoding: Points
             // problems.Add(new Page4Prob19(true, false));    // Encoding
@@ -73,7 +73,7 @@ namespace GeometryTestbed
             // problems.Add(new Page5Row3Prob2(true, false));    // GTG
             // problems.Add(new Page5Row3Prob3(true, false));    // GTG
             // problems.Add(new Page5Row3Prob4(true, false));    // GTG
-            problems.Add(new Page5Row5Prob17(true, false));
+            // problems.Add(new Page5Row5Prob17(true, false));   // Unchecked
 
             //
             // Singapore

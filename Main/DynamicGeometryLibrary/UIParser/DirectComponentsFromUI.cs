@@ -40,23 +40,7 @@ namespace LiveGeometry.TutorParser
             definedSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
             circles = new List<GeometryTutorLib.ConcreteAST.Circle>();
 
-            polygons = ConstructPolygonContainer();
-        }
-
-        //
-        // Construct the array of polygons. This data structure will be the same across a figure.
-        //
-        public static List<GeometryTutorLib.ConcreteAST.Polygon>[] ConstructPolygonContainer()
-        {
-            List<GeometryTutorLib.ConcreteAST.Polygon>[] polygons;
-            polygons = new List<GeometryTutorLib.ConcreteAST.Polygon>[GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX];
-
-            for (int n = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX; n < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX; n++)
-            {
-                polygons[n] = new List<GeometryTutorLib.ConcreteAST.Polygon>();
-            }
-
-            return polygons;
+            polygons = GeometryTutorLib.ConcreteAST.Polygon.ConstructPolygonContainer();
         }
 
         /// <summary>

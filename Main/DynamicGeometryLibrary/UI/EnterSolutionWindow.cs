@@ -290,7 +290,8 @@ namespace DynamicGeometry.UI
         /// <param name="e"></param>
         private void AddSolutionBtn_Click(object sender, RoutedEventArgs e)
         {
-            givenWindows[addSolution.SelectedValue as string].Show(new LiveGeometry.TutorParser.DrawingParserMain(drawingHost.CurrentDrawing), new List<GroundedClause>(currentGivens.Values));
+            givenWindows[addSolution.SelectedValue as string].Show(new LiveGeometry.TutorParser.DrawingParserMain(drawingHost.CurrentDrawing),
+                                                                   new List<GroundedClause>(currentGivens.Values));
         }
 
         /// <summary>

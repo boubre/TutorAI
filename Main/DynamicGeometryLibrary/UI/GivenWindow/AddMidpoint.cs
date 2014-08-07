@@ -64,7 +64,7 @@ namespace DynamicGeometry.UI.GivenWindow
             }
 
             //Each inmiddle that can be strengthened to a midpoint that is not already a given is an option.
-            foreach (InMiddle im in parser.implied.inMiddles)
+            foreach (InMiddle im in parser.backendParser.implied.inMiddles)
             {
                 Strengthened s = im.CanBeStrengthened();
                 if (s != null)

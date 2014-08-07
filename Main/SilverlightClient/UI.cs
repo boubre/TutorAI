@@ -444,12 +444,12 @@ namespace LiveGeometry
             // Execute Front-End Parse
             parser.Parse();
 
-            foreach (GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion ar in parser.GetAtomicRegions())
+            foreach (GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion ar in parser.backendParser.GetAtomicRegions())
             {
                 UIDebugPublisher.publishString(ar.ToString());
             }
 
-            analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.MakeProblemDescription(manageGivensWindow.GetGivens()));
+            analyzer = new GeometryTutorLib.UIFigureAnalyzerMain(parser.backendParser.MakeProblemDescription(manageGivensWindow.GetGivens()));
             List<GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation>> problems = analyzer.AnalyzeFigure();
 
             // Acquire access to the backend hypergraph
@@ -526,7 +526,7 @@ namespace LiveGeometry
                 //Parse and set atoms
                 DrawingParserMain parser = new DrawingParserMain(drawingHost.CurrentDrawing);
                 parser.Parse();
-                DynamicGeometry.UI.RegionShading.ShadedRegionCreator.Atoms = parser.GetAtomicRegions();
+                DynamicGeometry.UI.RegionShading.ShadedRegionCreator.Atoms = parser.backendParser.GetAtomicRegions();
             }
         }
 

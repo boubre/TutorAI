@@ -408,7 +408,7 @@ namespace GeometryTutorLib.ConcreteAST
 
                         // We have a candidate vertex: save the vertex and the 2 segments which created it.
                         vertices.Add(vertex);
-                        pairs.Add(new KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, GeometryTutorLib.ConcreteAST.Segment>(theseSegs[s1], theseSegs[s2]));
+                        pairs.Add(new KeyValuePair<Segment, Segment>(theseSegs[s1], theseSegs[s2]));
                     }
                 }
             }
@@ -611,6 +611,22 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return true;
+        }
+
+        //
+        // Construct the array of polygons. This data structure will be the same across a figure.
+        //
+        public static List<Polygon>[] ConstructPolygonContainer()
+        {
+            List<Polygon>[] polygons;
+            polygons = new List<Polygon>[Polygon.MAX_EXC_POLY_INDEX];
+
+            for (int n = Polygon.MIN_POLY_INDEX; n < Polygon.MAX_EXC_POLY_INDEX; n++)
+            {
+                polygons[n] = new List<Polygon>();
+            }
+
+            return polygons;
         }
     }
 }

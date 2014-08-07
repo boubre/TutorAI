@@ -19,6 +19,7 @@ namespace GeometryTestbed
 
             Segment ap = new Segment(a, p); segments.Add(ap);
             Segment bp = new Segment(b, p); segments.Add(bp);
+            Segment cp = new Segment(c, p); segments.Add(cp);
 
             circles.Add(new Circle(p, 6.0));
 

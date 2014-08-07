@@ -42,5 +42,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             return atomIndices.ToString() + " Area(" + solArea + ")";
         }
+
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

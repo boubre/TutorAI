@@ -34,7 +34,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; ATOMIC_REGION_OFF;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; </DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -68,8 +68,6 @@
     <Compile Include="Actions\RemoveItemAction.cs" />
     <Compile Include="Actions\ReplaceFigureAction.cs" />
     <Compile Include="Actions\SetPropertyAction.cs" />
-    <Compile Include="AtomicRegionIdentifier\AtomicIdentifierMain.cs" />
-    <Compile Include="AtomicRegionIdentifier\ShapeAtomizer.cs" />
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\Behavior.Design.cs" />
     <Compile Include="Behaviors\BehaviorCategories.cs" />
@@ -98,14 +96,6 @@
     <None Include="Data\Demo\Wireframe.xml" />
     <None Include="Drawing.cd" />
     <Compile Include="Drawing.cs" />
-    <Compile Include="UIParser\AbstractParserMain.cs" />
-    <Compile Include="UIParser\AreaBasedCalculator.cs" />
-    <Compile Include="UIParser\ShapeContainmentCalculator.cs" />
-    <Compile Include="UIParser\DrawingPointCalculator.cs" />
-    <Compile Include="UIParser\ShapeIntersectionCalculator.cs" />
-    <Compile Include="UIParser\PolygonCalculator.cs" />
-    <Compile Include="UIParser\HardCodedParserMain.cs" />
-    <Compile Include="UIParser\ImpliedComponentCalculator.cs" />
     <Compile Include="UIParser\DirectComponentsFromUI.cs" />
     <Compile Include="UIParser\DrawingParserMain.cs" />
     <Compile Include="Expressions\Binder.cs" />

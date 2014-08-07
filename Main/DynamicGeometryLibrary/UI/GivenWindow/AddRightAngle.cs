@@ -64,7 +64,7 @@ namespace DynamicGeometry.UI.GivenWindow
 
             List<Angle> rightAngles = new List<Angle>();
             //Populate list with possible choices
-            foreach (Angle a in parser.implied.angles)
+            foreach (Angle a in parser.backendParser.implied.angles)
             {
                 if (a.measure == 90)
                 {

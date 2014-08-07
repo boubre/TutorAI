@@ -15,10 +15,14 @@ namespace GeometryTestbed
             Point d = new Point("D", 0, -8); points.Add(d);
             Point o = new Point("O", 4, -4); points.Add(o);
 
+            Point x = new Point("X", 4, 0); points.Add(x);
+
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment bc = new Segment(b, c); segments.Add(bc);
             Segment cd = new Segment(c, d); segments.Add(cd);
             Segment ad = new Segment(a, d); segments.Add(ad);
+
+            Segment ox = new Segment(o, x); segments.Add(ox);
 
             circles.Add(new Circle(o, 4.0));
 
@@ -28,12 +32,14 @@ namespace GeometryTestbed
             given.Add(new Strengthened(quad, new Square(quad)));
 
             known.AddSegmentLength(ab, 8);
+            known.AddSegmentLength(ox, 4);
 
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", 7.9, -0.1));
             wanted.Add(new Point("", 0.1, -0.1));
             wanted.Add(new Point("", 7.9, -7.9));
             wanted.Add(new Point("", 0.1, -7.9));
+
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(64 - 16 * System.Math.PI);

@@ -63,7 +63,7 @@ namespace DynamicGeometry.UI.GivenWindow
 
             var bisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
             //Populate list with possible choices
-            foreach (GeometryTutorLib.ConcreteAST.AngleBisector ab in parser.implied.angleBisectors)
+            foreach (GeometryTutorLib.ConcreteAST.AngleBisector ab in parser.backendParser.implied.angleBisectors)
             {
                 if (!StructurallyContains(givens, ab))
                 {

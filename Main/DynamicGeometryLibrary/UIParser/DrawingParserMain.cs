@@ -3,16 +3,17 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using DynamicGeometry;
 using GeometryTutorLib.ConcreteAST;
-using LiveGeometry.AtomicRegionIdentifier;
+using GeometryTutorLib.TutorParser;
 
 namespace LiveGeometry.TutorParser
 {
     /// <summary>
     /// Provides various functions related to converting LiveGeometry Figure into Grounded Clauses suitable for input into the proof engine.
     /// </summary>
-    public class DrawingParserMain : AbstractParserMain
+    public class DrawingParserMain
     {
         private Drawing drawing;
+        public HardCodedParserMain backendParser { get; protected set; }
 
         /// <summary>
         /// Create a new Drawing Parser.
@@ -38,14 +39,11 @@ namespace LiveGeometry.TutorParser
             // (c) Polygons (includes triangles and quadrilaterals)
             // (d) Regular Polygons (in polygon structure)
             // (e) Circles
-            DirectComponentsFromUI parser = new DirectComponentsFromUI(drawing, ifigs);
-            parser.Parse();
+            DirectComponentsFromUI uiParser = new DirectComponentsFromUI(drawing, ifigs);
+            uiParser.Parse();
 
-            //
-            // Calculate all of the implied components of the figure.
-            //
-            implied = new ImpliedComponentCalculator(parser.definedPoints, parser.definedSegments, parser.circles, parser.polygons);
-            implied.ConstructAllImplied();
+            backendParser = new HardCodedParserMain(uiParser.definedPoints, new List<GeometryTutorLib.ConcreteAST.Collinear>(),
+                                                    uiParser.definedSegments, uiParser.circles, true);
         }
     }
 }

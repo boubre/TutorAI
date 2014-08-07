@@ -137,12 +137,14 @@ namespace GeometryTutorLib.ConcreteAST
         public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             // Any Radius known?
-            double length = 0;
+            double length = -1;
             foreach (Segment thisRadius in radii)
             {
                 length = known.GetSegmentLength(thisRadius);
                 if (length > 0) break;
             }
+
+            if (length < 0) return -1;
 
             return Area(length);
         }

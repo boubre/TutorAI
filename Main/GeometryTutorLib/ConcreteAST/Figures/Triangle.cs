@@ -240,6 +240,54 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Given known values, can the third side be determined: isosceles right triangle (with base known)
+        //
+        public List<KeyValuePair<Segment, double>> CalculateBaseOfIsosceles(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            List<KeyValuePair<Segment, double>> pairs = new List<KeyValuePair<Segment, double>>();
+
+            if (!this.provenIsosceles || !(this is IsoscelesTriangle)) return pairs;
+
+            //
+            // Make an isosceles triangle to acquire segments.
+            //
+            IsoscelesTriangle isoTri = new IsoscelesTriangle(this);
+            Segment baseSeg = isoTri.baseSegment;
+
+            double baseVal = known.GetSegmentLength(baseSeg);
+            if (baseVal > 0) return pairs;
+
+            //
+            // Get the other sides.
+            //
+            Segment otherSide1, otherSide2;
+            isoTri.GetOtherSides(baseSeg, out otherSide1, out otherSide2);
+
+            // If we know 1 we should know the other, check anyway
+            double otherVal1 = known.GetSegmentLength(otherSide1);
+            double otherVal2 = known.GetSegmentLength(otherSide2);
+
+            if (otherVal1 < 0 && otherVal2 < 0) return pairs;
+
+            //
+            // Get the base angle.
+            //
+            double baseAngleVal = known.GetAngleMeasure(isoTri.baseAngleOppositeLeg1);
+            if (baseAngleVal < 0) baseAngleVal = known.GetAngleMeasure(isoTri.baseAngleOppositeLeg2);
+
+            if (baseAngleVal < 0) return pairs;
+
+            //
+            // Compute the value of the base
+            //
+            double baseSideVal = 2.0 * otherVal1 * Math.Cos(Angle.toRadians(baseAngleVal));
+
+            pairs.Add(new KeyValuePair<Segment, double>(baseSeg, baseSideVal));
+
+            return pairs;
+        }
+
+        //
         // Given known values, can the third side be determined.
         //
         public KeyValuePair<Segment, double> PythagoreanTheoremApplies(Area_Based_Analyses.KnownMeasurementsAggregator known)

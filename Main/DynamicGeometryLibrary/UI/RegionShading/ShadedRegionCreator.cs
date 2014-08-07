@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GeometryTutorLib.Area_Based_Analyses.Atomizer;
-using LiveGeometry.TutorParser;
+using GeometryTutorLib.TutorParser;
 
 namespace DynamicGeometry.UI.RegionShading
 {

@@ -64,7 +64,7 @@ namespace DynamicGeometry.UI.GivenWindow
 
             List<Triangle> equiTriangles = new List<Triangle>();
             //Populate list with possible choices
-            foreach (Triangle t in parser.implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX])
+            foreach (Triangle t in parser.backendParser.implied.polygons[GeometryTutorLib.ConcreteAST.Polygon.TRIANGLE_INDEX])
             {
                 if (isEquilateral(t))
                 {

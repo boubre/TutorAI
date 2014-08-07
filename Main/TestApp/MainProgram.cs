@@ -8,9 +8,9 @@ namespace GeometryTestbed
 {
     public class MainProgram
     {
-        private static List<GeometryTestbed.ActualProblem> ConstructAllHardCodedProblems()
+        private static List<GeometryTutorLib.HardCodedProblems.ActualProblem> ConstructAllHardCodedProblems()
         {
-            List<GeometryTestbed.ActualProblem> problems = new List<GeometryTestbed.ActualProblem>();
+            List<GeometryTutorLib.HardCodedProblems.ActualProblem> problems = new List<GeometryTutorLib.HardCodedProblems.ActualProblem>();
 
             //problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
@@ -19,8 +19,8 @@ namespace GeometryTestbed
             //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
             //problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.ShadedAreaProblems.GetProblems());
-            problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
+            problems.AddRange(GeometryTutorLib.HardCodedProblems.ShadedAreaProblems.GetProblems());
+            //problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
 
             return problems;
         }
