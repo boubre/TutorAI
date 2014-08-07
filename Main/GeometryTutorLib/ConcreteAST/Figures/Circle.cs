@@ -492,7 +492,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (!segment.HasPoint(this.center)) return null;
 
             // The segment must be at least as long as a radius.
-            if (segment.Length < this.radius) return null;
+            if (!Utilities.CompareValues(segment.Length, this.radius)) return null;
 
             Point nonCenterPt = segment.OtherPoint(this.center);
 

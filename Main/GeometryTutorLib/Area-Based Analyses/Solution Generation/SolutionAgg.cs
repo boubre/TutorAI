@@ -37,5 +37,10 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             return Utilities.EqualOrderedSets(this.atomIndices.orderedIndices, that.atomIndices.orderedIndices);
         }
+
+        public override string ToString()
+        {
+            return atomIndices.ToString() + " Area(" + solArea + ")";
+        }
     }
 }

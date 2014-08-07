@@ -470,7 +470,7 @@ namespace GeometryTutorLib.ConcreteAST
                 Point pt1 = null;
                 Point pt2 = null;
                 that.FindIntersection(side, out pt1, out pt2);
-                if (pt1 != null || pt2 != null) return false;
+                if (pt1 != null && pt2 != null) return false;
             }
 
             return that.PointLiesInside(that.center);

@@ -136,8 +136,8 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            // Does this paralle set apply to this triangle?
-            if (!quad.HasOppositeParallelSides(parallel)) return newGrounded;
+            // Does this parallel set apply to this quadrilateral?
+            if (!quad.HasOppositeParallelSides(parallel)) return InstantiateToTrapezoidSubsegments(quad, parallel);
 
             //
             // The other set of sides should NOT be parallel (that's a parallelogram)
@@ -150,6 +150,40 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             if (otherSides[0].IsParallelWith(otherSides[1])) return newGrounded;
+
+            return MakeTrapezoid(quad, parallel);
+        }
+
+        //
+        // Are the parallel sides subsegments of sides of the quadrilateral?
+        // If so, instantiate.
+        //
+        private static List<EdgeAggregator> InstantiateToTrapezoidSubsegments(Quadrilateral quad, Parallel parallel)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            // Does this parallel set apply to this quadrilateral?
+            if (!quad.HasOppositeParallelSubsegmentSides(parallel)) return newGrounded;
+
+            //
+            // The other set of sides should NOT be parallel (that's a parallelogram)
+            //
+            List<Segment> otherSides = quad.GetOtherSubsegmentSides(parallel);
+
+            if (otherSides.Count != 2)
+            {
+                throw new ArgumentException("Expected TWO sides returned from a quadrilateral / parallel relationship: "
+                                            + quad + " " + parallel + " returned " + otherSides.Count);
+            }
+
+            if (otherSides[0].IsParallelWith(otherSides[1])) return newGrounded;
+
+            return MakeTrapezoid(quad, parallel);
+        }
+
+        private static List<EdgeAggregator> MakeTrapezoid(Quadrilateral quad, Parallel parallel)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
             //
             // Create the new Trapezoid object

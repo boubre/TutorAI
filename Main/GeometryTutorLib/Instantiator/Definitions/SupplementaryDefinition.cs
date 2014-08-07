@@ -31,10 +31,35 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 newGrounded.AddRange(InstantiateToSupplementary(clause as Intersection));
             }
+            else if (clause is CongruentAngles)
+            {
+                newGrounded.AddRange(InstantiateToSupplementary(clause as CongruentAngles));
+            }
 
             return newGrounded;
         }
 
+        //
+        // All right angles are supplementary.
+        //
+        public static List<EdgeAggregator> InstantiateToSupplementary(CongruentAngles cas)
+        {
+            List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
+
+            if (cas.IsReflexive()) return newGrounded;
+
+            if (!(cas.ca1 is RightAngle) || !(cas.ca2 is RightAngle)) return newGrounded;
+
+            Supplementary supp = new Supplementary(cas.ca1, cas.ca2);
+
+            supp.SetNotASourceNode();
+            supp.SetNotAGoalNode();
+            supp.SetClearDefinition();
+
+            newGrounded.Add(new EdgeAggregator(Utilities.MakeList<GroundedClause>(cas), supp, annotation));
+
+            return newGrounded;
+        }
 
         //  A      B
         //   \    /

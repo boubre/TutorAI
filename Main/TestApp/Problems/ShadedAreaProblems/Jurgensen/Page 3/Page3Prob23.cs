@@ -6,17 +6,16 @@ namespace GeometryTestbed
 {
     public class Page3Prob23 : ActualShadedAreaProblem
     {
-        public Page3Prob23(bool onoff, bool complete)
-            : base(onoff, complete)
+        public Page3Prob23(bool onoff, bool complete) : base(onoff, complete)
         {
             Point q = new Point("Q", -2, 0); points.Add(q);
             Point p = new Point("P", 2, 0); points.Add(p);
             Point o = new Point("O", 0, 0); points.Add(o);
 
             List<Point> pts = new List<Point>();
+            pts.Add(q);
             pts.Add(o);
             pts.Add(p);
-            pts.Add(q);
             collinear.Add(new Collinear(pts));
 
             circles.Add(new Circle(o, 4));

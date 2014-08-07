@@ -60,14 +60,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 // Cutoff counter; seek a bunch of equations in sequence.
                 //
-                int NUMEQUATIONS_FOR_CUTOFF = 50;
+                int NUMEQUATIONS_FOR_CUTOFF = 100;
 
                 if (clause is Equation || clause.IsAlgebraic() || clause is Supplementary) numSequentialEquations++;
                 else numSequentialEquations = 0;
 
                 if (numSequentialEquations >= NUMEQUATIONS_FOR_CUTOFF) return graph;
 
-                if (graph.Size() > 600) return graph;
+                if (graph.Size() > 900) return graph;
 
                 //
                 // Apply the clause to all applicable instantiators
@@ -284,6 +284,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     HandleDeducedClauses(worklist, RelationsOfCongruentAnglesAreCongruent.Instantiate(clause));
                     HandleDeducedClauses(worklist, AngleBisectorDefinition.Instantiate(clause));
                     HandleDeducedClauses(worklist, RightAngleDefinition.Instantiate(clause));
+                    HandleDeducedClauses(worklist, SupplementaryDefinition.Instantiate(clause));
 
                     // Quadrilaterals
                     HandleDeducedClauses(worklist, BothPairsOppAnglesCongruentImpliesParallelogram.Instantiate(clause));

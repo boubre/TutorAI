@@ -200,6 +200,21 @@ namespace GeometryTutorLib.ConcreteAST
         //
         private bool ContainsSector(Sector that)
         {
+            if (this.StructurallyEquals(that)) return true;
+
+            //
+            // Is this sector from the same circle as that sector?
+            //
+            if (this.theArc.theCircle.StructurallyEquals(that.theArc.theCircle))
+            {
+                foreach (Point pt in that.theArc.GetApproximatingPoints())
+                {
+                    if (!this.PointLiesInOrOn(pt)) return false;
+                }
+
+                return true;
+            }
+
             // this radius must be longer than that.
             if (Utilities.GreaterThan(that.theArc.theCircle.radius, this.theArc.theCircle.radius)) return false;
 

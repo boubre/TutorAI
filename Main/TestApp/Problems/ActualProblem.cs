@@ -29,6 +29,7 @@ namespace GeometryTestbed
         protected List<Collinear> collinear;
         protected List<Segment> segments;
         protected List<Circle> circles;
+        protected List<Semicircle> semicircles;
 
         public const bool INCOMPLETE = false;
         public const bool COMPLETE = true;
@@ -47,6 +48,7 @@ namespace GeometryTestbed
             collinear = new List<Collinear>();
             segments = new List<Segment>();
             circles = new List<Circle>();
+            semicircles = new List<Semicircle>();
 
             problemName = "TODO: NAME ME" + this.GetType();
             problemIsOn = runOrNot;

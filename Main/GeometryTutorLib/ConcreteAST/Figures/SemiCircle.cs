@@ -157,5 +157,72 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "Semicircle(" + endpoint1.SimpleToString() + middlePoint.SimpleToString() + endpoint2.SimpleToString() + ")";
         }
+
+        private void GetStartEndPoints(out Point start, out Point end, out double startAngle)
+        {
+            start = null;
+            end = null;
+            startAngle = -1;
+
+            // Find the first point so we sweep in a counter-clockwise manner.
+            double angle1 = Point.GetRadianStandardAngleWithCenter(theCircle.center, endpoint1);
+            double angle2 = Point.GetRadianStandardAngleWithCenter(theCircle.center, endpoint2);
+
+            // Define to vectors: vect1: A----->B
+            //                    vect2: B----->C
+            // Cross product vect1 and vect2. 
+            // If the result is positive, the sequence A-->B-->C is Counter-clockwise. 
+            // If the result is negative, the sequence A-->B-->C is clockwise.
+            Point vect1 = Point.MakeVector(this.middlePoint, this.endpoint1);
+            Point vect2 = Point.MakeVector(this.endpoint2, this.middlePoint);
+
+            if (Point.CrossProduct(vect1, vect2) > 0)
+            {
+                start = endpoint1;
+                end = endpoint2;
+                startAngle = angle1;
+            }
+            else
+            {
+                start = endpoint2;
+                end = endpoint1;
+                startAngle = angle2;
+            }
+        }
+
+        public override List<Segment> Segmentize()
+        {
+            if (approxSegments.Any()) return approxSegments;
+
+            // How much we will change the angle measure as we create segments.
+            double angleIncrement = Math.PI / Figure.NUM_SEGS_TO_APPROX_ARC;
+
+            Point firstPoint = null;
+            Point secondPoint = null;
+            double angle = -1;
+
+            GetStartEndPoints(out firstPoint, out secondPoint, out angle);
+
+            for (int i = 1; i <= Figure.NUM_SEGS_TO_APPROX_ARC; i++)
+            {
+                // Save this as an approximating point.
+                approxPoints.Add(firstPoint);
+
+                // Get the next point.
+                angle += angleIncrement;
+                secondPoint = Point.GetPointFromAngle(theCircle.center, theCircle.radius, angle);
+
+                // Make the segment.
+                approxSegments.Add(new Segment(firstPoint, secondPoint));
+
+                // Rotate points.
+                firstPoint = secondPoint;
+            }
+
+            // Save this as an approximating point.
+            approxPoints.Add(secondPoint);
+
+            return approxSegments;
+        }
     }
 }

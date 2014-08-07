@@ -5,10 +5,9 @@ using System;
 
 namespace GeometryTestbed
 {
-    public class Page4Row1Prob7 : ActualShadedAreaProblem
+    public class Page4Prob7 : ActualShadedAreaProblem
     {
-        public Page4Row1Prob7(bool onoff, bool complete)
-            : base(onoff, complete)
+        public Page4Prob7(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
             Point b = new Point("B", 8, 0); points.Add(b);
@@ -25,18 +24,17 @@ namespace GeometryTestbed
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ab, cd, bc, ad));
+            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ad, bc, ab, cd));
             given.Add(new Strengthened(quad, new Square(quad)));
 
             known.AddSegmentLength(ab, 8);
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 7.8, -.5));
-            wanted.Add(new Point("", .5, -7.8));
-            wanted.Add(new Point("", 7.8, -7.5));
-            wanted.Add(new Point("", .5, -.5));
+            wanted.Add(new Point("", 7.9, -0.1));
+            wanted.Add(new Point("", 0.1, -0.1));
+            wanted.Add(new Point("", 7.9, -7.9));
+            wanted.Add(new Point("", 0.1, -7.9));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
-
 
             SetSolutionArea(64 - 16 * System.Math.PI);
         }

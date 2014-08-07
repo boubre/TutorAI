@@ -311,6 +311,8 @@ namespace GeometryTutorLib.GenericInstantiator
             CircleSegmentIntersection tan1 = tangent1.intersection as CircleSegmentIntersection;
             CircleSegmentIntersection tan2 = tangent2.intersection as CircleSegmentIntersection;
 
+            if (tan1.StructurallyEquals(tan2)) return newGrounded;
+
             // Do the tangents apply to the same circle?
             if (!tan1.theCircle.StructurallyEquals(tan2.theCircle)) return newGrounded;
 
@@ -325,10 +327,10 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             // Get the arcs
             //
-            Arc minorArc = Arc.GetFigureMinorArc(circle, tan1.intersect, tan2.intersect);
-            Arc majorArc = Arc.GetFigureMajorArc(circle, tan1.intersect, tan2.intersect);
+            Arc minorArc = new MinorArc(circle, tan1.intersect, tan2.intersect);
+            Arc majorArc = new MajorArc(circle, tan1.intersect, tan2.intersect);
 
-            Angle theAngle = Angle.AcquireFigureAngle(new Angle(tan1.intersect, inter.intersect, tan2.intersect));
+            Angle theAngle = new Angle(tan1.intersect, inter.intersect, tan2.intersect);
 
             //
             // Construct the new relationship

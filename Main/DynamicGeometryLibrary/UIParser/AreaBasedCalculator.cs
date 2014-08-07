@@ -32,7 +32,7 @@ namespace LiveGeometry.TutorParser
 
         // All points we can see in a drawing.
         private List<GeometryTutorLib.ConcreteAST.Point> figurePoints;
-        private List<Semicircle> semiCircles;
+        private List<Sector> semicircleSectors;
         private List<Sector> minorSectors;
         private List<Sector> majorSectors;
         private List<GeometryTutorLib.ConcreteAST.Circle> circles;
@@ -50,7 +50,7 @@ namespace LiveGeometry.TutorParser
             allFigures = new List<Figure>();
 
             figurePoints = impliedCalc.allFigurePoints;
-            semiCircles = impliedCalc.semiCircles;
+            semicircleSectors = impliedCalc.semicircleSectors;
             majorSectors = impliedCalc.majorSectors;
             minorSectors = impliedCalc.minorSectors;
             circles = impliedCalc.circles;
@@ -102,6 +102,7 @@ namespace LiveGeometry.TutorParser
             List<Figure> tempList = new List<Figure>();
 
             circles.ForEach(c => tempList.Add(c));
+            semicircleSectors.ForEach(s => tempList.Add(s));
             minorSectors.ForEach(s => tempList.Add(s));
             majorSectors.ForEach(s => tempList.Add(s));
             foreach (List<GeometryTutorLib.ConcreteAST.Polygon> polys in polygons)
@@ -305,28 +306,25 @@ namespace LiveGeometry.TutorParser
             // Construct the child hierarchies:
             //    for each top shape, find the contained shapes, recur.
             //
-            for (int f1 = 0; f1 < inner.Count; f1++)
+            foreach (Figure topShape in topShapes)
             {
                 // Find contained shapes.
                 List<Figure> containedShapes = new List<Figure>();
-                for (int f2 = 0; f2 < inner.Count; f2++)
+                foreach (Figure innerShape in inner)
                 {
-                    if (f1 != f2)
+                    if (!topShape.StructurallyEquals(innerShape))
                     {
-                        if (inner[f1].Contains(inner[f2]))
+                        if (topShape.Contains(innerShape))
                         {
-                            containedShapes.Add(inner[f2]);
+                            containedShapes.Add(innerShape);
                         }
                     }
                 }
 
                 // Recur
-                ShapeHierarchyHelper(inner[f1], containedShapes);
+                ShapeHierarchyHelper(topShape, containedShapes);
             }
 
-            //
-            // Construct the list of children to add to the 'outer' figure's hierarchy.
-            //
             outer.SetChildren(topShapes);
         }
     }

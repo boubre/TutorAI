@@ -188,6 +188,19 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Does this quadrilateral contain the segment on a side?
+        //
+        public Segment HasSubsegmentSide(Segment segment)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                if (side.HasSubSegment(segment)) return side;
+            }
+
+            return null;
+        }
+
+        //
         // Are the two given segments on the opposite sides of this quadrilateral?
         //
         public bool AreOppositeSides(Segment segment1, Segment segment2)
@@ -199,6 +212,22 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (left.StructurallyEquals(segment1) && right.StructurallyEquals(segment2)) return true;
             if (left.StructurallyEquals(segment2) && right.StructurallyEquals(segment1)) return true;
+
+            return false;
+        }
+
+        //
+        // Are the two given segments on the opposite sides of this quadrilateral?
+        //
+        public bool AreOppositeSubsegmentSides(Segment segment1, Segment segment2)
+        {
+            if (this.HasSubsegmentSide(segment1) == null || this.HasSubsegmentSide(segment2) == null) return false;
+
+            if (top.HasSubSegment(segment1) && bottom.HasSubSegment(segment2)) return true;
+            if (top.HasSubSegment(segment2) && bottom.HasSubSegment(segment1)) return true;
+
+            if (left.HasSubSegment(segment1) && right.HasSubSegment(segment2)) return true;
+            if (left.HasSubSegment(segment2) && right.HasSubSegment(segment1)) return true;
 
             return false;
         }
@@ -247,6 +276,14 @@ namespace GeometryTutorLib.ConcreteAST
         public bool HasOppositeParallelSides(Parallel parallel)
         {
             return AreOppositeSides(parallel.segment1, parallel.segment2);
+        }
+
+        //
+        // Does this parallel set apply to this quadrilateral?
+        //
+        public bool HasOppositeParallelSubsegmentSides(Parallel parallel)
+        {
+            return AreOppositeSubsegmentSides(parallel.segment1, parallel.segment2);
         }
 
         //
@@ -301,6 +338,35 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Acquire the other 2 sides not in this parallel relationship; works for a n-gon (polygon) as well.
+        //
+        public List<Segment> GetOtherSubsegmentSides(List<Segment> inSegments)
+        {
+            // This quadrilateral must have these given segments to return valid data.
+            List<Segment> inSegsMappedToQuad = new List<Segment>();
+            foreach (Segment inSeg in inSegments)
+            {
+                Segment side = this.HasSubsegmentSide(inSeg);
+                if (side == null) return new List<Segment>();
+                inSegsMappedToQuad.Add(side);
+            }
+
+            //
+            // Traverse given segments partitioning this quad into in / out.
+            //
+            List<Segment> outSegments = new List<Segment>();
+            foreach (Segment side in orderedSides)
+            {
+                if (!inSegsMappedToQuad.Contains(side))
+                {
+                    outSegments.Add(side);
+                }
+            }
+
+            return outSegments;
+        }
+
+        //
         // Acquire the other 2 sides not in this parallel relationship.
         //
         public List<Segment> GetOtherSides(Parallel parallel)
@@ -310,6 +376,18 @@ namespace GeometryTutorLib.ConcreteAST
             segs.Add(parallel.segment2);
 
             return GetOtherSides(segs);
+        }
+
+        //
+        // Acquire the other 2 sides not in this parallel relationship.
+        //
+        public List<Segment> GetOtherSubsegmentSides(Parallel parallel)
+        {
+            List<Segment> segs = new List<Segment>();
+            segs.Add(parallel.segment1);
+            segs.Add(parallel.segment2);
+
+            return GetOtherSubsegmentSides(segs);
         }
 
         //

@@ -9,24 +9,19 @@ namespace GeometryTutorLib.Area_Based_Analyses
 {
     public class SolutionDatabase
     {
-        // private Dictionary<IndexList, SolutionAgg> Solutions;
-        private Dictionary<IndexList, SolutionAgg> rootSolutions;
-        private Dictionary<IndexList, SolutionAgg> extendedSolutions;
+        private Dictionary<IndexList, SolutionAgg> solutions;
 
         public SolutionDatabase(int size)
         {
-            rootSolutions = new Dictionary<IndexList,SolutionAgg>();
-            extendedSolutions = new Dictionary<IndexList,SolutionAgg>(size);
+            solutions = new Dictionary<IndexList,SolutionAgg>(size);
         }
 
+        //
+        // If the solution exists in the root solutions as incomputable, seek a solution from the extended
+        //
         public bool TryGetValue(IndexList indices, out SolutionAgg solutionAgg)
         {
-            if (rootSolutions.TryGetValue(indices, out solutionAgg)) return true;
-
-            if (extendedSolutions.TryGetValue(indices, out solutionAgg)) return true;
-
-            solutionAgg = null;
-            return false;
+            return solutions.TryGetValue(indices, out solutionAgg);
         }
 
         public bool Contains(SolutionAgg solution)
@@ -36,43 +31,38 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public bool Contains(IndexList indices)
         {
-            return rootSolutions.ContainsKey(indices) || extendedSolutions.ContainsKey(indices);
+            return solutions.ContainsKey(indices);
         }
 
-        public bool AddRootSolution(SolutionAgg solution)
+        public List<SolutionAgg> GetComputableSolutions()
         {
-            return AddSolution(rootSolutions, solution);
+            List<SolutionAgg> computable = new List<SolutionAgg>();
+
+            foreach (KeyValuePair<IndexList, SolutionAgg> pair in solutions)
+            {
+                if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE) computable.Add(pair.Value);
+            }
+
+            return computable;
         }
 
-        public bool AddExtendedSolution(SolutionAgg solution)
+        public List<SolutionAgg> GetSolutions()
         {
-            if (rootSolutions.ContainsKey(solution.atomIndices)) return false;
-
-            return AddSolution(extendedSolutions, solution);
+            return new List<SolutionAgg>(solutions.Values);
         }
 
-        public List<SolutionAgg> GetRootSolutions()
+        public bool AddSolution(SolutionAgg that)
         {
-            return new List<SolutionAgg>(rootSolutions.Values);
-        }
-
-        public List<SolutionAgg> GetExtendedSolutions()
-        {
-            return new List<SolutionAgg>(extendedSolutions.Values);
+            return AddSolution(solutions, that);
         }
 
         public int GetNumComputable()
         {
             int computable = 0;
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in rootSolutions)
+            foreach (KeyValuePair<IndexList, SolutionAgg> pair in solutions)
             {
                 if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE) computable++;
             }
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in extendedSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE) computable++;
-            }
-
             return computable;
         }
 
@@ -80,11 +70,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             int incomputable = 0;
 
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in rootSolutions)
-            {
-                if (pair.Value.solType == SolutionAgg.SolutionType.INCOMPUTABLE) incomputable++;
-            }
-            foreach (KeyValuePair<IndexList, SolutionAgg> pair in extendedSolutions)
+            foreach (KeyValuePair<IndexList, SolutionAgg> pair in solutions)
             {
                 if (pair.Value.solType == SolutionAgg.SolutionType.INCOMPUTABLE) incomputable++;
             }
@@ -100,12 +86,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             IndexList indices = IndexList.AcquireAtomicRegionIndices(figureAtoms, desiredRegions);
 
             SolutionAgg solutionAgg = null;
-            if (!rootSolutions.TryGetValue(indices, out solutionAgg))
-            {
-                extendedSolutions.TryGetValue(indices, out solutionAgg);
-            }
-
-            if (solutionAgg == null)
+            if (!solutions.TryGetValue(indices, out solutionAgg))
             {
                 throw new ArgumentException("Could not find a solution in the database.");
             }
@@ -130,10 +111,18 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
                 return true;
             }
+
             //
             // The equation already exists in the database.
             //
+            return UpdateSolution(solDictionary, existentAgg, that);
+        }
 
+        //
+        // The equation already exists in the database.
+        //
+        private bool UpdateSolution(Dictionary<IndexList, SolutionAgg> solDictionary, SolutionAgg existentAgg, SolutionAgg that)
+        {
             // Favor a straight-forward calculation of the area (no manipulations to acquire the value).
             if (existentAgg.IsDirectArea()) return false;
 

@@ -59,33 +59,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         public void SolveAll(KnownMeasurementsAggregator known)
         {
-            //
-            // Preprocess any of the shape atoms to see if the area is computable.
-            //
-            for (int a = 0; a < figureAtoms.Count; a++)
-            {
-                ShapeAtomicRegion shapeAtom = figureAtoms[a] as ShapeAtomicRegion;
-                if (shapeAtom != null)
-                {
-                    double area = shapeAtom.GetArea(known);
-
-                    if (area > 0)
-                    {
-                        Region atomRegion = new Region(figureAtoms[a]);
-
-                        SolutionAgg agg = new SolutionAgg();
-
-                        // The equation is the identity equation.
-                        agg.solEq = new ComplexRegionEquation(atomRegion, atomRegion);
-                        agg.solType = SolutionAgg.SolutionType.COMPUTABLE;
-                        agg.solArea = area;
-                        agg.atomIndices = new IndexList(a);
-
-                        // Add this solution to the database.
-                        solutions.AddRootSolution(agg);
-                    }
-                }
-            }
+            PreprocessAtomAreas(known);
+            PreprocessShapeHierarchyAreas(known);
 
             //
             // Using the atomic regions, explore all of the top-most shapes recursively.
@@ -128,7 +103,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             }
 
             //
-            // Subtraction of shapes extracts as many atomic regions as possible.the strict atomic regions, now compose those together.
+            // Subtraction of shapes extracts as many atomic regions as possible of the strict atomic regions, now compose those together.
             //
             ComposeAllRegions();
         }
@@ -160,7 +135,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             //
             // Add this solution to the database.
             //
-            solutions.AddRootSolution(agg);
+            solutions.AddSolution(agg);
 
             // Was this equation solving for a single atomic region? If so, leave. 
             if (currOuterRegion.IsAtomic()) return;
@@ -239,7 +214,74 @@ namespace GeometryTutorLib.Area_Based_Analyses
             }
         }
 
+        private void PreprocessAtomAreas(KnownMeasurementsAggregator known)
+        {
+            //
+            // Preprocess any of the shape atoms to see if the area is computable.
+            //
+            for (int a = 0; a < figureAtoms.Count; a++)
+            {
+                ShapeAtomicRegion shapeAtom = figureAtoms[a] as ShapeAtomicRegion;
+                if (shapeAtom != null)
+                {
+                    double area = shapeAtom.GetArea(known);
 
+                    if (area > 0)
+                    {
+                        Region atomRegion = new Region(figureAtoms[a]);
+
+                        SolutionAgg agg = new SolutionAgg();
+
+                        // The equation is the identity equation.
+                        agg.solEq = new ComplexRegionEquation(atomRegion, atomRegion);
+                        agg.solType = SolutionAgg.SolutionType.COMPUTABLE;
+                        agg.solArea = area;
+                        agg.atomIndices = new IndexList(a);
+
+                        // Add this solution to the database.
+                        solutions.AddSolution(agg);
+                    }
+                }
+            }
+        }
+
+        //
+        // Recur through all of the shapes to pre-calculate their areas.
+        //
+        private void PreprocessShapeHierarchyAreas(KnownMeasurementsAggregator known)
+        {
+            foreach (Figure topShape in topShapeForest)
+            {
+                PreprocessShapeHierarchyAreas(known, topShape.Hierarchy());
+            }
+        }
+        private void PreprocessShapeHierarchyAreas(KnownMeasurementsAggregator known, TreeNode<Figure> currentRoot)
+        {
+            Figure theFigure = currentRoot.GetData();
+
+            double area = theFigure.GetArea(known);
+
+            if (area > 0)
+            {
+                Region atomRegion = new Region(theFigure.atoms);
+
+                SolutionAgg agg = new SolutionAgg();
+
+                // The equation is the identity equation.
+                agg.solEq = new ComplexRegionEquation(atomRegion, atomRegion);
+                agg.solType = SolutionAgg.SolutionType.COMPUTABLE;
+                agg.solArea = area;
+                agg.atomIndices = IndexList.AcquireAtomicRegionIndices(figureAtoms, theFigure.atoms);
+
+                // Add this solution to the database.
+                solutions.AddSolution(agg);
+            }
+
+            foreach (TreeNode<Figure> child in currentRoot.Children())
+            {
+                PreprocessShapeHierarchyAreas(known, child);
+            }
+        }
 
         //
         // Combine (through addition) any / all set of two equations in which there is no shared atomic region:
@@ -249,24 +291,19 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         private void ComposeAllRegions()
         {
-            List<SolutionAgg> worklist = new List<SolutionAgg>(solutions.GetRootSolutions());
+            List<SolutionAgg> worklist = new List<SolutionAgg>(solutions.GetComputableSolutions());
 
             while (worklist.Any())
             {
                 SolutionAgg currentSol = worklist[0];
                 worklist.RemoveAt(0);
 
-                foreach (SolutionAgg otherSol in solutions.GetRootSolutions())
+                foreach (SolutionAgg otherSol in solutions.GetSolutions())
                 {
                     HandleComposition(worklist, currentSol, otherSol);
                 }
 
-                foreach (SolutionAgg otherSol in solutions.GetExtendedSolutions())
-                {
-                    HandleComposition(worklist, currentSol, otherSol);
-                }
-
-                solutions.AddExtendedSolution(currentSol);
+                solutions.AddSolution(currentSol);
             }
         }
 
@@ -293,60 +330,70 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         private void AddToWorklist(List<SolutionAgg> worklist, SolutionAgg solution)
         {
+            //// Guarantee we may add this to the aorklist for processing.
+            //if (!solutions.Contains(solution))
+            //{
+            //    worklist.Add(solution);
+            //    return;
+            //}
+
+            //
             // If the solution is already in the database, update the solution in the database (if needed). 
-            if (solutions.Contains(solution))
+            //
+            if (solutions.AddSolution(solution))
             {
-                solutions.AddExtendedSolution(solution);
-            }
-            else
-            {
-                // Is this region (set of indices) already in the worklist?
-                // If not, add to the worklist.
+                // The solution may be in the worklist for processing; update accordingly.
                 int worklistIndex = worklist.IndexOf(solution);
-
-                if (worklistIndex == -1)
-                {
-                    worklist.Add(solution);
-                    return;
-                }
-
-                //
-                // If in the worklist, update the record with the shorter / computable version.
-                // Same logic as the SolutionDatabase.
-                //
-                // Favor a straight-forward calculation of the area (no manipulations to acquire the value).
-                if (worklist[worklistIndex].IsDirectArea()) return;
-
-                // Favor a coomputable equation over incomputable.
-                if (worklist[worklistIndex].solType == SolutionAgg.SolutionType.INCOMPUTABLE &&
-                    solution.solType == SolutionAgg.SolutionType.COMPUTABLE)
+                if (worklistIndex != -1)
                 {
                     worklist[worklistIndex] = solution;
-                    return;
-                }
-                // Again, favor a computable solution over not.
-                else if (worklist[worklistIndex].solType == SolutionAgg.SolutionType.COMPUTABLE &&
-                         solution.solType == SolutionAgg.SolutionType.INCOMPUTABLE)
-                {
-                    return;
-                }
-                // The computability is the same for both equations.
-                else if (worklist[worklistIndex].solType == solution.solType || worklist[worklistIndex].solType == SolutionAgg.SolutionType.UNKNOWN)
-                {
-                    if (!Utilities.CompareValues(worklist[worklistIndex].solArea, solution.solArea))
-                    {
-                        throw new Exception("Area for region " + worklist[worklistIndex].atomIndices.ToString() +
-                                            " was calculated now as (" + worklist[worklistIndex].solArea + ") AND before (" + solution.solArea + ")");
-                    }
-
-                    if (worklist[worklistIndex].solEq.Length > solution.solEq.Length)
-                    {
-                        worklist[worklistIndex] = solution;
-                        return;
-                    }
                 }
             }
         }
+                //// Is this region (set of indices) already in the worklist?
+                //// If not, add to the worklist.
+                //int worklistIndex = worklist.IndexOf(solution);
+
+                //if (worklistIndex == -1)
+                //{
+                //    return;
+                //}
+
+                ////
+                //// If in the worklist, update the record with the shorter / computable version.
+                //// Same logic as the SolutionDatabase.
+                ////
+                //// Favor a straight-forward calculation of the area (no manipulations to acquire the value).
+                //if (worklist[worklistIndex].IsDirectArea()) return;
+
+                //// Favor a coomputable equation over incomputable.
+                //if (worklist[worklistIndex].solType == SolutionAgg.SolutionType.INCOMPUTABLE &&
+                //    solution.solType == SolutionAgg.SolutionType.COMPUTABLE)
+                //{
+                //    worklist[worklistIndex] = solution;
+                //    return;
+                //}
+                //// Again, favor a computable solution over not.
+                //else if (worklist[worklistIndex].solType == SolutionAgg.SolutionType.COMPUTABLE &&
+                //         solution.solType == SolutionAgg.SolutionType.INCOMPUTABLE)
+                //{
+                //    return;
+                //}
+                //// The computability is the same for both equations.
+                //else if (worklist[worklistIndex].solType == solution.solType || worklist[worklistIndex].solType == SolutionAgg.SolutionType.UNKNOWN)
+                //{
+                //    if (!Utilities.CompareValues(worklist[worklistIndex].solArea, solution.solArea))
+                //    {
+                //        throw new Exception("Area for region " + worklist[worklistIndex].atomIndices.ToString() +
+                //                            " was calculated now as (" + worklist[worklistIndex].solArea + ") AND before (" + solution.solArea + ")");
+                //    }
+
+                //    if (worklist[worklistIndex].solEq.Length > solution.solEq.Length)
+                //    {
+                //        worklist[worklistIndex] = solution;
+                //        return;
+                //    }
+                //}
 
         private SolutionAgg HandleUnion(SolutionAgg first, SolutionAgg second)
         {

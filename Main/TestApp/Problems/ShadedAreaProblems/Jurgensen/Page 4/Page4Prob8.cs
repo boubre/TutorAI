@@ -6,8 +6,7 @@ namespace GeometryTestbed
 {
     public class Page4Prob8 : ActualShadedAreaProblem
     {
-        public Page4Prob8(bool onoff, bool complete)
-            : base(onoff, complete)
+        public Page4Prob8(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", -1 * System.Math.Sqrt(27), -3); points.Add(a);
             Point b = new Point("B", 0, 6); points.Add(b);
@@ -16,12 +15,17 @@ namespace GeometryTestbed
 
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment bc = new Segment(b, c); segments.Add(bc);
-            Segment ca = new Segment(c, a); segments.Add(bc);
+            Segment ca = new Segment(c, a); segments.Add(ca);
+
             Segment ap = new Segment(a, p); segments.Add(ap);
+            Segment bp = new Segment(b, p); segments.Add(bp);
 
             circles.Add(new Circle(p, 6.0));
 
             parser = new LiveGeometry.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+
+            Triangle tri = (Triangle)parser.Get(new Triangle(a, b, c));
+            given.Add(new Strengthened(tri, new EquilateralTriangle(tri)));
 
             known.AddSegmentLength(ap, 6);
 
