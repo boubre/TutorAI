@@ -305,6 +305,7 @@
     <Compile Include="UI\AddParseGroupWindow.cs" />
     <Compile Include="UI\AIDebugWindow.cs" />
     <Compile Include="UI\BehaviorOrderer.cs" />
+    <Compile Include="UI\BookProblemWindow.cs" />
     <Compile Include="UI\EnterSolutionWindow.cs" />
     <Compile Include="UI\CommandSystem\Command.cs" />
     <Compile Include="UI\CommandSystem\CompositeCommandObserver.cs" />
@@ -335,6 +336,7 @@
     <Compile Include="UI\ParseGroupWindow.cs" />
     <Compile Include="UI\ParseOptionsWindow.cs" />
     <Compile Include="UI\ProblemCharacteristicsWindow.cs" />
+    <Compile Include="UI\ProblemDrawer.cs" />
     <Compile Include="UI\RegionShading\ShadedRegionCreator.cs" />
     <Compile Include="UI\Ribbon\BehaviorToolButton.cs" />
     <Compile Include="UI\Ribbon\ButtonGrid.cs" />

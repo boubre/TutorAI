@@ -25,6 +25,7 @@ namespace LiveGeometry
         private ProblemCharacteristicsWindow problemCharacteristicsWindow;
         private EnterSolutionWindow enterSolutionWindow;
         private ManageGivensWindow manageGivensWindow;
+        private BookProblemWindow bookProblemWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
         private GeometryTutorLib.UIFigureAnalyzerMain analyzer;
         private GeometryTutorLib.EngineUIBridge.HypergraphWrapper hypergraph;
@@ -515,10 +516,7 @@ namespace LiveGeometry
         {
             if (!ShadingMode)
             {
-                //Graphical update
-                ShadingMode = true;
-                CommandStartRegionShading.Icon.Opacity = 0.2;
-                CommandClearRegionShading.Icon.Opacity = 1.0;
+                UpdateShadingMode(true);
 
                 //Disable unncessary behaviors
                 Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
@@ -534,14 +532,45 @@ namespace LiveGeometry
         {
             if (ShadingMode)
             {
-                //Graphical update
-                ShadingMode = false;
-                CommandStartRegionShading.Icon.Opacity = 1.0;
-                CommandClearRegionShading.Icon.Opacity = 0.2;
+                UpdateShadingMode(false);
 
                 //Discard regions and re-enable behaviors
                 drawingHost.CurrentDrawing.ClearRegionShadings();
                 Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
+            }
+        }
+
+        void DrawBookProblem()
+        {
+            if (!ShadingMode)
+            {
+                bookProblemWindow.Show();
+            }
+        }
+
+        void UpdateShadingMode(bool mode)
+        {
+            ShadingMode = mode;
+
+            //Graphical Update
+            if (mode)
+            {
+                //Enable
+                CommandClearRegionShading.Icon.Opacity = 1.0;
+
+                //Disable
+                CommandStartRegionShading.Icon.Opacity = 0.2;
+                CommandMakeBookProblem.Icon.Opacity = 0.2;
+       
+            }
+            else
+            {
+                //Enable
+                CommandStartRegionShading.Icon.Opacity = 1.0;
+                CommandMakeBookProblem.Icon.Opacity = 1.0;
+
+                //Disable
+                CommandClearRegionShading.Icon.Opacity = 0.2;
             }
         }
     }

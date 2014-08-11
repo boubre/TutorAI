@@ -94,6 +94,7 @@ namespace LiveGeometry
             problemCharacteristicsWindow = new ProblemCharacteristicsWindow(manageGivensWindow);
             problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
             enterSolutionWindow = new EnterSolutionWindow() { drawingHost = drawingHost };
+            bookProblemWindow = new BookProblemWindow(new ProblemDrawer(drawingHost));
         }
 
         private void AddBehaviors()

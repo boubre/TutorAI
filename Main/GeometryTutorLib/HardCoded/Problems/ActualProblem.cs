@@ -16,7 +16,7 @@ namespace GeometryTutorLib.GeometryTestbed
         protected List<GroundedClause> goals;
 
         // Formatted Labeling of the Problem
-        protected string problemName;
+        public string problemName { get; protected set; }
 
         public bool problemIsOn { get; protected set; }
 
@@ -25,11 +25,11 @@ namespace GeometryTutorLib.GeometryTestbed
         //
         protected GeometryTutorLib.TutorParser.HardCodedParserMain parser;
 
-        protected List<Point> points;
-        protected List<Collinear> collinear;
-        protected List<Segment> segments;
-        protected List<Circle> circles;
-        protected List<Semicircle> semicircles;
+        public List<Point> points { get; protected set; }
+        public List<Collinear> collinear { get; protected set; }
+        public List<Segment> segments { get; protected set; }
+        public List<Circle> circles { get; protected set; }
+        public List<Semicircle> semicircles { get; protected set; }
 
         public const bool INCOMPLETE = false;
         public const bool COMPLETE = true;

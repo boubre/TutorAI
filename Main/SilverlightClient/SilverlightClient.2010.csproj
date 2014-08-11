@@ -164,6 +164,9 @@
     <Resource Include="..\DynamicGeometryLibrary\Resources\Trash.png">
       <Link>Trash.png</Link>
     </Resource>
+    <Resource Include="..\DynamicGeometryLibrary\Resources\draw.png">
+      <Link>draw.png</Link>
+    </Resource>
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
