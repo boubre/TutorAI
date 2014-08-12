@@ -48,7 +48,8 @@ namespace LiveGeometry
             AddBehaviors();
             this.Content = drawingHost;
 
-            UIDebugPublisher = drawingHost.AIDebugWindow.MakeUIDebugPublisher();
+            drawingHost.AIDebugWindow.MakeUIDebugPublisher();
+            UIDebugPublisher = GeometryTutorLib.UIDebugPublisher.getInstance();
             
             InitParams = initParams;
             var settings = Application.Current.Host.Settings;

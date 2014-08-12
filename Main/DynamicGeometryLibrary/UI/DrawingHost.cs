@@ -52,7 +52,7 @@ namespace DynamicGeometry
         {
             this.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             this.RowDefinitions.Add(new RowDefinition());
-            this.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            this.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             this.ColumnDefinitions.Add(new ColumnDefinition());
             this.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
@@ -73,16 +73,17 @@ namespace DynamicGeometry
             FigureExplorer.Visible = Settings.Instance.ShowFigureExplorer;
             AIDebugWindow.Visible = Settings.Instance.ShowAIDebugWindow;
 
-            Grid.SetColumnSpan(Ribbon, 3);
-            Grid.SetColumn(FigureExplorer, 2);
-            Grid.SetColumn(DrawingControl, 1);
-            Grid.SetColumn(propertyGridScrollViewer, 1);
-            Grid.SetColumn(StatusBar, 1);
+            Grid.SetColumnSpan(Ribbon, 2);
+            Grid.SetColumnSpan(AIDebugWindow, 2);
+            Grid.SetColumn(FigureExplorer, 1);
+            Grid.SetColumn(DrawingControl, 0);
+            Grid.SetColumn(propertyGridScrollViewer, 0);
+            Grid.SetColumn(StatusBar, 0);
             Grid.SetRow(FigureExplorer, 1);
-            Grid.SetRow(AIDebugWindow, 1);
             Grid.SetRow(DrawingControl, 1);
             Grid.SetRow(propertyGridScrollViewer, 1);
             Grid.SetRow(StatusBar, 1);
+            Grid.SetRow(AIDebugWindow, 2);
 
             CommandToggleGrid = new Command(ToggleGrid, CartesianGrid.GetIcon(), "Grid", BehaviorCategories.Coordinates);
             CommandToggleOrtho = new Command(ToggleOrtho, new CheckBox(), "Ortho", BehaviorCategories.Selection);
@@ -109,8 +110,8 @@ namespace DynamicGeometry
         {
             AIDebugWindow = new AIDebugWindow()
             {
-                MinWidth = 200,
-                MaxWidth = 400
+                MinHeight = 200,
+                MaxHeight = 400
             };
         }
 

@@ -43,11 +43,10 @@ namespace DynamicGeometry.UI
         /// <summary>
         /// Create a new UIDebugPublisher. This object can publish strings to the window or clear the window.
         /// The publish and clear operations can be called from any thread but will be asyncrhonously invoked on the UI thread.
-        /// </summary>
-        /// <returns>A new UIDebugPublisher</returns>
-        public UIDebugPublisher MakeUIDebugPublisher()
+        /// </summary
+        public void MakeUIDebugPublisher()
         {
-            return new UIDebugPublisher(produceString, clearWindow);
+            UIDebugPublisher.create(produceString, clearWindow);
         }
 
         /// <summary>
