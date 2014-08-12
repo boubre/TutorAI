@@ -545,6 +545,7 @@ namespace LiveGeometry
             if (!ShadingMode)
             {
                 bookProblemWindow.Show();
+                StartRegionShading();
             }
         }
 
