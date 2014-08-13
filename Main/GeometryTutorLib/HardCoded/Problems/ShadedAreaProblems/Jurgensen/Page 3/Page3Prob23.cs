@@ -34,6 +34,9 @@ namespace GeometryTutorLib.GeometryTestbed
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(8 * System.Math.PI);
+
+            problemName = "Jurgensen Page 3 Problem 23";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

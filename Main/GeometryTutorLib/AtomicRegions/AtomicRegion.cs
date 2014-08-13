@@ -12,7 +12,27 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         public List<Connection> connections { get; protected set; }
         public List<Figure> owners { get; protected set; }
         private Figure topOwner;
-        //public List<AtomicRegion> contained { get; protected set; }
+
+        //
+        // <------- The following are for processing atomic regions.
+        //
+        private bool knownAtomic;
+        public void SetKnownAtomic() { knownAtomic = true; }
+        public bool IsKnownAtomic() { return knownAtomic; }
+        public void Clear()
+        {
+            knownAtomic = false;
+            containedAtoms = new List<AtomicRegion>();
+        }
+
+        private List<AtomicRegion> containedAtoms;
+        public void SetContained(List<AtomicRegion> contained) { containedAtoms = contained; }
+        public bool IsKnownNonAtomic() { return containedAtoms.Any(); }
+        public List<AtomicRegion> GetContainedAtoms() { return containedAtoms; }
+        public bool UnknownAtomicStatus() { return !IsKnownAtomic() && !IsKnownNonAtomic(); }
+        //
+        // <------- End processing atomic region members
+        //
 
         // A version of this region that is an approximate polygon.
         public Polygon polygonalized { get; protected set; }
@@ -23,7 +43,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             connections = new List<Connection>();
             owners = new List<Figure>();
             topOwner = null;
-            //contained = new List<AtomicRegion>();
+            knownAtomic = false;
             polygonalized = null;
             thisArea = -1;
         }

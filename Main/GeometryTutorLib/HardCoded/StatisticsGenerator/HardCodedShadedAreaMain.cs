@@ -106,15 +106,21 @@ namespace GeometryTutorLib.TutorParser
             // Find the set of all equations for the shapes in this figure.
             //
             solutionAreaGenerator = new GeometryTutorLib.Area_Based_Analyses.AreaSolutionGenerator(areaCal.GetShapeHierarchy(), areaCal.GetUpdatedAtomicRegions());
-            solutionAreaGenerator.SolveAll(known);
+            solutionAreaGenerator.SolveAll(known, areaCal.GetAllFigures());
 
             // Acquire a single solution for this specific problem for validation purposes.
             KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = solutionAreaGenerator.GetSolution(goalRegions);
 
+#if HARD_CODED_UI
+            UIDebugPublisher.getInstance().clearWindow();
+            UIDebugPublisher.getInstance().publishString("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
+#endif
             Debug.WriteLine("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
 
             // Validate that calculated area value matches the value from the hard-coded problem.
             Validate(result.Key, result.Value);
+
+            solutionAreaGenerator.PrintAllSolutions();
 
             figureStats.numCalculableRegions = solutionAreaGenerator.GetNumComputable();
             figureStats.numIncalculableRegions = solutionAreaGenerator.GetNumIncomputable();

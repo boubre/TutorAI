@@ -52,6 +52,9 @@ namespace GeometryTutorLib.GeometryTestbed
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(42.06195997);
+
+            problemName = "Class X Page 2 Col 2 Problem 1";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

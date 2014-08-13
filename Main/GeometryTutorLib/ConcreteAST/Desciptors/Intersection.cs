@@ -915,6 +915,14 @@ namespace GeometryTutorLib.ConcreteAST
             return lhs.StructurallyEquals(s) || rhs.StructurallyEquals(s);
         }
 
+        //
+        // If an endpoint of one segment is on the other segment
+        //
+        public bool HasSubSegment(Segment s)
+        {
+            return lhs.HasSubSegment(s) || rhs.HasSubSegment(s);
+        }
+
         public Segment GetCollinearSegment(Segment thatSegment)
         {
             if (lhs.IsCollinearWith(thatSegment)) return lhs;

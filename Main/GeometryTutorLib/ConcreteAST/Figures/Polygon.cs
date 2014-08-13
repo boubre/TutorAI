@@ -428,13 +428,20 @@ namespace GeometryTutorLib.ConcreteAST
             //    /____/   \__|
             //
             //
-            foreach (Segment side in theseSegs)
+            //
+            // Interioir tangent circles are such that the approximations are extremely close to each other.
+            // Do not perform this check if this polygon construction is an approximation.
+            //
+            if (theseSegs.Count < Point.NUM_SEGS_TO_APPROX_ARC)
             {
-                foreach (Point vertex in vertices)
+                foreach (Segment side in theseSegs)
                 {
-                    if (side.PointLiesOnAndExactlyBetweenEndpoints(vertex))
+                    foreach (Point vertex in vertices)
                     {
-                        return null;
+                        if (side.PointLiesOnAndExactlyBetweenEndpoints(vertex))
+                        {
+                            return null;
+                        }
                     }
                 }
             }
@@ -510,8 +517,17 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (!this.PointLiesInOrOn(that.theArc.theCircle.center)) return false;
 
-            if (!this.PointLiesInOrOn(that.theArc.theCircle.Midpoint(that.theArc.endpoint1, that.theArc.endpoint2))) return false;
-
+            if (that.theArc is Semicircle)
+            {
+                Semicircle semi = that.theArc as Semicircle;
+                if (!this.PointLiesInOrOn(semi.middlePoint)) return false;
+                if (!this.PointLiesInOrOn(semi.theCircle.Midpoint(semi.endpoint1, semi.middlePoint))) return false;
+                if (!this.PointLiesInOrOn(semi.theCircle.Midpoint(semi.endpoint2, semi.middlePoint))) return false;
+            }
+            else
+            {
+                if (!this.PointLiesInOrOn(that.theArc.theCircle.Midpoint(that.theArc.endpoint1, that.theArc.endpoint2))) return false;
+            }
             // Check all point approximations for containment.
             //List<Point> approx = that.GetFigureAsAtomicRegion().GetVertices();
             //foreach (Point pt in approx)

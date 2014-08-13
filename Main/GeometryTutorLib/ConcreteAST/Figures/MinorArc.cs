@@ -110,7 +110,9 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool HasSubArc(Arc that)
         {
-            if (that is MajorArc) return false;
+            if (!this.theCircle.StructurallyEquals(that.theCircle)) return false;
+
+            if (that is MajorArc || that is Semicircle) return false;
 
             return this.HasMinorSubArc(that);
         }

@@ -6,8 +6,7 @@ namespace GeometryTutorLib.GeometryTestbed
 {
     public class Page3Prob24 : ActualShadedAreaProblem
     {
-        public Page3Prob24(bool onoff, bool complete)
-            : base(onoff, complete)
+        public Page3Prob24(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
             Point b = new Point("B", 2, 0); points.Add(b);
@@ -17,20 +16,39 @@ namespace GeometryTutorLib.GeometryTestbed
             Point e = new Point("E", 0, 4); points.Add(e);
             Point f = new Point("F", 2, 4); points.Add(f);
             Point g = new Point("G", 6, 4); points.Add(g);
-            Point h = new Point("H", 8, 0); points.Add(h);
+            Point h = new Point("H", 8, 4); points.Add(h);
 
+            Point x = new Point("X", 4, 0); points.Add(x);
 
-            Segment ab = new Segment(a, b); segments.Add(ab);
-            Segment cd = new Segment(c, d); segments.Add(cd);
             Segment ae = new Segment(a, e); segments.Add(ae);
             Segment bf = new Segment(b, f); segments.Add(bf);
             Segment cg = new Segment(c, g); segments.Add(cg);
             Segment dh = new Segment(d, h); segments.Add(dh);
 
+            List<Point> pts = new List<Point>();
+            pts.Add(e);
+            pts.Add(f);
+            pts.Add(o);
+            pts.Add(g);
+            pts.Add(h);
+            collinear.Add(new Collinear(pts));
+
+            pts = new List<Point>();
+            pts.Add(a);
+            pts.Add(b);
+            pts.Add(x);
+            pts.Add(c);
+            pts.Add(d);
+            collinear.Add(new Collinear(pts));
+
             circles.Add(new Circle(o, 2));
             circles.Add(new Circle(o, 4));
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
+
+            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ae, (Segment)parser.Get(new Segment(e, h)),
+                                                                             dh, (Segment)parser.Get(new Segment(a, d))));
+            given.Add(new Strengthened(quad, new Rectangle(quad)));
 
             known.AddSegmentLength(bf, 4);
             known.AddSegmentLength((Segment)parser.Get(new Segment(o, h)), 4);
@@ -44,7 +62,7 @@ namespace GeometryTutorLib.GeometryTestbed
             wanted.Add(new Point("", 7.5, 0.5));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(4 * (4 + (3 / 2) * System.Math.PI));
+            SetSolutionArea(4 * (4 + (3.0 / 2.0) * System.Math.PI));
         }
     }
 }

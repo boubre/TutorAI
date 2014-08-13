@@ -62,7 +62,21 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
                 if (GeometryTutorLib.Utilities.CompareValues(crossProduct, 0)) angleMeasure = 180;
 
-                if (angleMeasure < currentAngle)
+                // If there are have the same angle, choose the one farther away (it is due to two connections)
+                // So these points are collinear with a segment, but indistinguishable with two arcs.
+                if (Utilities.CompareValues(angleMeasure, currentAngle))
+                {
+                    double currentDist = Point.calcDistance(currentPt, currentNextPoint);
+                    double candDist = Point.calcDistance(currentPt, neighbor);
+
+                    // Take the farthest point.
+                    if (candDist > currentDist)
+                    {
+                        currentAngle = angleMeasure;
+                        currentNextPoint = neighbor;
+                    }
+                }
+                else if (angleMeasure < currentAngle)
                 {
                     currentAngle = angleMeasure;
                     currentNextPoint = neighbor;
@@ -107,8 +121,33 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
                     // if (GeometryTutorLib.Utilities.GreaterThan(crossProduct, 0)) angleMeasure = angleMeasure;
                     if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
-                    if (GeometryTutorLib.Utilities.CompareValues(crossProduct, 0)) angleMeasure = 180;
+                    if (GeometryTutorLib.Utilities.CompareValues(crossProduct, 0))
+                    {
+                        // Circles create a legitimate situation where we want to walk back in the same 'collinear' path.
+                        if (Point.OppositeVectors(prevCurrVector, currentNeighborVector))
+                        {
+                            throw new System.Exception("FacetCalculator has collinear points in graph, but a cycle in the edges.");
+                        }
+                        else 
+                        {
+                            angleMeasure = 180;
+                        }
+                    }
 
+                    // If there are have the same angle, choose the one farther away (it is due to two connections)
+                    // So these points are collinear with a segment, but indistinguishable with two arcs.
+                    if (Utilities.CompareValues(angleMeasure, currentAngle))
+                    {
+                        double currentDist = Point.calcDistance(currentPt, currentNextPoint);
+                        double candDist = Point.calcDistance(currentPt, neighbor);
+
+                        // Take the farthest point.
+                        if (candDist > currentDist)
+                        {
+                            currentAngle = angleMeasure;
+                            currentNextPoint = neighbor;
+                        }
+                    }
                     if (angleMeasure < currentAngle)
                     {
                         currentAngle = angleMeasure;

@@ -23,7 +23,7 @@ namespace GeometryTutorLib.GeometryTestbed
         //
         // For constructing clauses consistent with the UI.
         //
-        protected GeometryTutorLib.TutorParser.HardCodedParserMain parser;
+        public GeometryTutorLib.TutorParser.HardCodedParserMain parser;
 
         public List<Point> points { get; protected set; }
         public List<Collinear> collinear { get; protected set; }

@@ -312,7 +312,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             if (theArc is MajorArc) prefix = "Major";
             if (theArc is MinorArc) prefix = "Minor";
-            if (theArc is Semicircle) prefix = "Semicircle";
+            if (theArc is Semicircle) return theArc.CheapPrettyString();
 
             return prefix + "(" +
                    theArc.endpoint1.SimpleToString() + theArc.theCircle.center.CheapPrettyString() + theArc.endpoint2.SimpleToString() + ")";

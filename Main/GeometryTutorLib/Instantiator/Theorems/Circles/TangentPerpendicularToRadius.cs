@@ -109,7 +109,7 @@ namespace GeometryTutorLib.GenericInstantiator
             if (radius == null) return newGrounded;
 
             // Does this radius apply to this intersection?
-            if (!inter.HasSegment(radius)) return newGrounded;
+            if (!inter.HasSubSegment(radius)) return newGrounded;
 
             Strengthened newPerp = new Strengthened(inter, new Perpendicular(inter));
             

@@ -157,7 +157,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             //
             // Does this region define a sector? 
             //
-            List<AtomicRegion> sectors = SectorDefinesRegion(circles, graph);
+            List<AtomicRegion> sectors = SectorOrTruncationDefinesRegion(circles, graph);
             if (sectors != null && sectors.Any())
             {
                 regions.AddRange(sectors);
@@ -176,6 +176,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             List<Segment> sides = new List<Segment>();
 
+            //
+            // All connections between adjacent connections MUST be segments.
+            //
             for (int p = 0; p < points.Count; p++)
             {
                 Segment segment = new Segment(points[p], points[(p + 1) % points.Count]);
@@ -183,6 +186,23 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 sides.Add(segment);
 
                 if (graph.GetEdge(points[p], points[(p + 1) % points.Count]).edgeType != UndirectedPlanarGraph.EdgeType.REAL_SEGMENT) return null;
+            }
+
+            //
+            // All iterative connections cannot be arcs.
+            //
+            for (int p1 = 0; p1 < points.Count - 1; p1++)
+            {
+                // We want to check for a direct cycle, therefore, p2 starts at p1 not p1 + 1
+                for (int p2 = p1; p2 < points.Count; p2++)
+                {
+                    UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p1], points[(p2 + 1) % points.Count]);
+
+                    if (edge != null)
+                    {
+                        if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_ARC) return null;
+                    }
+                }
             }
 
             //
@@ -195,21 +215,107 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return new ShapeAtomicRegion(poly);
         }
 
-        private List<Atomizer.AtomicRegion> SectorDefinesRegion(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
+        private List<Atomizer.AtomicRegion> SectorOrTruncationDefinesRegion(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
         {
-            Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges = new Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge>();
-
-            List<MinorArc> realArcs = new List<MinorArc>();
+            //
+            // Do there exist any real-dual edges or extended segments? If so, this is not a sector.
+            //
             for (int p = 0; p < points.Count; p++)
             {
                 UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
 
-                Segment segment = new Segment(points[p], points[(p + 1) % points.Count]);
-                edges.Add(segment, edge);
+                if (edge.edgeType == UndirectedPlanarGraph.EdgeType.EXTENDED_SEGMENT) return null;
+                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_DUAL) return null;
+            }
 
-                //
-                // If we have a real arc (no chord associated), create the set of arcs.
-                //
+            //
+            // Collect all segments; split into two collinear lists.
+            //
+            List<Segment> segments = CollectSegments(graph);
+            List<List<Segment>> collinearSegmentSet = SplitSegmentsIntoCollinearSequences(segments);
+
+            // A sector requires one (semicircl) or two sets of segments ('normal' arc).
+            if (collinearSegmentSet.Count > 2) return null;
+
+            //
+            // Collect all arcs.
+            //
+            List<MinorArc> arcs = CollectStrictArcs(circles, graph);
+            List<List<MinorArc>> collinearArcSet = SplitArcsIntoCollinearSequences(arcs);
+
+            // A sector requires one set of arcs (no more, no less).
+            if (collinearArcSet.Count != 1) return null;
+
+            // Semicircle has one set of sides
+            if (collinearSegmentSet.Count == 1) return ConvertToTruncationOrSemicircle(collinearSegmentSet[0], collinearArcSet[0]);
+
+            // Pacman shape created with a circle results in Sector
+            return ConvertToGeneralSector(collinearSegmentSet[0], collinearSegmentSet[1], collinearArcSet[0]);
+        }
+
+        //
+        // Collect all segments attributed to this this cycle
+        //
+        private List<Segment> CollectSegments(UndirectedPlanarGraph.PlanarGraph graph)
+        {
+            List<Segment> segments = new List<Segment>();
+
+            for (int p = 0; p < points.Count; p++)
+            {
+                UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
+
+                if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_SEGMENT)
+                {
+                    segments.Add(new Segment(points[p], points[(p + 1) % points.Count]));
+                }
+            }
+
+            return segments;
+        }
+
+        //
+        // Split the segments into sets of collinear segments.
+        // NOTE: This code assumes an input ordering of segments and returns sets of ordered collinear segments.
+        //
+        private List<List<Segment>> SplitSegmentsIntoCollinearSequences(List<Segment> segments)
+        {
+            List<List<Segment>> collinearSet = new List<List<Segment>>();
+
+            foreach (Segment segment in segments)
+            {
+                bool collinearFound = false;
+                foreach (List<Segment> collinear in collinearSet)
+                {
+                    // Find the set of collinear segments
+                    if (segment.IsCollinearWith(collinear[0]))
+                    {
+                        collinearFound = true;
+                        int i = 0;
+                        for (i = 0; i < collinear.Count; i++)
+                        {
+                            if (segment.Point2.StructurallyEquals(collinear[i].Point1)) break;
+                        }
+                        collinear.Insert(i, segment);
+                    }
+                }
+
+                if (!collinearFound) collinearSet.Add(Utilities.MakeList<Segment>(segment));
+            }
+
+            return collinearSet;
+        }
+
+        //
+        // Collect all arcs attributed to this this cycle; 
+        //
+        private List<MinorArc> CollectStrictArcs(List<Circle> circles, UndirectedPlanarGraph.PlanarGraph graph)
+        {
+            List<MinorArc> minors = new List<MinorArc>();
+
+            for (int p = 0; p < points.Count; p++)
+            {
+                UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
+
                 if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_ARC)
                 {
                     // Find the applicable circle.
@@ -223,112 +329,304 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                         }
                     }
 
-                    realArcs.Add(new MinorArc(theCircle, points[p], points[(p + 1) % points.Count]));
+                    minors.Add(new MinorArc(theCircle, points[p], points[(p + 1) % points.Count]));
                 }
-                //
-                // Extended segments; if we have several this is an issue; and we omit the region
-                //
-                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.EXTENDED_SEGMENT) return null;
-                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_DUAL) return null;
             }
 
-            // Pacman shape created with a circle results in Sector
-            return ConvertToSector(edges, realArcs);
+            return minors;
+        }
+
+        //
+        // Split the segments into sets of collinear segments.
+        // NOTE: This code assumes an input ordering of segments and returns sets of ordered collinear segments.
+        //
+        private List<List<MinorArc>> SplitArcsIntoCollinearSequences(List<MinorArc> minors)
+        {
+            List<List<MinorArc>> collinearSet = new List<List<MinorArc>>();
+
+            foreach (MinorArc minor in minors)
+            {
+                bool collinearFound = false;
+                foreach (List<MinorArc> collinear in collinearSet)
+                {
+                    // Do the arcs belong to the same circle?
+                    if (minor.theCircle.StructurallyEquals(collinear[0].theCircle))
+                    {
+                        collinearFound = true;
+                        int i = 0;
+                        for (i = 0; i < collinear.Count; i++)
+                        {
+                            if (minor.endpoint2.StructurallyEquals(collinear[i].endpoint1)) break;
+                        }
+                        collinear.Insert(i, minor);
+                    }
+                }
+
+                if (!collinearFound) collinearSet.Add(Utilities.MakeList<MinorArc>(minor));
+            }
+
+            return collinearSet;
+        }
+
+        private List<Atomizer.AtomicRegion> ConvertToGeneralSector(List<Segment> sideSet1, List<Segment> sideSet2, List<MinorArc> arcs)
+        {
+            Segment side1 = ComposeSegmentsIntoSegment(sideSet1);
+            Segment side2 = ComposeSegmentsIntoSegment(sideSet2);
+            Arc theArc = ComposeArcsIntoArc(arcs);
+
+            //
+            // Verify that both sides of the sector contains the center.
+            // And many other tests to ensure proper sector acquisition.
+            //
+            if (!side1.HasPoint(theArc.theCircle.center)) return null;
+            if (!side2.HasPoint(theArc.theCircle.center)) return null;
+
+            Point sharedCenter = side1.SharedVertex(side2);
+            if (sharedCenter == null)
+            {
+                throw new Exception("Sides do not share a vertex as expected; they share " + sharedCenter);
+            }
+
+            if (!sharedCenter.StructurallyEquals(theArc.theCircle.center))
+            {
+                throw new Exception("Center and deduced center do not equate: " + sharedCenter + " " + theArc.theCircle.center);
+            }
+
+            Point segEndpoint1 = side1.OtherPoint(sharedCenter);
+            Point segEndpoint2 = side2.OtherPoint(sharedCenter);
+
+            if (!theArc.HasEndpoint(segEndpoint1) || !theArc.HasEndpoint(segEndpoint2))
+            {
+                throw new Exception("Side endpoints do not equate to the arc endpoints");
+            }
+
+            // Satisfied constraints, create the actual sector.
+            Sector sector = new Sector(theArc);
+
+            return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(sector));
+        }
+
+        private List<Atomizer.AtomicRegion> ConvertToTruncationOrSemicircle(List<Segment> sideSet, List<MinorArc> arcs)
+        {
+            Segment side = ComposeSegmentsIntoSegment(sideSet);
+            Arc theArc = ComposeArcsIntoArc(arcs);
+
+            // Verification Step 1.
+            if (!theArc.HasEndpoint(side.Point1) || !theArc.HasEndpoint(side.Point2))
+            {
+                throw new Exception("Semicircle / Truncation: Side endpoints do not equate to the arc endpoints");
+            }
+
+            if (theArc is Semicircle) return ConvertToSemicircle(side, theArc as Semicircle);
+            return ConvertToTruncation(side, theArc as MinorArc);
+        }
+
+        private List<Atomizer.AtomicRegion> ConvertToTruncation(Segment chord, MinorArc arc)
+        {
+            AtomicRegion atom = new AtomicRegion();
+
+            atom.AddConnection(new Connection(chord.Point1, chord.Point2, ConnectionType.SEGMENT, chord));
+
+            atom.AddConnection(new Connection(chord.Point1, chord.Point2, ConnectionType.ARC, arc));
+
+            return Utilities.MakeList<AtomicRegion>(atom);
+        }
+
+        private List<Atomizer.AtomicRegion> ConvertToSemicircle(Segment diameter, Semicircle semi)
+        {
+            // Verification Step 2.
+            if (!diameter.PointLiesOnAndExactlyBetweenEndpoints(semi.theCircle.center))
+            {
+                throw new Exception("Semicircle: expected center between endpoints.");
+            }
+
+            Sector sector = new Sector(semi);
+
+            return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(sector));
+        }
+
+        private Segment ComposeSegmentsIntoSegment(List<Segment> segments)
+        {
+            return new Segment(segments[0].Point1, segments[segments.Count - 1].Point2);
+        }
+
+        private Arc ComposeArcsIntoArc(List<MinorArc> minors)
+        {
+            // if (minors.Count == 1) return minors[0];
+
+            // Determine what type of arc to create.
+            double arcMeasure = 0;
+            foreach (MinorArc minor in minors)
+            {
+                arcMeasure += minor.minorMeasure;
+            }
+
+            //
+            // Create the arc
+            //
+            Circle theCircle = minors[0].theCircle;
+
+            if (Utilities.CompareValues(arcMeasure, 180))
+            {
+                Segment diameter = new Segment(minors[0].endpoint1, minors[minors.Count - 1].endpoint2);
+
+                // Get the midpoint that is on the same side.
+                Point midpt = theCircle.Midpoint(diameter.Point1, diameter.Point2, minors[0].endpoint2);
+                return new Semicircle(minors[0].theCircle, diameter.Point1, diameter.Point2, midpt, diameter);
+            }
+            else if (arcMeasure < 180) return new MinorArc(theCircle, minors[0].endpoint1, minors[minors.Count-1].endpoint2);
+            else if (arcMeasure > 180) return new MajorArc(theCircle, minors[0].endpoint1, minors[minors.Count-1].endpoint2);
+
+            return null;
+        }
+
+        private List<Circle> GetAllApplicableCircles(List<Circle> circles, Point pt1, Point pt2)
+        {
+            List<Circle> applicCircs = new List<Circle>();
+
+            foreach (Circle circle in circles)
+            {
+                if (circle.PointLiesOn(pt1) && circle.PointLiesOn(pt2))
+                {
+                    applicCircs.Add(circle);
+                }
+            }
+
+            return applicCircs;
         }
 
         private List<Atomizer.AtomicRegion> MixedArcChordedRegion(List<Circle> thatCircles, UndirectedPlanarGraph.PlanarGraph graph)
         {
-            List<Atomizer.AtomicRegion> regions = new List<Atomizer.AtomicRegion>();
+            List<AtomicRegion> regions = new List<AtomicRegion>();
 
             // Every segment may be have a set of circles. (on each side) surrounding it.
             // Keep parallel lists of: (1) segments, (2) (real) arcs, (3) left outer circles, and (4) right outer circles
             Segment[] regionsSegments = new Segment[points.Count];
-            MinorArc[] arcSegments = new MinorArc[points.Count];
+            Arc[] arcSegments = new Arc[points.Count];
             Circle[] leftOuterCircles = new Circle[points.Count];
             Circle[] rightOuterCircles = new Circle[points.Count];
 
             //
             // Populate the parallel arrays.
             //
-            for (int p = 0; p < points.Count; p++)
+            int currCounter = 0;
+            for (int p = 0; p < points.Count;  )
             {
                 UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
+                Segment currSegment = new Segment(points[p], points[(p + 1) % points.Count]);
 
-                // Always put a segment into the collection so we may create a polygon.
-                regionsSegments[p] = new Segment(points[p], points[(p + 1) % points.Count]);
-
-                // If a known segment, just add it directly, no circles.
+                //
+                // If a known segment, seek a sequence of collinear segments.
+                //
                 if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_SEGMENT)
                 {
-                    // No-op
-                }
-                // If we have an arc / chord situation, handle it. This method will return the outermost circle.
-                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_DUAL)
-                {
-                    regionsSegments[p] = new Segment(points[p], points[(p + 1) % points.Count]);
+                    Segment actualSeg = currSegment;
 
-                    //
-                    // Get the exact chord and set of circles
-                    //
-                    Segment chord = regionsSegments[p];
-                    List<Circle> circles = new List<Circle>();
-                    foreach (Circle circle in thatCircles)
+                    bool collinearExists = false;
+                    int prevPtIndex;
+                    for (prevPtIndex = p + 1; prevPtIndex < points.Count; prevPtIndex++)
                     {
-                        if (circle.PointLiesOn(points[p]) && circle.PointLiesOn(points[(p + 1) % points.Count])) circles.Add(circle);
+                        // Make another segment with the next point.
+                        Segment nextSeg = new Segment(points[p], points[(prevPtIndex + 1) % points.Count]);
+
+                        // CTA: This criteria seems invalid in some cases....; may not have collinearity
+
+                        // We hit the end of the line of collinear segments.
+                        if (!currSegment.IsCollinearWith(nextSeg)) break;
+
+                        collinearExists = true;
+                        actualSeg = nextSeg;
                     }
 
-                    regions.AddRange(ConvertToCircleCircle(chord, circles, out leftOuterCircles[p], out rightOuterCircles[p]));
-                }
-                else
-                {
-                    // Find the unique circle that contains these two points.
-                    // (if more than one circle has these points, we would have had more intersections and it would be a direct chorded region)
-                    Circle theCircle = null;
-                    foreach (Circle circle in thatCircles)
+                    // If there exists an arc over the actual segment, we have an embedded circle to consider.
+                    regionsSegments[currCounter] = actualSeg;
+
+                    if (collinearExists)
                     {
-                        if (circle.PointLiesOn(points[p]) && circle.PointLiesOn(points[(p + 1) % points.Count]))
+                        UndirectedPlanarGraph.PlanarGraphEdge collEdge = graph.GetEdge(actualSeg.Point1, actualSeg.Point2);
+                        if (collEdge != null)
                         {
-                            theCircle = circle;
-                            break;
+                            if (collEdge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_ARC)
+                            {
+                                // Find all applicable circles
+                                List<Circle> circles = GetAllApplicableCircles(thatCircles, actualSeg.Point1, actualSeg.Point2);
+
+                                // Get the exact outer circles for this segment (and create any embedded regions).
+                                regions.AddRange(ConvertToCircleCircle(actualSeg, circles, out leftOuterCircles[currCounter], out rightOuterCircles[currCounter]));
+                            }
                         }
                     }
 
-                    arcSegments[p] = new MinorArc(theCircle, points[p], points[(p + 1) % points.Count]);
+                    currCounter++;
+                    p = prevPtIndex;
                 }
+                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_DUAL)
+                {
+                    regionsSegments[currCounter] = new Segment(points[p], points[(p + 1) % points.Count]);
+
+                    // Get the exact chord and set of circles
+                    Segment chord = regionsSegments[currCounter];
+
+                    // Find all applicable circles
+                    List<Circle> circles = GetAllApplicableCircles(thatCircles, points[p], points[(p + 1) % points.Count]);
+
+                    // Get the exact outer circles for this segment (and create any embedded regions).
+                    regions.AddRange(ConvertToCircleCircle(chord, circles, out leftOuterCircles[currCounter], out rightOuterCircles[currCounter]));
+
+                    currCounter++;
+                    p++;
+                }
+                else if (edge.edgeType == UndirectedPlanarGraph.EdgeType.REAL_ARC)
+                {
+                    //
+                    // Find the unique circle that contains these two points.
+                    // (if more than one circle has these points, we would have had more intersections and it would be a direct chorded region)
+                    //
+                    List<Circle> circles = GetAllApplicableCircles(thatCircles, points[p], points[(p + 1) % points.Count]);
+
+                    if (circles.Count != 1) throw new Exception("Need ONLY 1 circle for REAL_ARC atom id; found (" + circles.Count + ")");
+
+                    arcSegments[currCounter++] = new MinorArc(circles[0], points[p], points[(p + 1) % points.Count]);
+
+                    p++;
+                }
+            }
+
+            //
+            // Check to see if this is a region in which some connections are segments and some are arcs.
+            // This means there were no REAL_DUAL edges.
+            //
+            List<AtomicRegion> generalRegions = GeneralAtomicRegion(regionsSegments, arcSegments);
+            if (generalRegions.Any()) return generalRegions;
+
+            // Copy the segments into a list (ensuring no nulls)
+            List<Segment> actSegments = new List<Segment>();
+            foreach (Segment side in regionsSegments)
+            {
+                if (side != null) actSegments.Add(side);
             }
 
             // Construct a polygon out of the straight-up segments
             // This might be a polygon that defines a pathological region.
-            Polygon poly = Polygon.MakePolygon(new List<Segment>(regionsSegments));
+            Polygon poly = Polygon.MakePolygon(actSegments);
 
             // Determine which outermost circles apply inside of this polygon.
-            Circle[] circlesCutInsidePoly = new Circle[points.Count];
-            for (int p = 0; p < points.Count; p++)
+            Circle[] circlesCutInsidePoly = new Circle[actSegments.Count];
+            for (int p = 0; p < actSegments.Count; p++)
             {
                 if (leftOuterCircles[p] != null && rightOuterCircles[p] == null)
                 {
-                    // Is the midpoint on the interior of the polygon?
-                    Point midpt = leftOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
-
-                    // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
+                    circlesCutInsidePoly[p] = CheckCircleCutInsidePolygon(poly, leftOuterCircles[p], actSegments[p].Point1, actSegments[p].Point2);
                 }
                 else if (leftOuterCircles[p] == null && rightOuterCircles[p] != null)
                 {
-                    // Is the midpoint on the interior of the polygon?
-                    Point midpt = rightOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
-
-                    // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = rightOuterCircles[p];
+                    circlesCutInsidePoly[p] = CheckCircleCutInsidePolygon(poly, rightOuterCircles[p], actSegments[p].Point1, actSegments[p].Point2);
                 }
                 else if (leftOuterCircles[p] != null && rightOuterCircles[p] != null)
                 {
-                    // Is the midpoint on the interior of the polygon?
-                    Point midpt = leftOuterCircles[p].Midpoint(points[p], points[(p + 1) % points.Count]);
+                    circlesCutInsidePoly[p] = CheckCircleCutInsidePolygon(poly, leftOuterCircles[p], actSegments[p].Point1, actSegments[p].Point2);
 
-                    // Is this point in the interior of this polygon?
-                    if (poly.IsInPolygon(midpt)) circlesCutInsidePoly[p] = leftOuterCircles[p];
-                    else circlesCutInsidePoly[p] = rightOuterCircles[p];
+                    if (circlesCutInsidePoly[p] == null) circlesCutInsidePoly[p] = rightOuterCircles[p];
                 }
                 else
                 {
@@ -337,7 +635,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             }
 
             bool isStrictPoly = true;
-            for (int p = 0; p < points.Count; p++)
+            for (int p = 0; p < actSegments.Count; p++)
             {
                 if (circlesCutInsidePoly[p] != null || arcSegments[p] != null)
                 {
@@ -358,34 +656,44 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 // Now that all interior arcs have been identified, construct the atomic (probably pathological) region
                 //
                 AtomicRegion pathological = new AtomicRegion();
-                for (int p = 0; p < points.Count; p++)
+                for (int p = 0; p < actSegments.Count; p++)
                 {
                     //
                     // A circle cutting inside the polygon
                     //
-                    if (circlesCutInsidePoly[p] != null) pathological.AddConnection(regionsSegments[p].Point1,
-                                                                                    regionsSegments[p].Point2,
-                                                                                    ConnectionType.ARC,
-                                                                                    new MinorArc(circlesCutInsidePoly[p], regionsSegments[p].Point1, regionsSegments[p].Point2));
-                    
+                    if (circlesCutInsidePoly[p] != null)
+                    {
+                        Arc theArc = null;
+
+                        if (circlesCutInsidePoly[p].DefinesDiameter(regionsSegments[p]))
+                        {
+                            Point midpt = circlesCutInsidePoly[p].Midpoint(regionsSegments[p].Point1, regionsSegments[p].Point2);
+
+                            if (!poly.IsInPolygon(midpt)) midpt = circlesCutInsidePoly[p].OppositePoint(midpt);
+
+                            theArc = new Semicircle(circlesCutInsidePoly[p], regionsSegments[p].Point1, regionsSegments[p].Point2, midpt, regionsSegments[p]);
+                        }
+                        else
+                        {
+                            theArc = new MinorArc(circlesCutInsidePoly[p], regionsSegments[p].Point1, regionsSegments[p].Point2);
+                        }
+
+                        pathological.AddConnection(regionsSegments[p].Point1, regionsSegments[p].Point2, ConnectionType.ARC, theArc);
+                    }
                     //
                     else
                     {
                         // We have a direct arc
                         if (arcSegments[p] != null)
                         {
-                            pathological.AddConnection(regionsSegments[p].Point1,
-                                                       regionsSegments[p].Point2,
-                                                       ConnectionType.ARC,
-                                                       arcSegments[p]);
+                            pathological.AddConnection(regionsSegments[p].Point1, regionsSegments[p].Point2,
+                                                       ConnectionType.ARC, arcSegments[p]);
                         }
                         // Use the segment
                         else
                         {
-                            pathological.AddConnection(regionsSegments[p].Point1,
-                                                       regionsSegments[p].Point2,
-                                                       ConnectionType.SEGMENT,
-                                                       regionsSegments[p]);
+                            pathological.AddConnection(regionsSegments[p].Point1, regionsSegments[p].Point2,
+                                                       ConnectionType.SEGMENT, regionsSegments[p]);
                         }
                     }
                 }
@@ -397,64 +705,93 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return regions;
         }
 
-        private List<Atomizer.AtomicRegion> ConvertToSector(Dictionary<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edges, List<MinorArc> arcs)
+        private List<AtomicRegion> GeneralAtomicRegion(Segment[] segments, Arc[] arcs)
         {
-            List<AtomicRegion> newAtoms = new List<AtomicRegion>();
+            List<AtomicRegion> regions = new List<AtomicRegion>();
 
             //
-            // Verify that all the arcs belong to the same circle.
-            // Add all of the arc measures together for later reference
+            // Determine if this is a true polygon situation or if it is a sequence of segments and arcs.
             //
-            double arcMeasure = arcs[0].minorMeasure;
-            Circle refCircle = arcs[0].theCircle;
-            for (int a = 1; a < arcs.Count; a++)
+            bool endReached = false;
+            bool hasArc = false;
+            bool hasSegment = false;
+            AtomicRegion theRegion = new AtomicRegion();
+            for (int i = 0; i < segments.Length && i < arcs.Length; i++)
             {
-                if (!refCircle.StructurallyEquals(arcs[a].theCircle))
+                // Both an arc and a segment.
+                if (segments[i] != null && arcs[i] != null) return regions;
+
+                if (segments[i] != null)
                 {
-                    throw new ArgumentException("arc does not match expected circle: " + arcs[a].theCircle);
-                }
-                arcMeasure += arcs[a].minorMeasure;
-            }
+                    hasSegment = true;
 
-            //
-            // Identify the segments which will be constructed into two radii; All we care about are the endpoints on the circle and the center.
-            //
-            List<Point> ptsOnCircle = new List<Point>();
-            foreach (KeyValuePair<Segment, UndirectedPlanarGraph.PlanarGraphEdge> edgePair in edges)
-            {
-                if (edgePair.Value.edgeType != UndirectedPlanarGraph.EdgeType.REAL_ARC)
+                    // We encountered a situation where there was a gap in the list; this is an error
+                    if (endReached) throw new ArgumentException("Gap in the GeneralAtomicRegion list.");
+
+                    theRegion.AddConnection(new Connection(segments[i].Point1, segments[i].Point2, ConnectionType.SEGMENT, segments[i]));
+                }
+                else if (arcs[i] != null)
                 {
-                    if (refCircle.PointLiesOn(edgePair.Key.Point1)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point1);
-                    if (refCircle.PointLiesOn(edgePair.Key.Point2)) GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(ptsOnCircle, edgePair.Key.Point2);
+                    hasArc = true;
+
+                    // We encountered a situation where there was a gap in the list; this is an error
+                    if (endReached) throw new ArgumentException("Gap in the GeneralAtomicRegion list.");
+
+                    //
+                    // Compose the arcs (from a single circle) together.
+                    //
+                    List<MinorArc> sequentialArcs = new List<MinorArc>();
+                    sequentialArcs.Add(arcs[i] as MinorArc);
+
+                    int currIndex;
+                    for (currIndex = i + 1; currIndex < arcs.Length; currIndex++)
+                    {
+                        if (arcs[currIndex] == null) break;
+
+                        if (arcs[i].theCircle.StructurallyEquals(arcs[currIndex].theCircle))
+                        {
+                            sequentialArcs.Add(arcs[currIndex] as MinorArc);
+                        }
+                        else break;
+                    }
+
+                    Arc composed;
+                    if (sequentialArcs.Count > 1) composed = this.ComposeArcsIntoArc(sequentialArcs);
+                    else composed = arcs[i];
+
+                    //
+                    // Add the connection.
+                    //
+                    theRegion.AddConnection(new Connection(composed.endpoint1, composed.endpoint2, ConnectionType.ARC, composed));
+
+                    // Update the outer loop index accordingly.
+                    i = currIndex - 1;
                 }
+                else endReached = true;
             }
 
-            if (ptsOnCircle.Count != 2) throw new ArgumentException("Expected 2 radii in a sector: " + ptsOnCircle.Count);
+            // Check if we had both segments and arcs; if only segments, we have a polygon.
+            if (hasSegment && !hasArc) return regions;
 
-            // Measure the angle between the endpoints and the center to determine if a minor or major arc.
-            Arc theArc = null;
-            
-            if (arcMeasure < 180) theArc = new MinorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
-            else if (arcMeasure > 180) theArc = new MajorArc(refCircle, ptsOnCircle[0], ptsOnCircle[1]);
+            return Utilities.MakeList<AtomicRegion>(theRegion);
+        }
 
-            if (theArc != null)
+        private Circle CheckCircleCutInsidePolygon(Polygon poly, Circle circle, Point pt1, Point pt2)
+        {
+            Segment diameter = new Segment(pt1, pt2);
+
+            // A semicircle always cuts into the polygon.
+            if (circle.DefinesDiameter(diameter)) return circle;
+            else
             {
-                newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
-                return newAtoms;
+                // Is the midpoint on the interior of the polygon?
+                Point midpt = circle.Midpoint(pt1, pt2);
+
+                // Is this point in the interior of this polygon?
+                if (poly.IsInPolygon(midpt)) return circle;
             }
 
-            //
-            // Semicircles
-            //
-            Point midpt = refCircle.Midpoint(ptsOnCircle[0], ptsOnCircle[1]);
-            
-            theArc = new Semicircle(refCircle, ptsOnCircle[0], ptsOnCircle[1], midpt, new Segment(ptsOnCircle[0], ptsOnCircle[1]));
-            newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
-
-            theArc = new Semicircle(refCircle, ptsOnCircle[0], ptsOnCircle[1], refCircle.OppositePoint(midpt), new Segment(ptsOnCircle[0], ptsOnCircle[1]));
-            newAtoms.Add(new ShapeAtomicRegion(new Sector(theArc)));
-
-            return newAtoms;
+            return null;
         }
 
         //
@@ -469,9 +806,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         // We are interested in only minor arcs of the given circles.
         //
         private List<Atomizer.AtomicRegion> ConvertToCircleCircle(Segment chord,
-                                                                                              List<Circle> circles,
-                                                                                              out Circle leftOuterCircle,
-                                                                                              out Circle rightOuterCircle)
+                                                                  List<Circle> circles,
+                                                                  out Circle leftOuterCircle,
+                                                                  out Circle rightOuterCircle)
         {
             List<Atomizer.AtomicRegion> regions = new List<Atomizer.AtomicRegion>();
             leftOuterCircle = null;
@@ -485,7 +822,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             {
                 leftOuterCircle = circles[0];
 
-                regions.Add(ConstructBasicLineCircleRegion(chord, circles[0]));
+                regions.AddRange(ConstructBasicLineCircleRegion(chord, circles[0]));
 
                 return regions;
             }
@@ -543,13 +880,13 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             //
             // Handle each side: left and right.
             //
-            if (leftSide.Any()) regions.Add(ConstructBasicLineCircleRegion(chord, leftSide[leftSide.Count - 1]));
+            if (leftSide.Any()) regions.AddRange(ConstructBasicLineCircleRegion(chord, leftSide[leftSide.Count - 1]));
             for (int ell = 0; ell < leftSide.Count - 2; ell++)
             {
                 regions.Add(ConstructBasicCircleCircleRegion(chord, leftSide[ell], leftSide[ell + 1]));
             }
 
-            if (rightSide.Any()) regions.Add(ConstructBasicLineCircleRegion(chord, rightSide[0]));
+            if (rightSide.Any()) regions.AddRange(ConstructBasicLineCircleRegion(chord, rightSide[0]));
             for (int r = 1; r < rightSide.Count - 1; r++)
             {
                 regions.Add(ConstructBasicCircleCircleRegion(chord, rightSide[r], rightSide[r+1]));
@@ -565,15 +902,41 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //   ( |
         //    (|
         //
-        private Atomizer.AtomicRegion ConstructBasicLineCircleRegion(Segment chord, Circle circle)
+        private List<AtomicRegion> ConstructBasicLineCircleRegion(Segment chord, Circle circle)
         {
-            AtomicRegion region = new AtomicRegion();
+            //
+            // Standard
+            //
+            if (!circle.DefinesDiameter(chord))
+            {
+                AtomicRegion region = new AtomicRegion();
 
-            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, new MinorArc(circle, chord.Point1, chord.Point2));
+                Arc theArc = new MinorArc(circle, chord.Point1, chord.Point2);
 
-            region.AddConnection(chord.Point1, chord.Point2, ConnectionType.SEGMENT, chord);
+                region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, theArc);
 
-            return region;
+                region.AddConnection(chord.Point1, chord.Point2, ConnectionType.SEGMENT, chord);
+
+                return Utilities.MakeList<AtomicRegion>(region);
+            }
+
+            //
+            // Semi-circles
+            //
+
+            Point midpt = circle.Midpoint(chord.Point1, chord.Point2);
+            Arc semi1 = new Semicircle(circle, chord.Point1, chord.Point2, midpt, chord);
+            ShapeAtomicRegion region1 = new ShapeAtomicRegion(new Sector(semi1));
+
+            Point opp = circle.OppositePoint(midpt);
+            Arc semi2 = new Semicircle(circle, chord.Point1, chord.Point2, opp, chord);
+            ShapeAtomicRegion region2 = new ShapeAtomicRegion(new Sector(semi2));
+
+            List<AtomicRegion> regions = new List<AtomicRegion>();
+            regions.Add(region1);
+            regions.Add(region2);
+
+            return regions;
         }
 
         // Construct the region between a circle and circle:
@@ -584,12 +947,23 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //   ( ( 
         //    ( (
         //     --
-        private Atomizer.AtomicRegion ConstructBasicCircleCircleRegion(Segment chord, Circle c1, Circle c2)
+        private Atomizer.AtomicRegion ConstructBasicCircleCircleRegion(Segment chord, Circle smaller, Circle larger)
         {
             AtomicRegion region = new AtomicRegion();
 
-            MinorArc arc1 = new MinorArc(c1, chord.Point1, chord.Point2);
-            MinorArc arc2 = new MinorArc(c2, chord.Point1, chord.Point2);
+            Arc arc1 = null;
+            if (smaller.DefinesDiameter(chord))
+            {
+                Point midpt = smaller.Midpoint(chord.Point1, chord.Point2, larger.Midpoint(chord.Point1, chord.Point2));
+
+                arc1 = new Semicircle(smaller, chord.Point1, chord.Point2, midpt, chord);
+            }
+            else
+            {
+                arc1 = new MinorArc(smaller, chord.Point1, chord.Point2);
+            }
+
+            MinorArc arc2 = new MinorArc(larger, chord.Point1, chord.Point2);
 
             region.AddConnection(chord.Point1, chord.Point2, ConnectionType.ARC, arc1);
 

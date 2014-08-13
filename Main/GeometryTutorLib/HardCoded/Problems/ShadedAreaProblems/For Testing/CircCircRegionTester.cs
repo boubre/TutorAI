@@ -11,18 +11,32 @@ namespace GeometryTutorLib.GeometryTestbed
         //
         public CircCircRegionTester(bool onoff, bool complete) : base(onoff, complete)
         {
-            Point a = new Point("A", -2, 0); points.Add(a);
+            Point a = new Point("A", -2.5, 0); points.Add(a);
             Point b = new Point("B", 1, 0); points.Add(b);
-            Point c = new Point("C", 2, 0); points.Add(c);
+            Point c = new Point("C", 2.5, 0); points.Add(c);
             Point d = new Point("D", -1, 0); points.Add(d);
 
             circles.Add(new Circle(a, 3.0));
             circles.Add(new Circle(c, 3.0));
 
+            List<Point> pts = new List<Point>();
+            pts.Add(a);
+            pts.Add(d);
+            pts.Add(b);
+            pts.Add(c);
+            collinear.Add(new Collinear(pts));
+
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            // The goal is the entire area of the figure.
-            goalRegions = new List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion>(parser.implied.atomicRegions);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(a, b)), 3.0);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(c, d)), 3.0);
+
+            goalRegions = parser.implied.GetAllAtomicRegions();
+
+            SetSolutionArea(42.06195997);
+
+            problemName = "Circle-Circle Problem";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

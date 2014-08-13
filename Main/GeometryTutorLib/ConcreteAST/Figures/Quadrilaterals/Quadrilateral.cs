@@ -736,7 +736,7 @@ namespace GeometryTutorLib.ConcreteAST
         // As a general mechanism, can we split up this quadrilateral into two triangles and find those individual areas?
         // We must try two combinations of triangle splitting.
         //
-        private double SplitTriangleArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        protected double SplitTriangleArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
         {
             //
             // Check the areas of each pairs, only if a diagonal is evident.

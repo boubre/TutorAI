@@ -19,16 +19,26 @@ namespace GeometryTutorLib.GeometryTestbed
             Point y = new Point("Y", 14, 7); points.Add(y);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
-            Segment ad = new Segment(a, d); segments.Add(ad);
-            Segment bc = new Segment(b, c); segments.Add(bc);
             Segment cd = new Segment(c, d); segments.Add(cd);
 
             circles.Add(new Circle(x, 7));
             circles.Add(new Circle(y, 7));
 
+            List<Point> pts = new List<Point>();
+            pts.Add(a);
+            pts.Add(x);
+            pts.Add(d);
+            collinear.Add(new Collinear(pts));
+
+            pts = new List<Point>();
+            pts.Add(b);
+            pts.Add(y);
+            pts.Add(c);
+            collinear.Add(new Collinear(pts));
+
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ad, bc, ab, cd));
+            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral((Segment)parser.Get(new Segment(a, d)), (Segment)parser.Get(new Segment(b, c)), ab, cd));
             given.Add(new Strengthened(quad, new Square(quad)));
 
             known.AddSegmentLength(ab, 14);
@@ -40,7 +50,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
             SetSolutionArea(42.06195997);
 
-            problemName = "Page 1 Col 1 Problem 2";
+            problemName = "Class X Page 1 Col 1 Problem 2";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }

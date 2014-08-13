@@ -129,33 +129,90 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Arc
             // We want the MINOR ARC only!
-            Arc theArc = Arc.GetFigureMinorArc(tan.theCircle, chord.Point1, chord.Point2);
-
-            // Angle; the smaller angle is always the chosen angle
-            Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point1);
-            
-            if (theAngle.measure > 90)
+            if (tan.theCircle.DefinesDiameter(chord))
             {
-                theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point2);
+                Arc theArc = null;
+                Point midpt = PointFactory.GeneratePoint(tan.theCircle.Midpoint(chord.Point1, chord.Point2));
+                Point opp = PointFactory.GeneratePoint(tan.theCircle.OppositePoint(midpt));
+
+                Point tanPoint = tanSegment.OtherPoint(inter.intersect);
+
+                if (tanPoint != null)
+                {
+                    // Angle; the smaller angle is always the chosen angle
+                    Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanPoint);
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, midpt, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, opp, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+                }
+                else
+                {
+                    // Angle; the smaller angle is always the chosen angle
+                    Angle theAngle = new Angle(chord.Point1, inter.intersect, tanSegment.Point1);
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, midpt, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, opp, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+
+                    // Angle; the smaller angle is always the chosen angle
+                    theAngle = new Angle(chord.Point1, inter.intersect, tanSegment.Point2);
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, midpt, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+
+                    theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, opp, chord);
+                    newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
+
+                }
+            }
+            else
+            {
+                Arc theArc = new MinorArc(tan.theCircle, chord.Point1, chord.Point2);
+
+                // Angle; the smaller angle is always the chosen angle
+                Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point1);
+                
+                if (theAngle.measure > 90)
+                {
+                    theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point2);
+                }
+
+                Multiplication product = new Multiplication(new NumericValue(2), theAngle);
+                GeometricAngleArcEquation angArcEq = new GeometricAngleArcEquation(product, theArc);
+
+                // For hypergraph
+                List<GroundedClause> antecedent = new List<GroundedClause>();
+                antecedent.Add(original);
+                antecedent.Add(inter);
+                antecedent.Add(theArc);
+                antecedent.Add(theAngle);
+
+                newGrounded.Add(new EdgeAggregator(antecedent, angArcEq, annotation));
             }
 
-            // Get the one instance
-            theAngle = Angle.AcquireFigureAngle(theAngle);
 
+            
+
+
+            return newGrounded;
+        }
+
+        private static EdgeAggregator CreateClause(Intersection inter, GroundedClause original, Angle theAngle, Arc theArc)
+        {
             Multiplication product = new Multiplication(new NumericValue(2), theAngle);
-            //GeometricAngleEquation angEq = new GeometricAngleEquation(product, theArc);
             GeometricAngleArcEquation angArcEq = new GeometricAngleArcEquation(product, theArc);
 
             // For hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();
             antecedent.Add(original);
             antecedent.Add(inter);
-            antecedent.Add(theArc);
-            antecedent.Add(theAngle);
 
-            newGrounded.Add(new EdgeAggregator(antecedent, angArcEq, annotation));
-
-            return newGrounded;
+            return new EdgeAggregator(antecedent, angArcEq, annotation);
         }
     }
 }

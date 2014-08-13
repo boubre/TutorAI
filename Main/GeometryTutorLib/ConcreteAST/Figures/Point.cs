@@ -52,6 +52,23 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Assumes our points represent vectors in std position
+        //
+        public static bool OppositeVectors(Point first, Point second)
+        {
+            Point origin = new Point("", 0, 0);
+
+            return Segment.Between(origin, first, second);
+
+            //double magnitudeFirst = Point.calcDistance(origin, first);
+            //double magnitudeSecond = Point.calcDistance(origin, second);
+
+            //double magnitudeCombined = Point.calcDistance(first, second);
+
+            //return Utilities.CompareValues(magnitudeCombined, magnitudeFirst + magnitudeSecond);
+        }
+
+        //
         // Angle measure (in degrees) between two vectors in standard position.
         //
         public static double AngleBetween(Point thisPoint, Point thatPoint)
@@ -63,6 +80,19 @@ namespace GeometryTutorLib.ConcreteAST
             if (Segment.Between(thatPoint, origin, thisPoint)) return 0;
             
             return new Angle(thisPoint, origin, thatPoint).measure;
+        }
+
+        public static bool CounterClockwise(Point A, Point B, Point C)
+        {
+            // Define two vectors: vect1: A----->B
+            //                     vect2: B----->C
+            // Cross product vect1 and vect2. 
+            // If the result is negative, the sequence A-->B-->C is Counter-clockwise. 
+            // If the result is positive, the sequence A-->B-->C is clockwise.
+            Point vect1 = Point.MakeVector(A, B);
+            Point vect2 = Point.MakeVector(B, C);
+
+            return Point.CrossProduct(vect1, vect2) < 0;
         }
 
         public static Point MakeVector(Point tail, Point head) { return new Point("", head.X - tail.X, head.Y - tail.Y); }
@@ -165,7 +195,7 @@ namespace GeometryTutorLib.ConcreteAST
             return StructurallyEquals(obj); // && name.Equals(pt.name);
         }
 
-        public override int GetHashCode() { return base.GetHashCode(); }
+        public override int GetHashCode() { return (int)(X * Y * 100);  }
 
         // Make a deep copy of this object; this is actually shallow, but is all that is required.
         public override GroundedClause DeepCopy() { return (Point)(this.MemberwiseClone()); }
@@ -174,7 +204,11 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToPrettyString() { return name; }
         
-        public string SimpleToString() { return name; }
+        public string SimpleToString()
+        {
+            if (name == "") return "(" + string.Format("{0:N1}", X) + ", " + string.Format("{0:N1}", Y) + ")";
+            else return name;
+        }
         public override string CheapPrettyString() { return SimpleToString(); }
 
         /// <summary>
@@ -187,10 +221,15 @@ namespace GeometryTutorLib.ConcreteAST
         /// <returns></returns>
         public static int LexicographicOrdering(Point p1, Point p2)
         {
-            // X's first
-            if (p1.X < p2.X) return -1;
+            if (!Utilities.CompareValues(p1.X, p2.X))
+            {
+                // X's first
+                if (p1.X < p2.X) return -1;
 
-            if (p1.X > p2.X) return 1;
+                if (p1.X > p2.X) return 1;
+            }
+
+            if (Utilities.CompareValues(p1.Y, p2.Y)) return 0;
 
             // Y's second
             if (p1.Y < p2.Y) return -1;

@@ -17,6 +17,7 @@ namespace GeometryTutorLib.TutorParser
         //
         // All the shapes in a single list.
         private List<Figure> allFigures;
+        public List<Figure> GetAllFigures() { return allFigures; }
 
         // The forest representing the shape hierarchy of the given figure.
         private List<Figure> shapeForest;

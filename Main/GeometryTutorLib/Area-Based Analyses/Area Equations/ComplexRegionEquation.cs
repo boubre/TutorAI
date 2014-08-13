@@ -104,6 +104,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return target != null && expr != null;
         }
 
+        //
+        // Is the expr of the equation defined by all shapes?
+        //
+        public bool DefinedByShapes()
+        {
+            return expr.DefinedByShapes();
+        }
+
         // Is this an equation of the form x = x?
         public bool IsIdentity()
         {
@@ -134,6 +142,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             public abstract int NumRegions();
             public abstract double GetArea();
             public abstract string CheapPrettyString();
+            public abstract bool DefinedByShapes();
         }
 
         public class Unary : Expr
@@ -148,6 +157,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             public override string CheapPrettyString() { return theRegion.CheapPrettyString(); }
             public override int NumRegions() { return 1; }
             public override double GetArea() { return theRegion.GetKnownArea(); }
+            public override bool DefinedByShapes() { return theRegion is ShapeRegion; }
         }
 
         public class Binary : Expr
@@ -195,6 +205,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
                 
                 return op == OperationT.ADDITION ? left + right : left - right;
             }
+            public override bool DefinedByShapes() { return leftExp.DefinedByShapes() && rightExp.DefinedByShapes(); }
         }
     }
 }

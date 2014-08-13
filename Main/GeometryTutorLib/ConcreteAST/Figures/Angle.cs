@@ -40,6 +40,11 @@ namespace GeometryTutorLib.ConcreteAST
         /// <param name="c">A point defining the angle.</param>
         public Angle(Point a, Point b, Point c) : base()
         {
+            if (a.StructurallyEquals(b) || b.StructurallyEquals(c) || a.StructurallyEquals(c))
+            {
+                return;
+                // throw new ArgumentException("Angle constructed with redundant vertices.");
+            }
             this.A = a;
             this.B = b;
             this.C = c;
@@ -78,13 +83,18 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (pts.Count != 3)
             {
-                //Console.WriteLine("ERROR: Construction of an angle with " + pts.Count + ", not 3.");
-                return;
+                throw new ArgumentException("Angle constructed with only " + pts.Count + " vertices.");
             }
 
-            this.A = pts.ElementAt(0);
-            this.B = pts.ElementAt(1);
-            this.C = pts.ElementAt(2);
+            this.A = pts[0];
+            this.B = pts[1];
+            this.C = pts[2];
+
+            if (A.StructurallyEquals(B) || B.StructurallyEquals(C) || A.StructurallyEquals(C))
+            {
+                throw new ArgumentException("Angle constructed with redundant vertices.");
+            }
+
             ray1 = new Segment(A, B);
             ray2 = new Segment(B, C);
             this.measure = toDegrees(findAngle(A, B, C));
@@ -546,6 +556,7 @@ namespace GeometryTutorLib.ConcreteAST
             if (thatSegment.IsCollinearWith(this.ray1) || thatSegment.IsCollinearWith(this.ray2)) return false;
 
             Point interiorPoint = this.IsOnInteriorExplicitly(thatSegment.Point1) ? thatSegment.Point1 : thatSegment.Point2;
+            if (!this.IsOnInteriorExplicitly(interiorPoint)) return false;
 
             Angle angle1 = new Angle(A, GetVertex(), interiorPoint);
             Angle angle2 = new Angle(C, GetVertex(), interiorPoint);
