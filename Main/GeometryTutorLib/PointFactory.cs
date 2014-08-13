@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using GeometryTutorLib.ConcreteAST;
 
 namespace GeometryTutorLib
 {
@@ -12,9 +14,38 @@ namespace GeometryTutorLib
         private static string currentName = "A";
         private static int numLetters = 1;
 
-        public static GeometryTutorLib.ConcreteAST.Point GeneratePoint(double x, double y)
+        private static List<Point> database = new List<Point>();
+
+        public static void Initialize(List<Point> initPoints)
         {
-            return new GeometryTutorLib.ConcreteAST.Point(GetCurrentName(), x, y);
+            database.AddRange(initPoints);
+        }
+
+        public static bool IsGenerated(Point that)
+        {
+            if (that == null) return false;
+
+            return prefix == that.name.Substring(0, 3);
+        }
+
+        public static Point GeneratePoint(double x, double y)
+        {
+            int index = database.IndexOf(new Point("", x, y));
+            if (index != -1) return database[index];
+
+            Point newPt = new Point(GetCurrentName(), x, y);
+            Point oldPt = Utilities.GetStructurally<Point>(database, newPt);
+
+            if (oldPt != null) return oldPt;
+
+            database.Add(newPt);
+
+            return newPt;
+        }
+
+        public static Point GeneratePoint(Point pt)
+        {
+            return GeneratePoint(pt.X, pt.Y);
         }
 
         // Reset for the next problem

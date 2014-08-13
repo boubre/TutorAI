@@ -146,7 +146,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
                                         " was calculated now as (" + existentAgg.solArea + ") AND before (" + that.solArea + ")");
                 }
 
-                if (existentAgg.solEq.Length > that.solEq.Length)
+                if (PreferNewComputableSolution(existentAgg, that))
                 {
                     solDictionary[that.atomIndices] = that;
                     return true;
@@ -154,6 +154,26 @@ namespace GeometryTutorLib.Area_Based_Analyses
             }
 
             return false;
+        }
+
+        //
+        // Given that both the old and new solutions are computable, how to do we prefer one solution over another?
+        //
+        private bool PreferNewComputableSolution(SolutionAgg existent, SolutionAgg newSolution)
+        {
+            bool exisDefShapes = existent.solEq.DefinedByShapes();
+            bool newDefShapes = newSolution.solEq.DefinedByShapes();
+
+            //
+            // Favor a solution consisting of all shapes over the alternative.
+            //
+            if (exisDefShapes && !newDefShapes) return false;
+            if (!exisDefShapes && newDefShapes) return true;
+
+            //
+            // Favor a shorter solution.
+            //
+            return existent.solEq.Length > newSolution.solEq.Length;
         }
     }
 }

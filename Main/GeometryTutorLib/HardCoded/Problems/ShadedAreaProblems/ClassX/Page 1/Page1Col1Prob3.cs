@@ -35,7 +35,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
             SetSolutionArea(10.515489999);
 
-            problemName = "Page 1 Col 1 Problem 3";
+            problemName = "Class X Page 1 Col 1 Problem 3";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }

@@ -35,17 +35,17 @@ namespace GeometryTutorLib.GeometryTestbed
             known.AddSegmentLength(ab, 7);
             //known.AddAngleMeasureDegree((Angle)parser.Get(new Angle(b, o, d)), 90);
 
-            List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 1, -1));
-            wanted.Add(new Point("", 8.83, -8.83));
-            wanted.Add(new Point("", 0, 10));
-            wanted.Add(new Point("", 12.4, 1));
+            List<Point> unwanted = new List<Point>();
+            unwanted.Add(new Point("", 0, 1));
+            unwanted.Add(new Point("", 1, 0.1));
+            unwanted.Add(new Point("", 10, 0.1));
+            unwanted.Add(new Point("", -1, -1));
+            unwanted.Add(new Point("", -2, -12));
+            goalRegions = parser.implied.GetAllAtomicRegionsWithoutPoints(unwanted);
 
-            goalRegions = parser.implied.GetAllAtomicRegionsWithoutPoints(wanted);
+            SetSolutionArea(284.1553891);
 
-            SetSolutionArea(42.06195997);
-
-            problemName = "Page 1 Col 1 Problem 1";
+            problemName = "Class X Page 1 Col 1 Problem 1";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }

@@ -176,7 +176,7 @@ namespace GeometryTutorLib.ConcreteAST
             //
             RightTriangle rightTri = new RightTriangle(this);
             Angle otherAngle1, otherAngle2;
-            Angle rightAngle = this.rightAngle;
+            Angle rightAngle = rightTri.rightAngle;
             rightTri.GetOtherAngles(rightAngle, out otherAngle1, out otherAngle2);
 
             double angleMeasure1 = known.GetAngleMeasure(otherAngle1);

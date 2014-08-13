@@ -45,6 +45,7 @@ namespace GeometryTutorLib.ConcreteAST
         // An ORDERED list of collinear points.
         public List<Point> collinear { get; protected set; }
         public virtual void AddCollinearPoint(Point newPt) { throw new ArgumentException("Only segments or arcs have 'collinearity'"); }
+        public virtual void AddCollinearPoints(List<Point> pts) { pts.ForEach(p => this.AddCollinearPoint(p)); }
         public virtual void ClearCollinear() { throw new ArgumentException("Only segments or arcs have 'collinearity'"); }
 
         protected List<Figure> superFigures;

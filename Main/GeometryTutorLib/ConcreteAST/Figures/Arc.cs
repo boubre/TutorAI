@@ -87,17 +87,60 @@ namespace GeometryTutorLib.ConcreteAST
             collinear = theCircle.OrderPoints(collinear);
         }
 
-        public List<Point> GetOrderedCollinearPointsByEndpoints()
+        //
+        // The goal is the return the set of collinear points such that the endpoints bookend the list.
+        //
+        public List<Point> GetOrderedCollinearPointsByEndpoints(List<Point> given)
         {
             // Find only the points on this arc.
             List<Point> applicable = new List<Point>();
 
-            foreach (Point pt in collinear)
+            foreach (Point pt in given)
             {
                 if (this.PointLiesOn(pt)) applicable.Add(pt);
             }
 
-            return theCircle.OrderPoints(applicable);
+            List<Point> ordered = theCircle.OrderPoints(applicable);
+
+            int index1 = ordered.IndexOf(endpoint1);
+            int index2 = ordered.IndexOf(endpoint2);
+
+            if ((index1 == 0 && index2 == ordered.Count-1) || (index2 == 0 && index1 == ordered.Count-1)) return ordered;
+
+            if (index1 + 1 != index2 && index2 + 1 != index1) throw new Exception("Logic failure to order points...");
+
+            List<Point> bookend = new List<Point>();
+            int start = -1;
+            int end = -1;
+
+            if (index1 > index2)
+            {
+                start = index1;
+                end = index2;
+            }
+            else if (index2 > index1)
+            {
+                start = index2;
+                end = index1;
+            }
+            else throw new Exception("Logic failure to order points...");
+
+            for (int i = start; i != end; )
+            {
+                bookend.Add(ordered[i]);
+                if (i + 1 == ordered.Count) i = 0;
+                else i++;
+            }
+            bookend.Add(ordered[end]);
+
+            return bookend;
+        }
+
+        public List<Point> GetOrderedByEndpointsWithMidpoints(List<Point> given)
+        {
+            List<Point> givenWithMidpoints = theCircle.ConstructAllMidpoints(given);
+
+            return GetOrderedCollinearPointsByEndpoints(givenWithMidpoints);
         }
 
         public override void ClearCollinear()
@@ -195,7 +238,15 @@ namespace GeometryTutorLib.ConcreteAST
             circle.FindIntersection(angle.ray2, out pt1, out pt2);
             endpt2 = pt1.StructurallyEquals(angle.GetVertex()) ? pt2 : pt1;
 
-            return Arc.GetFigureMinorArc(circle, endpt1, endpt2);
+            // Need to check if the angle is a diameter and create a semicircle
+            Segment chord = new Segment(endpt1, endpt2);
+            if (circle.DefinesDiameter(chord))
+            {
+                Point opp = circle.Midpoint(endpt1, endpt2, angle.GetVertex());
+                return new Semicircle(circle, endpt1, endpt2, circle.OppositePoint(opp), chord); 
+            }
+
+            return new MinorArc(circle, endpt1, endpt2);
         }
 
         //
@@ -416,6 +467,8 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static bool BetweenMajor(Point m, Arc originalArc)
         {
+            if (originalArc.HasEndpoint(m)) return true;
+
             if (m == null) return false;
 
             // Is the point on this circle?

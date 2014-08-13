@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; HARD_CODED_UI</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -360,6 +360,7 @@
     <Compile Include="HardCoded\Problems\ProofProblems\SimilarTrianglesProblem.cs" />
     <Compile Include="HardCoded\Problems\ProofProblems\TransversalsProblem.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ActualShadedAreaProblem.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\TwoCircleInteriorTangent.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col1Prob1.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col1Prob2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col1Prob3.cs" />
@@ -367,6 +368,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col2Prob1.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col2Prob2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col2Prob3.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col2Prob4.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\Page2Col1Prob1.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\Page2Col1Prob2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\Page2Col1Prob3.cs" />
@@ -384,6 +386,19 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\PathologicalTester.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\RegularPolygonCrushingTester.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\ThreeCircleTwoOverlapTester.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Row5Prob40.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob16.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob13.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob33.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob10.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob16.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob17.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob18.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob35.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob36.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob9.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob8.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2prob15.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2Prob16.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2Prob17.cs" />
@@ -404,6 +419,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob19.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob7.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row4Prob24.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row1Prob24.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row1Prob25.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row1Prob26.cs" />
@@ -639,6 +655,7 @@
     <Compile Include="UIDebugPublisher.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

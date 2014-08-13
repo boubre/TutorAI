@@ -128,7 +128,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is ArcInMiddle)
                 {
-                    HandleDeducedClauses(worklist, ArcAdditionAxiom.Instantiate(clause));
+                    // HandleDeducedClauses(worklist, ArcAdditionAxiom.Instantiate(clause));
                 }
                 else if (clause is Intersection)
                 {
@@ -504,8 +504,8 @@ namespace GeometryTutorLib.GenericInstantiator
                 }
                 else if (clause is Tangent)
                 {
-                    HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
-                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    // HandleDeducedClauses(worklist, ChordTangentAngleHalfInterceptedArc.Instantiate(clause));
+                    // HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
                     HandleDeducedClauses(worklist, TangentPerpendicularToRadius.Instantiate(clause));
                     HandleDeducedClauses(worklist, TangentsToCircleFromPointAreCongruent.Instantiate(clause));
                 }
@@ -520,10 +520,10 @@ namespace GeometryTutorLib.GenericInstantiator
                     Circle.Record(clause);
 
                     HandleDeducedClauses(worklist, CircleDefinition.Instantiate(clause));
-                    HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
-                    HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
-                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
-                    HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    //HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
                     HandleDeducedClauses(worklist, TwoInterceptedArcsHaveCongruentAngles.Instantiate(clause));
                 }

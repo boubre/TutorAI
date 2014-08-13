@@ -19,6 +19,16 @@ namespace GeometryTutorLib.ConcreteAST
             diameter = d;
             middlePoint = m;
 
+            if (!circle.DefinesDiameter(diameter))
+            {
+                System.Diagnostics.Debug.WriteLine("Semicircle constructed without a diameter");
+            }
+
+            if (!circle.DefinesDiameter(new Segment(e1, e2)))
+            {
+                System.Diagnostics.Debug.WriteLine("Semicircle constructed without a diameter");
+            }
+
             thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
@@ -66,7 +76,15 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool HasSubArc(Arc that)
         {
+            if (!this.theCircle.StructurallyEquals(that.theCircle)) return false;
+
             if (that is MajorArc) return false;
+            if (that is Semicircle)
+            {
+                Semicircle semi = that as Semicircle;
+                return this.HasMinorSubArc(new MinorArc(semi.theCircle, semi.endpoint1, semi.middlePoint)) &&
+                       this.HasMinorSubArc(new MinorArc(semi.theCircle, semi.endpoint2, semi.middlePoint));
+            }
 
             return this.HasMinorSubArc(that);
         }
@@ -155,7 +173,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string CheapPrettyString()
         {
-            return "Semicircle(" + endpoint1.SimpleToString() + middlePoint.SimpleToString() + endpoint2.SimpleToString() + ")";
+            return "Semicircle(" + endpoint1.SimpleToString() + theCircle.center.SimpleToString() + endpoint2.SimpleToString() + middlePoint.SimpleToString() + ")";
         }
 
         private void GetStartEndPoints(out Point start, out Point end, out double startAngle)

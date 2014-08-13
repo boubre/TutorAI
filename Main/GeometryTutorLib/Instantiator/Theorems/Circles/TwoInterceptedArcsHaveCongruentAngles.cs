@@ -76,6 +76,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     
                     //For hypergraph
                     List<GroundedClause> antecedent = new List<GroundedClause>();
+                    antecedent.Add(c);
                     antecedent.Add(a1);
                     antecedent.Add(a2);
                     antecedent.Add(i1);

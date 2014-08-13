@@ -31,10 +31,10 @@ namespace GeometryTutorLib.ConcreteAST
         public Dictionary<Segment, Segment> tangents { get; private set; }
 
         // Polygons that are circumscribed about the circle. 
-        public List<GeometryTutorLib.ConcreteAST.Polygon>[] circumPolys { get; private set; }
+        public List<Polygon>[] circumPolys { get; private set; }
 
         // Polygons that are inscribed in the circle. 
-        public List<GeometryTutorLib.ConcreteAST.Polygon>[] inscribedPolys { get; private set; }
+        public List<Polygon>[] inscribedPolys { get; private set; }
 
         // The list of points from the UI which involve this circle.
         public List<Point> pointsOnCircle { get; private set; }
@@ -71,8 +71,8 @@ namespace GeometryTutorLib.ConcreteAST
             circumPolys = new List<Polygon>[Polygon.MAX_EXC_POLY_INDEX];
             for (int n = Polygon.MIN_POLY_INDEX; n < Polygon.MAX_EXC_POLY_INDEX; n++)
             {
-                inscribedPolys[n] = new List<GeometryTutorLib.ConcreteAST.Polygon>();
-                circumPolys[n] = new List<GeometryTutorLib.ConcreteAST.Polygon>();
+                inscribedPolys[n] = new List<Polygon>();
+                circumPolys[n] = new List<Polygon>();
             }
 
             pointsOnCircle = new List<Point>();
@@ -182,6 +182,33 @@ namespace GeometryTutorLib.ConcreteAST
             }
 
             return ordered;
+        }
+
+        public List<Point> ConstructAllMidpoints(List<Point> given)
+        {
+            List<Point> ordered = this.OrderPoints(given);
+            List<Point> ptsWithMidpoints = new List<Point>();
+
+            if (ordered.Count < 2) return ordered;
+
+            //
+            // Walk around the ordered points in a COUNTER-CLOCKWISE direction.
+            //
+            for (int p = 0; p < ordered.Count; p++)
+            {
+                ptsWithMidpoints.Add(ordered[p]);
+
+                Point midpt = this.Midpoint(ordered[p], ordered[(p + 1) % ordered.Count]);
+                Point opp = this.OppositePoint(midpt);
+
+                if (Point.CounterClockwise(ordered[p], midpt, ordered[(p + 1) % ordered.Count]))
+                {
+                    ptsWithMidpoints.Add(midpt);
+                }
+                else ptsWithMidpoints.Add(opp);
+            }
+
+            return ptsWithMidpoints;
         }
 
         public Segment GetRadius(Segment r)
@@ -527,7 +554,7 @@ namespace GeometryTutorLib.ConcreteAST
             inter1 = null;
             inter2 = null;
 
-            GeometryTutorLib.ConcreteAST.Segment s = new GeometryTutorLib.ConcreteAST.Segment(ts.Point1, ts.Point2);
+            Segment s = new Segment(ts.Point1, ts.Point2);
 
             // SEE: http://stackoverflow.com/questions/1073336/circle-line-collision-detection
 
@@ -918,6 +945,21 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         // return the midpoint between these two on the circle.
+        public Point Midpoint(Point a, Point b, Point sameSide)
+        {
+            Point midpt = Midpoint(a, b);
+
+            Segment segment = new Segment(a, b);
+            Segment other = new Segment(midpt, sameSide);
+
+            Point intersection = segment.FindIntersection(other);
+
+            if (Segment.Between(intersection, midpt, sameSide)) return this.OppositePoint(midpt);
+
+            return midpt;
+        }
+
+        // return the midpoint between these two on the circle.
         public Point OppositePoint(Point that)
         {
             if (!this.PointLiesOn(that)) return null;
@@ -984,20 +1026,32 @@ namespace GeometryTutorLib.ConcreteAST
             List<Segment> constructedRadii = new List<Segment>();
             List<Point> imagPoints = new List<Point>();
 
-            List<GeometryTutorLib.ConcreteAST.Point> interPts = GetIntersectingPoints();
-
-            // If there are no points of interest, the circle is the atomic region.
-            if (!interPts.Any())
-            {
-                return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(this));
-            }
+            List<Point> interPts = GetIntersectingPoints();
 
             //
             // Construct the radii
             //
-            foreach (Point interPt in interPts)
+            switch (interPts.Count)
             {
-                constructedRadii.Add(new GeometryTutorLib.ConcreteAST.Segment(center, interPt));
+                // If there are no points of interest, the circle is the atomic region.
+                case 0:
+                  return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(this));
+
+                // If only 1 intersection point, create the diameter.
+                case 1:
+                  Point opp = Utilities.AcquirePoint(figurePoints, this.OppositePoint(interPts[0]));
+                  constructedRadii.Add(new Segment(center, interPts[0]));
+                  constructedRadii.Add(new Segment(center, opp));
+                  imagPoints.Add(opp);
+                  interPts.Add(opp);
+                  break;
+
+                default:
+                  foreach (Point interPt in interPts)
+                  {
+                      constructedRadii.Add(new Segment(center, interPt));
+                  }
+                  break;
             }
 
             //
@@ -1008,7 +1062,8 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
                 {
-                    constructedChords.Add(new Segment(interPts[p1], interPts[p2]));
+                    Segment chord = new Segment(interPts[p1], interPts[p2]);
+                    if (!DefinesDiameter(chord)) constructedChords.Add(chord);
                 }
             }
 
@@ -1099,11 +1154,14 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Add all arcs
             //
-            interPts = this.OrderPoints(interPts);
-            for (int p = 0; p < interPts.Count; p++)
+            List<Point> arcPts = this.ConstructAllMidpoints(interPts);
+            for (int p = 0; p < arcPts.Count; p++)
             {
-                graph.AddUndirectedEdge(interPts[p], interPts[(p + 1) % interPts.Count],
-                                        new Segment(interPts[p], interPts[(p + 1) % interPts.Count]).Length,
+                graph.AddNode(arcPts[p]);
+                graph.AddNode(arcPts[(p + 1) % arcPts.Count]);
+
+                graph.AddUndirectedEdge(arcPts[p], arcPts[(p + 1) % arcPts.Count],
+                                        new Segment(arcPts[p], arcPts[(p + 1) % interPts.Count]).Length,
                                         Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
             }
 
@@ -1116,71 +1174,34 @@ namespace GeometryTutorLib.ConcreteAST
             List<AtomicRegion> atoms = PrimitiveToRegionConverter.Convert(graph, primitives, Utilities.MakeList<Circle>(this));
 
             //
-            // A special case where there are only two points of intersection: the major arc sector is lost.
-            //
-            if (interPts.Count == 2)
-            {
-                Sector newSector = null;
-                //
-                // Major sector
-                //
-                if (!this.DefinesDiameter(new Segment(interPts[0], interPts[1])))
-                {
-                    newSector = new Sector(new MajorArc(this, interPts[0], interPts[1]));
-                }
-                //
-                // Semi-circle
-                //
-                else
-                {
-                    throw new ArgumentException("Need to handle semi-circle in Circle Atomizer.");
-                    // newSector = new Sector(new Semicircle(this, interPts[0], interPts[1], , new Segment(interPts[0], interPts[1])));
-                }
-
-                atoms.Add(new ShapeAtomicRegion(newSector));
-            }
-            //
             // A filament may result in the creation of a major AND minor arc; both are not required.
             // Figure out which one to omit.
+            // Multiple semi-circles may arise as well; omit if they can be broken into constituent elements.
             //
-            else
+            List <AtomicRegion> trueAtoms = new List<AtomicRegion>();
+
+            for (int a1 = 0; a1 < atoms.Count; a1++)
             {
-                bool containsFilament = false;
-                foreach (Primitive primitive in primitives)
+                bool trueAtom = true;
+                for (int a2 = 0; a2 < atoms.Count; a2++)
                 {
-                    if (primitive is Filament)
+                    if (a1 != a2)
                     {
-                        containsFilament = true;
-                        break;
+                        if (atoms[a1].Contains(atoms[a2]))
+                        {
+                            trueAtom = false;
+                            break;
+                        }
+
                     }
                 }
 
-                if (containsFilament)
-                {
-                    int index = -1;
-                    for (int a1 = 0; a1 < atoms.Count; a1++)
-                    {
-                        if (atoms[a1] is ShapeAtomicRegion)
-                        {
-                            if ((atoms[a1] as ShapeAtomicRegion).shape is Sector)
-                            {
-                                for (int a2 = 0; a2 < atoms.Count; a2++)
-                                {
-                                    if (atoms[a1].Contains(atoms[a2]))
-                                    {
-                                        index = a1;
-                                        break;
-                                    }
-                                }
-                                if (index != -1) break;
-                            }
-                        }
-                    }
-                    if (index != -1) atoms.RemoveAt(index);
-                }
+                if (trueAtom) trueAtoms.Add(atoms[a1]);
             }
 
-            return atoms;
+            atoms = trueAtoms;
+
+            return trueAtoms;
         }
 
         //private double CentralAngleMeasure(Point pt1, Point pt2)
@@ -1257,7 +1278,9 @@ namespace GeometryTutorLib.ConcreteAST
         //
         private bool ContainsCircle(Circle that)
         {
-            return Point.calcDistance(this.center, that.center) <= Math.Abs(this.radius - that.radius);
+            if (this.radius - that.radius < 0) return false;
+
+            return Point.calcDistance(this.center, that.center) <= this.radius - that.radius;
         }
 
         //

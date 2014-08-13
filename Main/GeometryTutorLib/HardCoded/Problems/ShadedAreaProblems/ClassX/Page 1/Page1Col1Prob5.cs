@@ -16,6 +16,8 @@ namespace GeometryTutorLib.GeometryTestbed
             Point e = new Point("E", -1.75, -3.5 * System.Math.Sqrt(3.0) / 2.0); points.Add(e);
             Point f = new Point("F", 1.75, -3.5 * System.Math.Sqrt(3.0) / 2.0); points.Add(f);
 
+
+
             //Segment ad = new Segment(a, d); segments.Add(ad);
             //Segment bd = new Segment(b, d); segments.Add(bd);
             //Segment ce = new Segment(c, e); segments.Add(ce);
@@ -26,15 +28,13 @@ namespace GeometryTutorLib.GeometryTestbed
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            known.AddSegmentLength(new Segment(a, d), 3.5);
-            //known.AddSegmentLength(new Segment(b, d), 3.5);
-            //known.AddSegmentLength(new Segment(c, e), 3.5);
-
-            // The goal is the entire area of the figure.
-            goalRegions.Add(parser.implied.GetAtomicRegionByPoint(new Point("", 0, -1)));
-
             given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(a, d)), (Segment)parser.Get(new Segment(b, d))));
             given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(a, d)), (Segment)parser.Get(new Segment(e, c))));
+
+            known.AddSegmentLength(new Segment(a, d), 3.5);
+
+            goalRegions.Add(parser.implied.GetAtomicRegionByPoint(new Point("", 0, -1)));
+
 
             SetSolutionArea(1.975367389);
         }

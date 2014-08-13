@@ -67,5 +67,31 @@ namespace GeometryTutorLib.ConcreteAST
             foreach (Point pt in points) str.Append(pt.CheapPrettyString());
             return "Rect(" + str.ToString() + ")";
         }
+
+        //
+        // Calculate base * height ; defer to splitting triangles from there.
+        //
+        public double Area(double b, double h) { return b * h; }
+
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            double[] sideVals = new double[orderedSides.Count];
+
+            for (int s = 0; s < orderedSides.Count; s++)
+            {
+                sideVals[s] = known.GetSegmentLength(orderedSides[s]);
+            }
+
+            // One pair of adjacent sides is required for the area computation.
+            for (int s = 0; s < sideVals.Length; s++)
+            {
+                double baseVal = sideVals[s];
+                double heightVal = sideVals[(s+1) % sideVals.Length];
+
+                if (baseVal > 0 && heightVal > 0) return Area(baseVal, heightVal);
+            }
+
+            return SplitTriangleArea(known);
+        }
     }
 }

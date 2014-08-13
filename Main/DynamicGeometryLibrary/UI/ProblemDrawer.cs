@@ -43,10 +43,17 @@ namespace DynamicGeometry.UI
             figures.ForEach(figure => RemoveFigure(figure));
 
             //Draw the hard-coded problem.
-            drawPoints(problem);
-            drawSegments(problem);
-            drawCircles(problem);
-            shadeProblem(problem);
+            try
+            {
+                drawPoints(problem);
+                drawSegments(problem);
+                drawCircles(problem);
+
+                shadeProblem(problem);
+            } catch (System.Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message + " " + e.StackTrace);
+            }
 
             //Run the problem
             problem.Run();
@@ -59,7 +66,7 @@ namespace DynamicGeometry.UI
         private void drawPoints(ActualProblem problem)
         {
             //Add each point to the drawing
-            foreach (var pt in problem.points)
+            foreach (var pt in problem.parser.implied.allFigurePoints)
             {
                 //Create and add the point
                 var point = Factory.CreateFreePoint(drawingHost.CurrentDrawing, new System.Windows.Point(pt.X, pt.Y));
@@ -80,16 +87,19 @@ namespace DynamicGeometry.UI
             //Add each segment to the drawing
             foreach (var seg in problem.segments)
             {
-                //Look already drawn points
-                var pt1 = points[seg.Point1];
-                var pt2 = points[seg.Point2];
+                if (seg != null)
+                {
+                    //Look already drawn points
+                    var pt1 = points[seg.Point1];
+                    var pt2 = points[seg.Point2];
 
-                //Create and add the segment
-                var segment = Factory.CreateSegment(drawingHost.CurrentDrawing, pt1, pt2);
-                Actions.Add(drawingHost.CurrentDrawing, segment);
+                    //Create and add the segment
+                    var segment = Factory.CreateSegment(drawingHost.CurrentDrawing, pt1, pt2);
+                    Actions.Add(drawingHost.CurrentDrawing, segment);
 
-                //Save to lookup dictionary
-                segments.Add(seg, segment);
+                    //Save to lookup dictionary
+                    segments.Add(seg, segment);
+                }
             }
         }
 

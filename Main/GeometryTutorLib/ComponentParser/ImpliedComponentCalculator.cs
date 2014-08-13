@@ -16,10 +16,10 @@ namespace GeometryTutorLib.TutorParser
         //
         // Minimum components that are determined externally.
         //
-        public List<GeometryTutorLib.ConcreteAST.Point> points { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.Segment> segments { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.Circle> circles { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.Polygon>[] polygons { get; private set; }
+        public List<Point> points { get; private set; }
+        public List<Segment> segments { get; private set; }
+        public List<Circle> circles { get; private set; }
+        public List<Polygon>[] polygons { get; private set; }
 
         //
         // Implied components calculated in this class.
@@ -28,8 +28,8 @@ namespace GeometryTutorLib.TutorParser
         public List<InMiddle> inMiddles { get; private set; }
 
         // UI named points and those unlabeled points due to intersection: points we can see in a drawing.
-        public List<GeometryTutorLib.ConcreteAST.Point> allFigurePoints { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.Point> unlabeledPoints { get; private set; }
+        public List<Point> allFigurePoints { get; private set; }
+        public List<Point> unlabeledPoints { get; private set; }
 
         public List<Intersection> ssIntersections { get; private set; }
         public List<Angle> angles { get; private set; }
@@ -40,16 +40,16 @@ namespace GeometryTutorLib.TutorParser
         public List<Sector> minorSectors { get; private set; }
         public List<Sector> majorSectors { get; private set; }
         public List<ArcInMiddle> arcInMiddle { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.CircleSegmentIntersection> csIntersections { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.CircleCircleIntersection> ccIntersections { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.SegmentBisector> segmentBisectors { get; private set; }
-        public List<GeometryTutorLib.ConcreteAST.AngleBisector> angleBisectors { get; private set; }
+        public List<CircleSegmentIntersection> csIntersections { get; private set; }
+        public List<CircleCircleIntersection> ccIntersections { get; private set; }
+        public List<SegmentBisector> segmentBisectors { get; private set; }
+        public List<AngleBisector> angleBisectors { get; private set; }
 
         // For private use in constructing intersections only
-        public List<GeometryTutorLib.ConcreteAST.Segment> maximalSegments { get; private set; }
+        public List<Segment> maximalSegments { get; private set; }
 
         // For atomic region id: graph construction.
-        public List<GeometryTutorLib.ConcreteAST.Segment> minimalSegments { get; private set; }
+        public List<Segment> minimalSegments { get; private set; }
 
         // The atomic regions for this figure.
         public List<AtomicRegion> atomicRegions { get; private set; }
@@ -60,10 +60,10 @@ namespace GeometryTutorLib.TutorParser
         //
         // Construction requires this minimal set from the UI.
         //
-        public ImpliedComponentCalculator(List<GeometryTutorLib.ConcreteAST.Point> pts,
-                                          List<GeometryTutorLib.ConcreteAST.Segment> segs,
-                                          List<GeometryTutorLib.ConcreteAST.Circle> circs,
-                                          List<GeometryTutorLib.ConcreteAST.Polygon>[] polys)
+        public ImpliedComponentCalculator(List<Point> pts,
+                                          List<Segment> segs,
+                                          List<Circle> circs,
+                                          List<Polygon>[] polys)
         {
             points = pts;
             segments = segs;
@@ -78,10 +78,10 @@ namespace GeometryTutorLib.TutorParser
         //
         // Construct requires this minimal set from a hard-coded test.
         //
-        public ImpliedComponentCalculator(List<GeometryTutorLib.ConcreteAST.Point> pts,
-                                          List<GeometryTutorLib.ConcreteAST.Collinear> coll,
-                                          List<GeometryTutorLib.ConcreteAST.Segment> segs,
-                                          List<GeometryTutorLib.ConcreteAST.Circle> circs)
+        public ImpliedComponentCalculator(List<Point> pts,
+                                          List<Collinear> coll,
+                                          List<Segment> segs,
+                                          List<Circle> circs)
         {
             points = pts;
             collinear = coll;
@@ -108,14 +108,16 @@ namespace GeometryTutorLib.TutorParser
             arcInMiddle = new List<ArcInMiddle>();
             csIntersections = new List<CircleSegmentIntersection>();
             ccIntersections = new List<CircleCircleIntersection>();
-            segmentBisectors = new List<GeometryTutorLib.ConcreteAST.SegmentBisector>();
-            angleBisectors = new List<GeometryTutorLib.ConcreteAST.AngleBisector>();
+            segmentBisectors = new List<SegmentBisector>();
+            angleBisectors = new List<AngleBisector>();
 
-            maximalSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            minimalSegments = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            maximalSegments = new List<Segment>();
+            minimalSegments = new List<Segment>();
 
             imagPoints = new List<ImaginaryPoint>();
             atomicRegions = new List<AtomicRegion>();
+
+            PointFactory.Initialize(points);
         }
 
         public void ConstructAllImplied()
@@ -184,7 +186,7 @@ namespace GeometryTutorLib.TutorParser
             List<Sector> localMinorSectors = null;
             List<Sector> localMajorSectors = null;
             List<Semicircle> localSemicircles = null;
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
+            foreach (Circle circle in circles)
             {
                 circle.ConstructImpliedAreaBasedSectors(out localMinorSectors, out localMajorSectors, out localSemicircles);
             }
@@ -196,7 +198,7 @@ namespace GeometryTutorLib.TutorParser
 
             foreach (AtomicRegion atom in atomicRegions)
             {
-                GeometryTutorLib.ConcreteAST.Polygon poly = atom.GetPolygonalized();
+                Polygon poly = atom.GetPolygonalized();
                 Debug.WriteLine(poly);
             }
 #endif
@@ -212,7 +214,7 @@ namespace GeometryTutorLib.TutorParser
             //
             foreach (Point p in points)
             {
-                foreach (GeometryTutorLib.ConcreteAST.Segment seg in segments)
+                foreach (Segment seg in segments)
                 {
                     if (seg.PointLiesOnAndExactlyBetweenEndpoints(p))
                     {
@@ -224,7 +226,7 @@ namespace GeometryTutorLib.TutorParser
             //
             // Create the actual collinear statements.
             //
-            foreach (GeometryTutorLib.ConcreteAST.Segment seg in segments)
+            foreach (Segment seg in segments)
             {
                 if (seg.DefinesCollinearity()) collinear.Add(new Collinear(seg.collinear));
             }
@@ -241,7 +243,7 @@ namespace GeometryTutorLib.TutorParser
                 {
                     for (int p2 = p1 + 1; p2 < coll.points.Count; p2++)
                     {
-                        GeometryTutorLib.ConcreteAST.Segment newSegment = new GeometryTutorLib.ConcreteAST.Segment(coll.points[p1], coll.points[p2]);
+                        Segment newSegment = new Segment(coll.points[p1], coll.points[p2]);
                         segments.Add(newSegment);
                         for (int imIndex = p1 + 1; imIndex < p2; imIndex++)
                         {
@@ -252,11 +254,11 @@ namespace GeometryTutorLib.TutorParser
             }
 
             // Remove any duplicates which may have arisen.
-            segments = GeometryTutorLib.Utilities.RemoveDuplicates<GeometryTutorLib.ConcreteAST.Segment>(segments);
+            segments = GeometryTutorLib.Utilities.RemoveDuplicates<Segment>(segments);
         }
 
         //// Simple function for creating a point (if needed since it is implied).
-        //private Point HandleIntersectionPoint(List<Point> containment, List<Point> toAdd, GeometryTutorLib.ConcreteAST.Segment segment, Point pt)
+        //private Point HandleIntersectionPoint(List<Point> containment, List<Point> toAdd, Segment segment, Point pt)
         //{
         //    if (pt == null) return null;
 
@@ -272,12 +274,12 @@ namespace GeometryTutorLib.TutorParser
         //    if (pt == null) return null;
 
         //    // If this point was defined by the UI, do nothing
-        //    Point uiPoint = GeometryTutorLib.Utilities.GetStructurally<GeometryTutorLib.ConcreteAST.Point>(containment, pt);
+        //    Point uiPoint = GeometryTutorLib.Utilities.GetStructurally<Point>(containment, pt);
         //    if (uiPoint != null) return uiPoint;
 
         //    // else create the point.
         //    Point newPoint = PointFactory.GeneratePoint(pt.X, pt.Y);
-        //    GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Point>(toAdd, newPoint);
+        //    GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(toAdd, newPoint);
         //    return newPoint;
         //}
 
@@ -320,14 +322,14 @@ namespace GeometryTutorLib.TutorParser
             //
             // Iterate over all polygons
             //
-            for (int sidesIndex = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX; sidesIndex < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX; sidesIndex++)
+            for (int sidesIndex = Polygon.MIN_POLY_INDEX; sidesIndex < Polygon.MAX_EXC_POLY_INDEX; sidesIndex++)
             {
-                foreach (GeometryTutorLib.ConcreteAST.Polygon poly in polygons[sidesIndex])
+                foreach (Polygon poly in polygons[sidesIndex])
                 {
                     //
                     // Add intersection clauses for all sides the polygon
                     //
-                    List<GeometryTutorLib.ConcreteAST.Segment> sides = poly.orderedSides;
+                    List<Segment> sides = poly.orderedSides;
                     for (int s1 = 0; s1 < sides.Count - 1; s1++)
                     {
                         for (int s2 = s1 + 1; s2 < sides.Count; s2++)
@@ -491,11 +493,11 @@ namespace GeometryTutorLib.TutorParser
         //
         private void AnalyzeCirclePolygonInscription()
         {
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
+            foreach (Circle circle in circles)
             {
-                for (int n = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX; n < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX; n++)
+                for (int n = Polygon.MIN_POLY_INDEX; n < Polygon.MAX_EXC_POLY_INDEX; n++)
                 {
-                    foreach (GeometryTutorLib.ConcreteAST.Polygon poly in polygons[n])
+                    foreach (Polygon poly in polygons[n])
                     {
                         circle.AnalyzePolygonInscription(poly);
                     }
@@ -506,16 +508,16 @@ namespace GeometryTutorLib.TutorParser
         //
         // Acquire the exact segment if it exists...otherwise return the maximal segment
         //
-        private GeometryTutorLib.ConcreteAST.Segment GetMaximalProblemSegment(GeometryTutorLib.ConcreteAST.Segment thatSegment)
+        private Segment GetMaximalProblemSegment(Segment thatSegment)
         {
             // Exact segment
-            foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
+            foreach (Segment segment in segments)
             {
                 if (segment.StructurallyEquals(thatSegment)) return segment;
             }
 
             // Maximal Segment
-            foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
+            foreach (Segment segment in segments)
             {
                 if (segment.HasSubSegment(thatSegment)) return segment;
             }
@@ -531,7 +533,7 @@ namespace GeometryTutorLib.TutorParser
             //
             // Find the points that are on the given circle; 
             //
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in circles)
+            foreach (Circle circle in circles)
             {
 #if !ATOMIC_REGION_OFF //Define in Properties->Build->Compilation Symbols to turn off this section
 
@@ -558,13 +560,27 @@ namespace GeometryTutorLib.TutorParser
         //
         // Detect diameters and generate all of the Semicircle Arc and ArcInMiddle clauses
         //
-        private void GenerateSemicircleClauses(GeometryTutorLib.ConcreteAST.Circle circle)
+        private void GenerateSemicircleClauses(Circle circle)
         {
+            if (circle.pointsOnCircle.Count == 2)
+            {
+                Segment diameter = new Segment(circle.pointsOnCircle[0], circle.pointsOnCircle[1]);
+
+                if (circle.DefinesDiameter(diameter))
+                {
+                    Point midpt = circle.Midpoint(diameter.Point1, diameter.Point2);
+                    Point opp = circle.OppositePoint(midpt);
+
+                    AddSemicircleClauses(new Semicircle(circle, diameter.Point1, diameter.Point2, midpt, diameter));
+                    AddSemicircleClauses(new Semicircle(circle, diameter.Point1, diameter.Point2, opp, diameter));
+                }
+            }
+
             for (int p1 = 0; p1 < circle.pointsOnCircle.Count - 1; p1++)
             {
                 for (int p2 = p1 + 1; p2 < circle.pointsOnCircle.Count; p2++)
                 {
-                    GeometryTutorLib.ConcreteAST.Segment diameter = new GeometryTutorLib.ConcreteAST.Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
+                    Segment diameter = new Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
 
                     if (circle.DefinesDiameter(diameter))
                     {
@@ -607,9 +623,9 @@ namespace GeometryTutorLib.TutorParser
             }
         }
 
-        //private void GenerateSemicircleClauses(GeometryTutorLib.ConcreteAST.Circle circle)
+        //private void GenerateSemicircleClauses(Circle circle)
         //{
-        //    foreach (GeometryTutorLib.ConcreteAST.Segment seg in segments)
+        //    foreach (Segment seg in segments)
         //    {
         //        if (circle.DefinesDiameter(seg))
         //        {
@@ -650,9 +666,9 @@ namespace GeometryTutorLib.TutorParser
         //    }
         //}
 
-        private void AddSemicircleClauses(GeometryTutorLib.ConcreteAST.Semicircle semi)
+        private void AddSemicircleClauses(Semicircle semi)
         {
-            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.Semicircle>(semiCircles, semi))
+            if (!GeometryTutorLib.Utilities.HasStructurally<Semicircle>(semiCircles, semi))
             {
                 semiCircles.Add(semi);
                 semicircleSectors.Add(new Sector(semi));
@@ -686,7 +702,7 @@ namespace GeometryTutorLib.TutorParser
         //
         // Generate all of the Major/Minor Arc and ArcInMiddle clauses; similar to generating for collinear points on segments.
         //
-        private void GenerateArcClauses(GeometryTutorLib.ConcreteAST.Circle circle)
+        private void GenerateArcClauses(Circle circle)
         {
             //
             // Generate all Arc objects with their minor / major arc points; also generate ArcInMiddle clauses.
@@ -696,7 +712,7 @@ namespace GeometryTutorLib.TutorParser
                 for (int p2 = p1 + 1; p2 < circle.pointsOnCircle.Count; p2++)
                 {
                     // Do these endpoints form a diameter? If so, the semicircle arcs should have already been handled by GenerateSemicircleClauses()
-                    GeometryTutorLib.ConcreteAST.Segment seg = new GeometryTutorLib.ConcreteAST.Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
+                    Segment seg = new Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
                     if (!circle.DefinesDiameter(seg)) CreateMajorMinorArcs(circle, p1, p2);
 
 
@@ -704,7 +720,7 @@ namespace GeometryTutorLib.TutorParser
             }
         }
 
-        private void CreateMajorMinorArcs(GeometryTutorLib.ConcreteAST.Circle circle, int p1, int p2)
+        private void CreateMajorMinorArcs(Circle circle, int p1, int p2)
         {
             List<Point> minorArcPoints;
             List<Point> majorArcPoints;
@@ -714,7 +730,7 @@ namespace GeometryTutorLib.TutorParser
             MajorArc newMajorArc = new MajorArc(circle, circle.pointsOnCircle[p1], circle.pointsOnCircle[p2], minorArcPoints, majorArcPoints);
             Sector newMinorSector = new Sector(newMinorArc);
             Sector newMajorSector = new Sector(newMajorArc);
-            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MinorArc>(minorArcs, newMinorArc))
+            if (!GeometryTutorLib.Utilities.HasStructurally<MinorArc>(minorArcs, newMinorArc))
             {
                 minorArcs.Add(newMinorArc);
                 minorSectors.Add(newMinorSector);
@@ -722,7 +738,7 @@ namespace GeometryTutorLib.TutorParser
 
                 angles.Add(new Angle(circle.pointsOnCircle[p1], circle.center, circle.pointsOnCircle[p2]));
             }
-            if (!GeometryTutorLib.Utilities.HasStructurally<GeometryTutorLib.ConcreteAST.MajorArc>(majorArcs, newMajorArc))
+            if (!GeometryTutorLib.Utilities.HasStructurally<MajorArc>(majorArcs, newMajorArc))
             {
                 majorArcs.Add(newMajorArc);
                 majorSectors.Add(newMajorSector);
@@ -744,7 +760,7 @@ namespace GeometryTutorLib.TutorParser
             }
         }
 
-        private void PartitionArcPoints(GeometryTutorLib.ConcreteAST.Circle circle, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
+        private void PartitionArcPoints(Circle circle, int endpt1, int endpt2, out List<Point> minorArcPoints, out List<Point> majorArcPoints)
         {
             minorArcPoints = new List<Point>();
             majorArcPoints = new List<Point>();
@@ -763,7 +779,7 @@ namespace GeometryTutorLib.TutorParser
             }
         }
 
-        //private void ConstructImaginaryIntersectionPoint(GeometryTutorLib.ConcreteAST.Segment s1, GeometryTutorLib.ConcreteAST.Segment s2)
+        //private void ConstructImaginaryIntersectionPoint(Segment s1, Segment s2)
         //{
         //    Point intersection = s1.FindIntersection(s2);
 
@@ -780,9 +796,9 @@ namespace GeometryTutorLib.TutorParser
         //}
 
         // Check to see if the given segment already exists directly or indirectly as collinear points.
-        private bool DoesSegmentExistExplicitly(GeometryTutorLib.ConcreteAST.Segment seg)
+        private bool DoesSegmentExistExplicitly(Segment seg)
         {
-            foreach (GeometryTutorLib.ConcreteAST.Segment maximal in maximalSegments)
+            foreach (Segment maximal in maximalSegments)
             {
                 if (maximal.HasSubSegment(seg)) return true;
             }
@@ -799,21 +815,21 @@ namespace GeometryTutorLib.TutorParser
             foreach (Intersection i in ssIntersections)
             {
                 //... and create two new lines for each segment split by the point of intersection.
-                var lhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.lhs.Point1, i.intersect);
-                var lhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.lhs.Point2);
-                var rhs1 = new GeometryTutorLib.ConcreteAST.Segment(i.rhs.Point1, i.intersect);
-                var rhs2 = new GeometryTutorLib.ConcreteAST.Segment(i.intersect, i.rhs.Point2);
+                var lhs1 = new Segment(i.lhs.Point1, i.intersect);
+                var lhs2 = new Segment(i.intersect, i.lhs.Point2);
+                var rhs1 = new Segment(i.rhs.Point1, i.intersect);
+                var rhs2 = new Segment(i.intersect, i.rhs.Point2);
 
                 // Is the lhs bisected by rhs?
                 if (GeometryTutorLib.Utilities.CompareValues(lhs1.Length, lhs2.Length))
                 {
-                    segmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.rhs));
+                    segmentBisectors.Add(new SegmentBisector(i, i.rhs));
                 }
 
                 // Is the rhs bisected by lhs?
                 if (GeometryTutorLib.Utilities.CompareValues(rhs1.Length, rhs2.Length))
                 {
-                    segmentBisectors.Add(new GeometryTutorLib.ConcreteAST.SegmentBisector(i, i.lhs));
+                    segmentBisectors.Add(new SegmentBisector(i, i.lhs));
                 }
             }
         }
@@ -827,12 +843,12 @@ namespace GeometryTutorLib.TutorParser
             foreach (Angle a in angles)
             {
                 //... and see if a segment passes through point B of the angle.
-                foreach (GeometryTutorLib.ConcreteAST.Segment segment in segments)
+                foreach (Segment segment in segments)
                 {
                     if (a.CoordinateAngleBisector(segment))
                     {
                         // We found an angle bisector!
-                        angleBisectors.Add(new GeometryTutorLib.ConcreteAST.AngleBisector(a, segment));
+                        angleBisectors.Add(new AngleBisector(a, segment));
                     }
                 }
             }
@@ -851,7 +867,7 @@ namespace GeometryTutorLib.TutorParser
                 normalized.Add(normed);
             }
 
-            GeometryTutorLib.Utilities.AddUniqueList<GeometryTutorLib.ConcreteAST.Point>(allFigurePoints, normalized);
+            GeometryTutorLib.Utilities.AddUniqueList<Point>(allFigurePoints, normalized);
 
             return normalized;
         }
@@ -867,7 +883,7 @@ namespace GeometryTutorLib.TutorParser
             }
 
             str.AppendLine("Segments");
-            foreach (GeometryTutorLib.ConcreteAST.Segment s in segments)
+            foreach (Segment s in segments)
             {
                 str.AppendLine("\t" + s.ToString());
             }
@@ -879,16 +895,16 @@ namespace GeometryTutorLib.TutorParser
             }
 
             str.AppendLine("Polygons");
-            for (int n = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX; n < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX; n++)
+            for (int n = Polygon.MIN_POLY_INDEX; n < Polygon.MAX_EXC_POLY_INDEX; n++)
             {
-                foreach (GeometryTutorLib.ConcreteAST.Polygon poly in polygons[n])
+                foreach (Polygon poly in polygons[n])
                 {
                     str.AppendLine("\t" + poly.ToString());
                 }
             }
 
             str.AppendLine("Circles");
-            foreach (GeometryTutorLib.ConcreteAST.Circle c in circles)
+            foreach (Circle c in circles)
             {
                 str.AppendLine("\t" + c.ToString());
             }
@@ -909,10 +925,10 @@ namespace GeometryTutorLib.TutorParser
             //}
 
             //str.AppendLine("Implied Chords");
-            //foreach (KeyValuePair<GeometryTutorLib.ConcreteAST.Segment, List<GeometryTutorLib.ConcreteAST.Circle>> chordPair in impliedChords)
+            //foreach (KeyValuePair<Segment, List<Circle>> chordPair in impliedChords)
             //{
             //    str.Append("\t" + chordPair.Key.ToString() + ": ");
-            //    foreach (GeometryTutorLib.ConcreteAST.Circle circle in chordPair.Value)
+            //    foreach (Circle circle in chordPair.Value)
             //    {
             //        str.Append(" " + circle.ToString());
             //    }

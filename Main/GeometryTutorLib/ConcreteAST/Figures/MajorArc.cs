@@ -9,7 +9,13 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public MajorArc(Circle circle, Point e1, Point e2) : this(circle, e1, e2, new List<Point>(), new List<Point>()) { }
 
-        public MajorArc(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts) : base(circle, e1, e2, minorPts, majorPts) { }
+        public MajorArc(Circle circle, Point e1, Point e2, List<Point> minorPts, List<Point> majorPts) : base(circle, e1, e2, minorPts, majorPts)
+        {
+            if (circle.DefinesDiameter(new Segment(e1, e2)))
+            {
+                System.Diagnostics.Debug.WriteLine("Major Arc should not be constructed when a semicircle is appropriate.");
+            }
+        }
 
         public override int GetHashCode() { return base.GetHashCode(); }
 
@@ -113,9 +119,17 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override bool HasSubArc(Arc that)
         {
-            if (that is MajorArc) return this.HasMajorSubArc(that);
+            if (!this.theCircle.StructurallyEquals(that.theCircle)) return false;
 
-            return !this.HasMinorSubArc(that);
+            if (that is MajorArc) return this.HasMajorSubArc(that);
+            if (that is Semicircle)
+            {
+                Semicircle semi = that as Semicircle;
+                return this.HasMinorSubArc(new MinorArc(semi.theCircle, semi.endpoint1, semi.middlePoint)) &&
+                       this.HasMinorSubArc(new MinorArc(semi.theCircle, semi.endpoint2, semi.middlePoint));
+            }
+
+            return this.HasMinorSubArc(that);
         }
 
         public override bool Equals(Object obj)
