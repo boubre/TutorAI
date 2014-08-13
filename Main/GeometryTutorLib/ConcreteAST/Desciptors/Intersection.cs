@@ -1126,5 +1126,6 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "Intersection(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + ") " + justification;
         }
+
     }
 }

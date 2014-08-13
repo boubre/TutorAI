@@ -158,5 +158,7 @@ namespace GeometryTutorLib.ConcreteAST
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override abstract string ToString();
+
+        public virtual String ToPrettyString() { return ToString(); }
     }
 }

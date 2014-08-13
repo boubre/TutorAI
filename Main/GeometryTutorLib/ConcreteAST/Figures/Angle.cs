@@ -603,5 +603,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "Angle( m" + A.name + B.name + C.name + " = " + string.Format("{0:N3}", measure) + ")";
         }
+
+        public override string ToPrettyString()
+        {
+            return "Angle " + A.name + B.name + C.name;
+        }
     }
 }

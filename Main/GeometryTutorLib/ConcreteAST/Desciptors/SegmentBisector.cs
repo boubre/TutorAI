@@ -45,5 +45,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "SegmentBisector(" + bisector.ToString() + " Bisects(" + bisected.OtherSegment(bisector) + ") at " + bisected.intersect + ")";
         }
+
+        public override string ToPrettyString()
+        {
+            return bisector.ToPrettyString() + " bisects " + bisected.OtherSegment(bisector) + " at " + bisected.intersect + ".";
+        }
     }
 }

@@ -119,5 +119,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "Congruent(" + ca1.ToString() + ", " + ca2.ToString() + ") " + justification;
         }
+
+        public override string ToPrettyString()
+        {
+            return ca1.ToPrettyString() + " is congruent to " + ca2.ToPrettyString() + " .";
+        }
     }
 }

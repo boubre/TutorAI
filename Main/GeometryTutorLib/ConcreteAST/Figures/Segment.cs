@@ -518,6 +518,8 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString() { return "Segment(" + Point1.ToString() + ", " + Point2.ToString() + ")"; }
 
+        public override string ToPrettyString() { return "Segment " + Point1.ToPrettyString() + Point2.ToPrettyString(); }
+
         //
         // Do these angles share this segment overlay this angle?
         //

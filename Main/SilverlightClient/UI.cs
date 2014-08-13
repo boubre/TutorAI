@@ -504,7 +504,16 @@ namespace LiveGeometry
 
         void DisplayEnterSolution()
         {
-            enterSolutionWindow.Show();
+            if (true || enterSolutionWindow.problem != null)
+            {
+                enterSolutionWindow.Show();
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid problem before entering a solution.",
+                    "Cannot Enter Solution",
+                    MessageBoxButton.OK);
+            }
         }
 
         void EnterSolutionWindow_Closed(object sender, EventArgs e)
