@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a right triangle, FOR PRECOMPTUATION purposes only now.
     /// </summary>
-    public class RightTriangle : Triangle
+    public partial class RightTriangle : Triangle
     {
         public RightTriangle(Segment a, Segment b, Segment c) : base(a, b, c)
         {

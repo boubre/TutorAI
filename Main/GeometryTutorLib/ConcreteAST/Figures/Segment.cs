@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// A segment defined by two points.
     /// </summary>
-    public class Segment : Figure
+    public partial class Segment : Figure
     {
         public Point Point1 { get; private set; }
         public Point Point2 { get; private set; }
@@ -558,6 +558,9 @@ namespace GeometryTutorLib.ConcreteAST
         }
         public Point FindIntersection(Segment thatSegment)
         {
+            // Special Case: Collinear, but non-overlapping.
+            if (this.CoincidingWithoutOverlap(thatSegment)) return null;
+
             // Special Case: Intersect at an endpoint
             Point shared = this.SharedVertex(thatSegment);
             if (shared != null) return shared;

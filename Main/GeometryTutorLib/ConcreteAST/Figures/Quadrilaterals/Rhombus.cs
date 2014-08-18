@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Rhombus : Parallelogram
+    public partial class Rhombus : Parallelogram
     {
         public Rhombus(Quadrilateral quad)
             : this(quad.left, quad.right, quad.top, quad.bottom,

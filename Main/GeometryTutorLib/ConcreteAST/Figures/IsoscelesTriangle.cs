@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a triangle, which consists of 3 segments where 2 are of equal length
     /// </summary>
-    public class IsoscelesTriangle : Triangle
+    public partial class IsoscelesTriangle : Triangle
     {
         //
         // Although some of this information is redundant to what is stored in the superclass, it makes the information easily accessible

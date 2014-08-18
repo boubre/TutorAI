@@ -6,7 +6,7 @@ using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public abstract class Figure : GroundedClause
+    public abstract partial class Figure : GroundedClause
     {
         protected Figure()
         {

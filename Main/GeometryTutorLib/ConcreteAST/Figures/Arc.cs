@@ -75,6 +75,17 @@ namespace GeometryTutorLib.ConcreteAST
             return null;
         }
 
+        public Point SharedEndpoint(Arc that)
+        {
+            if (this.endpoint1.StructurallyEquals(that.endpoint1)) return endpoint1;
+            if (this.endpoint1.StructurallyEquals(that.endpoint2)) return endpoint1;
+
+            if (this.endpoint2.StructurallyEquals(that.endpoint1)) return endpoint2;
+            if (this.endpoint2.StructurallyEquals(that.endpoint2)) return endpoint2;
+            
+            return null;
+        }
+
         public abstract bool PointLiesStrictlyOn(Point pt);
         public abstract bool HasSubArc(Arc that);
 

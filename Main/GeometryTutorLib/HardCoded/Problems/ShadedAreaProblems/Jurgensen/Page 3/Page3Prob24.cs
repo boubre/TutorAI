@@ -46,8 +46,8 @@ namespace GeometryTutorLib.GeometryTestbed
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ae, (Segment)parser.Get(new Segment(e, h)),
-                                                                             dh, (Segment)parser.Get(new Segment(a, d))));
+            Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ae, dh, (Segment)parser.Get(new Segment(e, h)),
+                                                                                     (Segment)parser.Get(new Segment(a, d))));
             given.Add(new Strengthened(quad, new Rectangle(quad)));
 
             known.AddSegmentLength(bf, 4);
@@ -56,13 +56,14 @@ namespace GeometryTutorLib.GeometryTestbed
 
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", 4, 7));
-            wanted.Add(new Point("", 1, 3));
-            wanted.Add(new Point("", 7, 3));
-            wanted.Add(new Point("", 0.5, 0.5));
-            wanted.Add(new Point("", 7.5, 0.5));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
+            goalRegions.AddRange(parser.implied.GetAtomicRegionsByFigure(new Quadrilateral(new Segment(g, c), new Segment(h, d), new Segment(g, h), new Segment(c, d))));
+            goalRegions.AddRange(parser.implied.GetAtomicRegionsByFigure(new Quadrilateral(new Segment(a, e), new Segment(f, b), new Segment(f, e), new Segment(b, a))));
 
             SetSolutionArea(4 * (4 + (3.0 / 2.0) * System.Math.PI));
+
+            problemName = "Jurgensen Page 3 Problem 24";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

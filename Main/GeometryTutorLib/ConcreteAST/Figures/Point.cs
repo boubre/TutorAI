@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// A 2D point
     /// </summary>
-    public class Point : Figure
+    public partial class Point : Figure
     {
         private static int CURRENT_ID = 0;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Rectangle : Parallelogram
+    public partial class Rectangle : Parallelogram
     {
         public Rectangle(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom,
                             quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection) { }

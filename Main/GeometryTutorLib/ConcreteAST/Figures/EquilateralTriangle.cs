@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class EquilateralTriangle : IsoscelesTriangle
+    public partial class EquilateralTriangle : IsoscelesTriangle
     {
         /// <summary>
         /// Create a new equilateral triangle bounded by the 3 given segments. The set of points that define these segments should have only 3 distinct elements.

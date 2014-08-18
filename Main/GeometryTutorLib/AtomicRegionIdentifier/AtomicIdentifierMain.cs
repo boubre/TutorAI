@@ -88,7 +88,7 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             // Combine all of the atomic regions together.
             //
             List<AtomicRegion> composed = ComposeAllRegions(figurePoints, workingAtoms, circGranularity);
-            composed = RemoveRedundantSemicircle(composed);
+            composed = RemoveContained(composed);
 
             //
             // Run the graph-based algorithm one last time to identify any pathological regions (exterior to all shapes).
@@ -131,6 +131,27 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
         //
         // Remove any semicircles that are not truly atomic.
         //
+        private static List<AtomicRegion> RemoveContained(List<AtomicRegion> originalAtoms)
+        {
+            List<AtomicRegion> trueAtoms = new List<AtomicRegion>();
+            for (int a1 = 0; a1 < originalAtoms.Count; a1++)
+            {
+                bool containment = false;
+                for (int a2 = 0; a2 < originalAtoms.Count; a2++)
+                {
+                    if (a1 != a2)
+                    if (originalAtoms[a1].Contains(originalAtoms[a2]))
+                    {
+                        containment = true;
+                        break;
+                    }
+                }
+                if (!containment) trueAtoms.Add(originalAtoms[a1]);
+            }
+
+            return trueAtoms;
+        }
+
         private static List<AtomicRegion> RemoveRedundantSemicircle(List<AtomicRegion> originalAtoms)
         {
             List<AtomicRegion> trueAtoms = new List<AtomicRegion>();
@@ -237,6 +258,10 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                 //
                 // Perform the actual composition to find ALL atomic regions contained within this atom.
                 //
+                if (g == 6)
+                {
+                    System.Diagnostics.Debug.WriteLine("No-Op");
+                }
                 List<AtomicRegion> newBoundedAtoms = ComposeSingleRegion(figurePoints, givenAtoms[g], givenAtoms.GetRange(g+1, givenAtoms.Count - g - 1),
                                                                          knownAtomicRegions, knownNonAtomicRegions, setsForNonAtomicRegions, circGranularity);
 
