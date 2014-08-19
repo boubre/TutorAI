@@ -32,7 +32,7 @@ namespace DynamicGeometry.UI
         public GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem { get; private set; }
         private string problemString;
         HypergraphWrapper wrapper = null;
-
+         
         public void SendProblem(
             HypergraphWrapper wrapper,
             GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> p,
@@ -74,8 +74,8 @@ namespace DynamicGeometry.UI
             this.Title = "Enter Solution Window";
             currentSolution = new Dictionary<string, GroundedClause>();
             currentJust = new List<string>();
-            this.MaxHeight = 650;
-            this.MaxWidth = 800;
+            this.MaxHeight = 800;
+            this.MaxWidth = 2000;
         }
 
         /// <summary>
@@ -104,20 +104,20 @@ namespace DynamicGeometry.UI
             solutionList = new ListBox();
             solutionList.SelectionMode = SelectionMode.Extended;
             solutionList.ItemsSource = currentSolution.Keys;
-            solutionList.MinHeight = 100;
-            solutionList.MaxHeight = 100;
-            solutionList.MinWidth = 230;
-            solutionList.MaxWidth = 230;
+            solutionList.MinHeight = 150;
+            solutionList.MaxHeight = 150;
+            solutionList.MinWidth = 350;
+            solutionList.MaxWidth = 350;
             solutionList.Margin = new Thickness(0, 0, 5, 5);
 
             //Set up list of current justifications
             justList = new ListBox();
             justList.SelectionMode = SelectionMode.Extended;
             justList.ItemsSource = currentJust;
-            justList.MinHeight = 100;
-            justList.MaxHeight = 100;
-            justList.MinWidth = 230;
-            justList.MaxWidth = 230;
+            justList.MinHeight = 150;
+            justList.MaxHeight = 150;
+            justList.MinWidth = 400;
+            justList.MaxWidth = 400;
             justList.Margin = new Thickness(0, 0, 5, 5);
 
             //Set up hint list title text block
@@ -130,10 +130,10 @@ namespace DynamicGeometry.UI
             hintList = new ListBox();
             hintList.SelectionMode = SelectionMode.Extended;
             hintList.ItemsSource = currentSolution.Keys;
-            hintList.MinHeight = 100;
-            hintList.MaxHeight = 100;
-            hintList.MinWidth = 230;
-            hintList.MaxWidth = 230;
+            hintList.MinHeight = 150;
+            hintList.MaxHeight = 150;
+            hintList.MinWidth = 350;
+            hintList.MaxWidth = 350;
             hintList.Margin = new Thickness(0, 0, 5, 5);
 
             //Set up problem box title text block
@@ -144,10 +144,10 @@ namespace DynamicGeometry.UI
 
             //Set up problem textbox
             problemBox = new TextBox();
-            problemBox.MinHeight = 100;
-            problemBox.MaxHeight = 100;
-            problemBox.MinWidth = 230;
-            problemBox.MaxWidth = 230;
+            problemBox.MinHeight = 150;
+            problemBox.MaxHeight = 150;
+            problemBox.MinWidth = 400;
+            problemBox.MaxWidth = 400;
             problemBox.Margin = new Thickness(0, 0, 5, 5);
             problemBox.IsEnabled = false;
 
@@ -157,8 +157,8 @@ namespace DynamicGeometry.UI
             addSolution.ItemsSource = givenWindows.Keys;
             addSolution.SelectedItem = addSolution.Items[0];
             addSolution.Margin = new Thickness(0, 5, 0, 5);
-            addSolution.MinWidth = 160;
-            addSolution.MaxWidth = 160;
+            addSolution.MinWidth = 293;
+            addSolution.MaxWidth = 293;
             addSolution.MinHeight = 25;
             addSolution.MaxHeight = 25;
             addRemPanel.Children.Add(addSolution);
@@ -185,8 +185,8 @@ namespace DynamicGeometry.UI
             addJustification.ItemsSource = justWindow.Keys;
             addJustification.SelectedItem = addJustification.Items[0];
             addJustification.Margin = new Thickness(0, 5, 0, 5);
-            addJustification.MinWidth = 177;
-            addJustification.MaxWidth = 177;
+            addJustification.MinWidth = 343;
+            addJustification.MaxWidth = 343;
             addJustification.MinHeight = 25;
             addJustification.MaxHeight = 25;
             justAddPanel.Children.Add(addJustification);
@@ -210,6 +210,8 @@ namespace DynamicGeometry.UI
             //Solution reslult textblock
             checkSolutionResult = new TextBlock();
             checkSolutionResult.Text = "";
+            checkSolutionResult.VerticalAlignment = VerticalAlignment.Center;
+            checkSolutionResult.HorizontalAlignment = HorizontalAlignment.Center;
 
             // Create a check solution button
             Button checkSolutionBtn = new Button();

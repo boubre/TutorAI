@@ -25,5 +25,11 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "GeometricParallel(" + segment1.ToString() + ", " + segment2.ToString() + ") " + justification;
         }
+
+        public override string ToPrettyString()
+        {
+            return segment1.ToPrettyString() + " is parallel to " + segment2.ToPrettyString() + ".";
+        }
+
     }
 }

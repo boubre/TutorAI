@@ -1354,6 +1354,27 @@ namespace GeometryTutorLib.ConcreteAST
             return str.ToString();
         }
 
+        public override string ToPrettyString()
+        {
+            StringBuilder str = new StringBuilder();
+
+            if (provenEquilateral)
+            {
+                str.Append("Equilateral ");
+            }
+            else if (provenIsosceles)
+            {
+                str.Append("Isosceles ");
+            }
+
+            if (provenRight)
+            {
+                str.Append("Right ");
+            }
+            str.Append("Triangle(" + Point1.ToPrettyString() + ", " + Point2.ToPrettyString() + ", " + Point3.ToPrettyString() + ") ");
+            return str.ToString();
+        }
+
         public override string CheapPrettyString()
         {
             StringBuilder str = new StringBuilder();

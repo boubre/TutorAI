@@ -46,5 +46,11 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "AngleBisector(" + angle.ToString() +  ", " +  bisector.ToString() + ")";
         }
+
+        public override string ToPrettyString()
+        {
+            return angle.ToPrettyString() + " is bisected by " + bisector.ToPrettyString() + ".";
+        }
+
     }
 }

@@ -26,5 +26,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         public override string ToString() { return "GeometricSimilar(" + st1.ToString() + ", " + st2.ToString() + ") " + justification; }
+
+        public override string ToPrettyString() { return st1.ToPrettyString() + " is similar to " + st2.ToPrettyString() + "."; }
     }
 }

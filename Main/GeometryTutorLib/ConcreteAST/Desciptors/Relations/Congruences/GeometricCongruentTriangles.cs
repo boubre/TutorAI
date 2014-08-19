@@ -15,5 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
         public override int GetHashCode() { return base.GetHashCode(); }
 
         public override string ToString() { return "GeometricCongruent(" + ct1.ToString() + ", " + ct2.ToString() + ") " + justification; }
+
+        public override string ToPrettyString() { return ct1.ToPrettyString() + "is congruent to " + ct2.ToPrettyString() + "."; }
     }
 }

@@ -1135,5 +1135,10 @@ namespace GeometryTutorLib.ConcreteAST
             return "Intersection(" + intersect.ToString() + ", " + lhs.ToString() + ", " + rhs.ToString() + ") " + justification;
         }
 
+        public override string ToPrettyString()
+        {
+            return intersect.ToPrettyString() + " is the intersection of " + lhs.ToPrettyString() + " and " + rhs.ToPrettyString() + ".";
+        }
+
     }
 }

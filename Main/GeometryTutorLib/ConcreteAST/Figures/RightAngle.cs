@@ -33,5 +33,11 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return "RightAngle( m" + A.name + B.name + C.name + " = " + measure + ") " + justification;
         }
+
+        public override string ToPrettyString()
+        {
+            return "Angle " + A.name + B.name + C.name + " is a right angle.";
+        }
+
     }
 }

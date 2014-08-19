@@ -48,7 +48,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToPrettyString()
         {
-            return bisector.ToPrettyString() + " bisects " + bisected.OtherSegment(bisector) + " at " + bisected.intersect + ".";
+            return bisector.ToPrettyString() + " bisects " + bisected.OtherSegment(bisector).ToPrettyString() + " at " + bisected.intersect.ToPrettyString() + ".";
         }
     }
 }
