@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GeometryTutorLib;
 
 namespace DynamicGeometry.UI
 {
@@ -10,16 +11,12 @@ namespace DynamicGeometry.UI
     {
         private Dictionary<string, ActualProblem> problems;
         private ComboBox problemsBox;
-        private ProblemDrawer drawer;
 
         /// <summary>
         /// Create the window.
         /// </summary>
-        /// <param name="drawer">The problem drawer to use to draw the problems.</param>
-        public BookProblemWindow(ProblemDrawer drawer)
+        public BookProblemWindow()
         {
-            this.drawer = drawer;
-
             Initialize();
             GetProblems();
             LayoutDesign();
@@ -84,9 +81,35 @@ namespace DynamicGeometry.UI
             }
         }
 
+        /// <summary>
+        /// This method is executed with the Add button is clicked.
+        /// Will draw the problem and run it.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            drawer.draw(problems[problemsBox.SelectedValue as string]);
+            UIProblemDrawer drawer = UIProblemDrawer.getInstance();
+            ActualProblem problem = problems[problemsBox.SelectedValue as string];
+
+            //Create the problem description from the actual problem
+            UIProblemDrawer.ProblemDescription desc = new UIProblemDrawer.ProblemDescription();
+            desc.Points = problem.parser.implied.allFigurePoints;
+            desc.Segments = problem.segments;
+            desc.Circles = problem.circles;
+            //Decide if there is a region to shade
+            ActualShadedAreaProblem saProb = problem as ActualShadedAreaProblem;
+            if (saProb != null) desc.Regions = saProb.goalRegions;
+            else desc.Regions = null;
+
+            //Draw the problem
+            drawer.reset();
+            drawer.clear();
+            drawer.draw(desc);
+
+            //Run the problem
+            problem.Run();
+
             Close();
         }
     }

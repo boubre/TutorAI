@@ -2,13 +2,19 @@
 using DynamicGeometry.UI.RegionShading;
 using GeometryTutorLib.GeometryTestbed;
 using System.Collections.Generic;
+using System.Diagnostics;
+using GeometryTutorLib;
+using System.Windows.Threading;
 namespace DynamicGeometry.UI
 {
     /// <summary>
-    /// Draws hard-coded problems to the canvas
+    /// Draws hard-coded problems to the canvas.
+    /// Provides an implementation for UIProblemDrawer. No instance of this class can be publically obtained.
     /// </summary>
     public class ProblemDrawer
     {
+        private static ProblemDrawer instance = null;
+
         private DrawingHost drawingHost;
 
         private Dictionary<GeometryTutorLib.ConcreteAST.Point, IPoint> points; //Keep track of logical to graphical points
@@ -19,29 +25,49 @@ namespace DynamicGeometry.UI
         /// Create a new problem drawer.
         /// </summary>
         /// <param name="drawing">The drawingHost.</param>
-        public ProblemDrawer(DrawingHost drawingHost)
+        private ProblemDrawer(DrawingHost drawingHost)
         {
             this.drawingHost = drawingHost;
         }
 
+        public static void create(DrawingHost drawingHost)
+        {
+            Debug.Assert(instance == null, "create() should only be called once.");
+            instance = new ProblemDrawer(drawingHost);
+            UIProblemDrawer.create(instance.invokeDraw, instance.invokeClear, instance.invokeReset);
+        }
+
+        /// <summary>
+        /// Async invocation of draw on the UI thread.
+        /// </summary>
+        /// <param name="desc">The problem to draw.</param>
+        public void invokeDraw(UIProblemDrawer.ProblemDescription desc)
+        {
+            SmartDispatcher.BeginInvoke(() => draw(desc));
+        }
+
+        /// <summary>
+        /// Async invocation of clear on the UI thread.
+        /// </summary>
+        public void invokeClear()
+        {
+            SmartDispatcher.BeginInvoke(clear);
+        }
+
+        /// <summary>
+        /// Async invocation of reset on the UI thread.
+        /// </summary>
+        public void invokeReset()
+        {
+            SmartDispatcher.BeginInvoke(reset);
+        }
+
         /// <summary>
         /// Draw the given problem to the drawing.
-        /// Will remove the current drawing and shadings
         /// </summary>
         /// <param name="problem">The problem to draw.</param>
-        public void draw(ActualProblem problem)
+        public void draw(UIProblemDrawer.ProblemDescription problem)
         {
-            //Initialize the lookup dictionaries
-            points = new Dictionary<GeometryTutorLib.ConcreteAST.Point, IPoint>();
-            segments = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, Segment>();
-            circles = new Dictionary<GeometryTutorLib.ConcreteAST.Circle, Circle>();
-
-            //Clear the current drawing
-            drawingHost.CurrentDrawing.ClearRegionShadings();
-            var figures = new List<IFigure>();
-            drawingHost.CurrentDrawing.Figures.ForEach(figure => figures.Add(figure));
-            figures.ForEach(figure => RemoveFigure(figure));
-
             //Draw the hard-coded problem.
             try
             {
@@ -54,19 +80,37 @@ namespace DynamicGeometry.UI
             {
                 System.Diagnostics.Debug.WriteLine(e.Message + " " + e.StackTrace);
             }
+        }
 
-            //Run the problem
-            problem.Run();
+        /// <summary>
+        /// Clear all shadings and figures on the UI.
+        /// </summary>
+        public void clear()
+        {
+            drawingHost.CurrentDrawing.ClearRegionShadings();
+            var figures = new List<IFigure>();
+            drawingHost.CurrentDrawing.Figures.ForEach(figure => figures.Add(figure));
+            figures.ForEach(figure => RemoveFigure(figure));
+        }
+
+        /// <summary>
+        /// Reset the problem drawer. That is, reset all the UI lookup information.
+        /// </summary>
+        public void reset()
+        {
+            points = new Dictionary<GeometryTutorLib.ConcreteAST.Point, IPoint>();
+            segments = new Dictionary<GeometryTutorLib.ConcreteAST.Segment, Segment>();
+            circles = new Dictionary<GeometryTutorLib.ConcreteAST.Circle, Circle>();
         }
 
         /// <summary>
         /// Draw each point in the problem and save it to the lookup dictionary.
         /// </summary>
         /// <param name="problem">The problem being drawn.</param>
-        private void drawPoints(ActualProblem problem)
+        private void drawPoints(UIProblemDrawer.ProblemDescription problem)
         {
             //Add each point to the drawing
-            foreach (var pt in problem.parser.implied.allFigurePoints)
+            foreach (var pt in problem.Points)
             {
                 //Create and add the point
                 var point = Factory.CreateFreePoint(drawingHost.CurrentDrawing, new System.Windows.Point(pt.X, pt.Y));
@@ -82,10 +126,10 @@ namespace DynamicGeometry.UI
         /// Draw each segment in the problem and save it to the lookup dictionary.
         /// </summary>
         /// <param name="problem">The problem being drawn.</param>
-        private void drawSegments(ActualProblem problem)
+        private void drawSegments(UIProblemDrawer.ProblemDescription problem)
         {
             //Add each segment to the drawing
-            foreach (var seg in problem.segments)
+            foreach (var seg in problem.Segments)
             {
                 if (seg != null)
                 {
@@ -110,10 +154,10 @@ namespace DynamicGeometry.UI
         /// right of the center.
         /// </summary>
         /// <param name="problem">The problem being drawn.</param>
-        private void drawCircles(ActualProblem problem)
+        private void drawCircles(UIProblemDrawer.ProblemDescription problem)
         {
             //Add circles to the drawing
-            foreach (var circ in problem.circles)
+            foreach (var circ in problem.Circles)
             {
                 //Lookup center point
                 var center = points[circ.center];
@@ -144,13 +188,12 @@ namespace DynamicGeometry.UI
         /// If the problem is a shaded area problem, shade the goal regions.
         /// </summary>
         /// <param name="problem">The problem being drawn.</param>
-        private void shadeProblem(ActualProblem problem)
+        private void shadeProblem(UIProblemDrawer.ProblemDescription problem)
         {
-            ActualShadedAreaProblem saProb = problem as ActualShadedAreaProblem;
-            if (saProb != null)
+            if (problem.Regions != null)
             {
                 //Shade each region
-                foreach (var region in saProb.goalRegions)
+                foreach (var region in problem.Regions)
                 {
                     ShadedRegion sr = new ShadedRegion(region);
                     sr.Draw(drawingHost.CurrentDrawing, ShadedRegion.BRUSHES[1]);

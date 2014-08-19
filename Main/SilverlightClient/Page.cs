@@ -50,6 +50,7 @@ namespace LiveGeometry
 
             drawingHost.AIDebugWindow.MakeUIDebugPublisher();
             UIDebugPublisher = GeometryTutorLib.UIDebugPublisher.getInstance();
+            ProblemDrawer.create(drawingHost);
             
             InitParams = initParams;
             var settings = Application.Current.Host.Settings;
@@ -94,8 +95,8 @@ namespace LiveGeometry
             manageGivensWindow = new ManageGivensWindow() { drawingHost = drawingHost };
             problemCharacteristicsWindow = new ProblemCharacteristicsWindow(manageGivensWindow);
             problemCharacteristicsWindow.Closed += new EventHandler(ProblemCharacteristicsWindow_Closed);
-            enterSolutionWindow = new EnterSolutionWindow() { drawingHost = drawingHost };
-            bookProblemWindow = new BookProblemWindow(new ProblemDrawer(drawingHost));
+            enterSolutionWindow = new EnterSolutionWindow() { drawingHost = drawingHost };      
+            bookProblemWindow = new BookProblemWindow();
         }
 
         private void AddBehaviors()
