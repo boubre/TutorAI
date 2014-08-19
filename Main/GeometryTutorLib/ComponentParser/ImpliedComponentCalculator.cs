@@ -54,9 +54,6 @@ namespace GeometryTutorLib.TutorParser
         // The atomic regions for this figure.
         public List<AtomicRegion> atomicRegions { get; private set; }
 
-        // Imaginary points due to constructed segments.
-        public List<ImaginaryPoint> imagPoints { get; private set; }
-
         //
         // Construction requires this minimal set from the UI.
         //
@@ -114,7 +111,6 @@ namespace GeometryTutorLib.TutorParser
             maximalSegments = new List<Segment>();
             minimalSegments = new List<Segment>();
 
-            imagPoints = new List<ImaginaryPoint>();
             atomicRegions = new List<AtomicRegion>();
 
             PointFactory.Initialize(points);
@@ -256,63 +252,6 @@ namespace GeometryTutorLib.TutorParser
             // Remove any duplicates which may have arisen.
             segments = GeometryTutorLib.Utilities.RemoveDuplicates<Segment>(segments);
         }
-
-        //// Simple function for creating a point (if needed since it is implied).
-        //private Point HandleIntersectionPoint(List<Point> containment, List<Point> toAdd, Segment segment, Point pt)
-        //{
-        //    if (pt == null) return null;
-
-        //    // The point must be between the endpoints of the segment
-        //    if (!segment.PointLiesOnAndBetweenEndpoints(pt)) return null;
-
-        //    return HandleIntersectionPoint(containment, toAdd, pt);
-        //}
-
-        //// Simple function for creating a point (if needed since it is implied).
-        //private Point HandleIntersectionPoint(List<Point> containment, List<Point> toAdd, Point pt)
-        //{
-        //    if (pt == null) return null;
-
-        //    // If this point was defined by the UI, do nothing
-        //    Point uiPoint = GeometryTutorLib.Utilities.GetStructurally<Point>(containment, pt);
-        //    if (uiPoint != null) return uiPoint;
-
-        //    // else create the point.
-        //    Point newPoint = PointFactory.GeneratePoint(pt.X, pt.Y);
-        //    GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(toAdd, newPoint);
-        //    return newPoint;
-        //}
-
-        ////
-        //// Find every point of intersection among segments (if they are not labeled in the UI) -- name them.
-        ////
-        //private void FindUnlabeledSegmentIntersectionPoints()
-        //{
-        //    for (int s1 = 0; s1 < segments.Count - 1; s1++)
-        //    {
-        //        for (int s2 = s1 + 1; s2 < segments.Count; s2++)
-        //        {
-        //            // If there exists a point of intersection that is between the endpoints of both segments
-        //            Point inter = segments[s1].FindIntersection(segments[s2]);
-
-        //            // Avoid parallel line intersections at infinity
-        //            if (inter != null && !double.IsInfinity(inter.X) && !double.IsInfinity(inter.Y) && !double.IsNaN(inter.X) && !double.IsNaN(inter.Y))
-        //            {
-        //                if (segments[s1].PointLiesOnAndExactlyBetweenEndpoints(inter) && segments[s2].PointLiesOnAndExactlyBetweenEndpoints(inter))
-        //                {
-        //                    HandleIntersectionPoint(points, impliedSegmentPoints, inter);
-        //                }
-        //                // This is an extended point (beyond the two segments; the intersection is not apparent in the drawing)
-        //                else
-        //                {
-        //                    HandleIntersectionPoint(points, extendedSegmentPoints, inter);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-
 
         //
         // Generate all covering intersection clauses; that is, generate maximal intersections (a subset of all intersections)
@@ -962,6 +901,26 @@ namespace GeometryTutorLib.TutorParser
             }
 
             return null;
+        }
+
+        public List<AtomicRegion> GetAtomicRegionsByFigure(Figure fig)
+        {
+            List<AtomicRegion> atoms = new List<AtomicRegion>();
+
+            foreach (AtomicRegion atom in atomicRegions)
+            {
+                ShapeAtomicRegion shapeAtom = atom as ShapeAtomicRegion;
+                if (shapeAtom != null)
+                {
+                    if (fig.Contains(shapeAtom.shape)) atoms.Add(atom);
+                }
+                else
+                {
+                    if (fig.Contains(this.allFigurePoints, atom)) atoms.Add(atom);
+                }
+            }
+
+            return atoms;
         }
 
         //

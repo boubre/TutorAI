@@ -9,7 +9,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a concave polygon (which consists of n >= 4 segments)
     /// </summary>
-    public class ConcavePolygon : Polygon
+    public partial class ConcavePolygon : Polygon
     {
         public ConcavePolygon() { }
 

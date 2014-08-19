@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class MinorArc : Arc
+    public partial class MinorArc : Arc
     {
         public MinorArc(Circle circle, Point e1, Point e2) : this(circle, e1, e2, new List<Point>(), new List<Point>()) { }
 

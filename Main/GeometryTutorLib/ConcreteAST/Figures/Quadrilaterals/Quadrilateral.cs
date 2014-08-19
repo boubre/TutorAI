@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a quadrilateral (defined by 4 segments)
     /// </summary>
-    public class Quadrilateral : Polygon
+    public partial class Quadrilateral : Polygon
     {
         public Point topLeft { get; private set; }
         public Point topRight { get; private set; }
@@ -63,8 +63,11 @@ namespace GeometryTutorLib.ConcreteAST
             // Points
             //
             this.topLeft = left.SharedVertex(top);
-            if (topLeft == null) throw new ArgumentException("Top left point is invalid: " + top + " " + left);
-
+            if (topLeft == null)
+            {
+                return;
+                // throw new ArgumentException("Top left point is invalid: " + top + " " + left);
+            }
             this.topRight = right.SharedVertex(top);
             if (topRight == null) throw new ArgumentException("Top left point is invalid: " + top + " " + right);
 

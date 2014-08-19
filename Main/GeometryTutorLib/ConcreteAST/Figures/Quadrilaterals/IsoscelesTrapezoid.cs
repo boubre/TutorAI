@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class IsoscelesTrapezoid : Trapezoid
+    public partial class IsoscelesTrapezoid : Trapezoid
     {
         public IsoscelesTrapezoid(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom) { }
 

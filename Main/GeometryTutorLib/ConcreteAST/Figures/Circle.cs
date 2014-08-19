@@ -9,7 +9,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// A circle is defined by a center and radius.
     /// </summary>
-    public class Circle : Figure
+    public partial class Circle : Figure
     {
         public Point center { get; private set; }
         public double radius { get; private set; }
@@ -386,6 +386,9 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public Segment IsTangent(Segment segment)
         {
+            // If the center and the segment points are collinear, this will not be a tangent.
+            if (segment.PointLiesOn(this.center)) return null;
+
             // Acquire the line perpendicular to the segment that passes through the center of the circle.
             Segment perpendicular = segment.GetPerpendicular(this.center);
 
@@ -466,6 +469,10 @@ namespace GeometryTutorLib.ConcreteAST
         {
             // Make it null and overwrite when necessary.
             chord = null;
+
+            // Is the segment exterior to the circle, but intersects at an endpoint (and wasn't tangent).
+            if (this.PointIsExterior(segment.Point1) && this.PointLiesOn(segment.Point2)) return false;
+            if (this.PointIsExterior(segment.Point2) && this.PointLiesOn(segment.Point1)) return false;
 
             // Is one endpoint of the segment simply on the interior of the circle (so we have nothing)?
             if (this.PointIsInterior(segment.Point1) || this.PointIsInterior(segment.Point2)) return false;

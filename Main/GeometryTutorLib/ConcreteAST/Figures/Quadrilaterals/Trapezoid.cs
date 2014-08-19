@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a triangle, which consists of 3 segments
     /// </summary>
-    public class Trapezoid : Quadrilateral
+    public partial class Trapezoid : Quadrilateral
     {
         public Segment baseSegment { get; private set; }
         public Segment oppBaseSegment { get; private set; }

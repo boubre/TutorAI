@@ -6,7 +6,7 @@ using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Sector : Figure
+    public partial class Sector : Figure
     {
         public Arc theArc { get; protected set; }
 

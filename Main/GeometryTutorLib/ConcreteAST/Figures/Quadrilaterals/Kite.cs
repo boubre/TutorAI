@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Kite : Quadrilateral
+    public partial class Kite : Quadrilateral
     {
         public Segment pairASegment1 { get; private set; }
         public Segment pairASegment2 { get; private set; }

@@ -6,7 +6,7 @@ using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Semicircle : Arc
+    public partial class Semicircle : Arc
     {
         public Segment diameter { get; private set; }
         public Point middlePoint { get; private set; }

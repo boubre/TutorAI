@@ -9,7 +9,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a general polygon (which consists of n >= 3 segments)
     /// </summary>
-    public class Polygon : Figure
+    public partial class Polygon : Figure
     {
         public const int MAX_POLYGON_SIDES = 6;
 
@@ -526,7 +526,7 @@ namespace GeometryTutorLib.ConcreteAST
             }
             else
             {
-                if (!this.PointLiesInOrOn(that.theArc.theCircle.Midpoint(that.theArc.endpoint1, that.theArc.endpoint2))) return false;
+                if (!this.PointLiesInOrOn(that.theArc.Midpoint())) return false;
             }
             // Check all point approximations for containment.
             //List<Point> approx = that.GetFigureAsAtomicRegion().GetVertices();

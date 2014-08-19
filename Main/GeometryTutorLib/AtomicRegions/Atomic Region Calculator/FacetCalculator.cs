@@ -59,8 +59,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 double angleMeasure = Point.AngleBetween(prevCurrVector, currentNeighborVector);
 
                 // if (GeometryTutorLib.Utilities.GreaterThan(crossProduct, 0)) angleMeasure = angleMeasure;
-                if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
                 if (GeometryTutorLib.Utilities.CompareValues(crossProduct, 0)) angleMeasure = 180;
+                else if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
 
                 // If there are have the same angle, choose the one farther away (it is due to two connections)
                 // So these points are collinear with a segment, but indistinguishable with two arcs.
@@ -120,7 +120,6 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                     double angleMeasure = Point.AngleBetween(Point.GetOppositeVector(prevCurrVector), currentNeighborVector);
 
                     // if (GeometryTutorLib.Utilities.GreaterThan(crossProduct, 0)) angleMeasure = angleMeasure;
-                    if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
                     if (GeometryTutorLib.Utilities.CompareValues(crossProduct, 0))
                     {
                         // Circles create a legitimate situation where we want to walk back in the same 'collinear' path.
@@ -133,6 +132,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                             angleMeasure = 180;
                         }
                     }
+                    else if (crossProduct < 0) angleMeasure = 360 - angleMeasure;
 
                     // If there are have the same angle, choose the one farther away (it is due to two connections)
                     // So these points are collinear with a segment, but indistinguishable with two arcs.

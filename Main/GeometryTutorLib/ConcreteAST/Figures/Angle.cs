@@ -8,7 +8,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents an angle (degrees), defined by 3 points.
     /// </summary>
-    public class Angle : Figure
+    public partial class Angle : Figure
     {
         public Point A { get; private set; }
         public Point B { get; private set; }

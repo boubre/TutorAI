@@ -9,7 +9,7 @@ namespace GeometryTutorLib.ConcreteAST
     /// <summary>
     /// Represents a triangle, which consists of 3 segments
     /// </summary>
-    public class Triangle : Polygon
+    public partial class Triangle : Polygon
     {
         public Point Point1 { get; private set; }
         public Point Point2 { get; private set; }

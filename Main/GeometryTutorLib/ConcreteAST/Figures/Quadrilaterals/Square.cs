@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.ConcreteAST
 {
-    public class Square : Rhombus
+    public partial class Square : Rhombus
     {
         public Square(Quadrilateral quad) : this(quad.left, quad.right, quad.top, quad.bottom,
             quad.TopLeftDiagonalIsValid(), quad.BottomRightDiagonalIsValid(), quad.diagonalIntersection) { }

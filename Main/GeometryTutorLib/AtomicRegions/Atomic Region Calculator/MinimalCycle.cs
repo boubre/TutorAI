@@ -67,7 +67,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             // Are the points book-ended in reverse?
             if (index1 == points.Count - 1 && index2 == 0)
             {
-                for (int p = points.Count-1; p >= 0; p--)
+                for (int p = points.Count - 1; p >= 0; p--)
                 {
                     ordered.Add(points[p]);
                 }
@@ -211,7 +211,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             Polygon poly = Polygon.MakePolygon(sides);
 
             if (poly == null) throw new ArgumentException("Real segments should define a polygon; they did not.");
-            
+
             return new ShapeAtomicRegion(poly);
         }
 
@@ -344,6 +344,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             List<List<MinorArc>> collinearSet = new List<List<MinorArc>>();
 
+            //
+            // Collect all the related arcs
+            //
             foreach (MinorArc minor in minors)
             {
                 bool collinearFound = false;
@@ -365,7 +368,80 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 if (!collinearFound) collinearSet.Add(Utilities.MakeList<MinorArc>(minor));
             }
 
+            //
+            // Sort each arc set.
+            //
+            for (int arcSetIndex = 0; arcSetIndex < collinearSet.Count; arcSetIndex++)
+            {
+                collinearSet[arcSetIndex] = SortArcSet(collinearSet[arcSetIndex]);
+            }
+
             return collinearSet;
+        }
+
+        //
+        // Order the arcs so the endpoints are clear in the first in last positions.
+        //
+        private List<MinorArc> SortArcSet(List<MinorArc> arcs)
+        {
+            if (arcs.Count <= 2) return arcs;
+
+            bool[] marked = new bool[arcs.Count];
+            List<MinorArc> sorted = new List<MinorArc>();
+
+            //
+            // Find the 'first' endpoint of the arc.
+            //
+            int sharedCount = 0;
+            int arcIndex = -1;
+            for (int a1 = 0; a1 < arcs.Count; a1++)
+            {
+                sharedCount = 0;
+                for (int a2 = 0; a2 < arcs.Count; a2++)
+                {
+                    if (a1 != a2)
+                    {
+                        if (arcs[a1].SharedEndpoint(arcs[a2]) != null) sharedCount++;
+                    }
+                }
+                arcIndex = a1;
+                if (sharedCount == 1) break;
+            }
+
+            // An 'end'-arc found; book-ends of list.
+            switch(sharedCount)
+            {
+                case 0:
+                    throw new Exception("Expected a shared count of 1 or 2, not 0");
+                case 1:
+                    sorted.Add(arcs[arcIndex]);
+                    marked[arcIndex] = true;
+                    break;
+                case 2:
+                    // Middle arc
+                    break;
+                default:
+                    throw new Exception("Expected a shared count of 1 or 2, not (" + sharedCount + ")");
+            }
+
+            MinorArc working = sorted[0];
+            while (marked.Contains(false))
+            {
+                Point shared;
+                for (arcIndex = 0; arcIndex < arcs.Count; arcIndex++)
+                {
+                    if (!marked[arcIndex])
+                    {
+                        shared = working.SharedEndpoint(arcs[arcIndex]);
+                        if (shared != null) break;
+                    }
+                }
+                marked[arcIndex] = true;
+                sorted.Add(arcs[arcIndex]);
+                working = arcs[arcIndex];
+            }
+
+            return sorted;
         }
 
         private List<Atomizer.AtomicRegion> ConvertToGeneralSector(List<Segment> sideSet1, List<Segment> sideSet2, List<MinorArc> arcs)
@@ -464,18 +540,24 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             //
             // Create the arc
             //
+
+            // Determine the proper endpoints.
+            Point endpt1 = minors[0].OtherEndpoint(minors[0].SharedEndpoint(minors[1]));
+            Point endpt2 = minors[minors.Count-1].OtherEndpoint(minors[minors.Count-1].SharedEndpoint(minors[minors.Count-2]));
+
+            // Create the proper arc.
             Circle theCircle = minors[0].theCircle;
 
             if (Utilities.CompareValues(arcMeasure, 180))
             {
-                Segment diameter = new Segment(minors[0].endpoint1, minors[minors.Count - 1].endpoint2);
+                Segment diameter = new Segment(endpt1, endpt2);
 
                 // Get the midpoint that is on the same side.
                 Point midpt = theCircle.Midpoint(diameter.Point1, diameter.Point2, minors[0].endpoint2);
                 return new Semicircle(minors[0].theCircle, diameter.Point1, diameter.Point2, midpt, diameter);
             }
-            else if (arcMeasure < 180) return new MinorArc(theCircle, minors[0].endpoint1, minors[minors.Count-1].endpoint2);
-            else if (arcMeasure > 180) return new MajorArc(theCircle, minors[0].endpoint1, minors[minors.Count-1].endpoint2);
+            else if (arcMeasure < 180) return new MinorArc(theCircle, endpt1, endpt2);
+            else if (arcMeasure > 180) return new MajorArc(theCircle, endpt1, endpt2);
 
             return null;
         }
@@ -510,7 +592,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             // Populate the parallel arrays.
             //
             int currCounter = 0;
-            for (int p = 0; p < points.Count;  )
+            for (int p = 0; p < points.Count; )
             {
                 UndirectedPlanarGraph.PlanarGraphEdge edge = graph.GetEdge(points[p], points[(p + 1) % points.Count]);
                 Segment currSegment = new Segment(points[p], points[(p + 1) % points.Count]);
@@ -889,7 +971,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             if (rightSide.Any()) regions.AddRange(ConstructBasicLineCircleRegion(chord, rightSide[0]));
             for (int r = 1; r < rightSide.Count - 1; r++)
             {
-                regions.Add(ConstructBasicCircleCircleRegion(chord, rightSide[r], rightSide[r+1]));
+                regions.Add(ConstructBasicCircleCircleRegion(chord, rightSide[r], rightSide[r + 1]));
             }
 
             return regions;
