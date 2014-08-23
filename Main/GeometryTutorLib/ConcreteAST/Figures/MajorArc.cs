@@ -36,6 +36,16 @@ namespace GeometryTutorLib.ConcreteAST
             return theCircle.OppositePoint(theCircle.Midpoint(endpoint1, endpoint2));
         }
 
+        public override bool CoordinateCongruent(Figure that)
+        {
+            MajorArc thatArc = that as MajorArc;
+            if (thatArc == null) return false;
+
+            if (!theCircle.CoordinateCongruent(thatArc.theCircle)) return false;
+
+            return Utilities.CompareValues(this.GetMajorArcMeasureDegrees(), thatArc.GetMajorArcMeasureDegrees());
+        }
+
         private void GetStartEndPoints(double angle1, double angle2, out Point start, out Point end, out double angle)
         {
             start = null;

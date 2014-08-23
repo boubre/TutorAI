@@ -21,6 +21,20 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             shape = f;
         }
 
+        public override bool CoordinateCongruent(Figure that)
+        {
+            return shape.CoordinateCongruent(that);
+        }
+        
+        public override bool CoordinateCongruent(AtomicRegion that)
+        {
+            ShapeAtomicRegion shapeAtom = that as ShapeAtomicRegion;
+
+            if (shapeAtom == null) return false;
+
+            return this.shape.CoordinateCongruent(shapeAtom.shape);
+        }
+
         // Can the area of this region be calcualted?
         public override bool IsComputableArea() { return true; }
         public override double GetArea(KnownMeasurementsAggregator known)

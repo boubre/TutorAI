@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GeometryTutorLib.Area_Based_Analyses.Atomizer;
+
+namespace GeometryTutorLib.ConcreteAST
+{
+    public partial class Sector : Figure
+    {
+        public override bool CoordinateCongruent(Figure that)
+        {
+            Sector thatSector = that as Sector;
+            if (thatSector == null) return false;
+
+            return this.theArc.CoordinateCongruent(thatSector.theArc);
+        }
+
+        public static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
+        {
+            return new List<FigSynthProblem>();
+        }
+
+        public static List<FigSynthProblem> AppendShape(List<Point> points)
+        {
+            return new List<FigSynthProblem>();
+        }
+
+        public static Sector ConstructDefaultSector()
+        {
+            return null;
+        }
+    }
+}

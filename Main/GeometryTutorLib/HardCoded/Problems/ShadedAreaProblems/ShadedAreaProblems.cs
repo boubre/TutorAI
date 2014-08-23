@@ -28,12 +28,12 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Class X
             //
-            problems.Add(new Page1Col1Prob1(true, false));     // GTGDemo
+            //problems.Add(new Page1Col1Prob1(true, false));      // GTGDemo
             // problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
             // problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
-            // // problems.Add(new Page1Col1Prob5(true, false));     // PATHOLOGICAL : NO SOLUTION>>>>>
+            // problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
             // problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
-            // // problems.Add(new Page1Col2Prob2(true, false));     // GTGDemo (Need to fix Implied Calculator to recognize ALL constructed polygons for deduction engine)
+            // problems.Add(new Page1Col2Prob2(true, false));     // GTGDemo (Need to fix Implied Calculator to recognize ALL constructed polygons for deduction engine)
             // problems.Add(new Page1Col2Prob3(true, false));     // GTGDemo
             // problems.Add(new Page1Col2Prob4(true, false));     // GTGDemo: Good circle example
             // problems.Add(new Page2Col1Prob1(true, false));     // GTGDemo: Implied polygon id problem.
@@ -72,7 +72,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row3Prob2(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob3(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob4(true, false));    // GTGDemo
-            // problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
+            //problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
             // // problems.Add(new Page5Row5Prob17(true, false));   // Can't Deduce a Square
 
             
@@ -107,7 +107,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // ACT Practice
             //
-            problems.Add(new TwoCircleInteriorTangent(true, false)); // GTGDemo
+            //problems.Add(new TwoCircleInteriorTangent(true, false)); // GTGDemo
             //problems.Add(new CircCircRegionTester(true, false)); // No solution found
             //problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
 

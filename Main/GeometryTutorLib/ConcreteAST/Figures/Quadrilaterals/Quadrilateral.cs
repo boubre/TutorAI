@@ -118,12 +118,39 @@ namespace GeometryTutorLib.ConcreteAST
             angles.Add(bottomLeftAngle);
             angles.Add(bottomRightAngle);
 
+            this.FigureSynthesizerConstructor();
+
             addSuperFigureToDependencies();
         }
 
         public Quadrilateral(List<Segment> segs) : this(segs[0], segs[1], segs[2], segs[3])
         {
             if (segs.Count != 4) throw new ArgumentException("Quadrilateral constructed with " + segs.Count + " segments.");
+        }
+
+        public static Quadrilateral MakeQuadrilateral(Point a, Point b, Point c, Point d)
+        {
+            Segment left = new Segment(a, d);
+            Segment right = new Segment(b, c);
+            Segment top = new Segment(a, b);
+            Segment bottom = new Segment(c, d);
+
+            Quadrilateral quad = null;
+            try
+            {
+                quad = new Quadrilateral(left, right, top, bottom);
+            }
+            catch (Exception)
+            {
+                left = new Segment(a, d);
+                right = new Segment(b, c);
+                top = new Segment(a, c);
+                bottom = new Segment(b, d);
+
+                quad = new Quadrilateral(left, right, top, bottom);
+            }
+
+            return quad;
         }
 
         protected void addSuperFigureToDependencies()
@@ -396,7 +423,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have a parallelogram.
         //
-        protected bool VerifyParallelogram()
+        public bool VerifyParallelogram()
         {
             if (!left.IsParallelWith(right)) return false;
             if (!top.IsParallelWith(bottom)) return false;
@@ -413,7 +440,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have a rhombus.
         //
-        protected bool VerifyRhombus()
+        public bool VerifyRhombus()
         {
             if (!VerifyParallelogram()) return false;
 
@@ -430,7 +457,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have a Square
         //
-        protected bool VerifySquare()
+        public bool VerifySquare()
         {
             if (!VerifyRhombus()) return false;
 
@@ -445,7 +472,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have a Rectangle
         //
-        protected bool VerifyRectangle()
+        public bool VerifyRectangle()
         {
             if (!VerifyParallelogram()) return false;
 
@@ -460,7 +487,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have a Trapezoid
         //
-        protected bool VerifyTrapezoid()
+        public bool VerifyTrapezoid()
         {
             bool lrParallel = left.IsParallelWith(right);
             bool tbParallel = top.IsParallelWith(bottom);
@@ -475,7 +502,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have an Isosceles Trapezoid
         //
-        protected bool VerifyIsoscelesTrapezoid()
+        public bool VerifyIsoscelesTrapezoid()
         {
             if (!VerifyTrapezoid()) return false;
 
@@ -497,7 +524,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Coordinate-based determination if we have an Isosceles Trapezoid
         //
-        protected bool VerifyKite()
+        public bool VerifyKite()
         {
             //
             // Adjacent sides must equate in length

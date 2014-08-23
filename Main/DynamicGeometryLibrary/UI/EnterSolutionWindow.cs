@@ -29,7 +29,7 @@ namespace DynamicGeometry.UI
         private TextBlock checkSolutionResult;
         private ComboBox addSolution;
         private ComboBox addJustification;
-        public GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem { get; private set; }
+        public GeometryTutorLib.ProblemAnalyzer.Problem<GeometryTutorLib.Hypergraph.EdgeAnnotation> problem { get; set; }
         private string problemString;
         HypergraphWrapper wrapper = null;
          
@@ -233,6 +233,7 @@ namespace DynamicGeometry.UI
             // Create a hint button
             Button hintBtn = new Button();
             hintBtn.Content = "Get Hint";
+            hintBtn.Click += new RoutedEventHandler(HintBtn_Click);
             hintBtn.Margin = new Thickness(0, 0, 10, 5);
             hintBtn.Width = 95;
             hintBtn.Height = 25;
@@ -460,6 +461,15 @@ namespace DynamicGeometry.UI
             {
                 checkSolutionResult.Text = "Stuck?\nAsk for a hint.";
             }
+        }
+
+        private void HintBtn_Click(object sender, RoutedEventArgs e)
+        {
+            List<GroundedClause> solutions = new List<GroundedClause>(currentSolution.Values);
+            var hint = new List<GroundedClause>();
+            hint.Add(wrapper.QueryHint(problem, solutions));
+            hintList.ItemsSource = null;
+            hintList.ItemsSource = hint;
         }
 
         /// <summary>

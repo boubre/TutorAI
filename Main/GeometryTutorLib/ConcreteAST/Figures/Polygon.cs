@@ -51,6 +51,8 @@ namespace GeometryTutorLib.ConcreteAST
             angles = pair.Value;
 
             thisAtomicRegion = new ShapeAtomicRegion(this);
+
+            this.FigureSynthesizerConstructor();
         }
 
         protected Polygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
@@ -60,6 +62,8 @@ namespace GeometryTutorLib.ConcreteAST
             angles = angs;
 
             thisAtomicRegion = new ShapeAtomicRegion(this);
+
+            this.FigureSynthesizerConstructor();
         }
 
         public bool HasSegment(Segment thatSegment)

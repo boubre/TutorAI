@@ -21,6 +21,9 @@ namespace GeometryTutorLib
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
 
+        // Handles negatives and positives.
+        public static int Modulus(int x, int m) { return (x % m + m) % m; }
+
         //
         // Given a list, remove duplicates
         //

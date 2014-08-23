@@ -55,5 +55,18 @@ namespace GeometryTutorLib.ConcreteAST
             foreach (Point pt in points) str.Append(pt.CheapPrettyString());
             return "IsoTrap(" + str.ToString() + ")";
         }
+
+        //
+        // Attempt trapezoidal formulas; if they fail, call the base method: splitting into triangles.
+        //
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            if (calculatedHeight > 0)
+            {
+                double area = GetBaseBasedArea(calculatedHeight, known);
+            }
+
+            return base.GetArea(known);
+        }
     }
 }

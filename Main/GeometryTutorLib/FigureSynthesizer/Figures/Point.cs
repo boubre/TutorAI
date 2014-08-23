@@ -17,5 +17,15 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return new Point("", (this.X + that.X) / 2.0, (this.Y + that.Y) / 2.0);
         }
+
+        public bool Collinear(Point pt1, Point pt2)
+        {
+            return Utilities.CompareValues(this.Slope(pt1), this.Slope(pt2));
+        }
+
+        public double Slope(Point pt)
+        {
+            return (pt.Y - this.Y) / (pt.X - this.X);
+        }
     }
 }

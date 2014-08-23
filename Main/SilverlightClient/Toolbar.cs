@@ -75,7 +75,7 @@ namespace LiveGeometry
             drawingHost.AddToolbarButton(CommandParseOptions);
             //drawingHost.AddToolbarButton(CommandProblemCharacteristics);
             drawingHost.AddToolbarButton(CommandManageGivens);
-            //drawingHost.AddToolbarButton(CommandEnterSolution);
+            drawingHost.AddToolbarButton(CommandEnterSolution);
             drawingHost.AddToolbarButton(CommandMakeBookProblem);
             drawingHost.AddToolbarButton(CommandSynthProblem);
             drawingHost.AddToolbarButton(CommandStartRegionShading);

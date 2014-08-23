@@ -32,6 +32,14 @@ namespace GeometryTutorLib.ConcreteAST
             thisAtomicRegion = new ShapeAtomicRegion(this);
         }
 
+        public override bool CoordinateCongruent(Figure that)
+        {
+            Semicircle thatSemi = that as Semicircle;
+            if (thatSemi == null) return false;
+
+            return theCircle.CoordinateCongruent(thatSemi.theCircle);
+        }
+
         //
         // Area-Related Computations
         //

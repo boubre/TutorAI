@@ -92,6 +92,9 @@ namespace GeometryTutorLib.GeometryTestbed
 
         static void Main(string[] args)
         {
+#if FIGURE_SYNTHESIZER
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
+#else
             List<GeometryTestbed.ActualProblem> problems = ConstructAllHardCodedProblems();
 
             DumpStatisticsHeader();
@@ -109,6 +112,7 @@ namespace GeometryTutorLib.GeometryTestbed
             }
 
             DumpAggregateTotals(problemCount);
+#endif
         }
 
         private static void DumpAggregateTotals(int numFigures)
