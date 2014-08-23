@@ -346,6 +346,7 @@
     <Compile Include="UI\Ribbon\ToolButton.cs" />
     <Compile Include="UI\RegionShading\ShadedRegion.cs" />
     <Compile Include="UI\StatusBar.cs" />
+    <Compile Include="UI\SynthesizeProblemWindow.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

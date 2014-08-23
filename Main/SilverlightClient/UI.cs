@@ -26,6 +26,7 @@ namespace LiveGeometry
         private EnterSolutionWindow enterSolutionWindow;
         private ManageGivensWindow manageGivensWindow;
         private BookProblemWindow bookProblemWindow;
+        private SynthesizeProblemWindow synthProblemWindow;
         private GeometryTutorLib.UIDebugPublisher UIDebugPublisher;
         private GeometryTutorLib.UIFigureAnalyzerMain analyzer;
         private GeometryTutorLib.EngineUIBridge.HypergraphWrapper hypergraph;
@@ -527,9 +528,6 @@ namespace LiveGeometry
             {
                 UpdateShadingMode(true);
 
-                //Disable unncessary behaviors
-                Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
-
                 //Parse and set atoms
                 DrawingParserMain parser = new DrawingParserMain(drawingHost.CurrentDrawing);
                 parser.Parse();
@@ -543,9 +541,8 @@ namespace LiveGeometry
             {
                 UpdateShadingMode(false);
 
-                //Discard regions and re-enable behaviors
+                //Discard regions
                 drawingHost.CurrentDrawing.ClearRegionShadings();
-                Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
             }
         }
 
@@ -554,13 +551,25 @@ namespace LiveGeometry
             if (!ShadingMode)
             {
                 bookProblemWindow.Show();
-                StartRegionShading();
+                UpdateShadingMode(true);
+            }
+        }
+
+        void SynthesizeProblem()
+        {
+            if (!ShadingMode)
+            {
+                synthProblemWindow.Show();
+                UpdateShadingMode(true);
             }
         }
 
         void UpdateShadingMode(bool mode)
         {
             ShadingMode = mode;
+
+            //Toggle behaviors
+            Behaviors.ForEach<Behavior>(b => b.Enabled = !b.Enabled);
 
             //Graphical Update
             if (mode)
@@ -582,6 +591,14 @@ namespace LiveGeometry
                 //Disable
                 CommandClearRegionShading.Icon.Opacity = 0.2;
             }
+        }
+
+        void DrawProblemWindow_Close(object sender, EventArgs e)
+        {
+            var regions = drawingHost.CurrentDrawing.GetRegionShadings();
+            var atomic = new List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion>();
+            regions.ForEach(r => atomic.Add(r.Region));
+            DynamicGeometry.UI.RegionShading.ShadedRegionCreator.Atoms = atomic;
         }
     }
 }

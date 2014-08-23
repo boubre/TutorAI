@@ -23,6 +23,7 @@ namespace LiveGeometry
         Command CommandManageGivens;
         Command CommandEnterSolution;
         Command CommandMakeBookProblem;
+        Command CommandSynthProblem;
         Command CommandStartRegionShading;
         Command CommandClearRegionShading;
 
@@ -44,6 +45,7 @@ namespace LiveGeometry
             CommandManageGivens = new Command(DisplayManageGivens, GetImageFromResource("ParseOptions.png"), "Manage Givens", "Parsing");
             CommandStartRegionShading = new Command(StartRegionShading, GetImageFromResource("Play.png"), "Start Shading", "Regions");
             CommandMakeBookProblem = new Command(DrawBookProblem, GetImageFromResource("Draw.png"), "Book Problem", "Parsing");
+            CommandSynthProblem = new Command(SynthesizeProblem, GetImageFromResource("Draw.png"), "Synthesize Problem", "Parsing");
             CommandClearRegionShading = new Command(ClearRegionShading, GetImageFromResource("Trash.png"), "Clear Shading", "Regions");
             CommandClearRegionShading.Icon.Opacity = 0.2;
 
@@ -75,6 +77,7 @@ namespace LiveGeometry
             drawingHost.AddToolbarButton(CommandManageGivens);
             //drawingHost.AddToolbarButton(CommandEnterSolution);
             drawingHost.AddToolbarButton(CommandMakeBookProblem);
+            drawingHost.AddToolbarButton(CommandSynthProblem);
             drawingHost.AddToolbarButton(CommandStartRegionShading);
             drawingHost.AddToolbarButton(CommandClearRegionShading);
 

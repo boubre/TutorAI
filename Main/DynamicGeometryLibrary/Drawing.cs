@@ -53,6 +53,11 @@ namespace DynamicGeometry
             RegionShadings.ForEach<ShadedRegion>(sr => sr.ZoomRedraw(this));
         }
 
+        public List<ShadedRegion> GetRegionShadings()
+        {
+            return RegionShadings;
+        }
+
         public double Version { get; set; }
 
         void Drawing_OnAttachToCanvas(Canvas canvas)
