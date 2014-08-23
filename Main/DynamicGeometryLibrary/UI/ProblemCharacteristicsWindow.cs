@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using GeometryTutorLib.EngineUIBridge;
 
 namespace DynamicGeometry.UI
@@ -65,13 +64,11 @@ namespace DynamicGeometry.UI
             label.VerticalAlignment = VerticalAlignment.Center;
             label.Width = 45;
             widthPanel.Children.Add(label);
-            minWidth = new TextBox();
-            minWidth.KeyDown += new KeyEventHandler(NumericTextBoxFilter);
+            minWidth = new NumericTextBox();
             minWidth.Width = 75;
             minWidth.Margin = new Thickness(0, 0, 10, 0);
             widthPanel.Children.Add(minWidth);
-            maxWidth = new TextBox();
-            maxWidth.KeyDown += new KeyEventHandler(NumericTextBoxFilter);
+            maxWidth = new NumericTextBox();
             maxWidth.Width = 75;
             widthPanel.Children.Add(maxWidth);
 
@@ -84,13 +81,11 @@ namespace DynamicGeometry.UI
             label.VerticalAlignment = VerticalAlignment.Center;
             label.Width = 45;
             lengthPanel.Children.Add(label);
-            minLength = new TextBox();
-            minLength.KeyDown += new KeyEventHandler(NumericTextBoxFilter);
+            minLength = new NumericTextBox();
             minLength.Width = 75;
             minLength.Margin = new Thickness(0, 0, 10, 0);
             lengthPanel.Children.Add(minLength);
-            maxLength = new TextBox();
-            maxLength.KeyDown += new KeyEventHandler(NumericTextBoxFilter);
+            maxLength = new NumericTextBox();
             maxLength.Width = 75;
             lengthPanel.Children.Add(maxLength);
 
@@ -204,20 +199,6 @@ namespace DynamicGeometry.UI
             if (problemCharacteristics.UpperLength < problemCharacteristics.LowerLength)
             {
                 problemCharacteristics.UpperLength = problemCharacteristics.LowerLength;
-            }
-        }
-
-        /// <summary>
-        /// This method will ignore all non-numeric and non-backspace keys when added as a KeyDown event to a TextBox.
-        /// This is used to create integer-only text boxes for certain problem characteristics.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NumericTextBoxFilter(object sender, KeyEventArgs e)
-        {
-            if (!e.Handled && (e.Key < Key.D0 || e.Key > Key.D9) && (e.Key < Key.NumPad0 || e.Key > Key.NumPad9) && e.Key != Key.Back)
-            {
-                e.Handled = true;
             }
         }
 

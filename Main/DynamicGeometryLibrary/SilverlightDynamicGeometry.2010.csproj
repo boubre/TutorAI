@@ -331,6 +331,7 @@
     <Compile Include="UI\GivenWindow\AddSimilarTriangles.cs" />
     <Compile Include="UI\IconBuilder.cs" />
     <Compile Include="UI\ManageGivensWindow.cs" />
+    <Compile Include="UI\NumericTextBox.cs" />
     <Compile Include="UI\ParseDisambiguationWindow.cs" />
     <Compile Include="UI\ParseGroup.cs" />
     <Compile Include="UI\ParseGroupWindow.cs" />

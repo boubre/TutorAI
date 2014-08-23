@@ -582,6 +582,7 @@ namespace LiveGeometry
                 //Disable
                 CommandStartRegionShading.Icon.Opacity = 0.2;
                 CommandMakeBookProblem.Icon.Opacity = 0.2;
+                CommandSynthProblem.Icon.Opacity = 0.2;
        
             }
             else
@@ -589,6 +590,7 @@ namespace LiveGeometry
                 //Enable
                 CommandStartRegionShading.Icon.Opacity = 1.0;
                 CommandMakeBookProblem.Icon.Opacity = 1.0;
+                CommandSynthProblem.Icon.Opacity = 1.0;
 
                 //Disable
                 CommandClearRegionShading.Icon.Opacity = 0.2;
