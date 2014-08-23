@@ -467,6 +467,8 @@ namespace LiveGeometry
                 UIDebugPublisher.publishString(problem.ConstructProblemAndSolution(analyzer.graph).ToString());
             }
 
+            enterSolutionWindow.problem = problems[0];
+
             UIDebugPublisher.publishString("Parse Complete.");
         }
 
@@ -504,7 +506,7 @@ namespace LiveGeometry
 
         void DisplayEnterSolution()
         {
-            if (true || enterSolutionWindow.problem != null)
+            if (enterSolutionWindow.problem != null)
             {
                 enterSolutionWindow.Show();
             }
@@ -518,7 +520,7 @@ namespace LiveGeometry
 
         void EnterSolutionWindow_Closed(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         void StartRegionShading()

@@ -27,6 +27,16 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override Point Midpoint() { return theCircle.Midpoint(endpoint1, endpoint2); }
 
+        public override bool CoordinateCongruent(Figure that)
+        {
+            MinorArc thatArc = that as MinorArc;
+            if (thatArc == null) return false;
+
+            if (!theCircle.CoordinateCongruent(thatArc.theCircle)) return false;
+
+            return Utilities.CompareValues(this.GetMinorArcMeasureDegrees(), thatArc.GetMinorArcMeasureDegrees());
+        }
+
         private void GetStartEndPoints(double angle1, double angle2, out Point start, out Point end, out double angle)
         {
             start = null;

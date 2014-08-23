@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; HARD_CODED_UI</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -150,24 +150,29 @@
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Parallelogram.cs" />
     <Compile Include="ConcreteAST\Figures\Quadrilaterals\Quadrilateral.cs" />
     <Compile Include="EngineUIBridge\HypergraphWrapper.cs" />
-    <Compile Include="FigureSynthesizer\Angle.cs" />
+    <Compile Include="FigureSynthesizer\Constraint.cs" />
+    <Compile Include="FigureSynthesizer\FigureSynthesizerMainSupport.cs" />
+    <Compile Include="FigureSynthesizer\FigSynthProblemAtomFinder.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Circle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Sector.cs" />
+    <Compile Include="FigureSynthesizer\ConstantPropagator.cs" />
+    <Compile Include="FigureSynthesizer\FigSynthProblem.cs" />
     <Compile Include="FigureSynthesizer\FigureSynthesizerMain.cs" />
-    <Compile Include="FigureSynthesizer\EquilateralTriangle.cs" />
-    <Compile Include="FigureSynthesizer\Segment.cs" />
-    <Compile Include="FigureSynthesizer\Figure.cs" />
-    <Compile Include="FigureSynthesizer\IsoscelesTrapezoid.cs" />
-    <Compile Include="FigureSynthesizer\IsoscelesTriangle.cs" />
-    <Compile Include="FigureSynthesizer\Kite.cs" />
-    <Compile Include="FigureSynthesizer\Parallelogram.cs" />
-    <Compile Include="FigureSynthesizer\Point.cs" />
-    <Compile Include="FigureSynthesizer\Polygon.cs" />
-    <Compile Include="FigureSynthesizer\Quadrilateral.cs" />
-    <Compile Include="FigureSynthesizer\Rectangle.cs" />
-    <Compile Include="FigureSynthesizer\Rhombus.cs" />
-    <Compile Include="FigureSynthesizer\RightTriangle.cs" />
-    <Compile Include="FigureSynthesizer\Square.cs" />
-    <Compile Include="FigureSynthesizer\Trapezoid.cs" />
-    <Compile Include="FigureSynthesizer\Triangle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\EquilateralTriangle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Figure.cs" />
+    <Compile Include="FigureSynthesizer\Figures\IsoscelesTrapezoid.cs" />
+    <Compile Include="FigureSynthesizer\Figures\IsoscelesTriangle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Kite.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Parallelogram.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Point.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Polygon.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Quadrilateral.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Rectangle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Rhombus.cs" />
+    <Compile Include="FigureSynthesizer\Figures\RightTriangle.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Square.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Trapezoid.cs" />
+    <Compile Include="FigureSynthesizer\Figures\Triangle.cs" />
     <Compile Include="HardCoded\Problems\ActualProblem.cs" />
     <Compile Include="HardCoded\Problems\ProofProblems\ActualProofProblem.cs" />
     <Compile Include="HardCoded\Problems\ProofProblems\AngleArc Problems\AngleArcProblems.cs" />
@@ -568,14 +573,14 @@
     <Compile Include="ConcreteAST\Desciptors\Relations\Congruences\GeometricCongruentSegments.cs" />
     <Compile Include="ConcreteAST\Desciptors\Relations\Congruences\CongruentTriangles.cs" />
     <Compile Include="ConcreteAST\Figures\RightAngle.cs" />
-    <Compile Include="ConcreteAST\Figures\RightTriangle.cs" />
-    <Compile Include="ConcreteAST\Figures\EquilateralTriangle.cs" />
+    <Compile Include="ConcreteAST\Figures\Triangles\RightTriangle.cs" />
+    <Compile Include="ConcreteAST\Figures\Triangles\EquilateralTriangle.cs" />
     <Compile Include="ConcreteAST\Figures\Figure.cs" />
-    <Compile Include="ConcreteAST\Figures\IsoscelesTriangle.cs" />
+    <Compile Include="ConcreteAST\Figures\Triangles\IsoscelesTriangle.cs" />
     <Compile Include="ConcreteAST\Desciptors\Midpoint.cs" />
     <Compile Include="ConcreteAST\Figures\Point.cs" />
     <Compile Include="ConcreteAST\Figures\Segment.cs" />
-    <Compile Include="ConcreteAST\Figures\Triangle.cs" />
+    <Compile Include="ConcreteAST\Figures\Triangles\Triangle.cs" />
     <Compile Include="ConcreteAST\Desciptors\Parallel.cs" />
     <Compile Include="ConcreteAST\Desciptors\Perpendicular.cs" />
     <Compile Include="ConcreteAST\Desciptors\Descriptor.cs" />

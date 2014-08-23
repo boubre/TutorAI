@@ -34,6 +34,24 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         // <------- End processing atomic region members
         //
 
+        //
+        // <------- Figure Synthesis (begin)
+        //
+        //
+        // Is this shape congruent to the other shape based purely on coordinates.
+        //
+        public virtual bool CoordinateCongruent(Figure that)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual bool CoordinateCongruent(AtomicRegion that)
+        {
+            throw new NotImplementedException();
+        }
+        //
+        // <------- Figure Synthesis (end)
+        //
+
         // A version of this region that is an approximate polygon.
         public Polygon polygonalized { get; protected set; }
 

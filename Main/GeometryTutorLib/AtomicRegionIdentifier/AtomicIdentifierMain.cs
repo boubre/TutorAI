@@ -701,10 +701,11 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
 
             segments = HandleCollinearSubSegments(segments);
 
-            //
-            // This is a hack solution to work around a known bug where arcs are perceived as filaments.
-            //
             List <AtomicRegion> ars = AcquireAtomicRegionsFromGraph(points, segments, arcs, circles, circGranularity);
+
+            //
+            // The following code should not be required (in theory).
+            //
             List <AtomicRegion> trueAtoms = new List<AtomicRegion>();
 
             for (int a1 = 0; a1 < ars.Count; a1++)
@@ -729,7 +730,7 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             return trueAtoms;
         }
 
-        private static List<AtomicRegion> AcquireAtomicRegionsFromGraph(List<Point> points, List<Segment> segments,
+        public static List<AtomicRegion> AcquireAtomicRegionsFromGraph(List<Point> points, List<Segment> segments,
                                                                         List<Arc> arcs, List<Circle> circles, Dictionary<Circle, int> circGranularity)
         {
             //

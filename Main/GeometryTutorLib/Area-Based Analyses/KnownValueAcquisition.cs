@@ -29,7 +29,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return known;
         }
 
-        private static bool AcquireCongruences(KnownMeasurementsAggregator known, List<GroundedClause> clauses)
+        public static bool AcquireCongruences(KnownMeasurementsAggregator known, List<GroundedClause> clauses)
         {
             bool addedKnown = false;
 
@@ -76,7 +76,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         // A right triangle means we can apply the pythagorean theorem to acquire an unknown.
         //
-        private static bool HandleTriangle(KnownMeasurementsAggregator known, Triangle tri)
+        public static bool HandleTriangle(KnownMeasurementsAggregator known, Triangle tri)
         {
             if (tri == null) return false; 
 
@@ -143,7 +143,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         // Check all equations to see if we can substitute into any.
         //
-        private static bool AcquireViaEquations(KnownMeasurementsAggregator known, List<GroundedClause> clauses)
+        public static bool AcquireViaEquations(KnownMeasurementsAggregator known, List<GroundedClause> clauses)
         {
             bool addedKnown = false;
 
@@ -168,7 +168,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
         // (6) Acquire the unknown and its value.
         // (7) Add to the list of knowns.
         //
-        private static bool HandleEquation(KnownMeasurementsAggregator known, List<GroundedClause> clauses, Equation theEq)
+        public static bool HandleEquation(KnownMeasurementsAggregator known, List<GroundedClause> clauses, Equation theEq)
         {
             if (theEq is AngleEquation) return HandleAngleEquation(known, clauses, theEq as AngleEquation);
             if (theEq is SegmentEquation) return HandleSegmentEquation(known, clauses, theEq as SegmentEquation);
