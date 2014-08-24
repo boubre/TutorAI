@@ -628,7 +628,8 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             }
 
             // Combine all points into a single list.
-            GeometryTutorLib.Utilities.AddUniqueList<Point>(points, figurePoints);
+            // Now doing these AFTER finding all intersections; unique intersection points will now be added to the list
+            //GeometryTutorLib.Utilities.AddUniqueList<Point>(points, figurePoints);
 
             //
             //
@@ -647,6 +648,8 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                     {
                         segments[s1].AddCollinearPoint(intersection);
                         segments[s2].AddCollinearPoint(intersection);
+                        //If intersection is not already part of the points list, add it (this is to avoid creating edges with undefined nodes)
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, intersection);
                     }
                 }
             }
@@ -666,11 +669,13 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                     {
                         segment.AddCollinearPoint(pt1);
                         arc.AddCollinearPoint(pt1);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, pt1);
                     }
                     if (pt2 != null)
                     {
                         segment.AddCollinearPoint(pt2);
                         arc.AddCollinearPoint(pt2);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, pt2);
                     }
                 }
             }
@@ -690,14 +695,19 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                     {
                         arcs[a1].AddCollinearPoint(pt1);
                         arcs[a2].AddCollinearPoint(pt1);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, pt1);
                     }
                     if (pt2 != null)
                     {
                         arcs[a1].AddCollinearPoint(pt2);
                         arcs[a2].AddCollinearPoint(pt2);
+                        GeometryTutorLib.Utilities.AddStructurallyUnique<Point>(points, pt1);
                     }
                 }
             }
+
+            // Combine all points into a single list.
+            GeometryTutorLib.Utilities.AddUniqueList<Point>(points, figurePoints);
 
             segments = HandleCollinearSubSegments(segments);
 

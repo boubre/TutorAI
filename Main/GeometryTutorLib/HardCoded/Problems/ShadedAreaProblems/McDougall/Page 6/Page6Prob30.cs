@@ -15,8 +15,6 @@ namespace GeometryTutorLib.GeometryTestbed
             Point r = new Point("R", 6, 0); points.Add(r);
             Point s = new Point("S", 8, 0); points.Add(s);
 
-            Segment rs = new Segment(r, s); segments.Add(rs);
-
             List<Point> pts = new List<Point>();
             pts.Add(o);
             pts.Add(p);
@@ -25,10 +23,14 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(s);
             collinear.Add(new Collinear(pts));
 
+            circles.Add(new Circle(o, 2));
+            circles.Add(new Circle(o, 4));
+            circles.Add(new Circle(o, 6));
             circles.Add(new Circle(o, 8));
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
+            Segment rs = (Segment)parser.Get(new Segment(r, s));
             known.AddSegmentLength(rs, 2);
             given.Add(new GeometricCongruentSegments(rs, (Segment)parser.Get(new Segment(o, p))));
             given.Add(new GeometricCongruentSegments(rs, (Segment)parser.Get(new Segment(p, q))));
@@ -36,11 +38,16 @@ namespace GeometryTutorLib.GeometryTestbed
 
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 3, 0));
-            wanted.Add(new Point("", 7, 0));
+            wanted.Add(new Point("", 0, 7));
+            wanted.Add(new Point("", 0, 3));
+            wanted.Add(new Point("", 0, -3));
+            wanted.Add(new Point("", 0, -7));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(40 * System.Math.PI);
+
+            problemName = "McDougall Page 6 Problem 30";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

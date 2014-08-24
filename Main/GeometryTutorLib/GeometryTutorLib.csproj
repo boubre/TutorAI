@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;HARD_CODED_UI</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -466,6 +466,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row5Prob18.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row6Prob19.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Prob26.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Prob27.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Prob28.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Prob29.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Prob30.cs" />

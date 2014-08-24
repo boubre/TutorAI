@@ -254,10 +254,20 @@ namespace GeometryTutorLib.ConcreteAST
             if (circle.DefinesDiameter(chord))
             {
                 Point opp = circle.Midpoint(endpt1, endpt2, angle.GetVertex());
-                return new Semicircle(circle, endpt1, endpt2, circle.OppositePoint(opp), chord); 
+                Semicircle semi = new Semicircle(circle, endpt1, endpt2, circle.OppositePoint(opp), chord);
+                //Find a defined semicircle of the figure that lies on the same side
+                Semicircle sameSideSemi = figureSemicircles.Where(s => semi.SameSideSemicircle(s)).FirstOrDefault();
+                //If none were found, should we throw an exception or just return the original semi?
+                if (sameSideSemi == null) return semi;
+                else return sameSideSemi;
             }
 
-            return new MinorArc(circle, endpt1, endpt2);
+            //Initially assume intercepted arc is the minor arc
+            Arc intercepted = null;
+            intercepted = new MinorArc(circle, endpt1, endpt2);
+            //Verify assumption, create major arc if necessary
+            if (Arc.BetweenMinor(angle.GetVertex(), intercepted)) intercepted = new MajorArc(circle, endpt1, endpt2);
+            return intercepted;
         }
 
         //

@@ -80,6 +80,11 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row4Prob25(true, false));   // GTG
             // // problems.Add(new Page5Row5Prob17(true, false));   // Can't Deduce a Square
             // problems.Add(new Page6Prob26(true, false));       // GTG
+            // problems.Add(new Page6Prob27(true, false));       // GTG
+            // problems.Add(new Page6Prob29(true, false));       // GTG
+            //problems.Add(new Page6Prob30(true, false));        // GTG
+            // problems.Add(new Page6Prob31(true, false));       // GTG
+            //problems.Add(new Page6Prob32a(true, false));       // GTG
 
             
 

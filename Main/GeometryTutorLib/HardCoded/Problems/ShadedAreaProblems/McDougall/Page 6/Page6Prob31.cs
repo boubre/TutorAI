@@ -10,9 +10,9 @@ namespace GeometryTutorLib.GeometryTestbed
             : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
-            Point b = new Point("B", (9 / 5), (12 / 5)); points.Add(b);
+            Point b = new Point("B", 1.8, 2.4); points.Add(b);
             Point c = new Point("C", 5, 0); points.Add(c);
-            Point d = new Point("D", (9 / 5), (-12 / 5)); points.Add(d);
+            Point d = new Point("D", 1.8, -2.4); points.Add(d);
             Point o = new Point("O", 2.5, 0); points.Add(o);
 
 
@@ -45,6 +45,9 @@ namespace GeometryTutorLib.GeometryTestbed
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(6.25 * System.Math.PI - 12);
+
+            problemName = "McDougall Page 6 Problem 31";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

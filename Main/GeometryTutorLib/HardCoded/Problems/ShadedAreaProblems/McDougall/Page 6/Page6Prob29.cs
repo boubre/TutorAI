@@ -12,9 +12,8 @@ namespace GeometryTutorLib.GeometryTestbed
             Point a = new Point("A", 0, 17); points.Add(a);
             Point b = new Point("B", 0, 34); points.Add(b);
             Point c = new Point("C", 0, -34); points.Add(c);
+            //Point d = new Point("D", 0, -17); points.Add(d);
             Point o = new Point("O", 0, 0); points.Add(o);
-
-            Segment bc = new Segment(b, c); segments.Add(bc);
 
             List<Point> pts = new List<Point>();
             pts.Add(b);
@@ -23,7 +22,10 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(c);
             collinear.Add(new Collinear(pts));
 
-            circles.Add(new Circle(o, 34));
+            Circle outer = new Circle(o, 34);
+            Circle inner = new Circle(o, 17);
+            circles.Add(outer);
+            circles.Add(inner);
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
@@ -36,6 +38,9 @@ namespace GeometryTutorLib.GeometryTestbed
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(433.5 * System.Math.PI);
+
+            problemName = "McDougall Page 6 Problem 29";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }
