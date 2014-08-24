@@ -221,7 +221,7 @@ namespace GeometryTutorLib.TutorParser
             List<int> givenSet = GeometryTutorLib.Utilities.CollectGraphIndices(deductiveGraph, given);
 
             // Perform pebbling based on the <figure, given> pair.
-            pebbler.Pebble(intrinsicSet, givenSet);
+            pebbler.PebbleForwardForShading(intrinsicSet, givenSet);
 
             if (GeometryTutorLib.Utilities.PEBBLING_DEBUG)
             {

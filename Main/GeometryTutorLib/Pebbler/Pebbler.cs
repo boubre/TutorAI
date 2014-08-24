@@ -76,6 +76,28 @@ namespace GeometryTutorLib.Pebbler
         }
 
         //
+        // Use Dowling-Gallier pebbling technique to pebble using all given nodes
+        //
+        public void PebbleForwardForShading(List<int> figure, List<int> givens)
+        {
+            // Find all axiomatic, reflexive, and other obvious notions which may go both directions for solving problems.
+            List<int> axiomaticNodes = new List<int>();
+            List<int> reflexiveNodes = new List<int>();
+            List<int> obviousDefinitionNodes = new List<int>();
+            for (int v = 0; v < graph.Size(); v++)
+            {
+                ConcreteAST.GroundedClause node = graph.GetNode(v);
+
+                if (node.IsAxiomatic()) axiomaticNodes.Add(v);
+                if (node.IsReflexive()) reflexiveNodes.Add(v);
+                if (node.IsClearDefinition()) obviousDefinitionNodes.Add(v);
+            }
+
+            // Forward pebble: it acquires the valid list of forward edges 
+            PebbleForward(figure, givens, axiomaticNodes);
+        }
+
+        //
         // We are attempting to pebble exactly the same way in which the hypergraph was generated: using a
         // worklist, breadth-first manner of construction.
         //

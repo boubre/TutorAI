@@ -9,18 +9,23 @@ namespace GeometryTutorLib.GeometryTestbed
         public Page2Prob18(bool onoff, bool complete) : base(onoff, complete)
         {
             Point o = new Point("O", 0, 0); points.Add(o);
-            Point a = new Point("A", 4, 0); points.Add(a);
-            Point b = new Point("B", 0, 4); points.Add(b);
+            Point a = new Point("A", 0, 4); points.Add(a);
+            Point b = new Point("B", 4, 0); points.Add(b);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
+            Segment ao = new Segment(a, o); segments.Add(ao);
+            Segment bo = new Segment(b, o); segments.Add(bo);
 
             Circle theCircle = new Circle(o, 4);
             circles.Add(theCircle);
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            known.AddArcMeasureDegree(new MinorArc(theCircle, a, b), 90);
-            known.AddSegmentLength(new Segment(o, b), 4);
+            MinorArc arcAB = (MinorArc)parser.Get(new MinorArc(theCircle, a, b));
+            given.Add(new GeometricArcEquation(arcAB, new NumericValue(90.0)));
+            known.AddArcMeasureDegree(arcAB, 90.0);
+            known.AddSegmentLength(ao, 4.0);
+            known.AddSegmentLength(bo, 4.0);
 
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", 0, -1));

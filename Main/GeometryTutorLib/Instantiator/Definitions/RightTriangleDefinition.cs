@@ -133,6 +133,7 @@ namespace GeometryTutorLib.GenericInstantiator
             
             // Strengthen the old triangle to a right triangle
             Strengthened newStrengthened = new Strengthened(tri, new RightTriangle(tri));
+            tri.SetProvenToBeRight();
 
             // Hypergraph
             List<GroundedClause> antecedent = new List<GroundedClause>();

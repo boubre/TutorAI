@@ -25,9 +25,14 @@ namespace GeometryTutorLib.GeometryTestbed
 
             known.AddSegmentLength(ob, 3);
 
-            goalRegions.AddRange(parser.implied.GetAllAtomicRegionsWithoutPoint(new Point("", 1.3, 2.5)));
+            List<Point> wanted = new List<Point>();
+            wanted.Add(new Point("", 2.8, 1));
+            goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(((3*System.Math.PI)/2) - (9/4)*System.Math.Sqrt(3));
+            SetSolutionArea((1.5 * System.Math.PI) - ((9 * System.Math.Sqrt(3)) / 4));
+
+            problemName = "Jurgensen Page 2 Problem 16";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

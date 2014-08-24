@@ -161,7 +161,7 @@ namespace GeometryTutorLib.ConcreteAST
             }
             else
             {
-                return CalcSidesHypotenuseUnknown(tri, knownAngle, knownAngleVal, hypotenuse, knownSegVal);
+                return CalcSidesHypotenuseUnknown(tri, knownAngle, knownAngleVal, knownSeg, knownSegVal);
             }
         }
 

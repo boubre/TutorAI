@@ -31,7 +31,7 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // TO RightAngle
-            if (clause is CongruentAngles)
+            if (clause is CongruentAngles || clause is AngleEquation)
             {
                 return InstantiateToRightAngle(clause);
             }
@@ -75,7 +75,45 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             List<EdgeAggregator> newGrounded = new List<EdgeAggregator>();
 
-            if (clause is CongruentAngles)
+            if (clause is AngleEquation)
+            {
+                AngleEquation eq = clause as AngleEquation;
+                //Filter for acceptable equations - both sides atomic
+                int atomicity = eq.GetAtomicity();
+                if (atomicity != Equation.BOTH_ATOMIC) return newGrounded;
+
+                //Check that the terms equate an angle to a measure
+                List<GroundedClause> lhs = eq.lhs.CollectTerms();
+                List<GroundedClause> rhs = eq.rhs.CollectTerms();
+
+                Angle angle = null;
+                NumericValue value = null;
+                if (lhs[0] is Angle && rhs[0] is NumericValue)
+                {
+                    angle = lhs[0] as Angle;
+                    value = rhs[0] as NumericValue;
+                }
+                else if (rhs[0] is Angle && lhs[0] is NumericValue)
+                {
+                    angle = rhs[0] as Angle;
+                    value = lhs[0] as NumericValue;
+                }
+                else
+                    return newGrounded;
+
+                //Verify that the angle is a right angle
+                if (!Utilities.CompareValues(value.DoubleValue, 90.0)) return newGrounded;
+
+                Strengthened newRightAngle = new Strengthened(angle, new RightAngle(angle));
+
+                List<GroundedClause> antecedent = Utilities.MakeList<GroundedClause>(clause);
+
+                newGrounded.Add(new EdgeAggregator(antecedent, newRightAngle, defAnnotation));
+
+                return newGrounded;
+
+            }
+            else if (clause is CongruentAngles)
             {
                 CongruentAngles cas = clause as CongruentAngles;
 

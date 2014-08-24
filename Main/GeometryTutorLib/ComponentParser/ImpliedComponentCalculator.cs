@@ -545,21 +545,41 @@ namespace GeometryTutorLib.TutorParser
                         // Semicircle requires 3 points to be defined - the two endpoints and a point inbetween
                         // The minorArcPoints and majorArcPoints lists contain all the potential inbetween points for either side of the diameter
                         // Handle 'side' 1:
-                        for (int i = 0; i < majorArcPoints.Count; ++i)
-                        {
-                            Semicircle semi = new Semicircle(circle, e1, e2, majorArcPoints[i], minorArcPoints, majorArcPoints, diameter);
-                            AddSemicircleClauses(semi);
-                        }
+                        // If majorArcPoints is empty, create an implied semicircle (minorArcPoints should be guaranteed to have at least one point, since
+                        // the case of having only 2 points on the circle was already handled)
+                        if (majorArcPoints.Count == 0 && minorArcPoints.Count != 0) 
+                            AddSemicircleClauses(CreateImpliedSemicircle(circle, diameter, minorArcPoints[0]));
+                        else
+                            for (int i = 0; i < majorArcPoints.Count; ++i)
+                            {
+                                Semicircle semi = new Semicircle(circle, e1, e2, majorArcPoints[i], minorArcPoints, majorArcPoints, diameter);
+                                AddSemicircleClauses(semi);
+                            }
                         // Handle 'side' 2:
-                        for (int i = 0; i < minorArcPoints.Count; ++i)
-                        {
-                            Semicircle semi = new Semicircle(circle, e1, e2, minorArcPoints[i], majorArcPoints, minorArcPoints, diameter);
-                            AddSemicircleClauses(semi);
-                        }
+                        if (minorArcPoints.Count == 0 && majorArcPoints.Count != 0)
+                            AddSemicircleClauses(CreateImpliedSemicircle(circle, diameter, majorArcPoints[0]));
+                        else
+                            for (int i = 0; i < minorArcPoints.Count; ++i)
+                            {
+                                Semicircle semi = new Semicircle(circle, e1, e2, minorArcPoints[i], majorArcPoints, minorArcPoints, diameter);
+                                AddSemicircleClauses(semi);
+                            }
 
                     }
                 }
             }
+        }
+
+        private Semicircle CreateImpliedSemicircle(Circle circle, Segment diameter, Point oppositePnt)
+        {
+            Point midpt = circle.Midpoint(diameter.Point1, diameter.Point2);
+            //Create semicircles from the midpt and the given oppositePnt, make sure they do not form the same side
+            Semicircle semi1 = new Semicircle(circle, diameter.Point1, diameter.Point2, midpt, diameter);
+            if (semi1.SameSideSemicircle(new Semicircle(circle, diameter.Point1, diameter.Point2, oppositePnt, diameter)))
+            {
+                semi1 = new Semicircle(circle, diameter.Point1, diameter.Point2, circle.OppositePoint(midpt), diameter);
+            }
+            return semi1;
         }
 
         //private void GenerateSemicircleClauses(Circle circle)

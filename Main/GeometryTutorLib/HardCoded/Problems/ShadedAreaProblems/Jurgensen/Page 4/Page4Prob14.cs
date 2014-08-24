@@ -9,8 +9,8 @@ namespace GeometryTutorLib.GeometryTestbed
         public Page4Prob14(bool onoff, bool complete) : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
-            Point b = new Point("B", 2, 1.5* System.Math.Sqrt(5.0)); points.Add(b);
-            Point c = new Point("C", 4, 3 * System.Math.Sqrt(5.0)); points.Add(c);
+            Point b = new Point("B", 2, System.Math.Sqrt(5)); points.Add(b);
+            Point c = new Point("C", 6, 1.5 * System.Math.Sqrt(20)); points.Add(c);
             Point d = new Point("D", 10, System.Math.Sqrt(5.0)); points.Add(d);
             Point e = new Point("E", 12, 0); points.Add(e);
 

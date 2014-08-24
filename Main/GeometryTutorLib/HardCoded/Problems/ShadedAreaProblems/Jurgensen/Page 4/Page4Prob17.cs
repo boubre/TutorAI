@@ -16,18 +16,25 @@ namespace GeometryTutorLib.GeometryTestbed
 
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment op = new Segment(o, p); segments.Add(op);
+            Segment ao = new Segment(a, o); segments.Add(ao);
+            Segment bo = new Segment(b, o); segments.Add(bo);
 
-            circles.Add(new Circle(o, 6.0));
+            Circle circle = new Circle(o, 6.0);
+            circles.Add(circle);
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
             known.AddSegmentLength(op, 6);
+            given.Add(new GeometricArcEquation((MinorArc)parser.Get(new MinorArc(circle, a, b)), new NumericValue(120)));
 
-            List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 1, 0));
-            goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
+            List<Point> unwanted = new List<Point>();
+            unwanted.Add(new Point("", 5, 3.3));
+            goalRegions = parser.implied.GetAllAtomicRegionsWithoutPoints(unwanted);
 
-            SetSolutionArea((System.Math.PI * 36) - 18 * (((2 * System.Math.PI) / 3) - System.Math.Sin(120)));
+            SetSolutionArea(24 * System.Math.PI + (9 * System.Math.Sqrt(3)));
+
+            problemName = "Jurgensen Page 4 Problem 17";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

@@ -484,7 +484,8 @@ namespace GeometryTutorLib.ConcreteAST
                 if (pt1 != null && pt2 != null) return false;
             }
 
-            return that.PointLiesInside(that.center);
+            //return that.PointLiesInside(that.center);
+            return this.PointLiesInside(that.center);
         }
 
         private bool ContainsPolygon(Polygon that)

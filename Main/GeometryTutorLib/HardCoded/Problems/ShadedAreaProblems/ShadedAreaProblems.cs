@@ -45,20 +45,24 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Jurgensen
             //
-            // problems.Add(new Page2Prob15(true, false));    // GTGDemo: Redundant
-            // problems.Add(new Page2Prob17(true, false));    // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            // // problems.Add(new Page2Prob18(true, false));    // Implied problem; Arc equation
-            // problems.Add(new Page2Prob19(true, false));    // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            // problems.Add(new Page3Prob21(true, false));    // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page2Prob15(true, false));       // GTGDemo: Redundant
+            // problems.Add(new Page2Prob16(true, false));       // GTG
+            // problems.Add(new Page2Prob17(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page2Prob18(true, false));       // GTG
+            // problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // // problems.Add(new Page3Prob22(true, false));    // Too long to execute
-            // problems.Add(new Page3Prob23(true, false));    // GTG2Demo: Interior Tangent Circles
-            // problems.Add(new Page3Prob24(true, false));    // Atomic Region ID redundancy problem; LONG solving...
+            // problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
+            // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
             
             // // problems.Add(new Page2Prob28(true, false));    // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
-            // problems.Add(new Page4Prob7(true, false));     // GTGDemo
-            // problems.Add(new Page4Prob8(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            // problems.Add(new Page4Prob13(true, false));    // GTGDemo
-            // // problems.Add(new Page4Prob14(true, false));    // Encoding: Points
+            // problems.Add(new Page4Prob7(true, false));        // GTGDemo
+            // problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page4Prob13(true, false));       // GTGDemo
+            // problems.Add(new Page4Prob14(true, false));    // Encoding: Points (need triangle similarity to solve?)
+            //problems.Add(new Page4Prob15(true, false));        // GTG
+            // problems.Add(new Page4prob17(true, false));       // GTG
+            //problems.Add(new Page4prob18(true, false));        //Works, but uses unproven semicircle clause
             // // problems.Add(new Page4Prob19(true, false));    // Encoding
 
             //
@@ -72,8 +76,10 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row3Prob2(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob3(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob4(true, false));    // GTGDemo
-            //problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
+            // problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
+            // problems.Add(new Page5Row4Prob25(true, false));   // GTG
             // // problems.Add(new Page5Row5Prob17(true, false));   // Can't Deduce a Square
+            // problems.Add(new Page6Prob26(true, false));       // GTG
 
             
 
@@ -90,6 +96,15 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Glencoe
             //
+            // problems.Add(new Page7Row6(true, false));           // Works, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
+            // problems.Add(new Page7Prob15(true, false));         // GTG
+            // problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
+            // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
+            // problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
+            // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
+            // problems.Add(new Page8Prob18(true, false));         // GTG
+            // problems.Add(new Page8Prob14(true, false));         // GTG
+            // //  problems.Add(new Page8Prob21(true, false));      // Atomic region issue
             // problems.Add(new Page8Row5Prob40(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // // problems.Add(new Page9Prob8(true, false));          // Encoding
             // problems.Add(new Page9Prob13(true, false));         // GTGDemo

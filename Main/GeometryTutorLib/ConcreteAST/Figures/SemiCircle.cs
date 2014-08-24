@@ -102,9 +102,11 @@ namespace GeometryTutorLib.ConcreteAST
             // First, the endpoints and the diameter must match
             if (!(this.diameter.StructurallyEquals(thatSemi.diameter) && base.StructurallyEquals(thatSemi))) return false;
 
-            // 'this' semicircle's included points are contained in the major arc point list
-            // If thatSemi's middle is in the major arc point list, the two semicircles form arcs on the same side of the diameter
-            if (this.arcMajorPoints.Contains(thatSemi.middlePoint)) return true;
+            // if either of the 2 minor arcs formed by this semicircle's middlepoint contain the middlepoint of thatSemi,
+            // then the two semicircles form the same 'side' of the circle
+            MinorArc m = new MinorArc(this.theCircle, this.endpoint1, this.middlePoint);
+            MinorArc m2 = new MinorArc(this.theCircle, this.middlePoint, this.endpoint2);
+            if (Arc.BetweenMinor(thatSemi.middlePoint, m) || Arc.BetweenMinor(thatSemi.middlePoint, m2)) return true;
             else return false;
         }
 

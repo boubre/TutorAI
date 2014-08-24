@@ -409,6 +409,15 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\PathologicalTester.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\RegularPolygonCrushingTester.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\ThreeCircleTwoOverlapTester.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob15.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob16.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob17.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob27.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob28.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Row6.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob14.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob18.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob21.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Row5Prob40.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob16.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob13.cs" />
@@ -437,6 +446,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 3\Page3Prob26.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob13.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob14.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob15.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob17.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob18.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob19.cs" />
@@ -451,6 +461,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row3Prob2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row3Prob3.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row3Prob4.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row4Prob25.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row5Prob17.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row5Prob18.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row6Prob19.cs" />

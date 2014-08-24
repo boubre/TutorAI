@@ -209,8 +209,8 @@ namespace GeometryTutorLib.GenericInstantiator
                     {
                         HandleDeducedClauses(worklist, AnglesOfEqualMeasureAreCongruent.Instantiate(clause));
                         HandleDeducedClauses(worklist, ComplementaryDefinition.Instantiate(clause));
+                        HandleDeducedClauses(worklist, RightAngleDefinition.Instantiate(clause));
                     }
-
                     // If a geometric equation was constructed, it may not have been checked for proportionality
                     if ((clause as Equation).IsGeometric())
                     {
@@ -520,9 +520,9 @@ namespace GeometryTutorLib.GenericInstantiator
                     Circle.Record(clause);
 
                     HandleDeducedClauses(worklist, CircleDefinition.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, CentralAngleEqualInterceptedArc.Instantiate(clause));
                     //HandleDeducedClauses(worklist, ExteriorAngleHalfDifferenceInterceptedArcs.Instantiate(clause));
-                    //HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
+                    HandleDeducedClauses(worklist, InscribedAngleHalfInterceptedArc.Instantiate(clause));
                     //HandleDeducedClauses(worklist, TwoChordsAnglesHalfSumInterceptedArc.Instantiate(clause));
                     HandleDeducedClauses(worklist, InscribedQuadrilateralOppositeSupplementary.Instantiate(clause));
                     HandleDeducedClauses(worklist, TwoInterceptedArcsHaveCongruentAngles.Instantiate(clause));

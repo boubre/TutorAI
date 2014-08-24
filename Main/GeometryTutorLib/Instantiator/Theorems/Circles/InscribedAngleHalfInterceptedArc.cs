@@ -96,6 +96,8 @@ namespace GeometryTutorLib.GenericInstantiator
 
             // Get the intercepted arc
             Arc intercepted = Arc.GetInterceptedArc(inscribed, angle);
+            // If the angle vertex lies within the intercepted arc, then we need the major arc instead of the minor arc
+            if (!(intercepted is Semicircle) && Arc.BetweenMinor(angle.GetVertex(), intercepted)) intercepted = new MajorArc(inscribed, intercepted.endpoint1, intercepted.endpoint2);
 
             //
             // Create the equation
