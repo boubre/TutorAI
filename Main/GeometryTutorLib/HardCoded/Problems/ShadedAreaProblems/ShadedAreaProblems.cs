@@ -15,7 +15,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // Testing
             //
             //// problems.Add(new ThreeCircleTwoOverlapTester(true, false)); // GTG
-            //// problems.Add(new ThreeCirclePathologicalTester(true, false)); GTG
+            //// problems.Add(new ThreeCirclePathologicalTester(true, false)); //GTG
             //// problems.Add(new RegularPolygonCrushingTester(true, false));
             //// problems.Add(new BasicInteriorPolygonTester2(true, false));
             //// problems.Add(new BasicInteriorPolygonTester(true, false));
@@ -28,7 +28,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Class X
             //
-            //problems.Add(new Page1Col1Prob1(true, false));      // GTGDemo
+            // problems.Add(new Page1Col1Prob1(true, false));     // GTGDemo
             // problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
             // problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
             // problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
@@ -50,19 +50,20 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page2Prob17(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page2Prob18(true, false));       // GTG
             // problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page2Prob20(true, false));       // GTG (~30 second load time in UI)
+            // problems.Add(new Page2Prob28(true, false));    // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
             // problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // // problems.Add(new Page3Prob22(true, false));    // Too long to execute
             // problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
             // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
-            
-            // // problems.Add(new Page2Prob28(true, false));    // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
+            // problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
             // problems.Add(new Page4Prob7(true, false));        // GTGDemo
             // problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page4Prob13(true, false));       // GTGDemo
-            // problems.Add(new Page4Prob14(true, false));    // Encoding: Points (need triangle similarity to solve?)
-            //problems.Add(new Page4Prob15(true, false));        // GTG
+            // problems.Add(new Page4Prob14(true, false));        // GTG (if given extra parallel clause, issue with detecting shared angle congruency)
+            // problems.Add(new Page4Prob15(true, false));       // GTG
             // problems.Add(new Page4prob17(true, false));       // GTG
-            //problems.Add(new Page4prob18(true, false));        //Works, but uses unproven semicircle clause
+            // problems.Add(new Page4prob18(true, false));       //Works, but uses unproven semicircle clause
             // // problems.Add(new Page4Prob19(true, false));    // Encoding
 
             //
@@ -79,12 +80,21 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
             // problems.Add(new Page5Row4Prob25(true, false));   // GTG
             // // problems.Add(new Page5Row5Prob17(true, false));   // Can't Deduce a Square
-            // problems.Add(new Page6Prob26(true, false));       // GTG
-            // problems.Add(new Page6Prob27(true, false));       // GTG
-            // problems.Add(new Page6Prob29(true, false));       // GTG
-            //problems.Add(new Page6Prob30(true, false));        // GTG
-            // problems.Add(new Page6Prob31(true, false));       // GTG
-            //problems.Add(new Page6Prob32a(true, false));       // GTG
+            // problems.Add(new Page6Row1Prob26(true, false));       // GTG
+            // problems.Add(new Page6Row1Prob27(true, false));       // GTG
+            // problems.Add(new Page6Row2Prob29(true, false));       // GTG
+            // problems.Add(new Page6Row2Prob30(true, false));       // GTG
+            // problems.Add(new Page6Row2Prob31(true, false));       // GTG
+            // problems.Add(new Page6Row3Prob32a(true, false));      // Atomic region problem
+            // problems.Add(new Page6Row3Prob32b(true, false));      // Atomic region problem
+            // problems.Add(new Page6Row5Prob4(true, false));        // GTG, but do we need a naming scheme to distinguish concentric circles?
+            // problems.Add(new Page6Row5Prob5(true, false));        // GTG
+            // problems.Add(new Page6Row5Prob6(true, false));        //not ready
+            // problems.Add(new Page6Row6Prob28(true, false));       //not ready
+            // problems.Add(new Page6Row6Prob29(true, false));       // GTG
+            // problems.Add(new Page7Prob3(true, false));            // GTG
+            // problems.Add(new Page7Prob24(true, false));           // GTG
+            // problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
 
             
 
@@ -107,11 +117,20 @@ namespace GeometryTutorLib.GeometryTestbed
             // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
             // problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
             // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
-            // problems.Add(new Page8Prob18(true, false));         // GTG
+            // problems.Add(new Page8Prob5(true, false));          // Needs triangles from atomizer to work with only 1 defined radius, but otherwise GTG
             // problems.Add(new Page8Prob14(true, false));         // GTG
-            // //  problems.Add(new Page8Prob21(true, false));      // Atomic region issue
+            // problems.Add(new Page8Prob18(true, false));         // GTG
+            // //  problems.Add(new Page8Prob21(true, false));        // Atomic region issue
             // problems.Add(new Page8Row5Prob40(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            // problems.Add(new Page8Row5Prob41(true, false));     // GTG
+            // problems.Add(new Page8Row6Prob42(true, false));     // Not working, doesn't deduce length of circle diameters
+            // problems.Add(new Page8Row6Prob43(true, false));     // Long constructing all implied components
+            // problems.Add(new Page8Row6Prob44(true, false));     // GTG
             // // problems.Add(new Page9Prob8(true, false));          // Encoding
+            // problems.Add(new Page9Prob9(true, false));          // GTG
+            // problems.Add(new Page9Prob10(true, false));         // GTG
+            // problems.Add(new Page9Prob11(true, false));         // GTG
+            // problems.Add(new Page9Prob12(true, false));         // GTG
             // problems.Add(new Page9Prob13(true, false));         // GTGDemo
             // problems.Add(new Page9Prob16(true, false));         // GTGDemo
             // problems.Add(new Page9Prob33(true, false));         // GTGDemo

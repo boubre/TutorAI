@@ -4,9 +4,9 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.GeometryTestbed
 {
-    public class Page6Prob32a : ActualShadedAreaProblem
+    public class Page6Row3Prob32b : ActualShadedAreaProblem
     {
-        public Page6Prob32a(bool onoff, bool complete)
+        public Page6Row3Prob32b(bool onoff, bool complete)
             : base(onoff, complete)
         {
             double x = 8 * System.Math.Cos(36 * System.Math.PI / 180);
@@ -34,13 +34,13 @@ namespace GeometryTutorLib.GeometryTestbed
             given.Add(new GeometricArcEquation(m, new NumericValue(108)));
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 0, 1));
-            wanted.Add(new Point("", 0, y + 0.2));
+            wanted.Add(new Point("", -1, -2));
+            wanted.Add(new Point("", 1, -2));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(19.2 * System.Math.PI);
+            SetSolutionArea(16 * System.Math.PI);
 
-            problemName = "McDougall Page 6 Problem 32a";
+            problemName = "McDougall Page 6 Row 3 Problem 32b";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }

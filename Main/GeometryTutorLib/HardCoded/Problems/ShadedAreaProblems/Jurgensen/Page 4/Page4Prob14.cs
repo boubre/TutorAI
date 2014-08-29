@@ -33,6 +33,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
             given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(b, c)), (Segment)parser.Get(new Segment(c, d))));
             given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(a, b)), (Segment)parser.Get(new Segment(d, e))));
+            given.Add(new GeometricParallel(bd, ae));
 
             known.AddSegmentLength((Segment)parser.Get(new Segment(a, b)), 3);
             known.AddSegmentLength((Segment)parser.Get(new Segment(b, c)), 6);

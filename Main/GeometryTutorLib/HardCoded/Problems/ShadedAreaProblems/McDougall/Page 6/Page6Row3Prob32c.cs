@@ -4,9 +4,9 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.GeometryTestbed
 {
-    public class Page6Prob32b : ActualShadedAreaProblem
+    public class Page6Row3Prob32c : ActualShadedAreaProblem
     {
-        public Page6Prob32b(bool onoff, bool complete)
+        public Page6Row3Prob32c(bool onoff, bool complete)
             : base(onoff, complete)
         {
             Point r = new Point("R", -8 * System.Math.Sin(0.3 * System.Math.PI), 8 * System.Math.Cos(0.3 * System.Math.PI)); points.Add(r);
@@ -27,10 +27,11 @@ namespace GeometryTutorLib.GeometryTestbed
             known.AddAngleMeasureDegree((Angle)parser.Get(new Angle(r, p, s)), 108);
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 0.5, -4));
+            wanted.Add(new Point("", 7, 0));
+            wanted.Add(new Point("", -7, 0));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(16 * System.Math.PI);
+            SetSolutionArea(28.8 * System.Math.PI);
         }
     }
 }

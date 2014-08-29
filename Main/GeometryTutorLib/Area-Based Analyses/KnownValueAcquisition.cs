@@ -153,6 +153,10 @@ namespace GeometryTutorLib.Area_Based_Analyses
                 {
                     if (HandleEquation(known, clauses, clause as Equation)) addedKnown = true;
                 }
+                else if (clause is GeometryTutorLib.ConcreteAST.SegmentRatioEquation)
+                {
+                    if (HandleRatioEquation(known, clause as SegmentRatioEquation)) addedKnown = true;
+                }
             }
 
             return addedKnown;
@@ -464,6 +468,39 @@ namespace GeometryTutorLib.Area_Based_Analyses
             // (7) Add to the list of knowns
             //
             return known.AddSegmentLength(unknownSegment, segmentValue);
+        }
+
+        private static bool HandleRatioEquation(KnownMeasurementsAggregator known, SegmentRatioEquation theEq)
+        {
+            double topLeft = known.GetSegmentLength(theEq.lhs.smallerSegment);
+            double bottomLeft = known.GetSegmentLength(theEq.lhs.largerSegment);
+            double topRight = known.GetSegmentLength(theEq.rhs.smallerSegment);
+            double bottomRight = known.GetSegmentLength(theEq.rhs.largerSegment);
+
+            int unknown = 0;
+            if (topLeft <= 0) unknown++; 
+            if (bottomLeft <= 0) unknown++;
+            if (topRight <= 0) unknown++;
+            if (bottomRight <= 0) unknown++;
+            if (unknown != 1) return false;
+            
+            if (topLeft <= 0)
+            {
+                return known.AddSegmentLength(theEq.lhs.smallerSegment, (topRight / bottomRight) * bottomLeft);
+            }
+            else if (bottomLeft <= 0)
+            {
+                return known.AddSegmentLength(theEq.lhs.largerSegment, topLeft * (bottomRight / topRight));
+            }
+            else if (topRight <= 0)
+            {
+                return known.AddSegmentLength(theEq.rhs.smallerSegment, (topLeft / bottomLeft) * bottomRight);
+            }
+            else if (bottomRight <= 0)
+            {
+                return known.AddSegmentLength(theEq.rhs.largerSegment, topRight * (bottomLeft / topLeft));
+            }
+            else return false;
         }
     }
 }

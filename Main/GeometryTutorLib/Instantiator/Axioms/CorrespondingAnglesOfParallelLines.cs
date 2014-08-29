@@ -732,9 +732,12 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             List<CongruentAngles> newAngleRelations = new List<CongruentAngles>();
 
-            GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(offEnd, endpt.intersect, stands.intersect),
-                                                                        new Angle(offStands, stands.intersect, down));
-            newAngleRelations.Add(gca);
+            if (!down.Equals(stands.intersect))
+            {
+                GeometricCongruentAngles gca = new GeometricCongruentAngles(new Angle(offEnd, endpt.intersect, stands.intersect),
+                                                                            new Angle(offStands, stands.intersect, down));
+                newAngleRelations.Add(gca);
+            }
 
             if (!up.Equals(endpt.intersect))
             {

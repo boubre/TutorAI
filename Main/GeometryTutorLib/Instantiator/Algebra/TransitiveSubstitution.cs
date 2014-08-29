@@ -1436,7 +1436,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 bool hasArc = terms.Any(c => c is Arc);
                 if (hasAngle && hasArc) equationType = ANGLE_ARC_EQUATION;
                 else if (hasAngle) equationType = ANGLE_EQUATION;
-                else equationType = ARC_EQUATION;
+                else if (hasArc) equationType = ARC_EQUATION;
             }
 
             //

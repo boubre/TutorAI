@@ -241,7 +241,8 @@ namespace GeometryTutorLib.TutorParser
                 if (node.pebbled)
                 {
                     if (deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Congruent ||
-                        deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Equation)
+                        deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.Equation ||
+                        deductiveGraph.vertices[node.id].data is GeometryTutorLib.ConcreteAST.SegmentRatioEquation)
                     {
                         nodes.Add(deductiveGraph.vertices[node.id].data);
                     }

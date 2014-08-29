@@ -4,9 +4,9 @@ using GeometryTutorLib.Precomputer;
 
 namespace GeometryTutorLib.GeometryTestbed
 {
-    public class Page6Prob31 : ActualShadedAreaProblem
+    public class Page6Row2Prob31 : ActualShadedAreaProblem
     {
-        public Page6Prob31(bool onoff, bool complete)
+        public Page6Row2Prob31(bool onoff, bool complete)
             : base(onoff, complete)
         {
             Point a = new Point("A", 0, 0); points.Add(a);
@@ -46,7 +46,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
             SetSolutionArea(6.25 * System.Math.PI - 12);
 
-            problemName = "McDougall Page 6 Problem 31";
+            problemName = "McDougall Page 6 Row 2 Problem 31";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
