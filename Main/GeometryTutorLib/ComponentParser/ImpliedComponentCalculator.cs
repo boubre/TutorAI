@@ -192,6 +192,9 @@ namespace GeometryTutorLib.TutorParser
             //
             atomicRegions = AtomicRegionIdentifier.AtomicIdentifierMain.GetAtomicRegions(allFigurePoints, circles, polygons);
 
+            //
+            // This is to ensure that we actually construct all the polygonalized versions of all the atomic regions.
+            //
             foreach (AtomicRegion atom in atomicRegions)
             {
                 Polygon poly = atom.GetPolygonalized();

@@ -254,6 +254,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
             this.FindIntersection(that, out pt1, out pt2);
 
+            // If the endpoints align, this is not a crossing.
+            if (this.type != that.type && this.HasPoint(that.endpoint1) && this.HasPoint(that.endpoint2)) return false;
+
             // A segment cuts through an arc in two points.
             if (this.type != that.type && pt1 != null && pt1 != null) return true;
 

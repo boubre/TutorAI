@@ -504,6 +504,23 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //
         public bool OverlapsWith(AtomicRegion that)
         {
+            ShapeAtomicRegion shapeAtom = that as ShapeAtomicRegion;
+            if (shapeAtom != null)
+            {
+                Polygon shapePoly = shapeAtom.shape as Polygon;
+                if (shapePoly != null)
+                {
+                    bool interiorPoint = false;
+                    bool exteriorPoint = false;
+                    foreach (Point pt in shapePoly.points)
+                    {
+                        if (this.PointLiesInside(pt)) interiorPoint = true;
+                        else if (!this.PointLiesOn(pt)) exteriorPoint = true;
+                    }
+                    return interiorPoint && exteriorPoint;
+                }
+            }
+
             //
             // Check for intersections that cross.
             //
@@ -823,17 +840,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                     Point inter2 = null;
                     thisConn.FindIntersection(thatConn, out inter1, out inter2);
 
-                    if (inter1 != null)
-                    {
-                        IntersectionAgg newAgg = new IntersectionAgg();
-                        newAgg.thisConn = thisConn;
-                        newAgg.thatConn = thatConn;
-                        newAgg.intersection1 = inter1;
-                        newAgg.intersection2 = inter2;
-                        newAgg.overlap = thisConn.Overlap(thatConn);
-                        AddIntersection(intersections, newAgg);
-                    }
-                    else if (thisConn.Overlap(thatConn))
+                    if (thisConn.Overlap(thatConn))
                     {
                         IntersectionAgg newAgg = new IntersectionAgg();
                         newAgg.thisConn = thisConn;
@@ -843,6 +850,17 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                         newAgg.overlap = true;
                         AddIntersection(intersections, newAgg);
                     }
+                    else if (inter1 != null)
+                    {
+                        IntersectionAgg newAgg = new IntersectionAgg();
+                        newAgg.thisConn = thisConn;
+                        newAgg.thatConn = thatConn;
+                        newAgg.intersection1 = inter1;
+                        newAgg.intersection2 = inter2;
+                        newAgg.overlap = thisConn.Overlap(thatConn);
+                        AddIntersection(intersections, newAgg);
+                    }
+
                 }
             }
 

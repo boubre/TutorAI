@@ -128,7 +128,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
 #if !FIGURE_SYNTHESIZER
             return;
-#endif
+#else
             snapToPoints = ConstructAllMidpoints(this.points);
 
             //
@@ -157,6 +157,7 @@ namespace GeometryTutorLib.ConcreteAST
                     currSidePt = 0;
                 }
             }
+#endif
         }
 
         /// <summary>

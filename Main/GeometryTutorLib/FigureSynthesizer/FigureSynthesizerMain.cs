@@ -46,7 +46,8 @@ namespace GeometryTutorLib
             Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
 
             figureCountMap[ShapeType.SQUARE] = 1;
-            figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+            figureCountMap[ShapeType.ISO_TRAPEZOID] = 1;
+
 
             //
             // Convert the incoming dictionary to a simple list of shapes to process in order.
@@ -56,7 +57,7 @@ namespace GeometryTutorLib
             //
             // Construct the figure recursively.
             //
-            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA);
+            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA);
 
             //
             // Debug output of the problems.
