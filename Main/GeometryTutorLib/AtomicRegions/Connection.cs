@@ -254,6 +254,9 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
             this.FindIntersection(that, out pt1, out pt2);
 
+            // A segment cuts through an arc in two points.
+            if (this.type != that.type && pt1 != null && pt1 != null) return true;
+
             if (pt2 != null) return false;
 
             if (this.HasPoint(pt1)) return false;
@@ -267,8 +270,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
         public bool DefinesArcSegmentRegion(Connection that)
         {
-            if (this.type == ConnectionType.ARC && that.type == ConnectionType.ARC) return false;
-            if (this.type == ConnectionType.SEGMENT && that.type == ConnectionType.SEGMENT) return false;
+            if (this.type == that.type) return false;
 
             // Endpoints align.
             return this.HasPoint(that.endpoint1) && this.HasPoint(that.endpoint2);

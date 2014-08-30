@@ -51,7 +51,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page2Prob18(true, false));       // GTG
             // problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page2Prob20(true, false));       // GTG (~30 second load time in UI)
-            // problems.Add(new Page2Prob28(true, false));    // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
+            // problems.Add(new Page2Prob28(true, false));       // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
             // problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // // problems.Add(new Page3Prob22(true, false));    // Too long to execute
             // problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
@@ -60,10 +60,10 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page4Prob7(true, false));        // GTGDemo
             // problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page4Prob13(true, false));       // GTGDemo
-            // problems.Add(new Page4Prob14(true, false));        // GTG (if given extra parallel clause, issue with detecting shared angle congruency)
+            // problems.Add(new Page4Prob14(true, false));       // GTG (if given extra parallel clause, issue with detecting shared angle congruency)
             // problems.Add(new Page4Prob15(true, false));       // GTG
             // problems.Add(new Page4prob17(true, false));       // GTG
-            // problems.Add(new Page4prob18(true, false));       //Works, but uses unproven semicircle clause
+            // problems.Add(new Page4prob18(true, false));       // Works, but uses unproven semicircle clause
             // // problems.Add(new Page4Prob19(true, false));    // Encoding
 
             //
@@ -85,11 +85,11 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page6Row2Prob29(true, false));       // GTG
             // problems.Add(new Page6Row2Prob30(true, false));       // GTG
             // problems.Add(new Page6Row2Prob31(true, false));       // GTG
-            // problems.Add(new Page6Row3Prob32a(true, false));      // Atomic region problem
-            // problems.Add(new Page6Row3Prob32b(true, false));      // Atomic region problem
-            // problems.Add(new Page6Row5Prob4(true, false));        // GTG, but do we need a naming scheme to distinguish concentric circles?
+            // problems.Add(new Page6Row3Prob32a(true, false));      // GTG
+            // problems.Add(new Page6Row3Prob32b(true, false));      // GTG
+            // problems.Add(new Page6Row5Prob4(true, false));        // GTG
             // problems.Add(new Page6Row5Prob5(true, false));        // GTG
-            // problems.Add(new Page6Row5Prob6(true, false));        //not ready
+            // problems.Add(new Page6Row5Prob6(true, false));        // How to calculate the area of a parallelogram?
             // problems.Add(new Page6Row6Prob28(true, false));       //not ready
             // problems.Add(new Page6Row6Prob29(true, false));       // GTG
             // problems.Add(new Page7Prob3(true, false));            // GTG
@@ -146,9 +146,11 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // ACT Practice
             //
-            //problems.Add(new TwoCircleInteriorTangent(true, false)); // GTGDemo
-            //problems.Add(new CircCircRegionTester(true, false)); // No solution found
-            //problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
+            // problems.Add(new TwoCircleInteriorTangent(true, false));    // GTGDemo
+            // problems.Add(new TwoIsoscelesTriangles(true, false));       // GTG
+            // problems.Add(new CircCircRegionTester(true, false));        // No solution found
+            // problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
+            // problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
 
             return problems;
         }

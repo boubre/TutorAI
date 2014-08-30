@@ -130,6 +130,8 @@ namespace DynamicGeometry.UI
                 return;
             }
 
+            this.Close();
+
             GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain(figureCountMap);
         }
 

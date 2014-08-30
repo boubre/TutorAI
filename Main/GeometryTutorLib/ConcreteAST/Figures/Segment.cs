@@ -616,6 +616,11 @@ namespace GeometryTutorLib.ConcreteAST
             if (!that.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;
         }
 
+        public override void FindIntersection(Arc that, out Point inter1, out Point inter2)
+        {
+            that.FindIntersection(this, out inter1, out inter2);
+        }
+
         private class Vector
         {
             private double originX;

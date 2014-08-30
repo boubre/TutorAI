@@ -787,73 +787,82 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return regions;
         }
 
+        //
+        // Determine if this is a true polygon situation or if it is a sequence of segments and arcs.
+        //
         private List<AtomicRegion> GeneralAtomicRegion(Segment[] segments, Arc[] arcs)
         {
             List<AtomicRegion> regions = new List<AtomicRegion>();
 
             //
-            // Determine if this is a true polygon situation or if it is a sequence of segments and arcs.
+            // Determine if the parts are all segments.
+            // Concurrently determine the proper starting point in the sequence to construct the atomic region.
             //
-            bool endReached = false;
             bool hasArc = false;
             bool hasSegment = false;
-            AtomicRegion theRegion = new AtomicRegion();
+            int startIndex = 0;
             for (int i = 0; i < segments.Length && i < arcs.Length; i++)
             {
                 // Both an arc and a segment.
                 if (segments[i] != null && arcs[i] != null) return regions;
 
-                if (segments[i] != null)
+                // Determine if we have an arc and/or a segment.
+                if (segments[i] != null) hasSegment = true;
+                if (arcs[i] != null) hasArc = true;
+
+                // A solid starting point is an arc right after a null.
+                if (arcs[i] == null && arcs[(i + 1) % arcs.Length] != null)
                 {
-                    hasSegment = true;
-
-                    // We encountered a situation where there was a gap in the list; this is an error
-                    if (endReached) throw new ArgumentException("Gap in the GeneralAtomicRegion list.");
-
-                    theRegion.AddConnection(new Connection(segments[i].Point1, segments[i].Point2, ConnectionType.SEGMENT, segments[i]));
+                    // Assign only once to the startIndex
+                    if (startIndex == 0) startIndex = (i + 1) % arcs.Length;
                 }
-                else if (arcs[i] != null)
+            }
+
+            // If only segments, we have a polygon.
+            if (hasSegment && !hasArc) return regions;
+
+            AtomicRegion theRegion = new AtomicRegion();
+            for (int i = 0; i < segments.Length && i < arcs.Length; i++)
+            {
+                int currIndex = (i + startIndex) % arcs.Length;
+
+                if (segments[currIndex] == null && arcs[currIndex] == null) { /* No-Op */ }
+
+                if (segments[currIndex] != null)
                 {
-                    hasArc = true;
-
-                    // We encountered a situation where there was a gap in the list; this is an error
-                    if (endReached) throw new ArgumentException("Gap in the GeneralAtomicRegion list.");
-
+                    theRegion.AddConnection(new Connection(segments[currIndex].Point1,
+                                                           segments[currIndex].Point2, ConnectionType.SEGMENT, segments[currIndex]));
+                }
+                else if (arcs[currIndex] != null)
+                {
                     //
                     // Compose the arcs (from a single circle) together.
                     //
                     List<MinorArc> sequentialArcs = new List<MinorArc>();
-                    sequentialArcs.Add(arcs[i] as MinorArc);
+                    sequentialArcs.Add(arcs[currIndex] as MinorArc);
 
-                    int currIndex;
-                    for (currIndex = i + 1; currIndex < arcs.Length; currIndex++)
+                    int seqIndex;
+                    for (seqIndex = (currIndex + 1) % arcs.Length; ; seqIndex = (seqIndex + 1) % arcs.Length, i++)
                     {
-                        if (arcs[currIndex] == null) break;
+                        if (arcs[seqIndex] == null) break;
 
-                        if (arcs[i].theCircle.StructurallyEquals(arcs[currIndex].theCircle))
+                        if (arcs[currIndex].theCircle.StructurallyEquals(arcs[seqIndex].theCircle))
                         {
-                            sequentialArcs.Add(arcs[currIndex] as MinorArc);
+                            sequentialArcs.Add(arcs[seqIndex] as MinorArc);
                         }
                         else break;
                     }
 
                     Arc composed;
                     if (sequentialArcs.Count > 1) composed = this.ComposeArcsIntoArc(sequentialArcs);
-                    else composed = arcs[i];
+                    else composed = arcs[currIndex];
 
                     //
                     // Add the connection.
                     //
                     theRegion.AddConnection(new Connection(composed.endpoint1, composed.endpoint2, ConnectionType.ARC, composed));
-
-                    // Update the outer loop index accordingly.
-                    i = currIndex - 1;
                 }
-                else endReached = true;
             }
-
-            // Check if we had both segments and arcs; if only segments, we have a polygon.
-            if (hasSegment && !hasArc) return regions;
 
             return Utilities.MakeList<AtomicRegion>(theRegion);
         }

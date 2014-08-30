@@ -518,17 +518,25 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             {                
                 List<Point> applicWithMidpoints = GetArcPoints(arc, circGranularity);
 
-                // Add the points to the graph
-                foreach (Point pt in applicWithMidpoints)
+                // Add the points to the graph; preprocess to see if all points are inside the region.
+                bool[] inOrOn = new bool[applicWithMidpoints.Count];
+                for (int p = 0; p < applicWithMidpoints.Count; p++)
                 {
-                    graph.AddNode(pt);
+                    if (outerBounds.PointLiesInOrOn(applicWithMidpoints[p]))
+                    {
+                        graph.AddNode(applicWithMidpoints[p]);
+                        inOrOn[p] = true;
+                    }
                 }
 
                 for (int p = 0; p < applicWithMidpoints.Count - 1; p++)
                 {
-                    graph.AddUndirectedEdge(applicWithMidpoints[p], applicWithMidpoints[p+1],
-                                            new Segment(applicWithMidpoints[p], applicWithMidpoints[p+1]).Length,
-                                            GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
+                    if (inOrOn[p] && inOrOn[p + 1])
+                    {
+                        graph.AddUndirectedEdge(applicWithMidpoints[p], applicWithMidpoints[p + 1],
+                                                new Segment(applicWithMidpoints[p], applicWithMidpoints[p + 1]).Length,
+                                                GeometryTutorLib.Area_Based_Analyses.Atomizer.UndirectedPlanarGraph.EdgeType.REAL_ARC);
+                    }
                 }
             }
 

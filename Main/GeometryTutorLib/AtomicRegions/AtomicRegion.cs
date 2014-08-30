@@ -524,6 +524,16 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
                     // If the midpoint of the segment or arc is inside this region.
                     if (this.PointLiesInside(agg.thatConn.Midpoint())) return true;
+
+                    // If it has two interesection points from an arc / segment.
+                    if (agg.MixedTypes())
+                    {
+                        // If the segment arc / combination have the same endpoints.
+                        if (!agg.thisConn.DefinesArcSegmentRegion(agg.thatConn))
+                        {
+                            if (agg.intersection1 != null && agg.intersection2 != null) return true;
+                        }
+                    }
                 }
             }
 
@@ -650,6 +660,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             public Point intersection1;
             public Point intersection2;
             public bool overlap;
+
+            public bool MixedTypes() { return thisConn.type != thatConn.type; }
         }
 
         ////

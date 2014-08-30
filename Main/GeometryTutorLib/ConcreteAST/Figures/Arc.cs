@@ -635,10 +635,15 @@ namespace GeometryTutorLib.ConcreteAST
                 if (!Arc.BetweenMinor(inter1, this)) inter1 = null;
                 if (!Arc.BetweenMinor(inter2, this)) inter2 = null;
             }
-            else
+            else if (this is MajorArc)
             {
                 if (!Arc.BetweenMajor(inter1, this)) inter1 = null;
                 if (!Arc.BetweenMajor(inter2, this)) inter2 = null;
+            }
+            else if (this is Semicircle)
+            {
+                if (!(this as Semicircle).PointLiesOn(inter1)) inter1 = null;
+                if (!(this as Semicircle).PointLiesOn(inter2)) inter2 = null;
             }
 
             if (!that.PointLiesOnAndBetweenEndpoints(inter1)) inter1 = null;

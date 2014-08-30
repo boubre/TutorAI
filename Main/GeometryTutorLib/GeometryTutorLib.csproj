@@ -29,11 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-<<<<<<< Updated upstream
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;</DefineConstants>
-=======
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; FIGURE_SYNTHESIZER; HARD_CODED_UI</DefineConstants>
->>>>>>> Stashed changes
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; FIGURE_SYNTHESIZER</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -386,6 +382,8 @@
     <Compile Include="HardCoded\Problems\ProofProblems\SimilarTrianglesProblem.cs" />
     <Compile Include="HardCoded\Problems\ProofProblems\TransversalsProblem.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ActualShadedAreaProblem.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\SimpleCircleRegion.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\TwoIsoscelesTriangles.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\TwoCircleInteriorTangent.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col1Prob1.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 1\Page1Col1Prob2.cs" />

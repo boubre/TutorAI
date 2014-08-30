@@ -68,6 +68,9 @@ namespace DynamicGeometry.UI
         /// <param name="problem">The problem to draw.</param>
         public void draw(UIProblemDrawer.ProblemDescription problem)
         {
+            // Reset to create the dictionaries.
+            reset();
+
             //Draw the hard-coded problem.
             try
             {

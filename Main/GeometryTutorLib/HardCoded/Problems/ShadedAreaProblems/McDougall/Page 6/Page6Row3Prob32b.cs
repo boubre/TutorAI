@@ -34,11 +34,13 @@ namespace GeometryTutorLib.GeometryTestbed
             given.Add(new GeometricArcEquation(m, new NumericValue(108)));
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", -1, -2));
-            wanted.Add(new Point("", 1, -2));
+            wanted.Add(new Point("", -6, 0));
+            wanted.Add(new Point("", -2, 0));
+            wanted.Add(new Point("", 2, 0));
+            wanted.Add(new Point("", 6, 0));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
-            SetSolutionArea(16 * System.Math.PI);
+            SetSolutionArea(90.47786842);
 
             problemName = "McDougall Page 6 Row 3 Problem 32b";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
