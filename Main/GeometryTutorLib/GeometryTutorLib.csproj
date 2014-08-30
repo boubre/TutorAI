@@ -29,7 +29,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
+<<<<<<< Updated upstream
     <DefineConstants>TRACE;DEBUG;SILVERLIGHT;</DefineConstants>
+=======
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; FIGURE_SYNTHESIZER; HARD_CODED_UI</DefineConstants>
+>>>>>>> Stashed changes
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -397,6 +401,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\Page2Col2Prob1.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\Page2Col2Prob2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ClassX\Page 2\TesterForCircleTriangle.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\FigSynthShadedAreaProblem.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\BasicInteriorPolygonTester.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\BasicInteriorPolygonTester2.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\For Testing\BasicPathologicalPolygonTester.cs" />

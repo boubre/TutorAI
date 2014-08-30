@@ -23,6 +23,16 @@ namespace GeometryTutorLib.TutorParser
         private List<Figure> shapeForest;
         public List<Figure> GetShapeHierarchy() { return shapeForest; }
 
+        public List<Figure> GetRootShapes()
+        {
+            List<Figure> roots = new List<Figure>();
+            foreach (Figure fig in shapeForest)
+            {
+                roots.Add(fig);
+            }
+            return roots;
+        }
+
         // The list of polygons which were strengthened from the deductive system.
         private List<Strengthened> strengthenedPolys;
 

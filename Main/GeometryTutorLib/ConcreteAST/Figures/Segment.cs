@@ -771,5 +771,19 @@ namespace GeometryTutorLib.ConcreteAST
 
             return pt1 != null && pt2 != null;
         }
+
+        public bool Covers(Segment that)
+        {
+            if (this.HasSubSegment(that)) return true;
+
+            if (this.CoincidingWithOverlap(that)) return true;
+
+            return false;
+        }
+
+        public bool Covers(Arc that)
+        {
+            return that.HasEndpoint(this.Point1) && that.HasEndpoint(this.Point2);
+        }
     }
 }

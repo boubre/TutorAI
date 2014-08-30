@@ -8,6 +8,11 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public partial class Rectangle : Parallelogram
     {
+        public override double CoordinatizedArea()
+        {
+            return this.orderedSides[0].Length * this.orderedSides[1].Length;
+        }
+
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             List<Quadrilateral> quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
@@ -39,6 +44,13 @@ namespace GeometryTutorLib.ConcreteAST
             int length = Figure.DefaultSideLength();
             int width = Figure.DefaultSideLength();
 
+            // Ensure we don't have a square.
+            while (width == length)
+            {
+                length = Figure.DefaultSideLength();
+                width = Figure.DefaultSideLength();
+            }
+
             Point topLeft = PointFactory.GeneratePoint(0, width);
             Point topRight = PointFactory.GeneratePoint(length, width);
             Point bottomRight = PointFactory.GeneratePoint(length, 0);
@@ -57,17 +69,18 @@ namespace GeometryTutorLib.ConcreteAST
         public override List<Constraint> GetConstraints()
         {
             List<Equation> eqs = new List<Equation>();
+            List<Congruent> congs = new List<Congruent>();
 
             //
             // Acquire the 'midpoint' equations from the polygon class.
             //
-            eqs.AddRange(GetGranularMidpointEquations());
+            GetGranularMidpointEquations(out eqs, out congs);
 
             //
-            // Create all relationship equations between the opposite sides of the rectangle.
+            // Create all relationship equations among the sides of the rectangle.
             //
-            eqs.Add(new GeometricSegmentEquation(orderedSides[0], orderedSides[2]));
-            eqs.Add(new GeometricSegmentEquation(orderedSides[1], orderedSides[3]));
+            congs.Add(new GeometricCongruentSegments(orderedSides[0], orderedSides[2]));
+            congs.Add(new GeometricCongruentSegments(orderedSides[1], orderedSides[3]));
 
             //
             // Create all relationship equations among the angles.
@@ -82,7 +95,10 @@ namespace GeometryTutorLib.ConcreteAST
                 }
             }
 
-            return Constraint.MakeEquationsIntoConstraints(eqs);
+            List<Constraint> constraints = Constraint.MakeEquationsIntoConstraints(eqs);
+            constraints.AddRange(Constraint.MakeCongruencesIntoConstraints(congs));
+
+            return constraints;
         }
 
         //

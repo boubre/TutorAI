@@ -8,6 +8,11 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public partial class Square : Rhombus
     {
+        public override double CoordinatizedArea()
+        {
+            return Math.Pow(this.orderedSides[0].Length, 2);
+        }
+
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             List<Quadrilateral> quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
@@ -34,12 +39,13 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public override List<Constraint> GetConstraints()
         {
-            List<Constraint> constraints = new List<Constraint>();
+            List<Equation> eqs = new List<Equation>();
+            List<Congruent> congs = new List<Congruent>();
 
             //
             // Acquire the 'midpoint' equations from the polygon class.
             //
-            constraints.AddRange(Constraint.MakeEquationsIntoConstraints(GetGranularMidpointEquations()));
+            GetGranularMidpointEquations(out eqs, out congs);
 
             //
             // Create all relationship equations among the sides of the square.
@@ -48,7 +54,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 for (int s2 = s1 + 1; s2 < orderedSides.Count; s2++)
                 {
-                    constraints.Add(new CongruenceConstraint(new GeometricCongruentSegments(orderedSides[s1], orderedSides[s2])));
+                    congs.Add(new GeometricCongruentSegments(orderedSides[s1], orderedSides[s2]));
                 }
             }
 
@@ -61,9 +67,12 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 for (int a2 = a1 + 1; a2 < angles.Count; a2++)
                 {
-                    constraints.Add(new EquationConstraint(new GeometricAngleEquation(angles[a1], angles[a2])));
+                    eqs.Add(new GeometricAngleEquation(angles[a1], angles[a2]));
                 }
             }
+
+            List<Constraint> constraints = Constraint.MakeEquationsIntoConstraints(eqs);
+            constraints.AddRange(Constraint.MakeCongruencesIntoConstraints(congs));
 
             return constraints;
         }

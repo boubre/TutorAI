@@ -51,6 +51,14 @@ namespace GeometryTutorLib.Area_Based_Analyses
         //
         // Count the number of calculable regions.
         //
+        public int GetNumAtomicComputable()
+        {
+            return solutions.GetNumAtomicComputable();
+        }
+
+        //
+        // Count the number of calculable regions.
+        //
         public int GetNumIncomputable()
         {
             return solutions.GetNumIncomputable();
@@ -473,6 +481,76 @@ namespace GeometryTutorLib.Area_Based_Analyses
 #else
                 Debug.WriteLine((s + 1) + " (" + string.Format("{0:N4}", theSolutions[s].solArea) + "): " + theSolutions[s].solEq.CheapPrettyString());
 #endif
+            }
+        }
+
+        //
+        // Determine which atomic regions touch which root shapes.
+        // Returns the indices of covered shapes.
+        //
+        private List<int>[] DetermineAtomCoverageOfShapes(List<Figure> shapes)
+        {
+            List<int>[] atomsCoverShapes = new List<int>[figureAtoms.Count];
+
+            for (int a = 0; a < atomsCoverShapes.Length; a++)
+            {
+                atomsCoverShapes[a] = new List<int>();
+
+                for (int s = 0; s < shapes.Count; s++)
+                {
+                    if (shapes[s].Covers(figureAtoms[a])) atomsCoverShapes[a].Add(s);
+                }
+            }
+
+            return atomsCoverShapes;
+        }
+
+        //
+        // Does this one solution cover all root shapes.
+        //
+        private bool SolutionCoversRoots(List<int>[] coverage, SolutionAgg solution, int numShapes)
+        {
+            List<int> shapesCovered = new List<int>();
+
+            // Collect all shape-covered indices
+            foreach (int index in solution.atomIndices.orderedIndices)
+            {
+                Utilities.AddUniqueList<int>(shapesCovered, coverage[index]);
+            }
+
+            // If we covered all indices, the solution covers.
+            return shapesCovered.Count == numShapes;
+        }
+
+        //
+        // For each compuable region, does the region touch all root-shapes in the hierarchy?
+        //
+        public void ComputableInterestingCount(List<Figure> roots, out int interestingComputable, out int uninterestingComputable,
+                                                                   out int interestingIncomputable, out int uninterestingIncomputable)
+        {
+            interestingComputable = 0;
+            uninterestingComputable = 0;
+            interestingIncomputable = 0;
+            uninterestingIncomputable = 0;
+
+            //
+            // Determine which atomic regions touch which root shapes.
+            //
+            List<SolutionAgg> computable = solutions.GetComputableSolutions();
+            List<SolutionAgg> incomputable = solutions.GetIncomputableSolutions();
+
+            List<int>[] coverage = DetermineAtomCoverageOfShapes(roots);
+
+            foreach (SolutionAgg comp in computable)
+            {
+                if (SolutionCoversRoots(coverage, comp, roots.Count)) interestingComputable++;
+                else uninterestingComputable++;
+            }
+
+            foreach (SolutionAgg incomp in incomputable)
+            {
+                if (SolutionCoversRoots(coverage, incomp, roots.Count)) interestingIncomputable++;
+                else uninterestingIncomputable++;
             }
         }
     }

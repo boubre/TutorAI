@@ -46,6 +46,18 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return computable;
         }
 
+        public List<SolutionAgg> GetIncomputableSolutions()
+        {
+            List<SolutionAgg> incomputable = new List<SolutionAgg>();
+
+            foreach (KeyValuePair<IndexList, SolutionAgg> pair in solutions)
+            {
+                if (pair.Value.solType == SolutionAgg.SolutionType.INCOMPUTABLE) incomputable.Add(pair.Value);
+            }
+
+            return incomputable;
+        }
+
         public List<SolutionAgg> GetSolutions()
         {
             return new List<SolutionAgg>(solutions.Values);
@@ -66,6 +78,19 @@ namespace GeometryTutorLib.Area_Based_Analyses
             return computable;
         }
 
+        public int GetNumAtomicComputable()
+        {
+            int computable = 0;
+            foreach (KeyValuePair<IndexList, SolutionAgg> pair in solutions)
+            {
+                if (pair.Value.solType == SolutionAgg.SolutionType.COMPUTABLE)
+                {
+                    if (pair.Value.atomIndices.Count == 1) computable++;
+                }
+            }
+            return computable;
+        }
+
         public int GetNumIncomputable()
         {
             int incomputable = 0;
@@ -77,7 +102,7 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
             return incomputable;
         }
-
+        
         //
         // Acquire a single solution equation and area value.
         //

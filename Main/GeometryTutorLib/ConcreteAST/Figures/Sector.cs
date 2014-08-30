@@ -9,10 +9,14 @@ namespace GeometryTutorLib.ConcreteAST
     public partial class Sector : Figure
     {
         public Arc theArc { get; protected set; }
+        public Segment radius1 { get; protected set; }
+        public Segment radius2 { get; protected set; }
 
         public Sector(Arc a)
         {
             theArc = a;
+            radius1 = new Segment(theArc.theCircle.center, theArc.endpoint1);
+            radius2 = new Segment(theArc.theCircle.center, theArc.endpoint2);
 
             thisAtomicRegion = new ShapeAtomicRegion(this);
         }
@@ -25,8 +29,8 @@ namespace GeometryTutorLib.ConcreteAST
 
             List<Segment> sides = new List<Segment>(theArc.GetApproximatingSegments());
 
-            sides.Add(new Segment(theArc.theCircle.center, theArc.endpoint1));
-            sides.Add(new Segment(theArc.theCircle.center, theArc.endpoint2));
+            sides.Add(radius1);
+            sides.Add(radius2);
 
             // Make a polygon out of the radii and the sector
             polygonalized = Polygon.MakePolygon(sides);
@@ -42,8 +46,8 @@ namespace GeometryTutorLib.ConcreteAST
         {
             List<Connection> connections = new List<Connection>();
 
-            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint1, ConnectionType.SEGMENT, new Segment(theArc.theCircle.center, theArc.endpoint1)));
-            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint2, ConnectionType.SEGMENT, new Segment(theArc.theCircle.center, theArc.endpoint2)));
+            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint1, ConnectionType.SEGMENT, radius1));
+            connections.Add(new Connection(theArc.theCircle.center, theArc.endpoint2, ConnectionType.SEGMENT, radius2));
 
             connections.Add(new Connection(theArc.endpoint1, theArc.endpoint2, ConnectionType.ARC, this.theArc));
 
@@ -55,8 +59,8 @@ namespace GeometryTutorLib.ConcreteAST
             List<Segment> segments = new List<Segment>();
 
             // Add radii
-            segments.Add(new Segment(theArc.theCircle.center, theArc.endpoint1));
-            segments.Add(new Segment(theArc.theCircle.center, theArc.endpoint2));
+            segments.Add(radius1);
+            segments.Add(radius2);
 
             // Segmentize the arc
             segments.AddRange(theArc.Segmentize());
@@ -73,8 +77,8 @@ namespace GeometryTutorLib.ConcreteAST
             if (!theArc.theCircle.PointLiesInside(pt)) return false;
 
             // Radii
-            if (new Segment(theArc.theCircle.center, theArc.endpoint1).PointLiesOnAndBetweenEndpoints(pt)) return false;
-            if (new Segment(theArc.theCircle.center, theArc.endpoint2).PointLiesOnAndBetweenEndpoints(pt)) return false;
+            if (radius1.PointLiesOnAndBetweenEndpoints(pt)) return false;
+            if (radius2.PointLiesOnAndBetweenEndpoints(pt)) return false;
 
             //
             // For the Minor Arc, create two angles.
@@ -158,9 +162,6 @@ namespace GeometryTutorLib.ConcreteAST
             //
             // Any intersections between the sides of the sector and the circle must be tangent.
             //
-            Segment radius1 = new Segment(theArc.theCircle.center, theArc.endpoint1);
-            Segment radius2 = new Segment(theArc.theCircle.center, theArc.endpoint2);
-
             Point pt1 = null;
             Point pt2 = null;
             that.FindIntersection(radius1, out pt1, out pt2);
@@ -316,6 +317,50 @@ namespace GeometryTutorLib.ConcreteAST
 
             return prefix + "(" +
                    theArc.endpoint1.SimpleToString() + theArc.theCircle.center.CheapPrettyString() + theArc.endpoint2.SimpleToString() + ")";
+        }
+
+        //
+        // Does this particular segment intersect one of the sides.
+        //
+        public bool Covers(Segment that)
+        {
+            if (radius1.Covers(that)) return true;
+
+            if (radius2.Covers(that)) return true;
+
+            return theArc.Covers(that);
+        }
+
+        //
+        // An arc is covered if one side of the polygon defines the endpoints of the arc.
+        //
+        public bool Covers(Arc that)
+        {
+            if (radius1.Covers(that)) return true;
+
+            if (radius2.Covers(that)) return true;
+
+            return theArc.Covers(that);
+        }
+
+        //
+        // Does the atom have a connection which intersects the sides of the polygon.
+        //
+        public override bool Covers(AtomicRegion atom)
+        {
+            foreach (Connection conn in atom.connections)
+            {
+                if (conn.type == ConnectionType.SEGMENT)
+                {
+                    if (this.Covers(conn.segmentOrArc as Segment)) return true;
+                }
+                else if (conn.type == ConnectionType.ARC)
+                {
+                    if (this.Covers(conn.segmentOrArc as Arc)) return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -41,6 +41,7 @@ namespace GeometryTutorLib.ConcreteAST
         public virtual void FindIntersection(Segment that, out Point inter1, out Point inter2) { inter1 = null; inter2 = null; }
         public virtual void FindIntersection(Arc that, out Point inter1, out Point inter2) { inter1 = null; inter2 = null; }
         public virtual List<Connection> MakeAtomicConnections() { return new List<Connection>(); }
+        public virtual bool Covers(AtomicRegion a) { throw new NotImplementedException(); }
 
         // An ORDERED list of collinear points.
         public List<Point> collinear { get; protected set; }

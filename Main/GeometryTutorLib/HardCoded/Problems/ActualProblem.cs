@@ -17,6 +17,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
         // Formatted Labeling of the Problem
         public string problemName { get; protected set; }
+        public void SetName(string name) { problemName = name; }
 
         public bool problemIsOn { get; protected set; }
 

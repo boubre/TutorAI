@@ -60,11 +60,14 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public override List<Constraint> GetConstraints()
         {
+            throw new NotImplementedException();
+/*
             List<Equation> eqs = new List<Equation>();
 
             //
             // Acquire the 'midpoint' equations from the polygon class.
             //
+
             eqs.AddRange(GetGranularMidpointEquations());
 
             //
@@ -87,6 +90,7 @@ namespace GeometryTutorLib.ConcreteAST
             eqs.Add(new GeometricAngleEquation(angles[1], angles[3]));
 
             return Constraint.MakeEquationsIntoConstraints(eqs);
+*/
         }
     }
 }

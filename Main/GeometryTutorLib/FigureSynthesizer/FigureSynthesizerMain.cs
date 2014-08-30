@@ -12,17 +12,8 @@ namespace GeometryTutorLib
     /// </summary>
     public static partial class FigureSynthesizerMain
     {
-        public static void SynthesizerMain(/* Dictionary<ShapeType, int> figureCountMap */)
+        public static void SynthesizerMain(Dictionary<ShapeType, int> figureCountMap)
         {
-            //
-            // Make up a list of shapes to compose.
-            //
-            Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
-
-            figureCountMap[ShapeType.RECTANGLE] = 1;
-            figureCountMap[ShapeType.TRAPEZOID] = 1;
-            figureCountMap[ShapeType.RIGHT_TRIANGLE] = 1;
-
             //
             // Convert the incoming dictionary to a simple list of shapes to process in order.
             //
@@ -31,7 +22,7 @@ namespace GeometryTutorLib
             //
             // Construct the figure recursively.
             //
-            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA);
+            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA);
 
             //
             // Debug output of the problems.
@@ -42,12 +33,43 @@ namespace GeometryTutorLib
             }
 
             //
-            // Acquire all of the givens using constant propagation for each figure construction.
+            // Construct the problem so that it can be passed to the Solver.
+            //
+            ConstructProblemsToSolve(problems);
+        }
+
+        public static void SynthesizerMain()
+        {
+            //
+            // Make up a list of shapes to compose.
+            //
+            Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+
+            figureCountMap[ShapeType.SQUARE] = 1;
+            figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+
+            //
+            // Convert the incoming dictionary to a simple list of shapes to process in order.
+            //
+            List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap);
+
+            //
+            // Construct the figure recursively.
+            //
+            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA);
+
+            //
+            // Debug output of the problems.
             //
             foreach (FigSynthProblem problem in problems)
             {
-                problem.AcquireGivens();
+                System.Diagnostics.Debug.WriteLine(problem.ToString());
             }
+
+            //
+            // Construct the problem so that it can be passed to the Solver.
+            //
+            ConstructProblemsToSolve(problems);
         }
 
         //
@@ -76,30 +98,64 @@ namespace GeometryTutorLib
                 // Two Shapes
                 //
                 case TemplateType.ALPHA_MINUS_BETA:                           // a - b
-                    // return SubtractShape(defaultLargeFigure, shapeList[1], type);
+                    return ConstructSequentialSubtraction(shapeList);
 
                 case TemplateType.ALPHA_PLUS_BETA:                            // a + b
-                    break;
+                    throw new NotImplementedException();
                 
                 //
                 // Three Shapes
                 //
                 case TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA:                 // a + b + c
-                    break;
+                    throw new NotImplementedException();
+
                 case TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN:  // a + (b - c)
-                    break;
+                    throw new NotImplementedException();
+
                 case TemplateType.LPAREN_ALPHA_PLUS_BETA_RPAREN_MINUS_GAMMA:  // (a + b) - c
-                    break;
+                    throw new NotImplementedException();
+
                 case TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA:               // a - b - c
-                    // return ConstructSequentialSubtraction(shapeList, type);
-                    break;
+                    return ConstructSequentialSubtraction(shapeList);
+
                 case TemplateType.ALPHA_MINUS_BETA_PLUS_GAMMA:                // a - b + c
-                    break;
+                    throw new NotImplementedException();
+
                 case TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN: // a - (b - c)
-                    break;
+                    return ConstructGroupedSubtraction(shapeList);
             }
 
             return new List<FigSynthProblem>();
+        }
+
+        //
+        // Perform a - (b - c) =
+        //                         1. a - b 
+        //                         2. b - c
+        //
+        private static List<FigSynthProblem> ConstructGroupedSubtraction(List<ShapeType> shapes)
+        {
+            //
+            // Construct  a - b
+            //
+            Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
+            List<FigSynthProblem> aMinusB = SubtractShape(defaultLargeFigure, shapes[1]);
+
+            //
+            // For each of the aMinusB problems, the outer bounds is defined by a shape; subtract the new shape.
+            //
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+            foreach (FigSynthProblem top in aMinusB)
+            {
+                List<FigSynthProblem> bMinusC = SubtractShape(((top as BinarySynthOperation).rightProblem as UnarySynth).figure, shapes[2]);
+
+                foreach (FigSynthProblem bc in bMinusC)
+                {
+                    newSynths.Add(FigSynthProblem.AppendFigureSubtraction(top, bc));
+                }
+            }
+
+            return newSynths;
         }
 
         //
@@ -107,22 +163,38 @@ namespace GeometryTutorLib
         //
         private static List<FigSynthProblem> ConstructSequentialSubtraction(List<ShapeType> shapes)
         {
+            //
+            // Construct base case
+            //
             Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
 
-            //List<FigSynthProblem> synths =  SubtractShape(defaultLargeFigure, defaultLargeFigure.MakeAtomicConnections(),
-            //                                              defaultLargeFigure.allComposingPoints, shapes[1]);
-            List<FigSynthProblem> synths = SubtractShape(defaultLargeFigure, shapes[1]);
+            List<FigSynthProblem> startSynths = SubtractShape(defaultLargeFigure, shapes[1]);
 
-            //List
-
+            //
+            // Recursive construction of each shape (level in the recursion).
+            //
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>(startSynths);
             for (int s = 2; s < shapes.Count; s++)
             {
-                foreach (FigSynthProblem synth in synths)
-                {
-                }
+                newSynths = ConstructSubtraction(newSynths, shapes[s]);
             }
 
-            return new List<FigSynthProblem>();
+            return newSynths;
+        }
+
+        //
+        // Recursive case
+        //
+        private static List<FigSynthProblem> ConstructSubtraction(List<FigSynthProblem> synths, ShapeType shapeType)
+        {
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+
+            foreach (FigSynthProblem synth in synths)
+            {
+                newSynths.AddRange(Subtract(synth, shapeType));
+            }
+
+            return newSynths;
         }
 
         //
@@ -143,25 +215,23 @@ namespace GeometryTutorLib
                 if (shapeAtom != null)
                 {
                     newSubs.AddRange(SubtractShape(shapeAtom.shape, shapeType));
-                    // newSubs.AddRange(SubtractShape(shapeAtom.shape, shapeAtom.shape.MakeAtomicConnections(), shapeAtom.shape.allComposingPoints, shapeType));
                 }
             }
-
-            //
-            // Eliminate symmetric problems? Will they occur here?
-            //
 
             //
             // Combine the existent problem with the newly subtracted region.
             //
             List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
-            foreach (FigSynthProblem problem in newSubs)
+            foreach (FigSynthProblem newSub in newSubs)
             {
-                // Make a copy out of the outer problem.
-            //    new FigSynthProblem(synth, problem);
+                // Makes a copy out of the outer problem and appends the subtraction operation.
+                newSynths.Add(FigSynthProblem.AppendAtomicSubtraction(synth, newSub));
             }
 
-            return newSynths;
+            //
+            // Eliminate symmetric problems.
+            //
+            return FigSynthProblem.RemoveSymmetric(newSynths);
         }
 
 
@@ -369,6 +439,152 @@ namespace GeometryTutorLib
             }
 
             return new List<FigSynthProblem>();
+        }
+
+#if HARD_CODED_UI
+        private static bool drawnAProblem = false;
+#endif
+        private static List<GeometryTestbed.FigSynthShadedAreaProblem> ConstructProblemsToSolve(List<FigSynthProblem> problems)
+        {
+            List<GeometryTestbed.FigSynthShadedAreaProblem> shadedAreaProblems = new List<GeometryTestbed.FigSynthShadedAreaProblem>();
+
+            foreach (FigSynthProblem problem in problems)
+            {
+                GeometryTestbed.FigSynthShadedAreaProblem shadedProb = ConstructProblem(problem);
+                shadedAreaProblems.Add(shadedProb);
+                shadedProb.Run();
+
+#if HARD_CODED_UI
+                if (!drawnAProblem)
+                {
+                    UIProblemDrawer.getInstance().draw(shadedProb.MakeUIProblemDescription());
+                    return shadedAreaProblems;
+                }
+                drawnAProblem = true;
+#endif
+            }
+
+            return shadedAreaProblems;
+        }
+
+        private static int figCounter = 1;
+        private static GeometryTestbed.FigSynthShadedAreaProblem ConstructProblem(FigSynthProblem problem)
+        {
+            GeometryTestbed.FigSynthShadedAreaProblem shadedArea = new GeometryTestbed.FigSynthShadedAreaProblem(true, true);
+            
+            //
+            // Name the problem (uniquely).
+            //
+            shadedArea.SetName("Fig-Synthesized " + (figCounter++));
+
+            //
+            // Construct the points.
+            //
+            List<Point> points = problem.CollectPoints();
+            shadedArea.SetPoints(points);
+
+            //
+            // Construct the collinear relationships.
+            //
+            List<Segment> segments;
+            List<Collinear> collinear;
+
+            AcquireCollinearAndSegments(problem.CollectSegments(), points, out segments, out collinear); 
+
+            shadedArea.SetSegments(segments);
+            shadedArea.SetCollinear(collinear);
+
+            //
+            // Construct circles.
+            //
+            shadedArea.SetCircles(problem.CollectCircles());
+
+            //
+            // Invoke the parser.
+            //
+            shadedArea.InvokeParser();
+
+            //
+            // Set the wanted atomic regions.
+            //
+            shadedArea.SetWantedRegions(shadedArea.GetRemainingRegionsFromParser(problem));
+
+            //
+            // Set the known values.
+            // Acquire all of the givens using constant propagation for each figure construction.
+            //
+            shadedArea.SetKnowns(problem.AcquireKnowns());
+            
+            //
+            // Set the problem given clauses.
+            //
+            List<GroundedClause> givens = problem.GetGivens();
+            problem.GetMidpoints().ForEach(m => givens.Add(m));
+            shadedArea.SetGivens(givens);
+
+            //
+            // Set the actual area of the solution (area of wanted regions).
+            //
+            shadedArea.SetSolutionArea(problem.GetCoordinateArea());
+
+            return shadedArea;
+        }
+
+        //
+        // Determine which of the inner Shape points apply to the given connection; add them as collinear points.
+        //
+        private static void AcquireCollinearAndSegments(List<Segment> segments, List<Point> points,
+                                                        out List<Segment> trueSegments, out List<Collinear> collinear)
+        {
+            trueSegments = new List<Segment>();
+            collinear = new List<Collinear>();
+
+            // Maximal segments (containing no subsegments).
+            List<Segment> maximal = new List<Segment>();
+
+            //
+            // Prune subsegments away
+            //
+            for (int s1 = 0; s1 < segments.Count; s1++)
+            {
+                bool max = true;
+                for (int s2 = 0; s2 < segments.Count; s2++)
+                {
+                    if (s1 != s2)
+                    {
+                        if (segments[s1].HasSubSegment(segments[s2]))
+                        {
+                            max = false;
+                            break;
+                        }
+                    }
+                }
+                if (max) maximal.Add(segments[s1]);
+            }
+
+            //
+            // Place all points on appropriate segments for collinearity.
+            //
+            foreach (Segment max in maximal)
+            {
+                max.ClearCollinear();
+                foreach (Point pt in points)
+                {
+                    if (max.PointLiesOn(pt))
+                    {
+                        max.AddCollinearPoint(pt);
+                    }
+                }
+                
+                //
+                // Convert to collinear or straight-up segments.
+                //
+                if (max.collinear.Count > 2)
+                {
+                    collinear.Add(new Collinear(max.collinear));
+                }
+                else trueSegments.Add(max);
+            }
         }
     }
 }

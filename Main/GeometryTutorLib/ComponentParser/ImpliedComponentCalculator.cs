@@ -943,6 +943,49 @@ namespace GeometryTutorLib.TutorParser
             return atoms;
         }
 
+        private List<int> GetAtomicRegionIndicesByFigure(Figure fig)
+        {
+            List<int> atomIndices = new List<int>();
+
+            for (int a = 0; a < atomicRegions.Count; a++)
+            {
+                ShapeAtomicRegion shapeAtom = atomicRegions[a] as ShapeAtomicRegion;
+                if (shapeAtom != null)
+                {
+                    if (fig.Contains(shapeAtom.shape)) atomIndices.Add(a);
+                }
+                else
+                {
+                    if (fig.Contains(this.allFigurePoints, atomicRegions[a])) atomIndices.Add(a);
+                }
+            }
+
+            return atomIndices;
+        }
+
+        public List<AtomicRegion> GetAtomicRegionsNotByFigures(List<Figure> figs)
+        {
+            List<int> atomIndices = new List<int>();
+
+            // Acquire all region (indices) defined by the given figures.
+            foreach (Figure fig in figs)
+            {
+                Utilities.AddUniqueList<int>(atomIndices, GetAtomicRegionIndicesByFigure(fig));
+            }
+
+            // Take the complement of the indices
+            List<int> complement = Utilities.ComplementList(atomIndices, atomicRegions.Count);
+
+            // Convert the complement indices to actual list of atomic regions.
+            List<AtomicRegion> compRegions = new List<AtomicRegion>();
+            foreach (int index in complement)
+            {
+                compRegions.Add(atomicRegions[index]);
+            }
+
+            return compRegions;
+        }
+
         //
         // Search the list of atomic regions using a single set of points to determine whether the point is inside the region or not.
         //

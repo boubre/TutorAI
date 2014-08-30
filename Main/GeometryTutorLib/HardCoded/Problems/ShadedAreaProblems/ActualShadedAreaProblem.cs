@@ -13,7 +13,7 @@ namespace GeometryTutorLib.GeometryTestbed
         public GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known { get; protected set; }
 
         private double solutionArea;
-        protected void SetSolutionArea(double a) { solutionArea = a; }
+        public void SetSolutionArea(double a) { solutionArea = a; }
         public double GetSolutionArea() { return solutionArea; }
 
         //
@@ -59,21 +59,37 @@ namespace GeometryTutorLib.GeometryTestbed
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();
 
+            this.isComplete = analyzer.IsComplete();
 
+            if (this.isComplete)
+            {
+                System.Diagnostics.Debug.WriteLine("This problem is complete.");
+            }
+            else
+            {
+                int interestingComputable = 0;
+                int uninterestingComputable = 0;
+                int interestingIncomputable = 0;
+                int uninterestingIncomputable = 0;
+                analyzer.GetComputableInterestingCount(out interestingComputable, out uninterestingComputable,
+                                                       out interestingIncomputable, out uninterestingIncomputable);
 
-
-
+                System.Diagnostics.Debug.WriteLine("Interesting Computable: " + interestingComputable);
+                System.Diagnostics.Debug.WriteLine("UNinteresting Computable: " + uninterestingComputable);
+                System.Diagnostics.Debug.WriteLine("Interesting INcomputable: " + interestingIncomputable);
+                System.Diagnostics.Debug.WriteLine("UNinteresting INcomputable: " + uninterestingIncomputable);
+            }
             //
             // If we know it's complete, keep that overridden completeness.
             // Otherwise, determine completeness through analysis of the nodes in the hypergraph.
             //
-            if (!this.isComplete) this.isComplete = figureStats.isComplete;
+            // if (!this.isComplete) this.isComplete = figureStats.isComplete;
 
             //System.Diagnostics.Debug.WriteLine("Resultant Complete: " + this.isComplete +"\n");
 
-
             if (this.isComplete)
             {
+
             }
             else
             {

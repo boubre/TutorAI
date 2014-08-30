@@ -8,6 +8,10 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public abstract partial class Figure
     {
+#if FIGURE_SYNTHESIZER
+        protected List<Midpoint> midpoints = new List<Midpoint>();
+        public List<Midpoint> GetMidpointClauses() { return midpoints; }
+#endif
         public virtual bool CoordinateCongruent(Figure that) { return false; }
         public virtual List<Constraint> GetConstraints() { return new List<Constraint>(); }
 
@@ -15,6 +19,8 @@ namespace GeometryTutorLib.ConcreteAST
         public List<Point> allComposingPoints { get; protected set; }
         // Subsegments of each side (parallel with the orderedsides)
         public List<Segment>[] sideSubsegments { get; protected set; }
+
+        public virtual double CoordinatizedArea() { throw new NotImplementedException(); }
 
         //
         //

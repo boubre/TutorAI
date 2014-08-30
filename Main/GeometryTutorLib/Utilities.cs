@@ -389,6 +389,33 @@ namespace GeometryTutorLib
             return union;
         }
 
+        public static List<int> ComplementList(List<int> theList, int size)
+        {
+            // Ensure smallest to largest ordering.
+            theList.Sort();
+
+            // Eventual complementary list.
+            List<int> complement = new List<int>();
+
+            int index, ell;
+            for (index = 0, ell = 0; index < size && ell < theList.Count; index++)
+            {
+                if (index != theList[ell])
+                {
+                    complement.Add(index);
+                }
+                else ell++;
+            }
+
+            // Picking up remaining values up to size
+            for (; index < size; index++)
+            {
+                complement.Add(index);
+            }
+
+            return complement;
+        }
+
         // Makes a list containing a single element
         public static void AddUniqueList<T>(List<T> list, List<T> objList)
         {

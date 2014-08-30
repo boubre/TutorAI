@@ -13,6 +13,18 @@ namespace GeometryTutorLib.ConcreteAST
         public abstract List<Segment> GetAreaVariables();
         public abstract double EvaluateArea(KnownMeasurementsAggregator known);
 
+        public abstract FigSynthProblem Copy();
+        public abstract FigSynthProblem GetSynthByShape(Figure that);
+        public abstract FigSynthProblem ReplaceUnary(Figure that, FigSynthProblem toSub);
+        public abstract List<Point> CollectPoints();
+        public abstract List<Segment> CollectSegments();
+        public abstract List<Figure> CollectFigures();
+        public abstract List<Arc> CollectArcs();
+        public abstract List<Circle> CollectCircles();
+        public abstract double GetCoordinateArea();
+        public abstract List<GroundedClause> GetGivens();
+        public abstract List<Midpoint> GetMidpoints();
+
         //public Figure outerShape { get; protected set; }
         //public void SetOuterShape(Figure outer) { outerShape = outer; }
 
@@ -20,6 +32,7 @@ namespace GeometryTutorLib.ConcreteAST
         //public void SetOuterShapeConstraints(List<Constraint> cs) { outerShapeConstraints = cs; }
 
         // The allowable regions that we might insert a figure.
+        // This is only meaningful at the top level of the problem.
         protected List<AtomicRegion> openRegions;
         public List<AtomicRegion> GetOpenRegions() { return openRegions; }
         public void SetOpenRegions(List<AtomicRegion> rs) { openRegions = rs; }
@@ -99,7 +112,7 @@ namespace GeometryTutorLib.ConcreteAST
         // 3) From the list of variables, remove which of them that are now known.
         // 4) Repeat until the list of variables is empty.
         //
-        public List<Segment> AcquireGivens()
+        public KnownMeasurementsAggregator AcquireKnowns()
         {
             // Acquire all unknown variables required to calculate the area.
             List<Segment> unknownAreaVars = this.GetAreaVariables();
@@ -133,7 +146,16 @@ namespace GeometryTutorLib.ConcreteAST
                 unknownAreaVars = AcquireCurrentUnknowns(known, unknownAreaVars);
             }
 
-            return assumptions;
+            //
+            // Create the known object.
+            //
+            KnownMeasurementsAggregator trueAssumptions = new KnownMeasurementsAggregator();
+            foreach (Segment seg in assumptions)
+            {
+                trueAssumptions.AddSegmentLength(seg, seg.Length);
+            }
+
+            return trueAssumptions;
         }
 
         //
@@ -151,7 +173,76 @@ namespace GeometryTutorLib.ConcreteAST
             return newUnknowns;
         }
 
+        //
+        // Append subtraction to this current problem; the subtraction occurs within the inner figure (shape).
+        //
+        public static FigSynthProblem AppendFigureSubtraction(FigSynthProblem that, FigSynthProblem toAppend)
+        {
+            BinarySynthOperation binaryAppend = toAppend as BinarySynthOperation;
+            if (binaryAppend == null) return null;
 
+            // Verify that the outer part of toAppend is a figure in this problem.
+            Figure theShape = (binaryAppend.leftProblem as UnarySynth).figure;
+            FigSynthProblem leftShapeProblem = that.GetSynthByShape(theShape);
+
+            if (leftShapeProblem == null)
+            {
+                throw new ArgumentException("Shape is not in the given problem: " + theShape);
+            }
+
+            // Make a copy of that.
+            FigSynthProblem copy = that.Copy();
+
+            //
+            // Create the new subtraction node and insert it into the copy.
+            //
+            // Since the 'left' expression was a shape, the 'right' is the actual shape we are appending.
+            SubtractionSynth newSub = new SubtractionSynth(leftShapeProblem, binaryAppend.rightProblem);
+
+            copy.ReplaceUnary(theShape, newSub);
+
+            return copy;
+        }
+
+        //
+        // Append subtraction to this current problem; the subtraction occurs within one of the open atomic regions.
+        //
+        public static FigSynthProblem AppendAtomicSubtraction(FigSynthProblem that, FigSynthProblem toAppend)
+        {
+            BinarySynthOperation binaryAppend = toAppend as BinarySynthOperation;
+            if (binaryAppend == null) return null;
+
+            // Verify that the outer part of toAppend is an open atomic region.
+            if (!that.openRegions.Contains(new ShapeAtomicRegion((binaryAppend.leftProblem as UnarySynth).figure)))
+            {
+                throw new ArgumentException("Shape is not an open atomic region: " + (binaryAppend.leftProblem as UnarySynth).figure);
+            }
+
+            // Since the 'left' expression was an open region, the 'right' is the actual shape we are appending.
+            SubtractionSynth newSub = new SubtractionSynth(that.Copy(), binaryAppend.rightProblem);
+
+            // Update the open regions to the inner-most shape.
+            newSub.SetOpenRegions(toAppend.openRegions);
+
+            return newSub;
+        }
+
+        //
+        // Append subtraction to this current problem.
+        //
+        public static FigSynthProblem AppendAddition(FigSynthProblem that, FigSynthProblem toAppend)
+        {
+            // Create the new synth object
+            AdditionSynth newSum = new AdditionSynth(that.Copy(), toAppend);
+
+            // The open regions that may be modified consist of a union of regions.
+            List<AtomicRegion> newOpenRegions = new List<AtomicRegion>(that.openRegions);
+            newOpenRegions.AddRange(toAppend.openRegions);
+
+            newSum.SetOpenRegions(newOpenRegions);
+
+            return newSum;
+        }
     }
 
     public abstract class BinarySynthOperation : FigSynthProblem
@@ -210,6 +301,92 @@ namespace GeometryTutorLib.ConcreteAST
             // The atomic regions have to match 1-1 and onto.
             return base.IsSymmetricTo(that);
         }
+
+        public override FigSynthProblem GetSynthByShape(Figure that)
+        {
+            FigSynthProblem left = leftProblem.GetSynthByShape(that);
+            if (left != null) return left;
+
+            return rightProblem.GetSynthByShape(that);
+        }
+
+        public override FigSynthProblem ReplaceUnary(Figure that, FigSynthProblem toSub)
+        {
+            leftProblem = leftProblem.ReplaceUnary(that, toSub);
+            rightProblem = rightProblem.ReplaceUnary(that, toSub);
+
+            return this;
+        }
+
+        public override List<Point> CollectPoints()
+        {
+            List<Point> points = new List<Point>(leftProblem.CollectPoints());
+            List<Point> right = new List<Point>(rightProblem.CollectPoints());
+
+            Utilities.AddUniqueList<Point>(points, right);
+
+            return points;
+        }
+
+        public override List<Segment> CollectSegments()
+        {
+            List<Segment> segments = new List<Segment>(leftProblem.CollectSegments());
+            List<Segment> right = new List<Segment>(rightProblem.CollectSegments());
+
+            Utilities.AddUniqueList<Segment>(segments, right);
+
+            return segments;
+        }
+
+        public override List<Arc> CollectArcs()
+        {
+            List<Arc> arcs = new List<Arc>(leftProblem.CollectArcs());
+            List<Arc> right = new List<Arc>(rightProblem.CollectArcs());
+
+            Utilities.AddUniqueList<Arc>(arcs, right);
+
+            return arcs;
+        }
+
+        public override List<Circle> CollectCircles()
+        {
+            List<Circle> circles = new List<Circle>(leftProblem.CollectCircles());
+            List<Circle> right = new List<Circle>(rightProblem.CollectCircles());
+
+            Utilities.AddUniqueList<Circle>(circles, right);
+
+            return circles;
+        }
+
+        public override List<GroundedClause> GetGivens()
+        {
+            List<GroundedClause> left = leftProblem.GetGivens();
+            List<GroundedClause> right = rightProblem.GetGivens();
+
+            left.AddRange(right);
+
+            return left;
+        }
+
+        public override List<Figure> CollectFigures()
+        {
+            List<Figure> left = new List<Figure>(leftProblem.CollectFigures());
+            List<Figure> right = new List<Figure>(rightProblem.CollectFigures());
+
+            left.AddRange(right);
+
+            return left;
+        }
+
+        public override List<Midpoint> GetMidpoints()
+        {
+            List<Midpoint> left = new List<Midpoint>(leftProblem.GetMidpoints());
+            List<Midpoint> right = new List<Midpoint>(rightProblem.GetMidpoints());
+
+            left.AddRange(right);
+
+            return left;
+        }
     }
 
     public class SubtractionSynth : BinarySynthOperation
@@ -241,9 +418,23 @@ namespace GeometryTutorLib.ConcreteAST
             return leftArea - rightArea;
         }
 
+        public override FigSynthProblem Copy()
+        {
+            SubtractionSynth copy = new SubtractionSynth(this.leftProblem.Copy(), this.rightProblem.Copy());
+
+            copy.SetOpenRegions(new List<AtomicRegion>(this.openRegions));
+
+            return copy;
+        }
+
         public override string ToString()
         {
             return "( " + leftProblem.ToString() + " - " + rightProblem.ToString() + " )";
+        }
+
+        public override double GetCoordinateArea()
+        {
+            return leftProblem.GetCoordinateArea() - rightProblem.GetCoordinateArea();
         }
     }
 
@@ -276,9 +467,23 @@ namespace GeometryTutorLib.ConcreteAST
             return leftArea + rightArea;
         }
 
+        public override FigSynthProblem Copy()
+        {
+            AdditionSynth copy = new AdditionSynth(this.leftProblem.Copy(), this.rightProblem.Copy());
+
+            copy.SetOpenRegions(new List<AtomicRegion>(this.openRegions));
+
+            return copy;
+        }
+
         public override string ToString()
         {
             return "( " + leftProblem.ToString() + " + " + rightProblem.ToString() + " )";
+        }
+
+        public override double GetCoordinateArea()
+        {
+            return leftProblem.GetCoordinateArea() + rightProblem.GetCoordinateArea();
         }
     }
 
@@ -308,6 +513,63 @@ namespace GeometryTutorLib.ConcreteAST
             // return base.IsSymmetricTo(that);
         }
 
+        public override FigSynthProblem Copy()
+        {
+            return new UnarySynth(figure);
+        }
+
+        public override FigSynthProblem GetSynthByShape(Figure that)
+        {
+            if (this.figure.Equals(that)) return this;
+
+            return null;
+        }
+
+        //
+        // If the figure matches this unary, return the problem to sub.
+        // Otherwise return this (which indicates no substitution).
+        //
+        public override FigSynthProblem ReplaceUnary(Figure that, FigSynthProblem toSub)
+        {
+            if (figure.Equals(that)) return toSub;
+
+            return this;
+        }
+
+        public override List<Point> CollectPoints()
+        {
+            if (this.figure is Circle) return Utilities.MakeList<Point>((figure as Circle).center);
+
+            if (this.figure is Arc) return Utilities.MakeList<Point>((figure as Arc).theCircle.center);
+
+            if (this.figure is Polygon) return (this.figure as Polygon).points;
+
+            return new List<Point>();
+        }
+
+        public override List<Segment> CollectSegments()
+        {
+            if (this.figure is Polygon) return (this.figure as Polygon).orderedSides;
+
+            return new List<Segment>();
+        }
+
+        public override List<Arc> CollectArcs()
+        {
+            if (this.figure is Arc) return Utilities.MakeList<Arc>(figure as Arc);
+
+            return new List<Arc>();
+        }
+
+        public override List<Circle> CollectCircles()
+        {
+            if (this.figure is Circle) return Utilities.MakeList<Circle>(figure as Circle);
+
+            if (this.figure is Arc) return Utilities.MakeList<Circle>((figure as Arc).theCircle);
+
+            return new List<Circle>();
+        }
+
         public override List<Constraint> GetConstraints()
         {
             return figure.GetConstraints();
@@ -326,6 +588,37 @@ namespace GeometryTutorLib.ConcreteAST
         public override string ToString()
         {
             return figure.ToString();
+        }
+
+        public override double GetCoordinateArea()
+        {
+            return figure.CoordinatizedArea();
+        }
+
+        public override List<GroundedClause> GetGivens()
+        {
+            Polygon thisPoly = figure as Polygon;
+            if (thisPoly == null) return new List<GroundedClause>();
+
+            //
+            // Create the simple version of the figure; we already have the strengthened version.
+            //
+            Polygon simple = null;
+            if (thisPoly.points.Count == 3) simple = new Triangle(thisPoly.points);
+            if (thisPoly.points.Count == 4) simple = new Quadrilateral(thisPoly.orderedSides[0], thisPoly.orderedSides[2],
+                                                                       thisPoly.orderedSides[1], thisPoly.orderedSides[3]);
+
+            return Utilities.MakeList<GroundedClause>(new Strengthened(simple, this.figure));
+        }
+
+        public override List<Figure> CollectFigures()
+        {
+            return Utilities.MakeList<Figure>(this.figure);
+        }
+
+        public override List<Midpoint> GetMidpoints()
+        {
+            return this.figure.GetMidpointClauses();
         }
     }
 }

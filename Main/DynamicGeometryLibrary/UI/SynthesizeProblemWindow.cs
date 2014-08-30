@@ -130,7 +130,7 @@ namespace DynamicGeometry.UI
                 return;
             }
 
-            //TODO: Pass to back end
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain(figureCountMap);
         }
 
         /// <summary>

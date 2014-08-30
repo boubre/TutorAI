@@ -11,6 +11,20 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public partial class Polygon : Figure
     {
+        //
+        // Requires strict counter-clockwise ordering of points...so may not work.
+        //
+        public override double CoordinatizedArea()
+        {
+            List<Point> localPoints = new List<Point>(this.points);
+
+            localPoints.Add(points[0]);
+            var area = Math.Abs(localPoints.Take(points.Count - 1)
+               .Select((p, i) => (localPoints[i + 1].X - p.X) * (localPoints[i + 1].Y + p.Y)).Sum() / 2);
+
+            return area;
+        }
+
         public static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             return new List<FigSynthProblem>();
@@ -112,6 +126,9 @@ namespace GeometryTutorLib.ConcreteAST
 
         protected void FigureSynthesizerConstructor()
         {
+#if !FIGURE_SYNTHESIZER
+            return;
+#endif
             snapToPoints = ConstructAllMidpoints(this.points);
 
             //
@@ -150,13 +167,16 @@ namespace GeometryTutorLib.ConcreteAST
             allComposingPoints = new List<Point>();
 
             List<Point> middlePoints = new List<Point>();
-            for (int i = 0; i < vertices.Count; i++)
+            for (int s = 0; s < orderedSides.Count; s++)
             {
+                Point start = orderedSides[s].SharedVertex(orderedSides[Utilities.Modulus(s - 1, orderedSides.Count)]);
+                Point end = orderedSides[s].OtherPoint(start);
+
                 // Construct all the necessary midpoints.
-                List<Point> currMiddlePoints = ConstructMidpoints(vertices[i], vertices[(i+1) % vertices.Count], 0);
+                List<Point> currMiddlePoints = ConstructMidpoints(start, end, 0);
 
                 // Add to the overall list.
-                allComposingPoints.Add(vertices[i]);
+                allComposingPoints.Add(start);
                 allComposingPoints.AddRange(currMiddlePoints);
 
                 // Add to the distinct snapping set of midpoints.
@@ -173,13 +193,18 @@ namespace GeometryTutorLib.ConcreteAST
             // Recursive Base Case
             if (level == NUM_MID_SEGMENT_POINTS) return middlePoints;
 
-            Point midpoint = end1.Midpoint(end2);
+            Point midpoint = PointFactory.GeneratePoint(end1.Midpoint(end2));
 
             //
             // Recursively construct all points between
             //
             middlePoints.AddRange(ConstructMidpoints(end1, midpoint, level + 1));
+
             middlePoints.Add(midpoint);
+
+            // Add to the list of midpoints clauses (for instantiation during figure synthesis).
+            midpoints.Add(new Midpoint(new InMiddle(midpoint, new Segment(end1, end2))));
+
             middlePoints.AddRange(ConstructMidpoints(midpoint, end2, level + 1));
 
             return middlePoints;
@@ -188,9 +213,10 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Since we are cutting segments into sections, there is a direct relationship between the split side lengths for each side.
         //
-        protected List<Equation> GetGranularMidpointEquations()
+        protected void GetGranularMidpointEquations(out List<Equation> eqs, out List<Congruent> congs)
         {
-            List<Equation> relations = new List<Equation>();
+            eqs = new List<Equation>();
+            congs = new List<Congruent>();
 
             //
             // Each sub-segment is equal to each other on each side.
@@ -201,7 +227,7 @@ namespace GeometryTutorLib.ConcreteAST
                 {
                     for (int s2 = s1 + 1; s2 < sideSubsegments[side].Count; s2++)
                     {
-                        relations.Add(new GeometricSegmentEquation(sideSubsegments[side][s1], sideSubsegments[side][s2]));
+                        congs.Add(new GeometricCongruentSegments(sideSubsegments[side][s1], sideSubsegments[side][s2]));
                     }
                 }
             }
@@ -219,11 +245,9 @@ namespace GeometryTutorLib.ConcreteAST
                 foreach (Segment subSeg in sideSubsegments[side])
                 {
                                                                                 // Factor * sub-segment = whole side
-                    relations.Add(new GeometricSegmentEquation(new Multiplication(factorVal, subSeg), orderedSides[side]));
+                    eqs.Add(new GeometricSegmentEquation(new Multiplication(factorVal, subSeg), orderedSides[side]));
                 }
             }
-
-            return relations;
         }
     }
 }

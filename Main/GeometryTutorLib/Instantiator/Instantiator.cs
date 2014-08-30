@@ -60,14 +60,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 //
                 // Cutoff counter; seek a bunch of equations in sequence.
                 //
-                int NUMEQUATIONS_FOR_CUTOFF = 100;
+                int NUMEQUATIONS_FOR_CUTOFF = 50;
 
                 if (clause is Equation || clause.IsAlgebraic() || clause is Supplementary) numSequentialEquations++;
                 else numSequentialEquations = 0;
 
                 if (numSequentialEquations >= NUMEQUATIONS_FOR_CUTOFF) return graph;
 
-                if (graph.Size() > 900) return graph;
+                if (graph.Size() > 800) return graph;
 
                 //
                 // Apply the clause to all applicable instantiators

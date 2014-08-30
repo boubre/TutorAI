@@ -51,10 +51,34 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static List<AtomicRegion> ConstructAtomicRegions(List<Connection> connections, List<Point> innerShapePoints, Figure innerShape)
         {
-            List<Point> points = new List<Point>();
-            List<Segment> segments = new List<Segment>();
-            List<Arc> arcs = new List<Arc>();
-            List<Circle> circles = new List<Circle>();
+            List<Point> points;
+            List<Segment> segments;
+            List<Arc> arcs;
+            List<Circle> circles;
+
+            CollectConstituentElements(connections, innerShapePoints, innerShape, out points, out segments, out arcs, out circles);
+
+            // Acquire circle granularity for atomic region finding.
+            Dictionary<Circle, int> circGranularity = Circle.AcquireCircleGranularity(circles);
+
+            // Extract the atomic regions.
+            List<AtomicRegion> ars = GeometryTutorLib.AtomicRegionIdentifier.AtomicIdentifierMain.AcquireAtomicRegionsFromGraph(points, segments, arcs, circles, circGranularity);
+
+            return ars;
+        }
+
+        private static void CollectConstituentElements(List<Connection> connections,
+                                                       List<Point> innerShapePoints,
+                                                       Figure innerShape,
+                                                       out List<Point> points,
+                                                       out List<Segment> segments,
+                                                       out List<Arc> arcs,
+                                                       out List<Circle> circles)
+        {
+            points = new List<Point>();
+            segments = new List<Segment>();
+            arcs = new List<Arc>();
+            circles = new List<Circle>();
 
             //
             // Handle the collinear points resulting from the inner shape.
@@ -95,14 +119,6 @@ namespace GeometryTutorLib.ConcreteAST
                     }
                 }
             }
-
-            // Acquire circle granularity for atomic region finding.
-            Dictionary<Circle, int> circGranularity = Circle.AcquireCircleGranularity(circles);
-
-            // Extract the atomic regions.
-            List<AtomicRegion> ars = GeometryTutorLib.AtomicRegionIdentifier.AtomicIdentifierMain.AcquireAtomicRegionsFromGraph(points, segments, arcs, circles, circGranularity);
-
-            return ars;
         }
 
         //

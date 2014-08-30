@@ -8,6 +8,17 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public partial class Sector : Figure
     {
+        public override double CoordinatizedArea()
+        {
+            double angle = -1;
+
+            if (theArc is Semicircle) angle = 180;
+            if (theArc is MinorArc) angle = theArc.GetMinorArcMeasureDegrees();
+            if (theArc is MajorArc) angle = theArc.GetMajorArcMeasureDegrees();
+
+            return Math.Pow(theArc.theCircle.radius, 2) * Math.PI * (angle / 360);
+        }
+
         public override bool CoordinateCongruent(Figure that)
         {
             Sector thatSector = that as Sector;

@@ -16,6 +16,8 @@ namespace GeometryTutorLib.ConcreteAST
             ct2 = t2;
         }
 
+        public override bool IsReflexive() { return ct1.StructurallyEquals(ct2); }
+
         public override bool StructurallyEquals(Object c)
         {
             CongruentTriangles cts = c as CongruentTriangles;

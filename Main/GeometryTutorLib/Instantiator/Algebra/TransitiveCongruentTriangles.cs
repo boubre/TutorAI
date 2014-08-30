@@ -45,6 +45,8 @@ namespace GeometryTutorLib.GenericInstantiator
             {
                 GeometricCongruentTriangles newGCTS = clause as GeometricCongruentTriangles;
 
+                if (newGCTS.IsReflexive()) return newGrounded;
+
                 foreach (GeometricCongruentTriangles oldGCTS in candidateGeoCongruentTriangles)
                 {
                     newGrounded.AddRange(InstantiateTransitive(oldGCTS, newGCTS));
@@ -60,6 +62,8 @@ namespace GeometryTutorLib.GenericInstantiator
             else if (clause is AlgebraicCongruentTriangles)
             {
                 AlgebraicCongruentTriangles newACTS = clause as AlgebraicCongruentTriangles;
+
+                if (newACTS.IsReflexive()) return newGrounded;
 
                 foreach (GeometricCongruentTriangles oldGCTS in candidateGeoCongruentTriangles)
                 {

@@ -17,7 +17,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 if (quad.VerifyParallelogram())
                 {
-                    IsoscelesTrapezoid para = new IsoscelesTrapezoid(quad);
+                    Parallelogram para = new Parallelogram(quad);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, para);
                     subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, para.points, para));

@@ -649,5 +649,51 @@ namespace GeometryTutorLib.ConcreteAST
 
             return polygons;
         }
+
+        //
+        // Does this particular segment intersect one of the sides.
+        //
+        public bool Covers(Segment that)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                if (side.Covers(that)) return true;
+            }
+
+            return false;
+        }
+
+        //
+        // An arc is covered if one side of the polygon defines the endpoints of the arc.
+        //
+        public bool Covers(Arc that)
+        {
+            foreach (Segment side in orderedSides)
+            {
+                if (side.Covers(that)) return true;
+            }
+
+            return false;
+        }
+
+        //
+        // Does the atom have a connection which intersects the sides of the polygon.
+        //
+        public override bool Covers(AtomicRegion atom)
+        {
+            foreach (Connection conn in atom.connections)
+            {
+                if (conn.type == ConnectionType.SEGMENT)
+                {
+                    if (Covers(conn.segmentOrArc as Segment)) return true;
+                }
+                else if (conn.type == ConnectionType.ARC)
+                {
+                    if (Covers(conn.segmentOrArc as Arc)) return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

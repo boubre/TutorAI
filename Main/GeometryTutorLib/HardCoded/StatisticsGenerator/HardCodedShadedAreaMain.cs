@@ -17,6 +17,7 @@ namespace GeometryTutorLib.TutorParser
         private GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known;
         private List<GeometryTutorLib.Area_Based_Analyses.Atomizer.AtomicRegion> goalRegions;
         private GeometryTutorLib.TutorParser.ImpliedComponentCalculator implied;
+        private List<GeometryTutorLib.ConcreteAST.Figure> roots;
 
         //
         // Deductive Hypergraph construction.
@@ -93,8 +94,10 @@ namespace GeometryTutorLib.TutorParser
 
             // Perform any calculations required for shaded-area solution synthesis: strengthening, hierarchy construction, etc.
             AreaBasedCalculator areaCal = new AreaBasedCalculator(implied, strengthenedNodes);
-            
             areaCal.PrepareAreaBasedCalculations();
+
+            // Save the roots of the hierarchy for interesting analysis.
+            roots = areaCal.GetRootShapes();
 
             // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.
             // Determine all the known values in the figure based on the pebbled hypergraph and all the known values stated in the problem.
@@ -134,6 +137,48 @@ namespace GeometryTutorLib.TutorParser
             figureStats.stopwatch.Stop();
 
             return figureStats;
+        }
+
+        public bool CompleteComputableRegions()
+        {
+            return solutionAreaGenerator.GetNumComputable() == (int)Math.Pow(2, implied.atomicRegions.Count) - 1;
+        }
+
+        public bool CompleteAtomicRegions()
+        {
+            return solutionAreaGenerator.GetNumAtomicComputable() == implied.atomicRegions.Count;
+        }
+
+        //
+        // Determine if the set of givens and knowns mean we calculate the area of all atomic regions?
+        // Equivalently, can we calculate the area of all 2^n - 1 regions?
+        //
+        public bool IsComplete()
+        {
+            bool countBasedRegionCheck = CompleteComputableRegions();
+            bool atomBasedCheck = CompleteAtomicRegions();
+
+            if (countBasedRegionCheck != atomBasedCheck)
+            {
+                throw new Exception("Complete calculations disagree: regions(" + countBasedRegionCheck + ") " + "atoms(" + atomBasedCheck + ")");
+            }
+
+            return countBasedRegionCheck || atomBasedCheck;
+        }
+
+        //
+        // For each compuable region, does the region touch all root-shapes in the hierarchy?
+        //
+        public void GetComputableInterestingCount(out int interestingComp, out int uninterestingComp,
+                                                  out int interestingIncomp, out int uninterestingIncomp)
+        {
+            interestingComp = 0;
+            uninterestingComp = 0;
+            interestingIncomp = 0;
+            uninterestingIncomp = 0;
+
+            // Check all solutions with the roots.
+            solutionAreaGenerator.ComputableInterestingCount(roots, out interestingComp, out uninterestingComp, out interestingIncomp, out uninterestingIncomp);
         }
 
         //

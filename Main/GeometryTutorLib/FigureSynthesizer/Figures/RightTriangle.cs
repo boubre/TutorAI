@@ -8,6 +8,15 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public partial class RightTriangle : Triangle
     {
+        public override double CoordinatizedArea()
+        {
+            Segment hyp = this.GetHypotenuse();
+            Segment other1, other2;            
+            GetOtherSides(hyp, out other1, out other2);
+
+            return other1.Length * other2.Length / 2.0;
+        }
+
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             List<Triangle> tris = Triangle.GetTrianglesFromPoints(points);
@@ -55,11 +64,12 @@ namespace GeometryTutorLib.ConcreteAST
         public override List<Constraint> GetConstraints()
         {
             List<Equation> eqs = new List<Equation>();
+            List<Congruent> congs = new List<Congruent>();
 
             //
             // Acquire the 'midpoint' equations from the polygon class.
             //
-            eqs.AddRange(GetGranularMidpointEquations());
+            GetGranularMidpointEquations(out eqs, out congs);
 
             //
             // Create all relationship equations among the angles.
@@ -69,6 +79,7 @@ namespace GeometryTutorLib.ConcreteAST
             eqs.Add(new GeometricAngleEquation(this.rightAngle, new NumericValue(90)));
 
             List<Constraint> constraints = Constraint.MakeEquationsIntoConstraints(eqs);
+            constraints.AddRange(Constraint.MakeCongruencesIntoConstraints(congs));
 
             constraints.Add(new FigureConstraint(this));
 

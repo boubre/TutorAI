@@ -8,6 +8,8 @@ namespace GeometryTutorLib.ConcreteAST
 {
     public partial class Circle : Figure
     {
+        public override double CoordinatizedArea() { return radius * radius * Math.PI;  }
+
         public override bool CoordinateCongruent(Figure that)
         {
             Circle thatCirc = that as Circle;

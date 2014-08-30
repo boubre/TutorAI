@@ -650,5 +650,15 @@ namespace GeometryTutorLib.ConcreteAST
                 inter2 = null;
             }
         }
+
+        public virtual bool Covers(Segment that)
+        {
+            return (this.HasEndpoint(that.Point1) && this.HasEndpoint(that.Point2));
+        }
+
+        public bool Covers(Arc that)
+        {
+            return this.PointLiesStrictlyOn(that.endpoint1) || this.PointLiesStrictlyOn(that.endpoint1);
+        }
     }
 }
