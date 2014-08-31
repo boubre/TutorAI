@@ -821,6 +821,23 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             // If only segments, we have a polygon.
             if (hasSegment && !hasArc) return regions;
 
+            //
+            // If the set ONLY consists of arcs, ensure we have a good starting point.
+            //
+            if (hasArc && !hasSegment)
+            {
+                // Seek the first index where a change among arcs occurs.
+                for (int i = 0; i < arcs.Length; i++)
+                {
+                    // A solid starting point is an arc right after a null.
+                    if (!arcs[i].theCircle.StructurallyEquals(arcs[(i + 1) % arcs.Length].theCircle))
+                    {
+                        startIndex = (i + 1) % arcs.Length;
+                        break;
+                    }
+                }
+            }
+
             AtomicRegion theRegion = new AtomicRegion();
             for (int i = 0; i < segments.Length && i < arcs.Length; i++)
             {

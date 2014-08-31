@@ -85,7 +85,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page6Row2Prob29(true, false));       // GTG
             // problems.Add(new Page6Row2Prob30(true, false));       // GTG
             // problems.Add(new Page6Row2Prob31(true, false));       // GTG
-            problems.Add(new Page6Row3Prob32a(true, false));      // GTG
+            // problems.Add(new Page6Row3Prob32a(true, false));      // GTG
             // problems.Add(new Page6Row3Prob32b(true, false));      // GTG
             // problems.Add(new Page6Row5Prob4(true, false));        // GTG
             // problems.Add(new Page6Row5Prob5(true, false));        // GTG

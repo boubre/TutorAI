@@ -55,6 +55,8 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         // A version of this region that is an approximate polygon.
         public Polygon polygonalized { get; protected set; }
 
+        public List<Point> GetApproximatingPoints() { return GetPolygonalized().points; }
+
         public AtomicRegion()
         {
             ordered = false;
@@ -500,61 +502,74 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         }
 
         //
-        // Does this region overlap the other?
+        // Does this region overlap the other based on points (not intersections).
         //
+        private bool Overlap(List<Point> points)
+        {
+            bool interiorPoint = false;
+            bool exteriorPoint = false;
+            foreach (Point pt in points)
+            {
+                if (this.PointLiesInside(pt)) interiorPoint = true;
+                else if (!this.PointLiesOn(pt)) exteriorPoint = true;
+            }
+            return interiorPoint && exteriorPoint;
+        }
+
         public bool OverlapsWith(AtomicRegion that)
         {
-            ShapeAtomicRegion shapeAtom = that as ShapeAtomicRegion;
-            if (shapeAtom != null)
-            {
-                Polygon shapePoly = shapeAtom.shape as Polygon;
-                if (shapePoly != null)
-                {
-                    bool interiorPoint = false;
-                    bool exteriorPoint = false;
-                    foreach (Point pt in shapePoly.points)
-                    {
-                        if (this.PointLiesInside(pt)) interiorPoint = true;
-                        else if (!this.PointLiesOn(pt)) exteriorPoint = true;
-                    }
-                    return interiorPoint && exteriorPoint;
-                }
-            }
+            List<Point> points = null;
 
-            //
-            // Check for intersections that cross.
-            //
-            List<IntersectionAgg> intersections = this.GetIntersections(that);
+            return Overlap(that.GetApproximatingPoints());
 
-            if (!intersections.Any()) return false;
+            //// If polygons overlap the atomic region.
+            //ShapeAtomicRegion shapeAtom = that as ShapeAtomicRegion;
+            //if (shapeAtom != null)
+            //{
+            //    points = shapeAtom.Get
+            //    Polygon shapePoly = shapeAtom.shape as Polygon;
+            //    if (shapePoly != null)
+            //    {
 
-            foreach (IntersectionAgg agg in intersections)
-            {
-                if (agg.overlap)
-                {
-                    // No-Op
-                }
-                else
-                {
-                    // Crossing like an X
-                    if (agg.thisConn.Crosses(agg.thatConn)) return true;
+            //    }
+            //}
 
-                    // If the midpoint of the segment or arc is inside this region.
-                    if (this.PointLiesInside(agg.thatConn.Midpoint())) return true;
 
-                    // If it has two interesection points from an arc / segment.
-                    if (agg.MixedTypes())
-                    {
-                        // If the segment arc / combination have the same endpoints.
-                        if (!agg.thisConn.DefinesArcSegmentRegion(agg.thatConn))
-                        {
-                            if (agg.intersection1 != null && agg.intersection2 != null) return true;
-                        }
-                    }
-                }
-            }
 
-            return false;
+            ////
+            //// Check for intersections that cross.
+            ////
+            //List<IntersectionAgg> intersections = this.GetIntersections(that);
+
+            //if (!intersections.Any()) return false;
+
+            //foreach (IntersectionAgg agg in intersections)
+            //{
+            //    if (agg.overlap)
+            //    {
+            //        // No-Op
+            //    }
+            //    else
+            //    {
+            //        // Crossing like an X
+            //        if (agg.thisConn.Crosses(agg.thatConn)) return true;
+
+            //        // If the midpoint of the segment or arc is inside this region.
+            //        if (this.PointLiesInside(agg.thatConn.Midpoint())) return true;
+
+            //        // If it has two interesection points from an arc / segment.
+            //        if (agg.MixedTypes())
+            //        {
+            //            // If the segment arc / combination have the same endpoints.
+            //            if (!agg.thisConn.DefinesArcSegmentRegion(agg.thatConn))
+            //            {
+            //                if (agg.intersection1 != null && agg.intersection2 != null) return true;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //return false;
         }
 
         //
