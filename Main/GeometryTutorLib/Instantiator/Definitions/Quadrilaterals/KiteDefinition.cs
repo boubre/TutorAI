@@ -148,6 +148,9 @@ namespace GeometryTutorLib.GenericInstantiator
             // The congruences should not share a side.
             if (cs1.SharedSegment(cs2) != null) return newGrounded;
 
+            // The congruent pairs should not also be congruent to each other
+            if (cs1.cs1.CoordinateCongruent(cs2.cs1)) return newGrounded;
+
             // Does both set of congruent segments apply to the quadrilateral?
             if (!quad.HasAdjacentCongruentSides(cs1)) return newGrounded;
             if (!quad.HasAdjacentCongruentSides(cs2)) return newGrounded;

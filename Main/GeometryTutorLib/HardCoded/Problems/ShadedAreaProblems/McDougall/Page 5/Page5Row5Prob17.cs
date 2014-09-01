@@ -31,14 +31,26 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(d);
             collinear.Add(new Collinear(pts));
 
-            circles.Add(new Circle(x, 3.0));
-            circles.Add(new Circle(y, 3.0));
+            Circle circleX = new Circle(x, 3.0);
+            Circle circleY = new Circle(y, 3.0);
+            circles.Add(circleX);
+            circles.Add(circleY);
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
+
+            CircleSegmentIntersection cInter1 = (CircleSegmentIntersection)parser.Get(new CircleSegmentIntersection(b, circleX, bc));
+            CircleSegmentIntersection cInter2 = (CircleSegmentIntersection)parser.Get(new CircleSegmentIntersection(c, circleY, bc));
+            CircleSegmentIntersection cInter3 = (CircleSegmentIntersection)parser.Get(new CircleSegmentIntersection(a, circleX, da));
+            CircleSegmentIntersection cInter4 = (CircleSegmentIntersection)parser.Get(new CircleSegmentIntersection(d, circleY, da));
+
             given.Add(new GeometricCongruentSegments(da, (Segment)parser.Get(new Segment(a, b))));
             given.Add(new GeometricCongruentSegments(da, (Segment)parser.Get(new Segment(c, d))));
-            
+            given.Add(new Strengthened(cInter1, new Tangent(cInter1)));
+            given.Add(new Strengthened(cInter2, new Tangent(cInter2)));
+            given.Add(new Strengthened(cInter3, new Tangent(cInter3)));
+            given.Add(new Strengthened(cInter4, new Tangent(cInter4)));
+
             known.AddSegmentLength(da, 6);
             known.AddSegmentLength((Segment)parser.Get(new Segment(a, b)), 6);
             known.AddSegmentLength((Segment)parser.Get(new Segment(c, d)), 6);
@@ -49,6 +61,9 @@ namespace GeometryTutorLib.GeometryTestbed
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(36 - System.Math.PI * 3 * 3);
+
+            problemName = "Jurgensen Page 5 Problem 17";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

@@ -34,6 +34,7 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(d);
             collinear.Add(new Collinear(pts));
 
+            pts = new List<Point>();
             pts.Add(b);
             pts.Add(e);
             pts.Add(f);
@@ -41,23 +42,32 @@ namespace GeometryTutorLib.GeometryTestbed
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(b, c, d))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(a, g, f))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(e, f, g))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(d, e, f))));
+            Angle a1 =(Angle)parser.Get(new Angle(b, c, d));
+            Angle a2 =(Angle)parser.Get(new Angle(a, g, f));
+            Angle a3 =(Angle)parser.Get(new Angle(e, f, g));
+            Angle a4 =(Angle)parser.Get(new Angle(d, e, f));
+            given.Add(new Strengthened(a1, new RightAngle(a1)));
+            given.Add(new Strengthened(a2, new RightAngle(a2)));
+            given.Add(new Strengthened(a3, new RightAngle(a3)));
+            given.Add(new Strengthened(a4, new RightAngle(a4)));
+            given.Add(new GeometricSegmentEquation(bc, new NumericValue(3.5)));
+            given.Add(new GeometricSegmentEquation(cd, new NumericValue(3.5)));
+            given.Add(new GeometricSegmentEquation(fg, new NumericValue(3.5)));
 
             known.AddSegmentLength(bc, 3.5);
             known.AddSegmentLength(cd, 3.5);
             known.AddSegmentLength(fg, 3.5);
             known.AddSegmentLength((Segment)parser.Get(new Segment(e, f)), 7);
 
-            List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", -1, 6));
-            wanted.Add(new Point("", -1, 1));
-            wanted.Add(new Point("", 2, 1));
-            goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
+            List<Point> unwanted = new List<Point>();
+            unwanted.Add(new Point("", 1, 3.7));
+            unwanted.Add(new Point("", 3.4, 3.7));
+            goalRegions = parser.implied.GetAllAtomicRegionsWithoutPoints(unwanted);
 
             SetSolutionArea(36.75+System.Math.PI*(12.25/4));
+
+            problemName = "McDougall Page 5 Row 6 Problem 19";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

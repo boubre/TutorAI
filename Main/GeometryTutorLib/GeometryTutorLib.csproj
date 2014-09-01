@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; FIGURE_SYNTHESIZER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT; FIGURE_SYNTHESIZER;</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -418,9 +418,11 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob27.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob28.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Row6.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob15.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob14.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob18.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob21.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob39.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob5.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Row5Prob40.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Row5Prob41.cs" />
@@ -432,6 +434,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob12.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob16.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob13.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob18.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob33.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob10.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob16.cs" />
@@ -464,6 +467,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob19.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob7.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row2Prob29.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row4Prob24.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row1Prob24.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 5\Page5Row1Prob25.cs" />
@@ -491,8 +495,11 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Row5Prob6.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Row6Prob28.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 6\Page6Row6Prob29.cs" />
-    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob1.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob1a.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob1b.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob1c.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob24.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob25.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob26.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob3.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob4.cs" />

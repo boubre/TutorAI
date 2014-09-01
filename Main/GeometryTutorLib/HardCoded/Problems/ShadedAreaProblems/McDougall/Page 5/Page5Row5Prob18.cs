@@ -16,15 +16,15 @@ namespace GeometryTutorLib.GeometryTestbed
             Point d = new Point("D", 20, 8); points.Add(d);
             Point e = new Point("E", 18, 4); points.Add(e);
             Point f = new Point("F", 16, 0); points.Add(f);
+            Point g = new Point("G", 16, 8); points.Add(g);
+            Point x = new Point("X", 8, 4); points.Add(x);
+            Point y = new Point("Y", 8, 0); points.Add(y);
 
-            Segment cd = new Segment(c, d); segments.Add(cd);
-            Segment af = new Segment(a, f); segments.Add(af);
-            Segment be = new Segment(b, e); segments.Add(be);
+            Segment xy = new Segment(x, y); segments.Add(xy);
+            Segment fg = new Segment(f, g); segments.Add(fg);
 
-            Point x = new Point("X", 10, 4); points.Add(x);
-
-            circles.Add(new Circle(x, 4.0));
-           // Quadrilateral quad = (Quadrilateral)parser.Get(new Quadrilateral(ac, cd, df, fa));
+            Circle circle = new Circle(x, 4.0);
+            circles.Add(circle);
 
             List<Point> pts = new List<Point>();
             pts.Add(a);
@@ -32,21 +32,44 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(c);
             collinear.Add(new Collinear(pts));
 
+            pts = new List<Point>();
+            pts.Add(c);
+            pts.Add(g);
+            pts.Add(d);
+            collinear.Add(new Collinear(pts));
+
+            pts = new List<Point>();
             pts.Add(d);
             pts.Add(e);
             pts.Add(f);
             collinear.Add(new Collinear(pts));
 
+            pts = new List<Point>();
+            pts.Add(b);
+            pts.Add(x);
+            pts.Add(e);
+            collinear.Add(new Collinear(pts));
+
+            pts = new List<Point>();
+            pts.Add(a);
+            pts.Add(y);
+            pts.Add(f);
+            collinear.Add(new Collinear(pts));
+
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(a, c, d))));
-            given.Add(new GeometricParallel(cd, be));
-            given.Add(new GeometricParallel(cd, af));
-
+            Angle angle = (Angle)parser.Get(new Angle(a, c, d));
+            Triangle tri = (Triangle)parser.Get(new Triangle(f, g, d));
+            CircleSegmentIntersection inter = (CircleSegmentIntersection)parser.Get(new CircleSegmentIntersection(y, circle, (Segment)parser.Get(new Segment(a, f))));
+            given.Add(new Strengthened(angle, new RightAngle(angle)));
+            given.Add(new Strengthened(inter, new Tangent(inter)));
+            given.Add(new Strengthened(tri, new RightTriangle(tri)));
+            given.Add(new GeometricParallel((Segment)parser.Get(new Segment(c, d)), (Segment)parser.Get(new Segment(b, e))));
+            given.Add(new GeometricParallel((Segment)parser.Get(new Segment(c, d)), (Segment)parser.Get(new Segment(a, f))));
             given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(d, e)), (Segment)parser.Get(new Segment(e, f))));
 
-            known.AddSegmentLength(af, 16);
-            known.AddSegmentLength(cd, 20);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(a, f)), 16);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(c, d)), 20);
             known.AddSegmentLength((Segment)parser.Get(new Segment(a, c)), 8);
 
             List<Point> wanted = new List<Point>();

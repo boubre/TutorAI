@@ -29,9 +29,14 @@ namespace GeometryTutorLib.GeometryTestbed
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", 7, 0));
             wanted.Add(new Point("", -7, 0));
+            wanted.Add(new Point("", -2, 1));
+            wanted.Add(new Point("", 2, 1));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(28.8 * System.Math.PI);
+
+            problemName = "McDougall Page 6 Row 3 Problem 32c";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }

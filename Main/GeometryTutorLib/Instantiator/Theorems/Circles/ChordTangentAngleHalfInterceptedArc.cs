@@ -151,7 +151,7 @@ namespace GeometryTutorLib.GenericInstantiator
                 else
                 {
                     // Angle; the smaller angle is always the chosen angle
-                    Angle theAngle = new Angle(chord.Point1, inter.intersect, tanSegment.Point1);
+                    Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point1);
 
                     theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, midpt, chord);
                     newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
@@ -160,7 +160,7 @@ namespace GeometryTutorLib.GenericInstantiator
                     newGrounded.Add(CreateClause(inter, original, theAngle, theArc));
 
                     // Angle; the smaller angle is always the chosen angle
-                    theAngle = new Angle(chord.Point1, inter.intersect, tanSegment.Point2);
+                    theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point2);
 
                     theArc = new Semicircle(tan.theCircle, chord.Point1, chord.Point2, midpt, chord);
                     newGrounded.Add(CreateClause(inter, original, theAngle, theArc));

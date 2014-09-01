@@ -19,32 +19,31 @@ namespace GeometryTutorLib.GeometryTestbed
             Point g = new Point("G", 8, 7); points.Add(g);
             Point h = new Point("H", 6, 7); points.Add(h);
             Point i = new Point("I", 6, 8); points.Add(i);
-            Point j = new Point("J", 8, 8); points.Add(j);
+            Point j = new Point("J", 11, 7); points.Add(j);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
             Segment ad = new Segment(a, d); segments.Add(ad);
             Segment ef = new Segment(e, f); segments.Add(ef);
-            //Segment fg = new Segment(f, g); segments.Add(fg);
-            Segment gh = new Segment(g, h); segments.Add(gh);
+            Segment fg = new Segment(f, g); segments.Add(fg);
             Segment hi = new Segment(h, i); segments.Add(hi);
 
             List<Point> pnts = new List<Point>();
             pnts.Add(b);
             pnts.Add(i);
-            pnts.Add(j);
             pnts.Add(c);
             collinear.Add(new Collinear(pnts));
 
             pnts = new List<Point>();
             pnts.Add(c);
+            pnts.Add(j);
             pnts.Add(e);
             pnts.Add(d);
             collinear.Add(new Collinear(pnts));
 
             pnts = new List<Point>();
-            pnts.Add(j);
+            pnts.Add(h);
             pnts.Add(g);
-            pnts.Add(f);
+            pnts.Add(j);
             collinear.Add(new Collinear(pnts));
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
@@ -52,20 +51,19 @@ namespace GeometryTutorLib.GeometryTestbed
             known.AddSegmentLength(ab, 8);
             known.AddSegmentLength((Segment)parser.Get(new Segment(b,i)), 6);
             known.AddSegmentLength(hi, 1);
-            known.AddSegmentLength(gh, 2);
-            known.AddSegmentLength((Segment)parser.Get(new Segment(f, g)), 2);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(g, h)), 2);
+            known.AddSegmentLength(fg, 2);
             known.AddSegmentLength(ef, 3);
             known.AddSegmentLength((Segment)parser.Get(new Segment(e, d)), 5);
             known.AddSegmentLength(ad, 11);
 
-            Angle a1 = (Angle)parser.Get(new Angle(a, b, c));
+            Angle a1 = (Angle)parser.Get(new Angle(a, b, i));
             Angle a2 = (Angle)parser.Get(new Angle(b, i, h));
             Angle a3 = (Angle)parser.Get(new Angle(h, g, f));
             Angle a4 = (Angle)parser.Get(new Angle(f, e, d));
             Angle a5 = (Angle)parser.Get(new Angle(e, d, a));
             Angle a6 = (Angle)parser.Get(new Angle(d, a, b));
-            Angle a7 = (Angle)parser.Get(new Angle(g, h, i));
-            Angle a8 = (Angle)parser.Get(new Angle(e, f, j));
+            Angle a7 = (Angle)parser.Get(new Angle(e, f, g));
 
             given.Add(new Strengthened(a1, new RightAngle(a1)));
             given.Add(new Strengthened(a2, new RightAngle(a2)));
@@ -73,8 +71,9 @@ namespace GeometryTutorLib.GeometryTestbed
             given.Add(new Strengthened(a4, new RightAngle(a4)));
             given.Add(new Strengthened(a5, new RightAngle(a5)));
             given.Add(new Strengthened(a6, new RightAngle(a6)));
+
+            // Right now, problem will not work unless given this extra right angle
             given.Add(new Strengthened(a7, new RightAngle(a7)));
-            given.Add(new Strengthened(a8, new RightAngle(a8)));
 
             List<Point> unwanted = new List<Point>();
             unwanted.Add(new Point("", 7, 7.5));

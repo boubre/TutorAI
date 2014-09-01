@@ -24,7 +24,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //// problems.Add(new CircCircCircRegionTester(true, false));
             //// problems.Add(new FilamentTester(true, false));
             //// problems.Add(new TesterForCircleTriangle(true, false));
-          
+
             //
             // Class X
             //
@@ -74,12 +74,15 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row1Prob26(true, false));   // GTGDemo
             // problems.Add(new Page5Row2Prob27(true, false));   // GTGDemo
             // problems.Add(new Page5Row2Prob28(true, false));   // GTGDemo
+            // problems.Add(new Page5Row2Prob29(true, false));   // Need way to calculate triangle & parallelogram areas from base and height
             // problems.Add(new Page5Row3Prob2(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob3(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob4(true, false));    // GTGDemo
             // problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
             // problems.Add(new Page5Row4Prob25(true, false));   // GTG
-            // // problems.Add(new Page5Row5Prob17(true, false));   // Can't Deduce a Square
+            // problems.Add(new Page5Row5Prob17(true, false));   // GTG (if given that quad segments are tangent to circle, can deduce square)
+            // problems.Add(new Page5Row5Prob18(true, false));   // Too long to execute
+            // problems.Add(new Page5Row6Prob19(true, false));   // GTG (but ~4 minute parse time unless RelationsOfCongruentAnglesAreCongruent is turned off)
             // problems.Add(new Page6Row1Prob26(true, false));       // GTG
             // problems.Add(new Page6Row1Prob27(true, false));       // GTG
             // problems.Add(new Page6Row2Prob29(true, false));       // GTG
@@ -87,16 +90,21 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page6Row2Prob31(true, false));       // GTG
             // problems.Add(new Page6Row3Prob32a(true, false));      // GTG
             // problems.Add(new Page6Row3Prob32b(true, false));      // GTG
+            // problems.Add(new Page6Row3Prob32c(true, false));      // GTG
             // problems.Add(new Page6Row5Prob4(true, false));        // GTG
             // problems.Add(new Page6Row5Prob5(true, false));        // GTG
             // problems.Add(new Page6Row5Prob6(true, false));        // How to calculate the area of a parallelogram?
             // problems.Add(new Page6Row6Prob28(true, false));       //not ready
             // problems.Add(new Page6Row6Prob29(true, false));       // GTG
+            // problems.Add(new Page7Prob1a(true, false));           // GTG
+            // problems.Add(new Page7Prob1b(true, false));           // GTG
+            // problems.Add(new Page7Prob1c(true, false));           // GTG
             // problems.Add(new Page7Prob3(true, false));            // GTG
             // problems.Add(new Page7Prob24(true, false));           // GTG
+            // problems.Add(new Page7Prob25(true, false));           // GTG
             // problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
+            // problems.Add(new Page7Prob28(true, false));           // deduction problem
 
-            
 
             //
             // Singapore
@@ -111,7 +119,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Glencoe
             //
-            // problems.Add(new Page7Row6(true, false));           // Works, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
+            // problems.Add(new Page7Row6(true, false));           // GTG, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
             // problems.Add(new Page7Prob15(true, false));         // GTG
             // problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
             // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
@@ -119,11 +127,12 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
             // problems.Add(new Page8Prob5(true, false));          // Needs triangles from atomizer to work with only 1 defined radius, but otherwise GTG
             // problems.Add(new Page8Prob14(true, false));         // GTG
+            // problems.Add(new Page8Prob15(true, false));         // Cannot deduce rectangle (does work if given outer quad is a rectangle)
             // problems.Add(new Page8Prob18(true, false));         // GTG
-            // //  problems.Add(new Page8Prob21(true, false));        // Atomic region issue
+            // // problems.Add(new Page8Prob21(true, false));        // Atomic region issue
             // problems.Add(new Page8Row5Prob40(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page8Row5Prob41(true, false));     // GTG
-            // problems.Add(new Page8Row6Prob42(true, false));     // Not working, doesn't deduce length of circle diameters
+            // problems.Add(new Page8Row6Prob42(true, false));     // Not working, long time constructing implied components
             // problems.Add(new Page8Row6Prob43(true, false));     // Long constructing all implied components
             // problems.Add(new Page8Row6Prob44(true, false));     // GTG
             // // problems.Add(new Page9Prob8(true, false));          // Encoding
@@ -133,6 +142,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page9Prob12(true, false));         // GTG
             // problems.Add(new Page9Prob13(true, false));         // GTGDemo
             // problems.Add(new Page9Prob16(true, false));         // GTGDemo
+            // problems.Add(new Page9Prob18(true, false));         // Substitution problem -> Angle(COA) = 2 * Angle(CBA), Angle(CBA) = 60, does not get that Angle(COA) = 120
             // problems.Add(new Page9Prob33(true, false));         // GTGDemo
             // problems.Add(new Page10Prob35(true, false));        // GTGDemo
             // problems.Add(new Page10Prob36(true, false));        // GTGDemo

@@ -61,7 +61,7 @@ namespace GeometryTutorLib.GeometryTestbed
 
             SetSolutionArea((4.0 / 3.0) * System.Math.PI + 2.0 * System.Math.Sqrt(3.0));
 
-            problemName = "Jurgensen Page 2 Problem 19";
+            problemName = "Jurgensen Page 2 Problem 20";
             GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
