@@ -417,6 +417,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob17.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob27.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Prob28.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob4.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 7\Page7Row6.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob15.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 8\Page8Prob14.cs" />
@@ -446,6 +447,12 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 10\Page10Prob9.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob8.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Glencoe\Page 9\Page9Prob9.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\CollectedLearning\Page64.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\CollectedLearning\Page86Prob13.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\CollectedLearning\Page89Prob8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\HbPage2Prob4.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\HbPage2Prob5.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\HbPage3Prob7.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2prob15.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2Prob16.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 2\Page2Prob17.cs" />
@@ -459,6 +466,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 3\Page3Prob24.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 3\Page3Prob25.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 3\Page3Prob26.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 3\Page3Prob30.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob13.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob14.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Jurgensen\Page 4\Page4Prob15.cs" />
@@ -502,7 +510,15 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob25.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob26.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob3.cs" />
-    <Compile Include="HardCoded\Problems\ShadedAreaProblems\McDougall\Page 7\Page7Prob4.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgGeoPracticeProb5.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgGeoPracticeProb6.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb2.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb6.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb7.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\WpfkProb2.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\WpfkProb46.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\WpfkProb6.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ShadedAreaProblems.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Singapore\Page199.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Singapore\Page205.cs" />

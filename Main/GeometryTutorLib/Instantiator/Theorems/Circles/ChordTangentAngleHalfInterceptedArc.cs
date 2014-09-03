@@ -175,10 +175,14 @@ namespace GeometryTutorLib.GenericInstantiator
                 Arc theArc = new MinorArc(tan.theCircle, chord.Point1, chord.Point2);
 
                 // Angle; the smaller angle is always the chosen angle
-                Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point1);
+                Point endPnt = (inter.intersect.StructurallyEquals(tanSegment.Point1)) ? tanSegment.Point2 : tanSegment.Point1;
+                Angle theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, endPnt);
                 
                 if (theAngle.measure > 90)
                 {
+                    //If the angle endpoint was already set to Point2, or if the intersect equals Point2, then the smaller angle does not exist
+                    //In this case, should we create a major arc or return nothing?
+                    if (endPnt.StructurallyEquals(tanSegment.Point2) || inter.intersect.StructurallyEquals(tanSegment.Point2)) return newGrounded;
                     theAngle = new Angle(chord.OtherPoint(inter.intersect), inter.intersect, tanSegment.Point2);
                 }
 

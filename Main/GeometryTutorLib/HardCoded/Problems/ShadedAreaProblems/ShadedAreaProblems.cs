@@ -57,6 +57,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
             // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
             // problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
+            // problems.Add(new Page3Prob30(true, false));       // Bug - need to avoid substitution between equations involving non-congruent circles
             // problems.Add(new Page4Prob7(true, false));        // GTGDemo
             // problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page4Prob13(true, false));       // GTGDemo
@@ -100,6 +101,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page7Prob1b(true, false));           // GTG
             // problems.Add(new Page7Prob1c(true, false));           // GTG
             // problems.Add(new Page7Prob3(true, false));            // GTG
+            // problems.Add(new Page7Prob4(true, false));            // Very long execution, works if RelationsOfCongruentAnglesAreCongruent is turned off
             // problems.Add(new Page7Prob24(true, false));           // GTG
             // problems.Add(new Page7Prob25(true, false));           // GTG
             // problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
@@ -152,6 +154,34 @@ namespace GeometryTutorLib.GeometryTestbed
             // // problems.Add(new Page10Prob17(true, false));        // No solution: Deduction Problem
             // problems.Add(new Page10Prob18(true, false));        // GTGDemo
             // // problems.Add(new Page10Prob16(true, false));        // Ambiguous / impossible problem
+
+            //
+            // Online problems
+            //
+            // Hatboro pdf: http://www.hatboro-horsham.org/cms/lib2/PA01000027/Centricity/Domain/271/Shaded%20Area%20Packet.pdf
+            // problems.Add(new HbPage2Prob4(true, false));           // Long execution, lots of atomic regions
+            // problems.Add(new HbPage2Prob5(true, false));           // GTG
+            // problems.Add(new HbPage3Prob7(true, false));           // GTG
+
+            // Word Problems For Kids - Grade 11: http://people.stfx.ca/rtmacdon/mathproblems/grade11.html
+            // problems.Add(new WpfkProb2(true, false));              // GTG
+            // problems.Add(new WpfkProb6(true, false));              // GTG
+            // problems.Add(new WpfkProb46(true, false));             // Works in testapp, but won't load in UI (extremely slow loading)
+
+            // NSA Collected Learning Unit: Area and Geometric Probability https://www.nsa.gov/academia/_files/collected_learning/area_and_geometric_probability.pdf
+            // problems.Add(new Page64(true, false));                 // GTG
+            // problems.Add(new Page86Prob13(true, false));           // GTG
+            // problems.Add(new Page89Prob8(true, false));            // GTG
+
+            // Magoosh GMAT Prep: http://magoosh.com/gmat/2014/circle-problems-on-the-gmat/
+            // problems.Add(new MgProb2(true, false));                // GTG
+            // problems.Add(new MgProb7(true, false));                // Crashes in AngleBisectorIsPerpendicularBisectorInIsosceles
+            // problems.Add(new MgProb8(true, false));                // GTG
+            // problems.Add(new MgProb6(true, false));                // Facet calculator exception
+
+            // Magoosh Geometry Practice: http://magoosh.com/gmat/2014/gmat-geometry-practice-problems/
+            // problems.Add(new MgGeoPracticeProb5(true, false));     // GTG
+            // problems.Add(new MgGeoPracticeProb6(true, false));     // GTG
 
             //
             // ACT Practice

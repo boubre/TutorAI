@@ -1,4 +1,5 @@
-﻿using GeometryTutorLib.ConcreteAST;
+﻿using System;
+using GeometryTutorLib.ConcreteAST;
 using System.Collections.Generic;
 using GeometryTutorLib.Precomputer;
 
@@ -15,50 +16,67 @@ namespace GeometryTutorLib.GeometryTestbed
             Point d = new Point("D", 8, 0); points.Add(d);
             Point e = new Point("E", 3, 0); points.Add(e);
             Point f = new Point("F", 3, 5); points.Add(f);
-            Point g = new Point("G", 5, 3); points.Add(g);
+            Point g = new Point("G", 5, 5); points.Add(g);
             Point h = new Point("H", 5, 0); points.Add(h);
+            Point i = new Point("I", 5, 3); points.Add(i);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
-            Segment bc = new Segment(b, c); segments.Add(bc);
             Segment cd = new Segment(c, d); segments.Add(cd);
-            Segment da = new Segment(d, a); segments.Add(da);
-            Segment ef = new Segment(e, f); segments.Add(ef);
-            Segment fg = new Segment(f, g); segments.Add(fg);
-            Segment gh = new Segment(g, h); segments.Add(gh);
-            Segment he = new Segment(h, e); segments.Add(he);
+            Segment fe = new Segment(f, e); segments.Add(fe);
+            Segment fi = new Segment(f, i); segments.Add(fi);
 
-            List<Point> pts = new List<Point>();
-            pts.Add(b);
-            pts.Add(f);
-            pts.Add(c);
-            collinear.Add(new Collinear(pts));
+            List<Point> pnts = new List<Point>();
+            pnts.Add(b);
+            pnts.Add(f);
+            pnts.Add(g);
+            pnts.Add(c);
+            collinear.Add(new Collinear(pnts));
 
-            pts.Add(a);
-            pts.Add(e);
-            pts.Add(h);
-            pts.Add(d);
-            collinear.Add(new Collinear(pts));
+            pnts = new List<Point>();
+            pnts.Add(a);
+            pnts.Add(e);
+            pnts.Add(h);
+            pnts.Add(d);
+            collinear.Add(new Collinear(pnts));
+
+            pnts = new List<Point>();
+            pnts.Add(g);
+            pnts.Add(i);
+            pnts.Add(h);
+            collinear.Add(new Collinear(pnts));
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);
 
-            known.AddSegmentLength(he, 2);
-            known.AddSegmentLength(gh, 3);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(b, c)), 8);
             known.AddSegmentLength(cd, 5);
-            known.AddSegmentLength(bc, 8);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(i, h)), 3);
+            known.AddSegmentLength((Segment)parser.Get(new Segment(e, h)), 2);
 
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(a, b, c))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(b, a, d))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(b, c, d))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(a, d, c))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(a, e, f))));
-            given.Add(new RightAngle((Angle)parser.Get(new Angle(g, h, d))));
+            Angle a1 = (Angle)parser.Get(new Angle(d, a, b));
+            Angle a2 = (Angle)parser.Get(new Angle(a, b, c));
+            Angle a3 = (Angle)parser.Get(new Angle(b, c, d));
+            Angle a4 = (Angle)parser.Get(new Angle(c, d, h));
+            Angle a5 = (Angle)parser.Get(new Angle(d, h, i));
+            Angle a6 = (Angle)parser.Get(new Angle(a, e, f));
+
+            given.Add(new Strengthened(a1, new RightAngle(a1)));
+            given.Add(new Strengthened(a2, new RightAngle(a2)));
+            given.Add(new Strengthened(a3, new RightAngle(a3)));
+            given.Add(new Strengthened(a4, new RightAngle(a4)));
+            given.Add(new Strengthened(a5, new RightAngle(a5)));
+            given.Add(new Strengthened(a6, new RightAngle(a6)));
 
             List<Point> wanted = new List<Point>();
-            wanted.Add(new Point("", 2, 2));
-            wanted.Add(new Point("", 7, 2));
+            wanted.Add(new Point("", 1, 1));
+            wanted.Add(new Point("", 4.5, 4));
+            wanted.Add(new Point("", 6, 1));
+            wanted.Add(new Point("", 6, 4));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(32);
+
+            problemName = "Glencoe Page 7 Problem 4";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }
