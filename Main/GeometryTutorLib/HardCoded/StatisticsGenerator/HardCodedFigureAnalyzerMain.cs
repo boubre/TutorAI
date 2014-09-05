@@ -279,7 +279,7 @@ namespace StatisticsGenerator
         {
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause clause in figure)
             {
-                figureStats.totalProperties++;
+                figureStats.totalImplicitFacts++;
                 if (clause is GeometryTutorLib.ConcreteAST.Point) figureStats.numPoints++;
                 else if (clause is GeometryTutorLib.ConcreteAST.InMiddle) figureStats.numInMiddle++;
                 else if (clause is GeometryTutorLib.ConcreteAST.Segment) figureStats.numSegments++;
@@ -291,7 +291,7 @@ namespace StatisticsGenerator
                 else
                 {
                     Debug.WriteLine("Did not count " + clause);
-                    figureStats.totalProperties--;
+                    figureStats.totalImplicitFacts--;
                 }
             }
         }

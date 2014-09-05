@@ -27,15 +27,22 @@ namespace GeometryTutorLib.TutorParser
         private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> deductiveGraph;
         private GeometryTutorLib.Pebbler.PebblerHypergraph<GeometryTutorLib.ConcreteAST.GroundedClause, GeometryTutorLib.Hypergraph.EdgeAnnotation> pebblerGraph;
         private GeometryTutorLib.Pebbler.Pebbler pebbler;
-
-        //
-        // Area-based Hypergraph
-        //
-//        private GeometryTutorLib.Hypergraph.Hypergraph<GeometryTutorLib.Area_Based_Analyses.Region, GeometryTutorLib.Area_Based_Analyses.SimpleRegionEquation> areaGraph;
         private GeometryTutorLib.Area_Based_Analyses.AreaSolutionGenerator solutionAreaGenerator;
 
         // The area dictated from the problem for validation purposes.
         private double area;
+
+        //
+        // Timer for statistical purposes.
+        //
+        private GeometryTutorLib.Stopwatch stopwatch;
+
+        private TimeSpan deductionTiming;
+        private TimeSpan solverTiming;
+
+        public TimeSpan GetDeductionTiming() { return deductionTiming; }
+        public TimeSpan GetSolverTiming() { return solverTiming; }
+        
 
         public HardCodedShadedAreaMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
                                        List<GeometryTutorLib.ConcreteAST.GroundedClause> giv,
@@ -51,6 +58,7 @@ namespace GeometryTutorLib.TutorParser
             this.implied = impl;
 
             instantiator = new GeometryTutorLib.GenericInstantiator.Instantiator();
+            stopwatch = new Stopwatch();
         }
 
         public HardCodedShadedAreaMain(List<GeometryTutorLib.ConcreteAST.GroundedClause> fs,
@@ -68,8 +76,14 @@ namespace GeometryTutorLib.TutorParser
         {
             ShadedAreaFigureStatisticsAggregator figureStats = new ShadedAreaFigureStatisticsAggregator();
 
-            // Start timing
+            // Set the number of atomic regions.
+            figureStats.numAtomicRegions = this.implied.atomicRegions.Count;
+
+            // Start overall timing
             figureStats.stopwatch.Start();
+
+            // Start stopwatch.
+            stopwatch.Start();
 
             // Handle givens that strengthen the intrinsic parts of the figure; modifies if needed
             given = DoGivensStrengthenFigure();
@@ -77,15 +91,29 @@ namespace GeometryTutorLib.TutorParser
             // Use a worklist technique to instantiate nodes to construct the hypergraph for this figure
             ConstructHypergraph();
 
+            // Track implicit and explicit facts.
+            figureStats.totalImplicitFacts = figure.Count;
+            figureStats.totalExplicitFacts = deductiveGraph.Size() - figure.Count;
+
             // Create the integer-based hypergraph representation
             ConstructPebblingHypergraph();
 
             // Pebble that hypergraph
             Pebble();
 
-// Define in Properties->Build->Compilation Symbols to turn off this section
-#if !ATOMIC_REGION_OFF
-
+            //
+            // Stop stopwatch and mark deduction timing.
+            //
+            stopwatch.Stop();
+            deductionTiming = stopwatch.Elapsed;
+            stopwatch.Reset();
+            
+            //
+            // Restart stopwatch for solving.
+            //
+            stopwatch.Reset();
+            stopwatch.Start();
+          
             //
             // Acquire the list of strengthened (pebbled) polygon nodes.
             //
@@ -95,12 +123,16 @@ namespace GeometryTutorLib.TutorParser
             // Perform any calculations required for shaded-area solution synthesis: strengthening, hierarchy construction, etc.
             AreaBasedCalculator areaCal = new AreaBasedCalculator(implied, strengthenedNodes);
             areaCal.PrepareAreaBasedCalculations();
+            figureStats.numShapes = areaCal.GetAllFigures().Count;
 
             // Save the roots of the hierarchy for interesting analysis.
             roots = areaCal.GetRootShapes();
+            figureStats.numRootShapes = roots.Count;
 
+            //
             // Based on pebbling, we have a specific set of reachable nodes in the hypergraph.
             // Determine all the known values in the figure based on the pebbled hypergraph and all the known values stated in the problem.
+            //
             List<GeometryTutorLib.ConcreteAST.GroundedClause> reachableConEqs = FindReachableCongEquationNodes();
             List<GeometryTutorLib.ConcreteAST.GroundedClause> triangles = FindReachableTriangles();
             known = GeometryTutorLib.Area_Based_Analyses.KnownValueAcquisition.AcquireAllKnownValues(known, reachableConEqs, triangles);
@@ -111,30 +143,44 @@ namespace GeometryTutorLib.TutorParser
             solutionAreaGenerator = new GeometryTutorLib.Area_Based_Analyses.AreaSolutionGenerator(areaCal.GetShapeHierarchy(), areaCal.GetUpdatedAtomicRegions());
             solutionAreaGenerator.SolveAll(known, areaCal.GetAllFigures());
 
+            //
+            // Stop the stopwatch for solving.
+            //
+            stopwatch.Stop();
+            this.solverTiming = stopwatch.Elapsed;
+
             // Acquire a single solution for this specific problem for validation purposes.
             KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = solutionAreaGenerator.GetSolution(goalRegions);
 
 #if HARD_CODED_UI
             UIDebugPublisher.getInstance().clearWindow();
             UIDebugPublisher.getInstance().publishString("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
+#else
+            if (Utilities.SHADED_AREA_SOLVER_DEBUG)
+            {
+                Debug.WriteLine("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
+            }
 #endif
-            Debug.WriteLine("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
-
+            //
             // Validate that calculated area value matches the value from the hard-coded problem.
+            //
             Validate(result.Key, result.Value);
+            figureStats.originalProblemInteresting = OriginalProblemInteresting();
 
-            solutionAreaGenerator.PrintAllSolutions();
+            //figureStats.numCalculableRegions = solutionAreaGenerator.GetNumComputable();
+            //figureStats.numIncalculableRegions = solutionAreaGenerator.GetNumIncomputable();
 
-            figureStats.numCalculableRegions = solutionAreaGenerator.GetNumComputable();
-            figureStats.numIncalculableRegions = solutionAreaGenerator.GetNumIncomputable();
+            //Debug.WriteLine("Calculable Regions: " + figureStats.numCalculableRegions);
+            //Debug.WriteLine("Incalculable Regions: " + figureStats.numIncalculableRegions);
+            //Debug.WriteLine("Total:                " + (figureStats.numCalculableRegions +  figureStats.numIncalculableRegions));
 
-            Debug.WriteLine("Calculable Regions: " + figureStats.numCalculableRegions);
-            Debug.WriteLine("Incalculable Regions: " + figureStats.numIncalculableRegions);
-            Debug.WriteLine("Total:                " + (figureStats.numCalculableRegions +  figureStats.numIncalculableRegions));
-#endif
-
-            // Stop timing before we generate all of the statistics
+            // Stop overall timing.
             figureStats.stopwatch.Stop();
+
+            if (Utilities.SHADED_AREA_SOLVER_DEBUG)
+            {
+                solutionAreaGenerator.PrintAllSolutions();
+            }
 
             return figureStats;
         }
@@ -160,7 +206,7 @@ namespace GeometryTutorLib.TutorParser
 
             if (countBasedRegionCheck != atomBasedCheck)
             {
-                throw new Exception("Complete calculations disagree: regions(" + countBasedRegionCheck + ") " + "atoms(" + atomBasedCheck + ")");
+                // throw new Exception("Complete calculations disagree: regions(" + countBasedRegionCheck + ") " + "atoms(" + atomBasedCheck + ")");
             }
 
             return countBasedRegionCheck || atomBasedCheck;
@@ -188,7 +234,7 @@ namespace GeometryTutorLib.TutorParser
         {
             foreach (GeometryTutorLib.ConcreteAST.GroundedClause clause in figure)
             {
-                figureStats.totalProperties++;
+                figureStats.totalImplicitFacts++;
                 if (clause is GeometryTutorLib.ConcreteAST.Point) figureStats.numPoints++;
                 else if (clause is GeometryTutorLib.ConcreteAST.InMiddle) figureStats.numInMiddle++;
                 else if (clause is GeometryTutorLib.ConcreteAST.Segment) figureStats.numSegments++;
@@ -200,7 +246,7 @@ namespace GeometryTutorLib.TutorParser
                 else
                 {
                     Debug.WriteLine("Did not count " + clause);
-                    figureStats.totalProperties--;
+                    figureStats.totalImplicitFacts--;
                 }
             }
         }
@@ -339,6 +385,11 @@ namespace GeometryTutorLib.TutorParser
             {
                 throw new Exception("Expected area (" + this.area + ") not found; found (" + calculatedArea + ")");
             }
+        }
+
+        private bool OriginalProblemInteresting()
+        {
+            return solutionAreaGenerator.IsProblemInteresting(roots, goalRegions);
         }
     }
 }

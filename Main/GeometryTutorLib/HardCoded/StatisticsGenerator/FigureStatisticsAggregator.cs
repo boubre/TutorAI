@@ -15,7 +15,7 @@ namespace StatisticsGenerator
         public bool isComplete;
 
         // Figure Properties (implicit facts)
-        public int totalProperties;
+        public int totalImplicitFacts;
         public int numInMiddle;
         public int numPoints;
         public int numSegments;
@@ -29,12 +29,14 @@ namespace StatisticsGenerator
 
         public int totalExplicitFacts;
 
+
+
         // For timing the processing of each figure
         public GeometryTutorLib.Stopwatch stopwatch;
 
         public FigureStatisticsAggregator()
         {
-            totalProperties = 0;
+            totalImplicitFacts = 0;
             numInMiddle = 0;
             numPoints = 0;
             numSegments = 0;

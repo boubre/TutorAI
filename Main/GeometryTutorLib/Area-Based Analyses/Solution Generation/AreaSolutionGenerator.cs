@@ -553,5 +553,17 @@ namespace GeometryTutorLib.Area_Based_Analyses
                 else uninterestingIncomputable++;
             }
         }
+
+        //
+        // Is this problem (defined by the set of atomic regions) covered / defined by all the root shapes?
+        //
+        public bool IsProblemInteresting(List<Figure> roots, List<AtomicRegion> regions)
+        {
+            SolutionAgg solution = solutions.GetSolutionAgg(this.figureAtoms, regions);
+
+            List<int>[] coverage = DetermineAtomCoverageOfShapes(roots);
+
+            return SolutionCoversRoots(coverage, solution, roots.Count);
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeometryTutorLib.GeometryTestbed
 {
-    class KiteProblems
+    public static class KiteProblems
     {
         public static List<ActualProofProblem> GetProblems()
         {

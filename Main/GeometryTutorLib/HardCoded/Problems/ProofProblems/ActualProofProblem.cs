@@ -23,7 +23,7 @@ namespace GeometryTutorLib.GeometryTestbed
         public static int TotalTriangles = 0;
         public static int TotalQuadrilaterals = 0;
         public static int TotalCircles = 0;
-        public static int TotalTotalProperties = 0;
+        public static int TotalImplicitFacts = 0;
         public static int TotalExplicitFacts = 0;
 
         public static System.TimeSpan TotalTime = new System.TimeSpan();
@@ -116,7 +116,7 @@ namespace GeometryTutorLib.GeometryTestbed
             ActualProofProblem.TotalAngles += figureStats.numAngles;
             ActualProofProblem.TotalTriangles += figureStats.numTriangles;
             ActualProofProblem.TotalIntersections += figureStats.numIntersections;
-            ActualProofProblem.TotalTotalProperties += figureStats.totalProperties;
+            ActualProofProblem.TotalImplicitFacts += figureStats.totalImplicitFacts;
 
             ActualProofProblem.TotalExplicitFacts += figureStats.totalExplicitFacts;
 
@@ -189,7 +189,7 @@ namespace GeometryTutorLib.GeometryTestbed
             statsString += figureStats.numIntersections + "\t";
             statsString += figureStats.numAngles + "\t";
             statsString += figureStats.numTriangles + "\t";
-            statsString += figureStats.totalProperties + "\t";
+            statsString += figureStats.totalImplicitFacts + "\t";
 
             statsString += figureStats.totalExplicitFacts + "\t";
 

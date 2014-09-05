@@ -54,6 +54,10 @@ namespace GeometryTutorLib.TutorParser
         // The atomic regions for this figure.
         public List<AtomicRegion> atomicRegions { get; private set; }
 
+        // Timer for statistical purposes.
+        private GeometryTutorLib.Stopwatch stopwatch;
+        public TimeSpan GetTiming() { return stopwatch.Elapsed; }
+
         //
         // Construction requires this minimal set from the UI.
         //
@@ -62,6 +66,10 @@ namespace GeometryTutorLib.TutorParser
                                           List<Circle> circs,
                                           List<Polygon>[] polys)
         {
+            // --- Begin timing ---
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             points = pts;
             segments = segs;
             circles = circs;
@@ -70,6 +78,9 @@ namespace GeometryTutorLib.TutorParser
             collinear = new List<Collinear>();
 
             ConstructCommonComponents();
+
+            // --- End timing ---
+            stopwatch.Stop();
         }
 
         //
@@ -80,6 +91,10 @@ namespace GeometryTutorLib.TutorParser
                                           List<Segment> segs,
                                           List<Circle> circs)
         {
+            // --- Begin timing ---
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             points = pts;
             collinear = coll;
             segments = segs;
@@ -87,6 +102,9 @@ namespace GeometryTutorLib.TutorParser
             polygons = Polygon.ConstructPolygonContainer();
 
             ConstructCommonComponents();
+
+            // --- End timing ---
+            stopwatch.Stop();
         }
 
         private void ConstructCommonComponents()
@@ -198,7 +216,11 @@ namespace GeometryTutorLib.TutorParser
             foreach (AtomicRegion atom in atomicRegions)
             {
                 Polygon poly = atom.GetPolygonalized();
-                Debug.WriteLine(poly);
+
+                if (Utilities.CONSTRUCTION_DEBUG)
+                {
+                    Debug.WriteLine(poly);
+                }
             }
 #endif
         }        

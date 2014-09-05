@@ -5,24 +5,112 @@ namespace GeometryTutorLib.GeometryTestbed
 {
     public class MainProgram
     {
-        private static List<GeometryTutorLib.GeometryTestbed.ActualProblem> ConstructAllHardCodedProblems()
+        static void Main(string[] args)
+        {
+#if FIGURE_SYNTHESIZER
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
+#else
+            List<GeometryTestbed.ActualProblem> problems = ConstructAllGeoShaderHardCodedProblems();
+
+            DumpGeoShaderStatisticsHeader();
+
+            int problemCount = 0;
+            foreach (GeometryTestbed.ActualProblem problem in problems)
+            {
+                if (problem.problemIsOn) // We may turn problems on / off: check on
+                {
+                    problem.Run();
+
+                    Debug.Write(++problemCount + "\t");
+                    Debug.WriteLine(problem.ToString() + "\n");
+                }
+            }
+
+            DumpGeoShaderStatisticsHeader();
+            DumpGeoShaderAggregateTotals(problemCount);
+#endif
+        }
+
+        private static List<GeometryTutorLib.GeometryTestbed.ActualProblem> ConstructAllGeoShaderHardCodedProblems()
+        {
+            return ShadedAreaProblems.GetProblems();
+        }
+
+        private static void DumpGeoShaderStatisticsHeader()
+        {
+            string header = "";
+            header += "Problem #\t\t";
+            header += "Name\t\t\t\t  ";
+            header += "Imp(Fig)\t";
+            header += "Exp(Fig)\t";
+
+            header += "Shapes\t";
+            header += "Root\t";
+            header += "Atoms\t";
+
+            header += "Implicit Time\t";
+            header += "GeoTutor Time\t";
+            header += "Solver Time\t";
+
+            header += "Int Probs\t";
+            header += "Complete\t";
+
+            header += "Orig Interesting\t";
+
+            Debug.WriteLine(header);
+        }
+
+        private static void DumpGeoShaderAggregateTotals(int numFigures)
+        {
+            string output = "";
+
+            output += "------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+
+            output += "\t\t" + numFigures + "\t\t\t\t\t\t\t\t";
+
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalImplicitFacts + "\t\t   ";
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalExplicitFacts + "\t\t";
+
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalShapes + "\t\t";
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalRootShapes + "\t\t";
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalAtomicRegions + "\t\t\t";
+
+            output += Utilities.TimeToString(ActualShadedAreaProblem.TotalImplicitTime) + "\t\t";
+            output += Utilities.TimeToString(ActualShadedAreaProblem.TotalDeductionTime) + "\t\t";
+            output += Utilities.TimeToString(ActualShadedAreaProblem.TotalSolverTime) + "\t";
+
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalInteresting + "\t\t   ";
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalComplete + "\t\t\t";
+
+            output += GeometryTestbed.ActualShadedAreaProblem.TotalOriginalInteresting + "\t";
+
+            Debug.WriteLine(output);
+        }
+
+        //
+        //
+        //
+        // GeoTutor statistics code.
+        //
+        //
+        //
+        private static List<GeometryTutorLib.GeometryTestbed.ActualProblem> ConstructAllHardCodedGeoTutorProblems()
         {
             List<ActualProblem> problems = new List<ActualProblem>();
 
-            //problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.IndianTextProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.HoltWorkbookProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
-            problems.AddRange(ShadedAreaProblems.GetProblems());
-            //problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.JurgensenProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.GlencoeProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.IndianTextProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.HoltWorkbookProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.McDougallProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.McDougallWorkbookProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.KiteProblems.GetProblems());
+            problems.AddRange(GeometryTestbed.AngleArcProblems.GetProblems());
 
             return problems;
         }
 
-        private static void DumpStatisticsHeader()
+        private static void DumpGeoTutorStatisticsHeader()
         {
             string header = "";
             header += "Problem #\t";
@@ -90,32 +178,7 @@ namespace GeometryTutorLib.GeometryTestbed
             Debug.WriteLine(header);
         }
 
-        static void Main(string[] args)
-        {
-#if FIGURE_SYNTHESIZER
-            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
-#else
-            List<GeometryTestbed.ActualProblem> problems = ConstructAllHardCodedProblems();
-
-            DumpStatisticsHeader();
-
-            int problemCount = 0;
-            foreach (GeometryTestbed.ActualProblem problem in problems)
-            {
-                if (problem.problemIsOn) // We may turn problems on / off: check on
-                {
-                    problem.Run();
-
-                    Debug.WriteLine(++problemCount + "\t\t");
-                    Debug.WriteLine(problem.ToString() + "\n");
-                }
-            }
-
-            DumpAggregateTotals(problemCount);
-#endif
-        }
-
-        private static void DumpAggregateTotals(int numFigures)
+        private static void DumpGeoTutorAggregateTotals(int numFigures)
         {
             string output = "";
 
@@ -129,7 +192,7 @@ namespace GeometryTutorLib.GeometryTestbed
             output += GeometryTestbed.ActualProofProblem.TotalIntersections + "\t";
             output += GeometryTestbed.ActualProofProblem.TotalAngles + "\t";
             output += GeometryTestbed.ActualProofProblem.TotalTriangles + "\t";
-            output += GeometryTestbed.ActualProofProblem.TotalTotalProperties + "\t";
+            output += GeometryTestbed.ActualProofProblem.TotalImplicitFacts + "\t";
             output += GeometryTestbed.ActualProofProblem.TotalPoints + "\t || ";
             //output += GeometryTestbed.ActualProofProblem.TotalCircles + "\t";
             //output += GeometryTestbed.ActualProofProblem.TotalQuadrilaterals + "\t";

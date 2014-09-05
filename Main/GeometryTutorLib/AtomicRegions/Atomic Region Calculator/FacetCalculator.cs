@@ -21,7 +21,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         {
             graph = g;
 
-            Debug.WriteLine(graph);
+            if (Utilities.ATOMIC_REGION_GEN_DEBUG)
+            {
+                Debug.WriteLine(graph);
+            }
 
             primitives = new List<Primitive>();
 
@@ -170,7 +173,10 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 heap.Add(graph.nodes[gIndex].thePoint);
             }
 
-            Debug.WriteLine(heap);
+            if (Utilities.ATOMIC_REGION_GEN_DEBUG)
+            {
+                Debug.WriteLine(heap);
+            }
 
             //
             // Exhaustively analyze all points in the graph.
@@ -210,7 +216,11 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             graph.RemoveNode(v0);
 
             primitives.Add(new IsolatedPoint(v0));
-            Debug.WriteLine(primitives[primitives.Count-1].ToString());
+
+            if (Utilities.ATOMIC_REGION_GEN_DEBUG)
+            {
+                Debug.WriteLine(primitives[primitives.Count - 1].ToString());
+            }
         }
 
         void ExtractFilament (Point v0, Point v1, OrderedPointList heap)
@@ -291,7 +301,11 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 }
                 
                 primitives.Add(primitive);
-                Debug.WriteLine(primitive.ToString());
+
+                if (Utilities.ATOMIC_REGION_GEN_DEBUG)
+                {
+                    Debug.WriteLine(primitive.ToString());
+                }
             }
         }
 
@@ -341,7 +355,11 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 primitive.AddAll(sequence);
 
                 primitives.Add(primitive);
-                Debug.WriteLine(primitive.ToString());
+
+                if (Utilities.ATOMIC_REGION_GEN_DEBUG)
+                {
+                    Debug.WriteLine(primitive.ToString());
+                }
 
                 // Mark that these edges are a part of a cycle
                 for (int p = 0; p < sequence.Count; p++)

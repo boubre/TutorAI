@@ -258,10 +258,6 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                 //
                 // Perform the actual composition to find ALL atomic regions contained within this atom.
                 //
-                if (g == 6)
-                {
-                    System.Diagnostics.Debug.WriteLine("No-Op");
-                }
                 List<AtomicRegion> newBoundedAtoms = ComposeSingleRegion(figurePoints, givenAtoms[g], givenAtoms.GetRange(g+1, givenAtoms.Count - g - 1),
                                                                          knownAtomicRegions, knownNonAtomicRegions, setsForNonAtomicRegions, circGranularity);
 

@@ -518,58 +518,7 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
         public bool OverlapsWith(AtomicRegion that)
         {
-            List<Point> points = null;
-
             return Overlap(that.GetApproximatingPoints());
-
-            //// If polygons overlap the atomic region.
-            //ShapeAtomicRegion shapeAtom = that as ShapeAtomicRegion;
-            //if (shapeAtom != null)
-            //{
-            //    points = shapeAtom.Get
-            //    Polygon shapePoly = shapeAtom.shape as Polygon;
-            //    if (shapePoly != null)
-            //    {
-
-            //    }
-            //}
-
-
-
-            ////
-            //// Check for intersections that cross.
-            ////
-            //List<IntersectionAgg> intersections = this.GetIntersections(that);
-
-            //if (!intersections.Any()) return false;
-
-            //foreach (IntersectionAgg agg in intersections)
-            //{
-            //    if (agg.overlap)
-            //    {
-            //        // No-Op
-            //    }
-            //    else
-            //    {
-            //        // Crossing like an X
-            //        if (agg.thisConn.Crosses(agg.thatConn)) return true;
-
-            //        // If the midpoint of the segment or arc is inside this region.
-            //        if (this.PointLiesInside(agg.thatConn.Midpoint())) return true;
-
-            //        // If it has two interesection points from an arc / segment.
-            //        if (agg.MixedTypes())
-            //        {
-            //            // If the segment arc / combination have the same endpoints.
-            //            if (!agg.thisConn.DefinesArcSegmentRegion(agg.thatConn))
-            //            {
-            //                if (agg.intersection1 != null && agg.intersection2 != null) return true;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //return false;
         }
 
         //

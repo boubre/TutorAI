@@ -57,8 +57,6 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
                 }
             }
 
-
-
             return regions;
         }
 

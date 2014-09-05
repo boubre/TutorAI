@@ -120,6 +120,22 @@ namespace GeometryTutorLib.Area_Based_Analyses
         }
 
         //
+        // Acquire a single solution equation and area value.
+        //
+        public SolutionAgg GetSolutionAgg(List<Atomizer.AtomicRegion> figureAtoms, List<Atomizer.AtomicRegion> desiredRegions)
+        {
+            IndexList indices = IndexList.AcquireAtomicRegionIndices(figureAtoms, desiredRegions);
+
+            SolutionAgg solutionAgg = null;
+            if (!solutions.TryGetValue(indices, out solutionAgg))
+            {
+                throw new ArgumentException("Could not find a solution in the database.");
+            }
+
+            return solutionAgg;
+        }
+
+        //
         // Adds an equation, if it does not exist.
         // If an equation for the region already exists, take the shortest one or the one that is computable.
         //

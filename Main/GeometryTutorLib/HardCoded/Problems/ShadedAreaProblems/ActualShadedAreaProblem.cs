@@ -33,10 +33,27 @@ namespace GeometryTutorLib.GeometryTestbed
         public static int TotalTriangles = 0;
         public static int TotalQuadrilaterals = 0;
         public static int TotalCircles = 0;
-        public static int TotalTotalProperties = 0;
+        public static int TotalImplicitFacts = 0;
         public static int TotalExplicitFacts = 0;
 
+        public static int TotalShapes = 0;
+        public static int TotalRootShapes = 0;
+        public static int TotalAtomicRegions = 0;
+
+        public static int TotalInteresting = 0;
+        public static int TotalComplete = 0;
+        public static int TotalOriginalInteresting = 0;
+
         public static System.TimeSpan TotalTime = new System.TimeSpan();
+        public static System.TimeSpan TotalImplicitTime = new System.TimeSpan();
+        public static System.TimeSpan TotalDeductionTime = new System.TimeSpan();
+        public static System.TimeSpan TotalSolverTime = new System.TimeSpan();
+
+        public System.TimeSpan ImplicitTiming;
+        public System.TimeSpan DeductionTiming;
+        public System.TimeSpan SolverTiming;
+
+        public int numInteresting = 0;
 
         public ActualShadedAreaProblem(bool runOrNot, bool comp) : base(runOrNot, comp)
         {
@@ -50,6 +67,9 @@ namespace GeometryTutorLib.GeometryTestbed
         {
             if (!this.problemIsOn) return;
 
+            // We have already parsed the figure; acquire the timing.
+            ImplicitTiming = this.parser.implied.GetTiming();
+
             // Map the set of clauses from parser to one set of intrinsic clauses.
             ConstructIntrinsicSet();
 
@@ -59,44 +79,39 @@ namespace GeometryTutorLib.GeometryTestbed
             // Perform and time the analysis
             figureStats = analyzer.AnalyzeFigure();
 
+            // Get the deduction and solving times.
+            DeductionTiming = analyzer.GetDeductionTiming();
+            SolverTiming = analyzer.GetSolverTiming();
+
+            // Determine completeness
             this.isComplete = analyzer.IsComplete();
 
-            if (this.isComplete)
-            {
-                System.Diagnostics.Debug.WriteLine("This problem is complete.");
-            }
-            else
-            {
-                int interestingComputable = 0;
-                int uninterestingComputable = 0;
-                int interestingIncomputable = 0;
-                int uninterestingIncomputable = 0;
-                analyzer.GetComputableInterestingCount(out interestingComputable, out uninterestingComputable,
-                                                       out interestingIncomputable, out uninterestingIncomputable);
+            //
+            // Determine the number of interesting problems from this figure.
+            //
+            int interestingComputable = 0;
+            int uninterestingComputable = 0;
+            int interestingIncomputable = 0;
+            int uninterestingIncomputable = 0;
+            analyzer.GetComputableInterestingCount(out interestingComputable, out uninterestingComputable,
+                                                   out interestingIncomputable, out uninterestingIncomputable);
 
+            if (Utilities.SHADED_AREA_SOLVER_DEBUG)
+            {
                 System.Diagnostics.Debug.WriteLine("Interesting Computable: " + interestingComputable);
                 System.Diagnostics.Debug.WriteLine("UNinteresting Computable: " + uninterestingComputable);
                 System.Diagnostics.Debug.WriteLine("Interesting INcomputable: " + interestingIncomputable);
-                System.Diagnostics.Debug.WriteLine("UNinteresting INcomputable: " + uninterestingIncomputable);
             }
+
+            numInteresting = interestingComputable;
+
             //
-            // If we know it's complete, keep that overridden completeness.
-            // Otherwise, determine completeness through analysis of the nodes in the hypergraph.
-            //
-            // if (!this.isComplete) this.isComplete = figureStats.isComplete;
-
-            //System.Diagnostics.Debug.WriteLine("Resultant Complete: " + this.isComplete +"\n");
-
-            if (this.isComplete)
-            {
-
-            }
-            else
-            {
-            }
-
             // Add to the cumulative statistics
+            //
             ActualShadedAreaProblem.TotalTime = ActualShadedAreaProblem.TotalTime.Add(figureStats.stopwatch.Elapsed);
+            ActualShadedAreaProblem.TotalImplicitTime = ActualShadedAreaProblem.TotalImplicitTime.Add(ImplicitTiming);
+            ActualShadedAreaProblem.TotalDeductionTime = ActualShadedAreaProblem.TotalDeductionTime.Add(DeductionTiming);
+            ActualShadedAreaProblem.TotalSolverTime = ActualShadedAreaProblem.TotalSolverTime.Add(SolverTiming);
 
             ActualShadedAreaProblem.TotalPoints += figureStats.numPoints;
             ActualShadedAreaProblem.TotalSegments += figureStats.numPoints;
@@ -104,38 +119,43 @@ namespace GeometryTutorLib.GeometryTestbed
             ActualShadedAreaProblem.TotalAngles += figureStats.numAngles;
             ActualShadedAreaProblem.TotalTriangles += figureStats.numTriangles;
             ActualShadedAreaProblem.TotalIntersections += figureStats.numIntersections;
-            ActualShadedAreaProblem.TotalTotalProperties += figureStats.totalProperties;
 
+            ActualShadedAreaProblem.TotalImplicitFacts += figureStats.totalImplicitFacts;
             ActualShadedAreaProblem.TotalExplicitFacts += figureStats.totalExplicitFacts;
+
+            ActualShadedAreaProblem.TotalShapes += figureStats.numShapes;
+            ActualShadedAreaProblem.TotalRootShapes += figureStats.numRootShapes;
+            ActualShadedAreaProblem.TotalAtomicRegions += figureStats.numAtomicRegions;
+
+            ActualShadedAreaProblem.TotalInteresting += numInteresting;
+
+            if (isComplete) ActualShadedAreaProblem.TotalComplete++;
+            if (figureStats.originalProblemInteresting) ActualShadedAreaProblem.TotalOriginalInteresting++;
         }
 
         public override string ToString()
         {
-            string statsString = "";
+            string output = "";
 
-            //
-            // Totals and Averages
-            //
-            statsString += this.problemName + ":\t";
+            output += problemName + "\t\t";
 
-            statsString += figureStats.numPoints + "\t";
-            statsString += figureStats.numSegments + "\t";
-            statsString += figureStats.numInMiddle + "\t";
-            statsString += figureStats.numIntersections + "\t";
-            statsString += figureStats.numAngles + "\t";
-            statsString += figureStats.numTriangles + "\t";
-            statsString += figureStats.totalProperties + "\t";
+            output += figureStats.totalImplicitFacts + "\t\t\t";
+            output += figureStats.totalExplicitFacts + "\t\t   ";
 
-            statsString += figureStats.totalExplicitFacts + "\t";
+            output += figureStats.numShapes + "\t";
+            output += figureStats.numRootShapes + "\t\t";
+            output += figureStats.numAtomicRegions + "\t\t\t";
 
-            statsString += this.goals.Count + "\t";
+            output += Utilities.TimeToString(ImplicitTiming) + "\t\t";
+            output += Utilities.TimeToString(DeductionTiming) + "\t\t";
+            output += Utilities.TimeToString(SolverTiming) + "\t";
 
-            // Format and display the elapsed time for this problem
-            statsString += System.String.Format("{0:00}:{1:00}.{2:00}",
-                                                figureStats.stopwatch.Elapsed.Minutes,
-                                                figureStats.stopwatch.Elapsed.Seconds, figureStats.stopwatch.Elapsed.Milliseconds / 10);
+            output += numInteresting + "\t\t";
+            output += isComplete + "\t\t\t";
 
-            return statsString;
+            output += figureStats.originalProblemInteresting;
+
+            return output;
         }
     }
 }

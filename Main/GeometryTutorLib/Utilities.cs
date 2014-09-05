@@ -9,7 +9,7 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool OVERRIDE_DEBUG = true;
+        public static readonly bool OVERRIDE_DEBUG = false;
 
         public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
@@ -17,6 +17,7 @@ namespace GeometryTutorLib
         public static readonly bool PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating the actual problems
         public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating backward problems
         public static readonly bool ATOMIC_REGION_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating atomic regions
+        public static readonly bool SHADED_AREA_SOLVER_DEBUG = OVERRIDE_DEBUG && true;   // Solving a shaded area problem.
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
@@ -331,7 +332,6 @@ namespace GeometryTutorLib
                 }
                 else if (smaller[s] == larger[ell])
                 {
-                    // NO-OP: omit the shared value from the difference.
                     s++;
                     ell++;
                 }
@@ -721,6 +721,11 @@ namespace GeometryTutorLib
             if (pt == null) return null;
 
             return !seg.PointLiesOnAndBetweenEndpoints(pt) || !arc.PointLiesOn(pt) ? null : pt;
+        }
+
+        public static string TimeToString(System.TimeSpan span)
+        {
+            return System.String.Format("{0:00}:{1:00}.{2:00}", span.Minutes, span.Seconds, span.Milliseconds / 10);
         }
     }
 

@@ -8,11 +8,19 @@ namespace StatisticsGenerator
 {
     public class ShadedAreaFigureStatisticsAggregator : FigureStatisticsAggregator
     {
-        public int numCalculableRegions;
-        public int numIncalculableRegions;
+        public int numShapes;
+        public int numRootShapes;
+        public int numAtomicRegions;
+
+        public bool originalProblemInteresting;
 
         public ShadedAreaFigureStatisticsAggregator() : base()
         {
+            numShapes = 0;
+            numRootShapes = 0;
+            numAtomicRegions = 0;
+
+            originalProblemInteresting = false;
         }
     }
 }
