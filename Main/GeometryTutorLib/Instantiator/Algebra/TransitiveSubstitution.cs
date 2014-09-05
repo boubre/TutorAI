@@ -1453,6 +1453,11 @@ namespace GeometryTutorLib.GenericInstantiator
             }
             else if (equationType == ARC_EQUATION)
             {
+                //Do not try to relate arcs from non-congruent circles
+                Arc arc1 = (left is Arc) ? left as Arc : null;
+                Arc arc2 = (right is Arc) ? right as Arc : null;
+                if (arc1 != null && arc2 != null && !Utilities.CompareValues(arc1.theCircle.radius, arc2.theCircle.radius)) return null;
+
                 newEq = new AlgebraicArcEquation(left, right);
             }
             else if (equationType == ANGLE_ARC_EQUATION)

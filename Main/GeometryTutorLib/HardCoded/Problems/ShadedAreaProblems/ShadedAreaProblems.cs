@@ -51,13 +51,13 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page2Prob18(true, false));       // GTG
             // problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page2Prob20(true, false));       // GTG (~30 second load time in UI)
-            // problems.Add(new Page2Prob28(true, false));       // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
+            // // problems.Add(new Page2Prob28(true, false));       // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
             // problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // // problems.Add(new Page3Prob22(true, false));    // Too long to execute
             // problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
-            // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
-            // problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
-            // problems.Add(new Page3Prob30(true, false));       // Bug - need to avoid substitution between equations involving non-congruent circles
+            // // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
+            // // problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
+            // problems.Add(new Page3Prob30(true, false));       // GTG Kind Of (works fine in TestApp with ~25 second parse time, but very slow loading in UI (~3 minutes))
             // problems.Add(new Page4Prob7(true, false));        // GTGDemo
             // problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page4Prob13(true, false));       // GTGDemo
@@ -75,14 +75,14 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page5Row1Prob26(true, false));   // GTGDemo
             // problems.Add(new Page5Row2Prob27(true, false));   // GTGDemo
             // problems.Add(new Page5Row2Prob28(true, false));   // GTGDemo
-            // problems.Add(new Page5Row2Prob29(true, false));   // Need way to calculate triangle & parallelogram areas from base and height
+            // // problems.Add(new Page5Row2Prob29(true, false));   // Need way to calculate triangle & parallelogram areas from base and height
             // problems.Add(new Page5Row3Prob2(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob3(true, false));    // GTGDemo
             // problems.Add(new Page5Row3Prob4(true, false));    // GTGDemo
             // problems.Add(new Page5Row4Prob24(true, false));   // GTGDemo
             // problems.Add(new Page5Row4Prob25(true, false));   // GTG
             // problems.Add(new Page5Row5Prob17(true, false));   // GTG (if given that quad segments are tangent to circle, can deduce square)
-            // problems.Add(new Page5Row5Prob18(true, false));   // Too long to execute
+            // // problems.Add(new Page5Row5Prob18(true, false));   // Too long to execute
             // problems.Add(new Page5Row6Prob19(true, false));   // GTG (but ~4 minute parse time unless RelationsOfCongruentAnglesAreCongruent is turned off)
             // problems.Add(new Page6Row1Prob26(true, false));       // GTG
             // problems.Add(new Page6Row1Prob27(true, false));       // GTG
@@ -94,18 +94,18 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page6Row3Prob32c(true, false));      // GTG
             // problems.Add(new Page6Row5Prob4(true, false));        // GTG
             // problems.Add(new Page6Row5Prob5(true, false));        // GTG
-            // problems.Add(new Page6Row5Prob6(true, false));        // How to calculate the area of a parallelogram?
-            // problems.Add(new Page6Row6Prob28(true, false));       //not ready
+            // // problems.Add(new Page6Row5Prob6(true, false));        // How to calculate the area of a parallelogram?
+            // // problems.Add(new Page6Row6Prob28(true, false));       //not ready
             // problems.Add(new Page6Row6Prob29(true, false));       // GTG
             // problems.Add(new Page7Prob1a(true, false));           // GTG
             // problems.Add(new Page7Prob1b(true, false));           // GTG
             // problems.Add(new Page7Prob1c(true, false));           // GTG
             // problems.Add(new Page7Prob3(true, false));            // GTG
-            // problems.Add(new Page7Prob4(true, false));            // Very long execution, works if RelationsOfCongruentAnglesAreCongruent is turned off
+            // // problems.Add(new Page7Prob4(true, false));            // Very long execution, works if RelationsOfCongruentAnglesAreCongruent is turned off
             // problems.Add(new Page7Prob24(true, false));           // GTG
             // problems.Add(new Page7Prob25(true, false));           // GTG
-            // problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
-            // problems.Add(new Page7Prob28(true, false));           // deduction problem
+            // // problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
+            // // problems.Add(new Page7Prob28(true, false));           // deduction problem
 
 
             //
@@ -121,21 +121,21 @@ namespace GeometryTutorLib.GeometryTestbed
             //
             // Glencoe
             //
-            // problems.Add(new Page7Row6(true, false));           // GTG, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
+            // // problems.Add(new Page7Row6(true, false));           // GTG, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
             // problems.Add(new Page7Prob15(true, false));         // GTG
-            // problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
-            // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
-            // problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
-            // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
+            // // problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
+            // // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
+            // // problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
+            // // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
             // problems.Add(new Page8Prob5(true, false));          // Needs triangles from atomizer to work with only 1 defined radius, but otherwise GTG
             // problems.Add(new Page8Prob14(true, false));         // GTG
-            // problems.Add(new Page8Prob15(true, false));         // Cannot deduce rectangle (does work if given outer quad is a rectangle)
+            // // problems.Add(new Page8Prob15(true, false));         // Cannot deduce rectangle (does work if given outer quad is a rectangle)
             // problems.Add(new Page8Prob18(true, false));         // GTG
             // // problems.Add(new Page8Prob21(true, false));        // Atomic region issue
             // problems.Add(new Page8Row5Prob40(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
             // problems.Add(new Page8Row5Prob41(true, false));     // GTG
-            // problems.Add(new Page8Row6Prob42(true, false));     // Not working, long time constructing implied components
-            // problems.Add(new Page8Row6Prob43(true, false));     // Long constructing all implied components
+            // // problems.Add(new Page8Row6Prob42(true, false));     // Not working, long time constructing implied components
+            // // problems.Add(new Page8Row6Prob43(true, false));     // Long constructing all implied components
             // problems.Add(new Page8Row6Prob44(true, false));     // GTG
             // // problems.Add(new Page9Prob8(true, false));          // Encoding
             // problems.Add(new Page9Prob9(true, false));          // GTG
@@ -144,7 +144,7 @@ namespace GeometryTutorLib.GeometryTestbed
             // problems.Add(new Page9Prob12(true, false));         // GTG
             // problems.Add(new Page9Prob13(true, false));         // GTGDemo
             // problems.Add(new Page9Prob16(true, false));         // GTGDemo
-            // problems.Add(new Page9Prob18(true, false));         // Substitution problem -> Angle(COA) = 2 * Angle(CBA), Angle(CBA) = 60, does not get that Angle(COA) = 120
+            // // problems.Add(new Page9Prob18(true, false));         // Substitution problem -> Angle(COA) = 2 * Angle(CBA), Angle(CBA) = 60, does not get that Angle(COA) = 120
             // problems.Add(new Page9Prob33(true, false));         // GTGDemo
             // problems.Add(new Page10Prob35(true, false));        // GTGDemo
             // problems.Add(new Page10Prob36(true, false));        // GTGDemo
@@ -159,14 +159,14 @@ namespace GeometryTutorLib.GeometryTestbed
             // Online problems
             //
             // Hatboro pdf: http://www.hatboro-horsham.org/cms/lib2/PA01000027/Centricity/Domain/271/Shaded%20Area%20Packet.pdf
-            // problems.Add(new HbPage2Prob4(true, false));           // Long execution, lots of atomic regions
+            // // problems.Add(new HbPage2Prob4(true, false));           // Long execution, lots of atomic regions
             // problems.Add(new HbPage2Prob5(true, false));           // GTG
             // problems.Add(new HbPage3Prob7(true, false));           // GTG
 
             // Word Problems For Kids - Grade 11: http://people.stfx.ca/rtmacdon/mathproblems/grade11.html
             // problems.Add(new WpfkProb2(true, false));              // GTG
             // problems.Add(new WpfkProb6(true, false));              // GTG
-            // problems.Add(new WpfkProb46(true, false));             // Works in testapp, but won't load in UI (extremely slow loading)
+            // // problems.Add(new WpfkProb46(true, false));             // Works in testapp, but won't load in UI (extremely slow loading)
 
             // NSA Collected Learning Unit: Area and Geometric Probability https://www.nsa.gov/academia/_files/collected_learning/area_and_geometric_probability.pdf
             // problems.Add(new Page64(true, false));                 // GTG
@@ -175,21 +175,34 @@ namespace GeometryTutorLib.GeometryTestbed
 
             // Magoosh GMAT Prep: http://magoosh.com/gmat/2014/circle-problems-on-the-gmat/
             // problems.Add(new MgProb2(true, false));                // GTG
-            // problems.Add(new MgProb7(true, false));                // Crashes in AngleBisectorIsPerpendicularBisectorInIsosceles
+            // // problems.Add(new MgProb7(true, false));                // Crashes in AngleBisectorIsPerpendicularBisectorInIsosceles
             // problems.Add(new MgProb8(true, false));                // GTG
-            // problems.Add(new MgProb6(true, false));                // Facet calculator exception
+            // // problems.Add(new MgProb6(true, false));                // Facet calculator exception
 
             // Magoosh Geometry Practice: http://magoosh.com/gmat/2014/gmat-geometry-practice-problems/
             // problems.Add(new MgGeoPracticeProb5(true, false));     // GTG
             // problems.Add(new MgGeoPracticeProb6(true, false));     // GTG
+
+            // TutorVista worksheet: http://worksheets.tutorvista.com/area-of-a-sector-in-a-circle-worksheet.html
+            // problems.Add(new TvPage1Prob6(true, false));           // GTG
+            // problems.Add(new TvPage1Prob7(true, false));           // GTG
+            // // problems.Add(new TvPage1Prob8(true, false));           // Facet calculator cycle
+            // problems.Add(new TvPage2Prob11(true, false));          // GTG
+            // // problems.Add(new TvPage2Prob14(true, false));          // Facet calculator cycle
+            // // problems.Add(new TvPage4Prob33(true, false));          // Facet calculator cycle
+            // // problems.Add(new TvPage4Prob34(true, false));          // Need right triangle trig with 3 known sides to find the 2 unknown angles
+            // problems.Add(new TvPage4Prob35(true, false));          // GTG
+            // problems.Add(new TvPage4Prob38(true, false));          // GTG
+            // problems.Add(new TvPage4Prob39(true, false));          // Works in test app, but fails to load in UI
+            // problems.Add(new TvPage4Prob40(true, false));          // GTG
 
             //
             // ACT Practice
             //
             // problems.Add(new TwoCircleInteriorTangent(true, false));    // GTGDemo
             // problems.Add(new TwoIsoscelesTriangles(true, false));       // GTG
-            // problems.Add(new CircCircRegionTester(true, false));        // No solution found
-            // problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
+            // // problems.Add(new CircCircRegionTester(true, false));        // No solution found
+            // // problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
             // problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
 
             return problems;

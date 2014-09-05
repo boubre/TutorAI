@@ -45,12 +45,17 @@ namespace GeometryTutorLib.GeometryTestbed
 
             known.AddSegmentLength((Segment)parser.Get(new Segment(a, c)), 20);
 
+            given.Add(new GeometricCongruentSegments((Segment)parser.Get(new Segment(a, b)), (Segment)parser.Get(new Segment(b, c))));
+
             List<Point> wanted = new List<Point>();
             wanted.Add(new Point("", -11, 3));
             wanted.Add(new Point("", 11, 3));
             goalRegions = parser.implied.GetAtomicRegionsByPoints(wanted);
 
             SetSolutionArea(100);
+
+            problemName = "Jurgensen Page 3 Problem 30";
+            GeometryTutorLib.EngineUIBridge.HardCodedProblemsToUI.AddProblem(problemName, points, circles, segments);
         }
     }
 }
