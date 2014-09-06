@@ -11,6 +11,8 @@ namespace DynamicGeometry.UI
         private static readonly int ITEMS_PER_COL = 8;
 
         private List<EntryPanel> EntryPanels;
+        private ComboBox templateSelection;
+        private Dictionary<string, TemplateType> templateMap;
 
         /// <summary>
         /// Create the window.
@@ -19,6 +21,7 @@ namespace DynamicGeometry.UI
         {
             Initialize();
             MakeEntryPanels();
+            MakeTemplateMap();
             LayoutDesign();
         }
 
@@ -42,6 +45,7 @@ namespace DynamicGeometry.UI
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
             //Add the entry panels to the UI
             var verticalPanel = new StackPanel() { Orientation = Orientation.Vertical };
@@ -60,6 +64,20 @@ namespace DynamicGeometry.UI
                 panel.Margin = new Thickness(0, 0, 10, 5);
                 verticalPanel.Children.Add(panel);
             }
+            
+            //Add template selection combo and descriptor
+            StackPanel templatePanel = new StackPanel() { Orientation = Orientation.Horizontal };
+            templatePanel.Margin = new Thickness(0, 0, 0, 5);
+            templatePanel.HorizontalAlignment = HorizontalAlignment.Center;
+            TextBlock templateDesc = new TextBlock();
+            templateDesc.Text = "Template:";
+            templateDesc.Margin = new Thickness(0, 0, 5, 0);
+            templateDesc.VerticalAlignment = VerticalAlignment.Center;
+            templatePanel.Children.Add(templateDesc);
+            templateSelection = new ComboBox();
+            templateSelection.Width = 100;
+            templateSelection.ItemsSource = templateMap.Keys;
+            templatePanel.Children.Add(templateSelection);
 
             //Add the submit button
             Button submitBtn = new Button();
@@ -71,7 +89,10 @@ namespace DynamicGeometry.UI
             Grid.SetRow(horizontalPanel, 0);
             Grid.SetColumn(horizontalPanel, 0);
             grid.Children.Add(horizontalPanel);
-            Grid.SetRow(submitBtn, 1);
+            Grid.SetRow(templatePanel, 1);
+            Grid.SetColumn(templatePanel, 0);
+            grid.Children.Add(templatePanel);
+            Grid.SetRow(submitBtn, 2);
             Grid.SetColumn(submitBtn, 0);
             grid.Children.Add(submitBtn);
 
@@ -103,6 +124,22 @@ namespace DynamicGeometry.UI
         }
 
         /// <summary>
+        /// Assign the string-to-template associations used for the template drop down box.
+        /// </summary>
+        private void MakeTemplateMap()
+        {
+            templateMap = new Dictionary<string, TemplateType>();
+            templateMap.Add("a - b", TemplateType.ALPHA_MINUS_BETA);
+            templateMap.Add("a + b", TemplateType.ALPHA_PLUS_BETA);
+            templateMap.Add("a + b + c", TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA);
+            templateMap.Add("a + (b - c)", TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN);
+            templateMap.Add("(a + b) - c", TemplateType.LPAREN_ALPHA_PLUS_BETA_RPAREN_MINUS_GAMMA);
+            templateMap.Add("a - b - c", TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA);
+            templateMap.Add("a - b + c", TemplateType.ALPHA_MINUS_BETA_PLUS_GAMMA);
+            templateMap.Add("a - (b - c)", TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN);
+        }
+
+        /// <summary>
         /// This event is executed when the submit button is clicked.
         /// This method will organize the information into a dictionary and pass it to the back end.
         /// </summary>
@@ -131,7 +168,7 @@ namespace DynamicGeometry.UI
             }
 
             this.Close();
-
+            TemplateType template = templateMap[templateSelection.SelectedValue as string];
             GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain(figureCountMap);
         }
 
