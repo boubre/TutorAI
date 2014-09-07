@@ -173,11 +173,12 @@ namespace GeometryTutorLib.TutorParser
             List<Segment> chordsRadii = AcquireImpliedChordsRadii();
 
             // Eliminate redundant segments; combine into a list
-            Utilities.AddUniqueList<Segment>(segments, chordsRadii);
+            List<Segment> allSegments = new List<Segment>(segments);
+            allSegments.AddRange(chordsRadii);
 
             // Shaded area computations require that we properly construct all 'implied' polygons;
             // we limit our investigation only to triangles; this can be extended.
-            List<Polygon> addedPolys = AcquireImpliedTriangles(segments);
+            List<Polygon> addedPolys = AcquireImpliedTriangles(allSegments);
 
             // Re-check the new triangles (polygons) against circle to determine if there are more points of intersection now.
             shapeIntCalc.CalcCirclePolygonIntersectionPoints(addedPolys);
@@ -192,8 +193,8 @@ namespace GeometryTutorLib.TutorParser
             // Segments (which are not part of a polygon) may intersect a circle; these are also added to the circle's interesting points.
             csIntersections = shapeIntCalc.FindCircleSegmentIntersections();
 
-            // Find all the angles based on intersections; duplicates are removed.
-            CalculateAngles();
+            // Find all the angles based on intersections and implicit triangles; duplicates are removed.
+            CalculateAngles(addedPolys);
 
             // Identify inscribed and circumscribed situations between a circle and polygon.
             AnalyzeCirclePolygonInscription();
@@ -233,6 +234,16 @@ namespace GeometryTutorLib.TutorParser
                 }
             }
 #endif
+            // Add the implied polygons to the list of actual polygons.
+            polygons[Polygon.GetPolygonIndex(3)].AddRange(addedPolys);
+            
+            // Add the set of 'used', implied segments to the actual segment list.
+            foreach (Polygon poly in addedPolys)
+            {
+                Utilities.AddUniqueList<Segment>(segments, poly.orderedSides);
+            }
+            //segments = allSegments;
+
             // --- End timing ---
             stopwatch.Stop();
         }        
@@ -420,8 +431,11 @@ namespace GeometryTutorLib.TutorParser
         /// <summary>
         /// Calculate all angles in the drawing.
         /// </summary>
-        private void CalculateAngles()
+        private void CalculateAngles(List<Polygon> addedPolys)
         {
+            // Add all implied angles.
+            addedPolys.ForEach(p => angles.AddRange(p.angles));
+
             foreach (Intersection inter in ssIntersections)
             {
                 // 1 angle
@@ -777,8 +791,6 @@ namespace GeometryTutorLib.TutorParser
                     }
                 }
             }
-
-            polygons[Polygon.GetPolygonIndex(3)].AddRange(toAdd);
 
             return toAdd;
         }

@@ -935,8 +935,8 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                 {
                     if (maximalSegments[s1].IsCollinearWith(maximalSegments[s2]) && maximalSegments[s1].SharedVertex(maximalSegments[s2]) != null)
                     {
-                        segments[s1].AddCollinearPoints(segments[s2].collinear);
-                        segments[s2].AddCollinearPoints(segments[s1].collinear);
+                        maximalSegments[s1].AddCollinearPoints(maximalSegments[s2].collinear);
+                        maximalSegments[s2].AddCollinearPoints(maximalSegments[s1].collinear);
                     }
                 }
             }

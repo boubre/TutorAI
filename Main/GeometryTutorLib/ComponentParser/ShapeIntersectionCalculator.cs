@@ -225,10 +225,12 @@ namespace GeometryTutorLib.TutorParser
 
                     if (inter1 != null && seg.PointLiesOnAndBetweenEndpoints(inter1))
                     {
+                        inter1 = PointFactory.GeneratePoint(inter1);
                         circle.AddIntersectingPoint(inter1);
                     }
                     if (inter2 != null && seg.PointLiesOnAndBetweenEndpoints(inter2))
                     {
+                        inter2 = PointFactory.GeneratePoint(inter2);
                         circle.AddIntersectingPoint(inter2);
                     }
                 }

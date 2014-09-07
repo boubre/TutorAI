@@ -31,9 +31,9 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page1Col1Prob1(true, false));     // GTGDemo
             //problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
             //problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
-            problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob2(true, false));       // GTGDemo
+            //problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
+            //problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
+            //problems.Add(new Page1Col2Prob2(true, false));       // GTGDemo
             //problems.Add(new Page1Col2Prob3(true, false));     // GTGDemo
             //problems.Add(new Page1Col2Prob4(true, false));     // GTGDemo: Good circle example
             //problems.Add(new Page2Col1Prob1(true, false));     // GTGDemo: Implied polygon id problem.
@@ -176,7 +176,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new MgProb2(true, false));                // GTG
             //// problems.Add(new MgProb7(true, false));                // Crashes in AngleBisectorIsPerpendicularBisectorInIsosceles
             //problems.Add(new MgProb8(true, false));                // GTG
-            //// problems.Add(new MgProb6(true, false));                // Facet calculator exception
+            ////problems.Add(new MgProb6(true, false));                // Facet calculator exception
 
             //// Magoosh Geometry Practice: http://magoosh.com/gmat/2014/gmat-geometry-practice-problems/
             //problems.Add(new MgGeoPracticeProb5(true, false));     // GTG
@@ -185,9 +185,9 @@ namespace GeometryTutorLib.GeometryTestbed
             //// TutorVista worksheet: http://worksheets.tutorvista.com/area-of-a-sector-in-a-circle-worksheet.html
             //problems.Add(new TvPage1Prob6(true, false));           // GTG
             //problems.Add(new TvPage1Prob7(true, false));           // GTG
-            //// problems.Add(new TvPage1Prob8(true, false));           // Facet calculator cycle
+            ////problems.Add(new TvPage1Prob8(true, false));           // Facet calculator cycle
             //problems.Add(new TvPage2Prob11(true, false));          // GTG
-            //// problems.Add(new TvPage2Prob14(true, false));          // Facet calculator cycle
+            ////problems.Add(new TvPage2Prob14(true, false));          // Facet calculator cycle
             //// problems.Add(new TvPage4Prob33(true, false));          // Facet calculator cycle
             //// problems.Add(new TvPage4Prob34(true, false));          // Need right triangle trig with 3 known sides to find the 2 unknown angles
             //problems.Add(new TvPage4Prob35(true, false));          // GTG
@@ -203,6 +203,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //// problems.Add(new CircCircRegionTester(true, false));        // No solution found
             //// problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
             //problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
+            // problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
 
             return problems;
         }

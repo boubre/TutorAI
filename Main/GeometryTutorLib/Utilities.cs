@@ -9,7 +9,7 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool OVERRIDE_DEBUG = false;
+        public static readonly bool OVERRIDE_DEBUG = true;
 
         public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
