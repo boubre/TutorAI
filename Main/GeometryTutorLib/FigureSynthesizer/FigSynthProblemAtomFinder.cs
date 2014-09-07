@@ -62,7 +62,9 @@ namespace GeometryTutorLib.ConcreteAST
             Dictionary<Circle, int> circGranularity = Circle.AcquireCircleGranularity(circles);
 
             // Extract the atomic regions.
-            return GeometryTutorLib.AtomicRegionIdentifier.AtomicIdentifierMain.AcquireAtomicRegionsFromGraph(points, segments, arcs, circles, circGranularity);
+            List<AtomicRegion> ars = GeometryTutorLib.AtomicRegionIdentifier.AtomicIdentifierMain.AcquireAtomicRegionsFromGraph(points, segments, arcs, circles, circGranularity);
+
+            return ars;
         }
 
         private static void CollectConstituentElements(List<Connection> connections,
@@ -135,26 +137,6 @@ namespace GeometryTutorLib.ConcreteAST
                     }
                 }
             }
-        }
-
-        //
-        //
-        // Appending
-        //
-        //
-        //
-        // Use the pathological atomic region identification code to id the atoms.
-        //
-        public static List<AtomicRegion> AcquireOpenAtomicRegions(List<AtomicRegion> atoms)
-        {
-            // Collect all the points from the atoms.
-            List<Point> points = new List<Point>();
-            foreach (AtomicRegion atom in atoms)
-            {
-                points.AddRange(atom.GetVertices());
-            }
-
-            return AtomicRegionIdentifier.AtomicIdentifierMain.IdentifyPathological(points, atoms, new List<Circle>(), new Dictionary<Circle,int>());
         }
     }
 }

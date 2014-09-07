@@ -18,8 +18,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
             {
-                // Require a trapezoid that doesn't match the outer shape.
-                if (quad.VerifyTrapezoid() && !quad.HasSamePoints(outerShape as Polygon))
+                if (quad.VerifyTrapezoid())
                 {
                     Trapezoid trap = new Trapezoid(quad);
 
@@ -33,9 +32,9 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            throw new NotImplementedException();
+            return new List<FigSynthProblem>();
         }
 
         public static Trapezoid ConstructDefaultTrapezoid()

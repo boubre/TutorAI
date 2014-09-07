@@ -151,7 +151,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // For subsitution and algebraic Simplifications
         //
-        public virtual bool ContainsClause(GroundedClause clause) { return false; }
+        public virtual bool Contains(GroundedClause clause) { return false; }
         public virtual void Substitute(GroundedClause c1, GroundedClause c2) { }
         public virtual GroundedClause DeepCopy() { return (GroundedClause)this.MemberwiseClone(); }
 

@@ -8,7 +8,7 @@ namespace GeometryTutorLib.GeometryTestbed
         static void Main(string[] args)
         {
 #if FIGURE_SYNTHESIZER
-            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainTester();
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
 #else
             List<GeometryTestbed.ActualProblem> problems = ConstructAllGeoShaderHardCodedProblems();
 

@@ -594,8 +594,8 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             return applicWithMidpoints;
         }
 
-        public static List<AtomicRegion> IdentifyPathological(List<Point> figurePoints, List<AtomicRegion> atoms,
-                                                              List<Circle> circles, Dictionary<Circle, int> circGranularity)
+        private static List<AtomicRegion> IdentifyPathological(List<Point> figurePoints, List<AtomicRegion> atoms,
+                                                               List<Circle> circles, Dictionary<Circle, int> circGranularity)
         {
             List<Point> points = new List<Point>();
             List<Segment> segments = new List<Segment>();

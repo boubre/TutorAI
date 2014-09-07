@@ -34,9 +34,9 @@ namespace GeometryTutorLib.ConcreteAST
             return list;
         }
 
-        public override bool ContainsClause(GroundedClause newG)
+        public override bool Contains(GroundedClause newG)
         {
-            return leftExp.ContainsClause(newG) || rightExp.ContainsClause(newG);
+            return leftExp.Contains(newG) || rightExp.Contains(newG);
         }
 
         public override void Substitute(GroundedClause toFind, GroundedClause toSub)

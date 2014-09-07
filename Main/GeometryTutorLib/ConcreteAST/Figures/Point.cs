@@ -59,6 +59,13 @@ namespace GeometryTutorLib.ConcreteAST
             Point origin = new Point("", 0, 0);
 
             return Segment.Between(origin, first, second);
+
+            //double magnitudeFirst = Point.calcDistance(origin, first);
+            //double magnitudeSecond = Point.calcDistance(origin, second);
+
+            //double magnitudeCombined = Point.calcDistance(first, second);
+
+            //return Utilities.CompareValues(magnitudeCombined, magnitudeFirst + magnitudeSecond);
         }
 
         //
@@ -88,15 +95,8 @@ namespace GeometryTutorLib.ConcreteAST
             return Point.CrossProduct(vect1, vect2) < 0;
         }
 
-        public static double Magnitude(Point vector) { return Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2)); }
         public static Point MakeVector(Point tail, Point head) { return new Point("", head.X - tail.X, head.Y - tail.Y); }
         public static Point GetOppositeVector(Point v) { return new Point("", -v.X, -v.Y); }
-        public static Point Normalize(Point vector)
-        {
-            double magnitude = Point.Magnitude(vector);
-            return new Point("", vector.X / magnitude, vector.Y / magnitude);
-        }
-        public static Point ScalarMultiply(Point vector, double scalar) { return new Point("", scalar * vector.X, scalar * vector.Y); }
 
         public int Quadrant()
         {

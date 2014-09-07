@@ -12,86 +12,24 @@ namespace GeometryTutorLib.TutorParser
     /// </summary>
     public class PolygonCalculator
     {
-        private List<Polygon>[] polygons;
+        private List<GeometryTutorLib.ConcreteAST.Polygon>[] polygons;
+        private List<GeometryTutorLib.ConcreteAST.Segment> segments;
 
-        public PolygonCalculator()
+        public PolygonCalculator(List<GeometryTutorLib.ConcreteAST.Segment> segs)
         {
-            polygons = Polygon.ConstructPolygonContainer();
+            polygons = null;
+            segments = segs;
         }
 
-        //
-        // Acquire all polygons.
-        //
-        public List<Polygon>[] GetPolygons(List<Segment> segs)
+        public List<GeometryTutorLib.ConcreteAST.Polygon>[] GetPolygons()
         {
-            bool[,] eligible = DetermineEligibleCombinations(segs);
-
-            CalculateImpliedPolygons(eligible, segs);
+            if (polygons == null)
+            {
+                polygons = Polygon.ConstructPolygonContainer();
+                CalculateImpliedPolygons();
+            }
 
             return polygons;
-        }
-
-        //
-        // Acquire only triangles.
-        //
-        public List<Polygon> GetTriangles(List<Segment> segments)
-        {
-            List<List<int>> constructedPolygonSets;
-            List<List<int>> failedPolygonSets;
-
-            bool[,] eligible = DetermineEligibleCombinations(segments);
-
-            return ConstructBaseCase(eligible, segments, out constructedPolygonSets, out failedPolygonSets);
-        }
-
-        //
-        // Base case: construct all triangles.
-        // For all non-triangle set of 3 segments, inductively look for polygons with more sides.
-        //
-        private List<Polygon> ConstructBaseCase(bool[,] eligible, List<Segment> segments,
-                                                out List<List<int>> constructedPolygonSets,
-                                                out List<List<int>> failedPolygonSets)
-        {
-            List<Polygon> successful = new List<Polygon>();
-            constructedPolygonSets = new List<List<int>>();
-            failedPolygonSets = new List<List<int>>();
-
-            for (int s1 = 0; s1 < segments.Count - 2; s1++)
-            {
-                for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
-                {
-                    if (eligible[s1, s2])
-                    {
-                        for (int s3 = s2 + 1; s3 < segments.Count - 0; s3++)
-                        {
-                            // Does this set create a triangle?
-                            if (eligible[s1, s3] && eligible[s2, s3])
-                            {
-                                List<int> indices = new List<int>();
-                                indices.Add(s1);
-                                indices.Add(s2);
-                                indices.Add(s3);
-
-                                List<Segment> segs = MakeSegmentsList(segments, indices);
-                                Polygon poly = Polygon.MakePolygon(segs);
-                                if (poly == null)
-                                {
-                                    failedPolygonSets.Add(indices);
-                                }
-                                else
-                                {
-                                    // We have a triangle...
-                                    successful.Add(poly);
-
-                                    // Keep track of all existent sets of segments which created polygons.
-                                    constructedPolygonSets.Add(indices);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return successful;
         }
 
         //
@@ -108,33 +46,67 @@ namespace GeometryTutorLib.TutorParser
         //
         // This construction must be done in a breadth first manner (triangles then quads then pentagons...)
         //
-        private void CalculateImpliedPolygons(bool[,] eligible, List<Segment> segments)
+        private void CalculateImpliedPolygons()
         {
-            List<List<int>> constructedPolygonSets;
-            List<List<int>> failedPolygonSets;
+            bool[,] eligible = DetermineEligibleCombinations();
+            List<List<int>> constructedPolygonSets = new List<List<int>>();
+            List<List<int>> failedPolygonSets = new List<List<int>>();
 
             //
-            // Construct the base case: triangles.
+            // Base case: construct all triangles.
+            // For all non-triangle set of 3 segments, inductively look for polygons with more sides.
             //
-            polygons[Polygon.GetPolygonIndex(3)] = ConstructBaseCase(eligible, segments, out constructedPolygonSets, out failedPolygonSets);
+            for (int s1 = 0; s1 < segments.Count - 2; s1++)
+            {
+                for (int s2 = s1 + 1; s2 < segments.Count - 1; s2++)
+                {
+                    if (eligible[s1, s2])
+                    {
+                        for (int s3 = s2 + 1; s3 < segments.Count - 0; s3++)
+                        {
+                            // Does this set create a triangle?
+                            if (eligible[s1, s3] && eligible[s2, s3])
+                            {
+                                List<int> indices = new List<int>();
+                                indices.Add(s1);
+                                indices.Add(s2);
+                                indices.Add(s3);
+
+                                List<GeometryTutorLib.ConcreteAST.Segment> segs = MakeSegmentsList(indices);
+                                GeometryTutorLib.ConcreteAST.Polygon poly = GeometryTutorLib.ConcreteAST.Polygon.MakePolygon(segs);
+                                if (poly == null)
+                                {
+                                    failedPolygonSets.Add(indices);
+                                }
+                                else
+                                {
+                                    polygons[GeometryTutorLib.ConcreteAST.Polygon.GetPolygonIndex(indices.Count)].Add(poly);
+
+                                    // Keep track of all existent sets of segments which created polygons.
+                                    constructedPolygonSets.Add(indices);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             //
             // Inductively look for polygons with more than 3 sides.
             //
-            InductivelyConstructPolygon(segments, failedPolygonSets, eligible, constructedPolygonSets);
+            InductivelyConstructPolygon(failedPolygonSets, eligible, constructedPolygonSets);
         }
 
         //
         // For each given set, add 1 new side (at a time) to the list of sides in order to construct polygons.
         //
-        private void InductivelyConstructPolygon(List<Segment> segments, List<List<int>> openPolygonSets,
-                                                 bool[,] eligible, List<List<int>> constructedPolygonSets)
+        private void InductivelyConstructPolygon(List<List<int>> openPolygonSets, bool[,] eligible, List<List<int>> constructedPolygonSets)
         {
             // Stop if no sets to consider and grow from.
             if (!openPolygonSets.Any()) return;
 
             // Stop at a maximum number of sides;  we say n is the number of sides
-            if (openPolygonSets[0].Count == Polygon.MAX_POLYGON_SIDES) return;
+            if (openPolygonSets[0].Count == GeometryTutorLib.ConcreteAST.Polygon.MAX_POLYGON_SIDES) return;
 
             int matrixLength = eligible.GetLength(0);
 
@@ -155,15 +127,15 @@ namespace GeometryTutorLib.TutorParser
                         // Did we already create a polygon with a subset of these indices?
                         if (!GeometryTutorLib.Utilities.ListHasSubsetOfSet<int>(constructedPolygonSets, newIndices))
                         {
-                            List<Segment> segs = MakeSegmentsList(segments, newIndices);
-                            Polygon poly = Polygon.MakePolygon(segs);
+                            List<GeometryTutorLib.ConcreteAST.Segment> segs = MakeSegmentsList(newIndices);
+                            GeometryTutorLib.ConcreteAST.Polygon poly = GeometryTutorLib.ConcreteAST.Polygon.MakePolygon(segs);
                             if (poly == null)
                             {
                                 failedPolygonSets.Add(newIndices);
                             }
                             else
                             {
-                                polygons[Polygon.GetPolygonIndex(segs.Count)].Add(poly);
+                                polygons[GeometryTutorLib.ConcreteAST.Polygon.GetPolygonIndex(segs.Count)].Add(poly);
 
                                 // Keep track of all existent sets of segments which created polygons.
                                 constructedPolygonSets.Add(newIndices);
@@ -173,20 +145,20 @@ namespace GeometryTutorLib.TutorParser
                 }
             }
 
-            InductivelyConstructPolygon(segments, failedPolygonSets, eligible, constructedPolygonSets);
+            InductivelyConstructPolygon(failedPolygonSets, eligible, constructedPolygonSets);
         }
 
         // Make a list of segments based on indices; a helper function.
-        private List<Segment> MakeSegmentsList(List<Segment> segments, List<int> indices)
+        private List<GeometryTutorLib.ConcreteAST.Segment> MakeSegmentsList(List<int> indices)
         {
-            List<Segment> localSegs = new List<Segment>();
+            List<GeometryTutorLib.ConcreteAST.Segment> segs = new List<GeometryTutorLib.ConcreteAST.Segment>();
 
             foreach (int index in indices)
             {
-                localSegs.Add(segments[index]);
+                segs.Add(segments[index]);
             }
 
-            return localSegs;
+            return segs;
         }
 
         //
@@ -207,7 +179,7 @@ namespace GeometryTutorLib.TutorParser
         //   (1) Cross the other segment through the middle (creating an X or |-)
         //   (2) Coincide with overlap (or share a vertex)
         //
-        private bool[,] DetermineEligibleCombinations(List<Segment> segments)
+        private bool[,] DetermineEligibleCombinations()
         {
             bool[,] eligible = new bool[segments.Count, segments.Count]; // defaults to false
 

@@ -20,8 +20,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
             {
-                // Select only squares that don't match the outer shape.
-                if (quad.VerifySquare() && !quad.HasSamePoints(outerShape as Polygon))
+                if (quad.VerifySquare())
                 {
                     Square square = new Square(quad);
 
@@ -78,27 +77,9 @@ namespace GeometryTutorLib.ConcreteAST
             return constraints;
         }
 
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            List<FigSynthProblem> composed = new List<FigSynthProblem>();
-            foreach (Segment seg in segments)
-            {
-                Rectangle rect1;
-                Rectangle rect2;
-
-                Rectangle.MakeRectangles(seg, (int)seg.Length, out rect1, out rect2);
-
-                Square sq1 = new Square(rect1);
-                Square sq2 = new Square(rect2);
-
-                FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, sq2);
-                if (prob != null) composed.Add(prob);
-
-                prob = Figure.MakeAdditionProblem(outerShape, sq2);
-                if (prob != null) composed.Add(prob);
-            }
-
-            return FigSynthProblem.RemoveSymmetric(composed);
+            return new List<FigSynthProblem>();
         }
 
         public static Square ConstructDefaultSquare()

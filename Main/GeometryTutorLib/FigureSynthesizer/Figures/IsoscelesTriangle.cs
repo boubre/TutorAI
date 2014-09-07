@@ -15,8 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Triangle tri in tris)
             {
-                // Select only isosceles triangle that don't match the outer shape.
-                if (tri.IsIsosceles() && !tri.StructurallyEquals(outerShape))
+                if (tri.IsIsosceles())
                 {
                     IsoscelesTriangle isoTri = new IsoscelesTriangle(tri);
 
@@ -30,71 +29,9 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        //
-        // With appending in this case, we choose the given segment to be the base.
-        //
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            List<FigSynthProblem> composed = new List<FigSynthProblem>();
-
-            // Acquire a set of lengths of the given segments.
-            List<int> lengths = new List<int>();
-            segments.ForEach(s => Utilities.AddUnique<int>(lengths, (int)s.Length));
-
-            //
-            // Acquire the length of the isosceles triangle so that it is longer than the half the distance of the segment.
-            //
-            int newLength = -1;
-            for (newLength = Figure.DefaultSideLength(); ; newLength = Figure.DefaultSideLength())
-            {
-                bool longEnough = true;
-                foreach (Segment side in segments)
-                {
-                    if (newLength < (side.Length / 2.0))
-                    {
-                        longEnough = false;
-                        break;
-                    }
-                }
-                if (longEnough) break;
-            }
-            
-            //
-            // Construct the triangles.
-            //
-            foreach (Segment seg in segments)
-            {
-                List<Triangle> tris;
-
-                MakeIsoscelesTriangles(seg, newLength, out tris);
-
-                foreach (Triangle t in tris)
-                {
-                    FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, t);
-                    if (prob != null) composed.Add(prob);
-                }
-            }
-
-            return FigSynthProblem.RemoveSymmetric(composed);
-        }
-
-        public static void MakeIsoscelesTriangles(Segment side, double length, out List<Triangle> tris)
-        {
-            tris = new List<Triangle>();
-
-            // Define two circles or radius 'length'
-            // One intersection defines a triangle 'above' the segment; the other 'below' the segment.
-            Circle circle1 = new Circle(side.Point1, length);
-            Circle circle2 = new Circle(side.Point2, length);
-
-            Point inter1, inter2;
-            circle1.FindIntersection(circle2, out inter1, out inter2);
-
-            // 1
-            tris.Add(new IsoscelesTriangle(new Triangle(side.Point1, side.Point2, inter1)));
-
-            // 2
-            tris.Add(new IsoscelesTriangle(new Triangle(side.Point1, side.Point2, inter2)));
+            return new List<FigSynthProblem>();
         }
 
         public static IsoscelesTriangle ConstructDefaultIsoscelesTriangle()

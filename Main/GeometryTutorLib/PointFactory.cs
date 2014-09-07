@@ -25,8 +25,6 @@ namespace GeometryTutorLib
         {
             if (that == null) return false;
 
-            if (that.name.Length < prefix.Length) return false;
-
             return prefix == that.name.Substring(0, 3);
         }
 

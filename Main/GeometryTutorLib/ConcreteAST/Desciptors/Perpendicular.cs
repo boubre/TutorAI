@@ -11,16 +11,14 @@ namespace GeometryTutorLib.ConcreteAST
 
         public Perpendicular(Intersection inter) : base(inter.intersect, inter.lhs, inter.rhs)
         {
-            // Check if truly perpendicular
-            if (lhs.CoordinatePerpendicular(rhs) == null)
-            {
-                throw new ArgumentException("Intersection is not perpendicular: " + inter.ToString());
-            }
-
             originalInter = inter;
         }
 
-        public override int GetHashCode() { return base.GetHashCode(); }
+        public override int GetHashCode()
+        {
+            //Change this if the object is no longer immutable!!!
+            return base.GetHashCode();
+        }
 
         public override bool StructurallyEquals(Object obj)
         {

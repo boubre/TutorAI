@@ -66,7 +66,6 @@ namespace GeometryTutorLib.GenericInstantiator
 
                 // We are only interested in straight-angle type intersections
                 if (inter.StandsOnEndpoint()) return newGrounded;
-                if (!inter.IsPerpendicular()) return newGrounded;
 
                 foreach (Altitude altitude in candidateAltitude)
                 {

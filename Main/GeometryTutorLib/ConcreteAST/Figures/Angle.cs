@@ -335,7 +335,7 @@ namespace GeometryTutorLib.ConcreteAST
             return false;
         }
 
-        public override bool ContainsClause(GroundedClause target)
+        public override bool Contains(GroundedClause target)
         {
             return this.Equals(target);
         }
@@ -494,6 +494,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             return new GenericInstantiator.EdgeAggregator(Utilities.MakeList<GroundedClause>(Angle.AcquireFigureAngle(angle)), gcas, reflexAnnotation);
         }
+
 
         public bool IsComplementaryTo(Angle thatAngle)
         {

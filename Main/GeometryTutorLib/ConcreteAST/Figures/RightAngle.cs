@@ -10,22 +10,8 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public partial class RightAngle : Angle
     {
-        public RightAngle(Point a, Point b, Point c) : base(a, b, c)
-        {
-            if (!Utilities.CompareValues(this.measure, 90))
-            {
-                System.Diagnostics.Debug.WriteLine("Problem");
-                // throw new ArgumentException("Right angles should measure 90 degrees, not (" + this.measure + ") degrees.");
-            }
-        }
-        public RightAngle(Angle angle) : base(angle.A, angle.B, angle.C)
-        {
-            if (!Utilities.CompareValues(angle.measure, 90))
-            {
-                System.Diagnostics.Debug.WriteLine("Problem");
-                // throw new ArgumentException("Right angles should measure 90 degrees, not (" + angle.measure + ") degrees.");
-            }
-        }
+        public RightAngle(Point a, Point b, Point c) : base(a, b, c) { }
+        public RightAngle(Angle angle) : base(angle.A, angle.B, angle.C) { }
 
         // CTA: Be careful with equality; this is object-based equality
         // If we check for angle measure equality that is distinct.

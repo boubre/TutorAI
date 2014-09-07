@@ -15,8 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Triangle tri in tris)
             {
-                // Select only parallelograms that don't match the outer shape.
-                if (tri.IsEquilateral() && !tri.StructurallyEquals(outerShape))
+                if (tri.IsEquilateral())
                 {
                     EquilateralTriangle eqTri = new EquilateralTriangle(tri);
 
@@ -30,30 +29,9 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        //
-        // With appending in this case, we choose the given segment to be the base.
-        //
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            List<FigSynthProblem> composed = new List<FigSynthProblem>();
-
-            //
-            // Construct the triangles.
-            //
-            foreach (Segment seg in segments)
-            {
-                List<Triangle> tris;
-
-                IsoscelesTriangle.MakeIsoscelesTriangles(seg, seg.Length, out tris);
-
-                foreach (Triangle t in tris)
-                {
-                    FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, t);
-                    if (prob != null) composed.Add(prob);
-                }
-            }
-
-            return FigSynthProblem.RemoveSymmetric(composed);
+            return new List<FigSynthProblem>();
         }
 
         public static EquilateralTriangle ConstructDefaultEquilateralTriangle()

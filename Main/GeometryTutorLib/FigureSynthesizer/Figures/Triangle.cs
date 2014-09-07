@@ -12,11 +12,6 @@ namespace GeometryTutorLib.ConcreteAST
     /// </summary>
     public partial class Triangle : Polygon
     {
-        public override double CoordinatizedArea()
-        {
-            return HeroArea(SegmentA.Length, SegmentB.Length, SegmentC.Length);
-        }
-
         //
         // Acquire the list of all possible quadrilaterals 
         //
@@ -43,71 +38,12 @@ namespace GeometryTutorLib.ConcreteAST
 
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            List<FigSynthProblem> composed = new List<FigSynthProblem>();
-
-            // Possible triangles.
-            List<Triangle> tris = Triangle.GetTrianglesFromPoints(points);
-
-            // Check all triangles to determine applicability.
-            foreach (Triangle tri in tris)
-            {
-                // Avoid equilateral, isosceles, and right triangles.
-                if (!tri.IsEquilateral() && !tri.IsIsosceles() && !tri.isRightTriangle() && !tri.StructurallyEquals(outerShape))
-                {
-                    SubtractionSynth subSynth = new SubtractionSynth(outerShape, tri);
-
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, tri.points, tri));
-
-                    composed.Add(subSynth);
-                }
-            }
-
-            return FigSynthProblem.RemoveSymmetric(composed);
+            return new List<FigSynthProblem>();
         }
 
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            List<FigSynthProblem> composed = new List<FigSynthProblem>();
-
-            int length = Figure.DefaultSideLength();
-            int angle = Figure.DefaultFirstQuadrantNonRightAngle();
-            foreach (Segment seg in segments)
-            {
-                List<Triangle> tris;
-
-                MakeTriangles(seg, length, angle, out tris);
-
-                foreach (Triangle t in tris)
-                {
-                    FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, t);
-                    if (prob != null) composed.Add(prob);
-                }
-            }
-
-            return FigSynthProblem.RemoveSymmetric(composed);
-        }
-
-        public static void MakeTriangles(Segment side, int length, int angle, out List<Triangle> tris)
-        {
-            tris = new List<Triangle>();
-
-            // 1
-            Segment newSide1 = side.ConstructSegmentByAngle(side.Point1, angle, length);
-            Point newPoint1 = newSide1.OtherPoint(side.Point1);
-            tris.Add(new Triangle(side.Point1, side.Point2, newPoint1));
-
-            // 2
-            Segment newSide2 = side.ConstructSegmentByAngle(side.Point2, angle, length);
-            Point newPoint2 = newSide2.OtherPoint(side.Point2);
-            tris.Add(new Triangle(side.Point1, side.Point2, newPoint2));
-
-            // 3
-            Point oppNewPoint1 = side.GetReflectionPoint(newPoint1);
-            tris.Add(new Triangle(side.Point1, side.Point2, oppNewPoint1));
-
-            // 4
-            Point oppNewPoint2 = side.GetReflectionPoint(newPoint1);
-            tris.Add(new Triangle(side.Point1, side.Point2, oppNewPoint2));
+            return new List<FigSynthProblem>();
         }
 
         public static Triangle ConstructDefaultTriangle()
@@ -118,10 +54,6 @@ namespace GeometryTutorLib.ConcreteAST
             return new Triangle(origin, other1, other2);
         }
 
-        // By default return all the sides since we can use Hero's formula then.
-        public override List<Segment> GetAreaVariables()
-        {
-            return this.orderedSides;
-        }
+        public override List<Segment> GetAreaVariables() { throw new NotImplementedException(); }
     }
 }

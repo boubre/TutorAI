@@ -15,8 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
             {
-                // Select only rhombi that don't match the outer shape.
-                if (quad.VerifyRhombus() && !quad.HasSamePoints(outerShape as Polygon))
+                if (quad.VerifyRhombus())
                 {
                     Rhombus rhombus = new Rhombus(quad);
 
@@ -30,9 +29,9 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            throw new NotImplementedException();
+            return new List<FigSynthProblem>();
         }
 
         public static Rhombus ConstructDefaultRhombus()

@@ -102,6 +102,9 @@ namespace GeometryTutorLib.TutorParser
             polygons = Polygon.ConstructPolygonContainer();
 
             ConstructCommonComponents();
+
+            // --- End timing ---
+            stopwatch.Stop();
         }
 
         private void ConstructCommonComponents()
@@ -156,34 +159,17 @@ namespace GeometryTutorLib.TutorParser
             allFigurePoints.AddRange(unlabeledPoints);
 
             // Using only segments, identify all polygons which are implied.
-            PolygonCalculator polyCalc = new PolygonCalculator();
-            polygons = polyCalc.GetPolygons(segments);
+            PolygonCalculator polyCalc = new PolygonCalculator(segments);
+            polygons = polyCalc.GetPolygons();
 
             shapeIntCalc.CalcCirclePolygonIntersectionPoints();
             shapeIntCalc.CalcPolygonPolygonIntersectionPoints();
-            shapeIntCalc.CalcCircleSegmentIntersectionPoints(segments);
 
             // Determine what shapes are contained within what other shapes.
             ShapeContainmentCalculator shapeContainCalc = new ShapeContainmentCalculator(this);
             shapeContainCalc.CalcCircleCircleContainment();
             shapeContainCalc.CalcCirclePolygonContainment();
             shapeContainCalc.CalcPolygonPolygonContainment();
-
-            // Determine which of the UI and implied (intersection) points apply to each circle.
-            List<Segment> chordsRadii = AcquireImpliedChordsRadii();
-
-            // Eliminate redundant segments; combine into a list
-            Utilities.AddUniqueList<Segment>(segments, chordsRadii);
-
-            // Shaded area computations require that we properly construct all 'implied' polygons;
-            // we limit our investigation only to triangles; this can be extended.
-            List<Polygon> addedPolys = AcquireImpliedTriangles(segments);
-
-            // Re-check the new triangles (polygons) against circle to determine if there are more points of intersection now.
-            shapeIntCalc.CalcCirclePolygonIntersectionPoints(addedPolys);
-
-            // Generates all arc clauses and arcInMiddle clauses.
-            GenerateArcClauses();
 
             // Calculate all (selective) Segment-Segment Intersections
             CalculateIntersections();
@@ -197,6 +183,10 @@ namespace GeometryTutorLib.TutorParser
 
             // Identify inscribed and circumscribed situations between a circle and polygon.
             AnalyzeCirclePolygonInscription();
+
+            // Determine which of the UI and implied (intersection) points apply to each circle.
+            // Generates all arc clauses and arcInMiddle clauses.
+            AnalyzeAllCirclePointRelationships();
 
             //
             // All of the following calculations are used in stating the assumptions (user-defined givens)
@@ -233,8 +223,6 @@ namespace GeometryTutorLib.TutorParser
                 }
             }
 #endif
-            // --- End timing ---
-            stopwatch.Stop();
         }        
 
         /// <summary>
@@ -504,48 +492,29 @@ namespace GeometryTutorLib.TutorParser
         //
         // Determine which (UI and intersection-based) points belong to each circle.
         //
-        private List<Segment> AcquireImpliedChordsRadii()
+        private void AnalyzeAllCirclePointRelationships()
         {
             //
             // Find the points that are on the given circle; 
             //
-            List<Segment> radii;
-            List<Segment> chords;
-            List<Point> imagPoints;
-            List<Segment> allChordsRadii = new List<Segment>();
             foreach (Circle circle in circles)
             {
-                circle.ConstructChordsRadii(this.allFigurePoints, out chords, out radii, out imagPoints);
-                allChordsRadii.AddRange(chords);
-                allChordsRadii.AddRange(radii);
-            }
-
-            return allChordsRadii;
-        }
-
-        //
-        // Determine which (UI and intersection-based) points belong to each circle.
-        //
-        private void GenerateArcClauses()
-        {
-            foreach (Circle circle in circles)
-            {
-// #if !ATOMIC_REGION_OFF //Define in Properties->Build->Compilation Symbols to turn off this section
+#if !ATOMIC_REGION_OFF //Define in Properties->Build->Compilation Symbols to turn off this section
 
                 // CTA: We need to use all UI AND implied points from intersections to generate clauses for shaded area stuff
                 // The goal is to remove these guards...deduction engine (GeoTutor) needs to be robust enough.
                 circle.SetPointsOnCircle(circle.GetIntersectingPoints());
-//#else
-//                List<Point> pointsOnCircle = new List<Point>();
+#else
+                List<Point> pointsOnCircle = new List<Point>();
 
-//                // UI Points
-//                foreach (Point pt in points)
-//                {
-//                    if (circle.PointLiesOn(pt)) pointsOnCircle.Add(pt);
-//                }
+                // UI Points
+                foreach (Point pt in points)
+                {
+                    if (circle.PointLiesOn(pt)) pointsOnCircle.Add(pt);
+                }
 
-//                circle.SetPointsOnCircle(pointsOnCircle);
-//#endif
+                circle.SetPointsOnCircle(pointsOnCircle);
+#endif
                 // Since we know all points on this circle, we generate all arc clauses
                 GenerateSemicircleClauses(circle);
                 GenerateArcClauses(circle);
@@ -638,6 +607,49 @@ namespace GeometryTutorLib.TutorParser
             return semi1;
         }
 
+        //private void GenerateSemicircleClauses(Circle circle)
+        //{
+        //    foreach (Segment seg in segments)
+        //    {
+        //        if (circle.DefinesDiameter(seg))
+        //        {
+        //            //Get the endpoints of the diameter and the indices of these endpoints
+        //            Point e1 = seg.Point1;
+        //            Point e2 = seg.Point2;
+        //            int p1 = circle.pointsOnCircle.IndexOf(e1);
+        //            int p2 = circle.pointsOnCircle.IndexOf(e2);
+
+        //            //For partitioning purposes, order of the endpoints matters. Make sure p1 holds the lower of the two indices
+        //            if (p1 > p2)
+        //            {
+        //                int p3 = p1;
+        //                p1 = p2;
+        //                p2 = p3;
+        //            }
+
+        //            // Partition the remaining points on the circle
+        //            List<Point> minorArcPoints;
+        //            List<Point> majorArcPoints;
+        //            PartitionSemiCircleArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
+
+        //            // Semicircle requires 3 points to be defined - the two endpoints and a point inbetween
+        //            // The minorArcPoints and majorArcPoints lists contain all the potential inbetween points for either side of the diameter
+        //            // Handle 'side' 1:
+        //            for (int i = 0; i < majorArcPoints.Count; ++i)
+        //            {
+        //                Semicircle semi = new Semicircle(circle, e1, e2, majorArcPoints[i], minorArcPoints, majorArcPoints, seg);
+        //                AddSemicircleClauses(semi);
+        //            }
+        //            // Handle 'side' 2:
+        //            for (int i = 0; i < minorArcPoints.Count; ++i)
+        //            {
+        //                Semicircle semi = new Semicircle(circle, e1, e2, minorArcPoints[i], majorArcPoints, minorArcPoints, seg);
+        //                AddSemicircleClauses(semi);
+        //            }
+        //        }
+        //    }
+        //}
+
         private void AddSemicircleClauses(Semicircle semi)
         {
             if (!GeometryTutorLib.Utilities.HasStructurally<Semicircle>(semiCircles, semi))
@@ -686,6 +698,8 @@ namespace GeometryTutorLib.TutorParser
                     // Do these endpoints form a diameter? If so, the semicircle arcs should have already been handled by GenerateSemicircleClauses()
                     Segment seg = new Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
                     if (!circle.DefinesDiameter(seg)) CreateMajorMinorArcs(circle, p1, p2);
+
+
                 }
             }
         }
@@ -749,39 +763,21 @@ namespace GeometryTutorLib.TutorParser
             }
         }
 
-        //
-        // Shaded area computations require that we properly construct all 'implied' polygons;
-        // we limit our investigation only to triangles; this can be extended.
-        //
-        private List<Polygon> AcquireImpliedTriangles(List<Segment> segments)
-        {
-            //
-            // Construct the triangles
-            //
-            PolygonCalculator polyCalc = new PolygonCalculator();
-            List<Polygon> tris = polyCalc.GetTriangles(segments);
+        //private void ConstructImaginaryIntersectionPoint(Segment s1, Segment s2)
+        //{
+        //    Point intersection = s1.FindIntersection(s2);
 
-            //
-            // Add those triangles to the set of polygons.
-            //
-            int triIndex = Polygon.GetPolygonIndex(3);
-            List<Polygon> toAdd = new List<Polygon>();
-            foreach (Polygon tri in tris)
-            {
-                if (!Utilities.HasStructurally<Polygon>(polygons[triIndex], tri))
-                {
-                    // Restrict addition of triangles if they have at maximum, one generated point.
-                    if (tri.GeneratedPointCount() <= 1)
-                    {
-                        toAdd.Add(tri);
-                    }
-                }
-            }
-
-            polygons[Polygon.GetPolygonIndex(3)].AddRange(toAdd);
-
-            return toAdd;
-        }
+        //    if (!double.IsInfinity(intersection.X) && !double.IsInfinity(intersection.Y))
+        //    {
+        //        if (s1.PointLiesOnAndBetweenEndpoints(intersection) && s2.PointLiesOnAndBetweenEndpoints(intersection))
+        //        {
+        //            if (!GeometryTutorLib.Utilities.HasStructurally<Point>(allFigurePoints, intersection))
+        //            {
+        //                GeometryTutorLib.Utilities.AddStructurallyUnique<ImaginaryPoint>(imagPoints, new ImaginaryPoint(intersection));
+        //            }
+        //        }
+        //    }
+        //}
 
         // Check to see if the given segment already exists directly or indirectly as collinear points.
         private bool DoesSegmentExistExplicitly(Segment seg)

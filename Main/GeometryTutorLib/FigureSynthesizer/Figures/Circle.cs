@@ -20,12 +20,12 @@ namespace GeometryTutorLib.ConcreteAST
 
         public static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            throw new NotImplementedException();
+            return new List<FigSynthProblem>();
         }
 
-        public static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            throw new NotImplementedException();
+            return new List<FigSynthProblem>();
         }
 
         public static Circle ConstructDefaultCircle()

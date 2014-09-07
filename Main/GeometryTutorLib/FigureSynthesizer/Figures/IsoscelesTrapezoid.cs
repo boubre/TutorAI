@@ -15,8 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
             {
-                // Select only isosceles trapezoids that don't match the outer shape.
-                if (quad.VerifyIsoscelesTrapezoid() && !quad.HasSamePoints(outerShape as Polygon))
+                if (quad.VerifyIsoscelesTrapezoid())
                 {
                     IsoscelesTrapezoid isoTrap = new IsoscelesTrapezoid(quad);
 
@@ -30,9 +29,9 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
+        public new static List<FigSynthProblem> AppendShape(List<Point> points)
         {
-            throw new NotImplementedException();
+            return new List<FigSynthProblem>();
         }
 
         public static IsoscelesTrapezoid ConstructDefaultIsoscelesTrapezoid()

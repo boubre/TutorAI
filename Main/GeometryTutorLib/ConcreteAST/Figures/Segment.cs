@@ -337,7 +337,7 @@ namespace GeometryTutorLib.ConcreteAST
             return Point1.Equals(p) || Point2.Equals(p);
         }
 
-        public override bool ContainsClause(GroundedClause target)
+        public override bool Contains(GroundedClause target)
         {
             return this.Equals(target);
         }
@@ -764,44 +764,6 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // Given one of the fixed endpoints on this segment, return a congruent segment with the: fixed endpoint and the other point being moved.
-        //
-        public Segment GetOppositeSegment(Point pt)
-        {
-            if (!HasPoint(pt)) return null;
-
-            Point fixedPt = pt;
-            Point variablePt = this.OtherPoint(pt);
-
-            Point vector = Point.MakeVector(fixedPt, variablePt);
-            Point opp = Point.GetOppositeVector(vector);
-
-            // 'Move' the vector to begin at its starting point: pt
-            return new Segment(pt, new Point("", pt.X + opp.X, pt.Y + opp.Y));
-        }
-
-        //
-        // Return the line perpendicular to this segment at the given point. 
-        // The point is ON the segment.
-        public Segment GetPerpendicularByLength(Point pt, int length)
-        {
-            Segment perp = this.GetPerpendicular(pt);
-
-            //
-            // Find the point which is length distance from the given point.
-            //
-            // Treat the given perpendicular as a vector; normalize and then multiply.
-            //
-            Point vector = Point.MakeVector(perp.Point1, perp.Point2);
-            vector = Point.Normalize(vector);
-            vector = Point.ScalarMultiply(vector, length);
-
-            // 'Move' the vector to begin at its starting point: pt
-            // Return the perpendicular of proper length.
-            return new Segment(pt, new Point("", pt.X + vector.X, pt.Y + vector.Y));
-        }
-
-        //
         // Is the given segment a secant THROUGH this circle? (2 intersection points)
         //
         public bool IsSecant(Circle circle)
@@ -827,51 +789,6 @@ namespace GeometryTutorLib.ConcreteAST
         public bool Covers(Arc that)
         {
             return that.HasEndpoint(this.Point1) && that.HasEndpoint(this.Point2);
-        }
-
-        ////
-        //// Force this segment into standard position; only 1st and second quadrants allowed.
-        ////
-        //public Segment Standardize()
-        //{
-        //    Point vector = Point.MakeVector(this.Point1, this.Point2);
-
-        //    // If this segment is in the 3rd or 4th quadrant, force into the second by taking the opposite.
-        //    if (vector.Y < 0) vector = Point.GetOppositeVector(vector);
-
-        //    return new Segment(origin, vector);
-        //}
-
-        public Segment ConstructSegmentByAngle(Point tail, int angle, int length)
-        {
-            // Make a vector in standard position
-            Point vector = Point.MakeVector(tail, this.OtherPoint(tail));
-
-            // Calculate the angle from standard position.
-            double stdPosAngle = Point.GetDegreeStandardAngleWithCenter(origin, vector);
-
-            // Get the exact point we want.
-            Point rotatedPoint = Figure.GetPointByLengthAndAngleInStandardPosition(length, stdPosAngle - angle);
-
-            return new Segment(tail, rotatedPoint);
-        }
-
-        //
-        // Acquire the point that is opposite the given point w.r.t. to this line.
-        //
-        //              x   given
-        //              |
-        //   ----------------------------
-        //              |
-        //              y   <-- opp returned
-        //
-        public Point GetReflectionPoint(Point pt)
-        {
-            Point ptOnLine = this.ProjectOnto(pt);
-
-            Segment perp = new Segment(pt, ptOnLine);
-
-            return (perp.GetOppositeSegment(ptOnLine)).OtherPoint(ptOnLine);
         }
     }
 }
