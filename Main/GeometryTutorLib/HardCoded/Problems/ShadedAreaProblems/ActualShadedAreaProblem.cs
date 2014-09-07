@@ -136,6 +136,56 @@ namespace GeometryTutorLib.GeometryTestbed
 
             if (isComplete) ActualShadedAreaProblem.TotalComplete++;
             if (figureStats.originalProblemInteresting) ActualShadedAreaProblem.TotalOriginalInteresting++;
+
+            AppendToFiles(figureStats);
+        }
+
+        private void AppendToFiles(StatisticsGenerator.ShadedAreaFigureStatisticsAggregator figureStats)
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\impFacts.txt", true))
+            {
+                file.WriteLine(figureStats.totalImplicitFacts);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\expFacts.txt", true))
+            {
+                file.WriteLine(figureStats.totalExplicitFacts);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\atomData.txt", true))
+            {
+                file.WriteLine(figureStats.numAtomicRegions);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\numInteresting.txt", true))
+            {
+                file.WriteLine(numInteresting);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\numShapes.txt", true))
+            {
+                file.WriteLine(figureStats.numShapes);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\numRootShapes.txt", true))
+            {
+                file.WriteLine(figureStats.numRootShapes);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\implicitTiming.txt", true))
+            {
+                file.WriteLine(ImplicitTiming);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\geoTutorTiming.txt", true))
+            {
+                file.WriteLine(DeductionTiming);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\solverTiming.txt", true))
+            {
+                file.WriteLine(SolverTiming);
+            }
         }
 
         public override string ToString()

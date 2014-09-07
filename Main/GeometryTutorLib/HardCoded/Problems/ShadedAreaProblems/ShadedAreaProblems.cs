@@ -31,9 +31,9 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page1Col1Prob1(true, false));     // GTGDemo
             //problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
             //problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
-            //problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
-            //problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob2(true, false));     // GTGDemo (Need to fix Implied Calculator to recognize ALL constructed polygons for deduction engine)
+            problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
+            problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
+            problems.Add(new Page1Col2Prob2(true, false));       // GTGDemo
             //problems.Add(new Page1Col2Prob3(true, false));     // GTGDemo
             //problems.Add(new Page1Col2Prob4(true, false));     // GTGDemo: Good circle example
             //problems.Add(new Page2Col1Prob1(true, false));     // GTGDemo: Implied polygon id problem.
