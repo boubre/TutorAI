@@ -15,7 +15,7 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override string ToString() { return value.ToString(); }
 
-        public override bool Contains(GroundedClause clause) 
+        public override bool ContainsClause(GroundedClause clause) 
         {
             NumericValue clauseValue = clause as NumericValue;
             if (clauseValue == null) return false;

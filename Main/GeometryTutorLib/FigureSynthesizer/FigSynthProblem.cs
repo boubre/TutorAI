@@ -18,24 +18,39 @@ namespace GeometryTutorLib.ConcreteAST
         public abstract FigSynthProblem ReplaceUnary(Figure that, FigSynthProblem toSub);
         public abstract List<Point> CollectPoints();
         public abstract List<Segment> CollectSegments();
-        public abstract List<Figure> CollectFigures();
+        public abstract List<Segment> CollectCompleteSegments();
+        public abstract List<Point> CollectCompletePoints();
+        public abstract List<Figure> CollectSubtractiveFigures(bool subtractFlag);
         public abstract List<Arc> CollectArcs();
         public abstract List<Circle> CollectCircles();
         public abstract double GetCoordinateArea();
         public abstract List<GroundedClause> GetGivens();
         public abstract List<Midpoint> GetMidpoints();
 
-        //public Figure outerShape { get; protected set; }
-        //public void SetOuterShape(Figure outer) { outerShape = outer; }
-
-        //public List<Constraint> outerShapeConstraints { get; protected set; }
-        //public void SetOuterShapeConstraints(List<Constraint> cs) { outerShapeConstraints = cs; }
-
         // The allowable regions that we might insert a figure.
         // This is only meaningful at the top level of the problem.
         protected List<AtomicRegion> openRegions;
         public List<AtomicRegion> GetOpenRegions() { return openRegions; }
         public void SetOpenRegions(List<AtomicRegion> rs) { openRegions = rs; }
+
+        public abstract List<Segment> GetExteriorSegments();
+
+        //
+        // Acquire the actual external points.
+        //
+        public List<Point> GetExteriorPoints()
+        {
+            List<Segment> exterior = GetExteriorSegments();
+            List<Point> extPoints = new List<Point>();
+
+            foreach (Segment seg in exterior)
+            {
+                Utilities.AddUnique<Point>(extPoints, seg.Point1);
+                Utilities.AddUnique<Point>(extPoints, seg.Point2);
+            }
+
+            return extPoints;
+        }
 
         //
         // Prune the list of synth objects to only asymmetric scenarios.
@@ -181,27 +196,38 @@ namespace GeometryTutorLib.ConcreteAST
             BinarySynthOperation binaryAppend = toAppend as BinarySynthOperation;
             if (binaryAppend == null) return null;
 
-            // Verify that the outer part of toAppend is a figure in this problem.
-            Figure theShape = (binaryAppend.leftProblem as UnarySynth).figure;
-            FigSynthProblem leftShapeProblem = that.GetSynthByShape(theShape);
-
-            if (leftShapeProblem == null)
+            if (that is SubtractionSynth)
             {
-                throw new ArgumentException("Shape is not in the given problem: " + theShape);
+                // Verify that the outer part of toAppend is a figure in this problem.
+                Figure theShape = (binaryAppend.leftProblem as UnarySynth).figure;
+                FigSynthProblem leftShapeProblem = that.GetSynthByShape(theShape);
+
+                if (leftShapeProblem == null)
+                {
+                    throw new ArgumentException("Shape is not in the given problem: " + theShape);
+                }
+
+                //
+                // Create the new subtraction node and insert it into the copy.
+                //
+                // Since the 'left' expression was a shape, the 'right' is the actual shape we are appending.
+                SubtractionSynth newSub = new SubtractionSynth(leftShapeProblem, binaryAppend.rightProblem);
+
+                return that.Copy().ReplaceUnary(theShape, newSub);
             }
+            else if (that is AdditionSynth)
+            {
+                // Verify that the external form of that matches with the LHS of toAppend.
+                Polygon outerPoly = Polygon.MakePolygon(that.GetExteriorSegments());
+                if (!outerPoly.StructurallyEquals((binaryAppend.leftProblem as UnarySynth).figure))
+                {
+                    throw new ArgumentException("Exterior polygons do not match: " + (binaryAppend.leftProblem as UnarySynth).figure);
+                }
 
-            // Make a copy of that.
-            FigSynthProblem copy = that.Copy();
-
-            //
-            // Create the new subtraction node and insert it into the copy.
-            //
-            // Since the 'left' expression was a shape, the 'right' is the actual shape we are appending.
-            SubtractionSynth newSub = new SubtractionSynth(leftShapeProblem, binaryAppend.rightProblem);
-
-            copy.ReplaceUnary(theShape, newSub);
-
-            return copy;
+                // Make a copy of that.
+                return new SubtractionSynth(that.Copy(), (binaryAppend.rightProblem as UnarySynth).figure);
+            }
+            else throw new ArgumentException("Expected Addition or Subtraction; acquired neither.");
         }
 
         //
@@ -228,12 +254,34 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
+        // Append addition to this current problem; addition is to an exterior segment.
+        //
+        public static FigSynthProblem AppendAtomicAddition(FigSynthProblem that, FigSynthProblem toAppend)
+        {
+            //            AdditionSynth
+            // TBC
+            return new AdditionSynth(that, toAppend);
+        }
+
+        //
         // Append subtraction to this current problem.
         //
         public static FigSynthProblem AppendAddition(FigSynthProblem that, FigSynthProblem toAppend)
         {
+            BinarySynthOperation binaryAppend = toAppend as BinarySynthOperation;
+            if (binaryAppend == null) return null;
+
+            if (that is AdditionSynth)
+            {
+                // Verify that the external form of that matches with the LHS of toAppend.
+                Polygon testPoly = Polygon.MakePolygon(that.GetExteriorSegments());
+                if (!testPoly.StructurallyEquals((binaryAppend.leftProblem as UnarySynth).figure))
+                {
+                    throw new ArgumentException("Exterior polygons do not match: " + (binaryAppend.leftProblem as UnarySynth).figure);
+                }
+            }
             // Create the new synth object
-            AdditionSynth newSum = new AdditionSynth(that.Copy(), toAppend);
+            AdditionSynth newSum = new AdditionSynth(that.Copy(), (binaryAppend.rightProblem as UnarySynth).figure);
 
             // The open regions that may be modified consist of a union of regions.
             List<AtomicRegion> newOpenRegions = new List<AtomicRegion>(that.openRegions);
@@ -259,6 +307,12 @@ namespace GeometryTutorLib.ConcreteAST
         public BinarySynthOperation(Figure ell, Figure r)
         {
             leftProblem = new UnarySynth(ell);
+            rightProblem = new UnarySynth(r);
+        }
+
+        public BinarySynthOperation(FigSynthProblem ell, Figure r)
+        {
+            leftProblem = ell;
             rightProblem = new UnarySynth(r);
         }
 
@@ -338,6 +392,26 @@ namespace GeometryTutorLib.ConcreteAST
             return segments;
         }
 
+        public override List<Segment> CollectCompleteSegments()
+        {
+            List<Segment> segments = new List<Segment>(leftProblem.CollectCompleteSegments());
+            List<Segment> right = new List<Segment>(rightProblem.CollectCompleteSegments());
+
+            Utilities.AddUniqueList<Segment>(segments, right);
+
+            return segments;
+        }
+
+        public override List<Point> CollectCompletePoints()
+        {
+            List<Point> points = new List<Point>(leftProblem.CollectCompletePoints());
+            List<Point> right = new List<Point>(rightProblem.CollectCompletePoints());
+
+            Utilities.AddUniqueList<Point>(points, right);
+
+            return points;
+        }
+
         public override List<Arc> CollectArcs()
         {
             List<Arc> arcs = new List<Arc>(leftProblem.CollectArcs());
@@ -368,20 +442,64 @@ namespace GeometryTutorLib.ConcreteAST
             return left;
         }
 
-        public override List<Figure> CollectFigures()
+        public override List<Midpoint> GetMidpoints()
         {
-            List<Figure> left = new List<Figure>(leftProblem.CollectFigures());
-            List<Figure> right = new List<Figure>(rightProblem.CollectFigures());
+            List<Midpoint> left = new List<Midpoint>(leftProblem.GetMidpoints());
+            List<Midpoint> right = new List<Midpoint>(rightProblem.GetMidpoints());
 
             left.AddRange(right);
 
             return left;
         }
 
-        public override List<Midpoint> GetMidpoints()
+        //
+        // Appending result in a set of exterior segments that may be attached to;
+        // interior points result when two shapes are appended together (snapped into at least two places)
+        //
+        public override List<Segment> GetExteriorSegments()
         {
-            List<Midpoint> left = new List<Midpoint>(leftProblem.GetMidpoints());
-            List<Midpoint> right = new List<Midpoint>(rightProblem.GetMidpoints());
+            // Acquire all maximal subsegments.
+            List<Segment> left = Utilities.FilterForMaximal(leftProblem.GetExteriorSegments());
+            List<Segment> right = Utilities.FilterForMaximal(rightProblem.GetExteriorSegments());
+
+            left.AddRange(right);
+
+            // Remove any shared subsegments.
+            List<Segment> sharedList;
+            List<Segment> exterior = Utilities.FilterShared(left, out sharedList);
+
+            if (sharedList.Count != 2)
+            {
+                throw new ArgumentException("Expected only 2 shared segments; found (" + sharedList.Count + ")");
+            }
+
+            // Shared an entire side.
+            if (sharedList[0].StructurallyEquals(sharedList[1])) return exterior;
+
+            // Shared a subsegment.
+            Segment max;
+            Segment min;
+            if (sharedList[0].HasSubSegment(sharedList[1]))
+            {
+                max = sharedList[0];
+                min = sharedList[1];
+            }
+            else
+            {
+                max = sharedList[1];
+                min = sharedList[0];
+            }
+
+            Point shared = max.SharedVertex(min);
+            exterior.Add(new Segment(max.OtherPoint(shared), min.OtherPoint(shared)));
+
+            return exterior;
+        }
+
+        public override List<Figure> CollectSubtractiveFigures(bool subtractFlag)
+        {
+            List<Figure> left = new List<Figure>(leftProblem.CollectSubtractiveFigures(subtractFlag));
+            List<Figure> right = new List<Figure>(rightProblem.CollectSubtractiveFigures(subtractFlag));
 
             left.AddRange(right);
 
@@ -393,6 +511,7 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public SubtractionSynth(FigSynthProblem ell, FigSynthProblem r) : base(ell, r) { }
         public SubtractionSynth(Figure ell, Figure r) : base(ell, r) { }
+        public SubtractionSynth(FigSynthProblem ell, Figure r) : base(ell, r) { }
 
         //
         // A symmetric scenario is one in which:
@@ -434,7 +553,20 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override double GetCoordinateArea()
         {
-            return leftProblem.GetCoordinateArea() - rightProblem.GetCoordinateArea();
+            double lArea = leftProblem.GetCoordinateArea();
+            double rArea = rightProblem.GetCoordinateArea();
+
+            return lArea - rArea;
+        }
+
+        public override List<Figure> CollectSubtractiveFigures(bool subtractFlag)
+        {
+            List<Figure> left = new List<Figure>(leftProblem.CollectSubtractiveFigures(subtractFlag));
+            List<Figure> right = new List<Figure>(rightProblem.CollectSubtractiveFigures(!subtractFlag));
+
+            left.AddRange(right);
+
+            return left;
         }
     }
 
@@ -442,6 +574,7 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public AdditionSynth(FigSynthProblem ell, FigSynthProblem r) : base(ell, r) { }
         public AdditionSynth(Figure ell, Figure r) : base(ell, r) { }
+        public AdditionSynth(FigSynthProblem ell, Figure r) : base(ell, r) { }
 
         //
         // A symmetric scenario is one in which:
@@ -554,6 +687,20 @@ namespace GeometryTutorLib.ConcreteAST
             return new List<Segment>();
         }
 
+        public override List<Segment> CollectCompleteSegments()
+        {
+            if (this.figure is Polygon) return (this.figure as Polygon).GetCompleteSideSegments();
+
+            return new List<Segment>();
+        }
+
+        public override List<Point> CollectCompletePoints()
+        {
+            if (this.figure is Polygon) return (this.figure as Figure).allComposingPoints;
+
+            return new List<Point>();
+        }
+
         public override List<Arc> CollectArcs()
         {
             if (this.figure is Arc) return Utilities.MakeList<Arc>(figure as Arc);
@@ -592,7 +739,9 @@ namespace GeometryTutorLib.ConcreteAST
 
         public override double GetCoordinateArea()
         {
-            return figure.CoordinatizedArea();
+            double area = figure.CoordinatizedArea();
+
+            return area;
         }
 
         public override List<GroundedClause> GetGivens()
@@ -611,14 +760,19 @@ namespace GeometryTutorLib.ConcreteAST
             return Utilities.MakeList<GroundedClause>(new Strengthened(simple, this.figure));
         }
 
-        public override List<Figure> CollectFigures()
+        public override List<Figure> CollectSubtractiveFigures(bool subtractFlag)
         {
-            return Utilities.MakeList<Figure>(this.figure);
+            return subtractFlag ? Utilities.MakeList<Figure>(this.figure) : new List<Figure>();
         }
 
         public override List<Midpoint> GetMidpoints()
         {
             return this.figure.GetMidpointClauses();
+        }
+
+        public override List<Segment> GetExteriorSegments()
+        {
+            return this.figure.GetCompleteSideSegments();
         }
     }
 }

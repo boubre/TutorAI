@@ -518,7 +518,17 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 
         public bool OverlapsWith(AtomicRegion that)
         {
-            return Overlap(that.GetApproximatingPoints());
+            // Point based overlapping.
+            if (Overlap(that.GetApproximatingPoints())) return true;
+
+            // Crossing-based overlap.
+            List<IntersectionAgg> intersections = this.GetIntersections(that);
+            foreach (IntersectionAgg agg in intersections)
+            {
+                if (agg.thisConn.Crosses(agg.thatConn)) return true;
+            }
+            
+            return false;
         }
 
         //

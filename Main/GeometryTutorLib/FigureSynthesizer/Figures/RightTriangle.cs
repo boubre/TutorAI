@@ -24,7 +24,8 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Triangle tri in tris)
             {
-                if (tri.isRightTriangle())
+                // Only create right triangles that are NOT the outershape.
+                if (tri.isRightTriangle() && !tri.StructurallyEquals(outerShape))
                 {
                     RightTriangle rTri = new RightTriangle(tri);
 
@@ -38,9 +39,48 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public new static List<FigSynthProblem> AppendShape(List<Point> points)
+        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
         {
-            return new List<FigSynthProblem>();
+            List<FigSynthProblem> composed = new List<FigSynthProblem>();
+
+            int length = Figure.DefaultSideLength();
+            foreach (Segment seg in segments)
+            {
+                List<RightTriangle> tris;
+
+                MakeRightTriangles(seg, length, out tris);
+
+                foreach (RightTriangle rt in tris)
+                {
+                    FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, rt);
+                    if (prob != null) composed.Add(prob);
+                }
+            }
+
+            return FigSynthProblem.RemoveSymmetric(composed);
+        }
+
+        public static void MakeRightTriangles(Segment side, int length, out List<RightTriangle> tris)
+        {
+            tris = new List<RightTriangle>();
+
+            //
+            // 1
+            //
+            Segment perp = side.GetPerpendicularByLength(side.Point1, length);
+            tris.Add(new RightTriangle(new Triangle(side.Point1, side.Point2, perp.OtherPoint(side.Point1))));
+
+            // 2
+            Segment oppPerp = perp.GetOppositeSegment(side.Point1);
+            tris.Add(new RightTriangle(new Triangle(side.Point1, side.Point2, oppPerp.OtherPoint(side.Point1))));
+            
+            // 3
+            perp = side.GetPerpendicularByLength(side.Point2, length);
+            tris.Add(new RightTriangle(new Triangle(side.Point1, side.Point2, perp.OtherPoint(side.Point2))));
+
+            // 4
+            oppPerp = perp.GetOppositeSegment(side.Point2);
+            tris.Add(new RightTriangle(new Triangle(side.Point1, side.Point2, oppPerp.OtherPoint(side.Point2))));
         }
 
         public static RightTriangle ConstructDefaultRightTriangle()

@@ -30,7 +30,7 @@ namespace GeometryTutorLib.ConcreteAST
             return new List<FigSynthProblem>();
         }
 
-        public static List<FigSynthProblem> AppendShape(List<Point> points)
+        public static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
         {
             return new List<FigSynthProblem>();
         }
@@ -135,22 +135,42 @@ namespace GeometryTutorLib.ConcreteAST
             // Construct and populate the subsegments aligned with the ordered set of sides.
             //
             sideSubsegments = new List<Segment>[orderedSides.Count];
+            completeSideSegments = new List<Segment>[orderedSides.Count];
             for (int i = 0; i < sideSubsegments.Length; i++)
             {
                 sideSubsegments[i] = new List<Segment>();
+                completeSideSegments[i] = new List<Segment>();
             }
 
             // How many points are between the side endpoints?
             int numMidPointsPerSide = (int)Math.Pow(2, NUM_MID_SEGMENT_POINTS) - 1;
             int numPointsPerSide = numMidPointsPerSide + 2;
 
+            List<Point> sidePoints = new List<Point>();
             for (int p = 0, currSidePt = 0, side = 0; p < allComposingPoints.Count; p++)
             {
                 sideSubsegments[side].Add(new Segment(allComposingPoints[p], allComposingPoints[(p+1) % allComposingPoints.Count]));
+                sidePoints.Add(allComposingPoints[p]);
 
                 currSidePt++;
                 if (currSidePt == numPointsPerSide-1) // Num sub-segments per side is 1 less than the number of points.
                 {
+                    // Append the last point.
+                    sidePoints.Add(allComposingPoints[(p + 1) % allComposingPoints.Count]);
+
+                    //
+                    // Construct all segments for this side.
+                    //
+                    for (int s1 = 0; s1 < sidePoints.Count; s1++)
+                    {
+                        for (int s2 = s1 + 1; s2 < sidePoints.Count; s2++)
+                        {
+                            completeSideSegments[side].Add(new Segment(sidePoints[s1], sidePoints[s2]));
+                        }
+                    }
+
+                    sidePoints.Clear();
+
                     // Advance to the next side.
                     side++;
                     // Reset the current side counter

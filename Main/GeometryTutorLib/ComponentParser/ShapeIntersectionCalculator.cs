@@ -23,7 +23,7 @@ namespace GeometryTutorLib.TutorParser
         /// Calculate all points of intersection between circles.
         /// Updates segments by creating segments.
         /// </summary>
-        public void CalcCircleCircleIntersections(out List<GeometryTutorLib.ConcreteAST.CircleCircleIntersection> ccIntersections)
+        public void CalcCircleCircleIntersections(out List<CircleCircleIntersection> ccIntersections)
         {
             ccIntersections = new List<CircleCircleIntersection>();
             
@@ -74,13 +74,13 @@ namespace GeometryTutorLib.TutorParser
                         Point e1, e2, m;
                         Point center1 = implied.circles[c1].center;
                         Point center2 = implied.circles[c2].center;
-                        if (GeometryTutorLib.ConcreteAST.Segment.Between(inter1, center1, center2))
+                        if (Segment.Between(inter1, center1, center2))
                         {
                             e1 = center1;
                             e2 = center2;
                             m = inter1;
                         }
-                        else if (GeometryTutorLib.ConcreteAST.Segment.Between(center1, inter1, center2))
+                        else if (Segment.Between(center1, inter1, center2))
                         {
                             e1 = inter1;
                             e2 = center2;
@@ -102,7 +102,7 @@ namespace GeometryTutorLib.TutorParser
             }
 
             // Construct any radii and chords.
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            foreach (Circle circle in implied.circles)
             {
                 AddImpliedSegments(circle);
             }
@@ -112,13 +112,13 @@ namespace GeometryTutorLib.TutorParser
         //
         // If no radii are drawn, construct them as well as the chords connecting them.
         //
-        private void AddImpliedSegments(GeometryTutorLib.ConcreteAST.Circle circle)
+        private void AddImpliedSegments(Circle circle)
         {
-            List<GeometryTutorLib.ConcreteAST.Segment> constructedChords = new List<GeometryTutorLib.ConcreteAST.Segment>();
-            List<GeometryTutorLib.ConcreteAST.Segment> constructedRadii = new List<GeometryTutorLib.ConcreteAST.Segment>();
+            List<Segment> constructedChords = new List<Segment>();
+            List<Segment> constructedRadii = new List<Segment>();
             List<Point> imagPoints = new List<Point>();
 
-            List<GeometryTutorLib.ConcreteAST.Point> interPts = circle.GetIntersectingPoints();
+            List<Point> interPts = circle.GetIntersectingPoints();
 
             // If there are no points of interest, the circle is the atomic region.
             if (!interPts.Any()) return;
@@ -126,8 +126,7 @@ namespace GeometryTutorLib.TutorParser
             // Construct the radii
             foreach (Point interPt in interPts)
             {
-                GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(implied.segments,
-                                                                                                       new GeometryTutorLib.ConcreteAST.Segment(circle.center, interPt));
+                GeometryTutorLib.Utilities.AddStructurallyUnique<Segment>(implied.segments, new Segment(circle.center, interPt));
             }
 
             // Construct the chords
@@ -135,8 +134,7 @@ namespace GeometryTutorLib.TutorParser
             {
                 for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
                 {
-                    GeometryTutorLib.Utilities.AddStructurallyUnique<GeometryTutorLib.ConcreteAST.Segment>(implied.segments,
-                                                                                                           new GeometryTutorLib.ConcreteAST.Segment(interPts[p1], interPts[p2]));
+                    GeometryTutorLib.Utilities.AddStructurallyUnique<Segment>(implied.segments, new Segment(interPts[p1], interPts[p2]));
                 }
             }
         }
@@ -146,14 +144,14 @@ namespace GeometryTutorLib.TutorParser
         /// </summary>
         public void CalcCirclePolygonIntersectionPoints()
         {
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            foreach (Circle circle in implied.circles)
             {
                 // Iterate over all polygons
-                for (int sidesIndex = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX;
-                     sidesIndex < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX;
+                for (int sidesIndex = Polygon.MIN_POLY_INDEX;
+                     sidesIndex < Polygon.MAX_EXC_POLY_INDEX;
                      sidesIndex++)
                 {
-                    foreach (GeometryTutorLib.ConcreteAST.Polygon poly in implied.polygons[sidesIndex])
+                    foreach (Polygon poly in implied.polygons[sidesIndex])
                     {
                         // Get the list of intersection points
                         List<Point> intersectionPts = poly.FindIntersections(circle);
@@ -170,18 +168,87 @@ namespace GeometryTutorLib.TutorParser
         }
 
         /// <summary>
+        /// On-demand check of intersection points between polygons and circles.
+        /// </summary>
+        public void CalcCirclePolygonIntersectionPoints(List<Polygon> polysToCheck)
+        {
+            foreach (Circle circle in implied.circles)
+            {
+                foreach (Polygon poly in polysToCheck)
+                {
+                    // Get the list of intersection points
+                    List<Point> intersectionPts = poly.FindIntersections(circle);
+
+                    // normalized to drawing point (names)
+                    intersectionPts = implied.NormalizePointsToDrawing(intersectionPts);
+
+                    // and add to each figure (circle and polygon).
+                    poly.AddIntersectingPoints(intersectionPts);
+                    circle.AddIntersectingPoints(intersectionPts);
+                }
+            }
+        }
+
+        ///// <summary>
+        ///// Calculate all points of intersection between polygons and polygons.
+        ///// </summary>
+        //public void CalcPolygonPolygonIntersectionPoints(List<Polygon> polysToCheck)
+        //{
+        //    for (int p1 = 0; p1 < polysToCheck.Count - 1; p1++)
+        //    {
+        //        for (int p2 = p1 + 1; p2 < polysToCheck.Count - 1; p2++)
+        //        {
+        //            // Get the list of intersection points
+        //            List<Point> intersectionPts = implied.polygons[s1][p1].FindIntersections(implied.polygons[s2][p2]);
+
+        //            // normalized to drawing point (names)
+        //            intersectionPts = implied.NormalizePointsToDrawing(intersectionPts);
+
+        //            // and add to each figure (circle and polygon).
+        //            polysToCheck[p1].AddIntersectingPoints(intersectionPts);
+        //            polysToCheck[p2].AddIntersectingPoints(intersectionPts);
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// Determine if there are any segments that intersect the circle
+        /// </summary>
+        public void CalcCircleSegmentIntersectionPoints(List<Segment> segments)
+        {
+            foreach (Circle circle in implied.circles)
+            {
+                foreach (Segment seg in segments)
+                {
+                    Point inter1, inter2;
+                    circle.FindIntersection(seg, out inter1, out inter2);
+
+                    if (inter1 != null && seg.PointLiesOnAndBetweenEndpoints(inter1))
+                    {
+                        circle.AddIntersectingPoint(inter1);
+                    }
+                    if (inter2 != null && seg.PointLiesOnAndBetweenEndpoints(inter2))
+                    {
+                        circle.AddIntersectingPoint(inter2);
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Calculate all points of intersection between polygons and polygons.
         /// </summary>
         public void CalcPolygonPolygonIntersectionPoints()
         {
-            for (int s1 = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX;
-                 s1 < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX;
+            for (int s1 = Polygon.MIN_POLY_INDEX;
+                 s1 < Polygon.MAX_EXC_POLY_INDEX;
                  s1++)
             {
                 for (int p1 = 0; p1 < implied.polygons[s1].Count; p1++)
                 {
-                    for (int s2 = GeometryTutorLib.ConcreteAST.Polygon.MIN_POLY_INDEX;
-                         s2 < GeometryTutorLib.ConcreteAST.Polygon.MAX_EXC_POLY_INDEX;
+                    for (int s2 = Polygon.MIN_POLY_INDEX;
+                         s2 < Polygon.MAX_EXC_POLY_INDEX;
                          s2++)
                     {
                         for (int p2 = 0; p2 < implied.polygons[s2].Count; p2++)
@@ -211,9 +278,9 @@ namespace GeometryTutorLib.TutorParser
         {
             List<CircleSegmentIntersection> intersections = new List<CircleSegmentIntersection>();
 
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            foreach (Circle circle in implied.circles)
             {
-                foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.segments)
+                foreach (Segment segment in implied.segments)
                 {
                     Point inter1 = null;
                     Point inter2 = null;
@@ -230,9 +297,9 @@ namespace GeometryTutorLib.TutorParser
                 }
             }
 
-            foreach (GeometryTutorLib.ConcreteAST.Circle circle in implied.circles)
+            foreach (Circle circle in implied.circles)
             {
-                foreach (GeometryTutorLib.ConcreteAST.Segment segment in implied.maximalSegments)
+                foreach (Segment segment in implied.maximalSegments)
                 {
                     //
                     // Find any intersection points between the circle and the segment;

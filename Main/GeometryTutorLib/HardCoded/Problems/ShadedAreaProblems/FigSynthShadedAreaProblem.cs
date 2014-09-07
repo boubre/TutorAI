@@ -26,14 +26,23 @@ namespace GeometryTutorLib.GeometryTestbed
 
         public List<AtomicRegion> GetRemainingRegionsFromParser(FigSynthProblem problem)
         {
-            // Acquire all the figures.
-            List<Figure> figures = problem.CollectFigures();
+            // Acquire all the figures we are subtracting.
+            // false indicates an implied addition at the beginning.
+            List<Figure> figures = problem.CollectSubtractiveFigures(false);
 
-            // Remove the outer-most figures.
-            figures.RemoveAt(0);
 
             // Acquire the remaining atomic regions.
-            return parser.implied.GetAtomicRegionsNotByFigures(figures);
+            List<AtomicRegion> atoms = parser.implied.GetAtomicRegionsNotByFigures(figures);
+
+            if (Utilities.FIGURE_SYNTHESIZER_DEBUG)
+            {
+                if (atoms.Count == 1)
+                {
+                    System.Diagnostics.Debug.WriteLine("Remaining atom area: " + (atoms[0] as ShapeAtomicRegion).shape.CoordinatizedArea());
+                }
+            }
+
+            return atoms;
         }
 
         public UIProblemDrawer.ProblemDescription MakeUIProblemDescription()

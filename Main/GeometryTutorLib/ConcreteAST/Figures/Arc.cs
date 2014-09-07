@@ -426,7 +426,7 @@ namespace GeometryTutorLib.ConcreteAST
             return arcsMatch && base.Equals(obj);
         }
 
-        public override bool Contains(GroundedClause target)
+        public override bool ContainsClause(GroundedClause target)
         {
             return this.Equals(target);
         }

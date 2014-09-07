@@ -9,7 +9,7 @@ namespace GeometryTutorLib
 {
     public static class Utilities
     {
-        public static readonly bool OVERRIDE_DEBUG = false;
+        public static readonly bool OVERRIDE_DEBUG = true;
 
         public static readonly bool DEBUG              = OVERRIDE_DEBUG && true;
         public static readonly bool CONSTRUCTION_DEBUG = OVERRIDE_DEBUG && true;   // Generating clauses when analyzing input figure
@@ -18,6 +18,7 @@ namespace GeometryTutorLib
         public static readonly bool BACKWARD_PROBLEM_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating backward problems
         public static readonly bool ATOMIC_REGION_GEN_DEBUG = OVERRIDE_DEBUG && true;   // Generating atomic regions
         public static readonly bool SHADED_AREA_SOLVER_DEBUG = OVERRIDE_DEBUG && true;   // Solving a shaded area problem.
+        public static readonly bool FIGURE_SYNTHESIZER_DEBUG = OVERRIDE_DEBUG && true;   // Solving a shaded area problem.
 
         // If the user specifies that an axiom, theorem, or definition is not to be used.
         public static readonly bool RESTRICTING_AXS_DEFINITIONS_THEOREMS = true;
@@ -726,6 +727,90 @@ namespace GeometryTutorLib
         public static string TimeToString(System.TimeSpan span)
         {
             return System.String.Format("{0:00}:{1:00}.{2:00}", span.Minutes, span.Seconds, span.Milliseconds / 10);
+        }
+
+        public static List<ConcreteAST.Segment> FilterForMinimal(List<ConcreteAST.Segment> segments)
+        {
+            List<ConcreteAST.Segment> minimal = new List<ConcreteAST.Segment>();
+
+            for (int s1 = 0; s1 < segments.Count; s1++)
+            {
+                bool min = true;
+                for (int s2 = 0; s2 < segments.Count; s2++)
+                {
+                    if (s1 != s2)
+                    {
+                        if (segments[s1].HasSubSegment(segments[s2]))
+                        {
+                            min = false;
+                            break;
+                        }
+                    }
+                }
+                if (min) minimal.Add(segments[s1]);
+            }
+
+            return minimal;
+        }
+
+        public static List<ConcreteAST.Segment> FilterForMaximal(List<ConcreteAST.Segment> segments)
+        {
+            List<ConcreteAST.Segment> maximal = new List<ConcreteAST.Segment>();
+
+            for (int s1 = 0; s1 < segments.Count; s1++)
+            {
+                bool max = true;
+                for (int s2 = 0; s2 < segments.Count; s2++)
+                {
+                    if (s1 != s2)
+                    {
+                        if (segments[s2].HasSubSegment(segments[s1]))
+                        {
+                            max = false;
+                            break;
+                        }
+                    }
+                }
+                if (max) maximal.Add(segments[s1]);
+            }
+
+            return maximal;
+        }
+
+        public static List<ConcreteAST.Segment> FilterShared(List<ConcreteAST.Segment> segments, out List<ConcreteAST.Segment> shared)
+        {
+            List<ConcreteAST.Segment> unique = new List<ConcreteAST.Segment>();
+            shared = new List<ConcreteAST.Segment>();
+
+            bool[] marked = new bool[segments.Count];
+            for (int s1 = 0; s1 < segments.Count; s1++)
+            {
+                if (!marked[s1])
+                {
+                    for (int s2 = 0; s2 < segments.Count; s2++)
+                    {
+                        if (s1 != s2)
+                        {
+                            if (segments[s1].HasSubSegment(segments[s2]))
+                            {
+                                marked[s1] = true;
+                                marked[s2] = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //
+            // Pick up all unmarked segments.
+            //
+            for (int m = 0; m < marked.Length; m++)
+            {
+                if (!marked[m]) unique.Add(segments[m]);
+                else shared.Add(segments[m]);
+            }
+
+            return unique;
         }
     }
 

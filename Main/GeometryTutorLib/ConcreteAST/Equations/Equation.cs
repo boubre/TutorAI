@@ -46,10 +46,10 @@ namespace GeometryTutorLib.ConcreteAST
             }
         }
 
-        public override bool Contains(GroundedClause target)
+        public override bool ContainsClause(GroundedClause target)
         {
             // If a composite node, check accordingly; this will return false if they are atomic
-            return lhs.Contains(target) || rhs.Contains(target);
+            return lhs.ContainsClause(target) || rhs.ContainsClause(target);
         }
 
         //

@@ -13,7 +13,12 @@ namespace GeometryTutorLib.GeometryTestbed
         public GeometryTutorLib.Area_Based_Analyses.KnownMeasurementsAggregator known { get; protected set; }
 
         private double solutionArea;
-        public void SetSolutionArea(double a) { solutionArea = a; }
+        public void SetSolutionArea(double a)
+        {
+            if (a <= 0) throw new System.ArgumentException("Specified area is negative: " + a);
+
+            solutionArea = a;
+        }
         public double GetSolutionArea() { return solutionArea; }
 
         //

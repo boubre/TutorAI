@@ -19,6 +19,16 @@ namespace GeometryTutorLib.ConcreteAST
         public List<Point> allComposingPoints { get; protected set; }
         // Subsegments of each side (parallel with the orderedsides)
         public List<Segment>[] sideSubsegments { get; protected set; }
+        protected List<Segment>[] completeSideSegments;
+        public List<Segment> GetCompleteSideSegments()
+        {
+            List<Segment> segs = new List<Segment>();
+            foreach (List<Segment> segList in completeSideSegments)
+            {
+                segList.ForEach(s => segs.Add(s));
+            }
+            return segs;
+        }
 
         public virtual double CoordinatizedArea() { throw new NotImplementedException(); }
 
@@ -77,7 +87,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         //
 
-        public static Point GetPointByLengthAndAngleInStandardPosition(int length, int measure)
+        public static Point GetPointByLengthAndAngleInStandardPosition(int length, double measure)
         {
             return new Point("", length * Math.Cos(Angle.toRadians(measure)), length * Math.Sin(Angle.toRadians(measure)));
         }
@@ -112,5 +122,28 @@ namespace GeometryTutorLib.ConcreteAST
 
         // Get the variables required for the given figure.
         public virtual List<Segment> GetAreaVariables() { return new List<Segment>(); }
+
+        public bool Overlaps(Figure that)
+        {
+            return this.GetFigureAsAtomicRegion().OverlapsWith(that.GetFigureAsAtomicRegion());
+        }
+
+        //
+        // Used by Square and Rectangle
+        //
+        public static FigSynthProblem MakeAdditionProblem(Figure outerShape, Figure appended)
+        {
+            if (outerShape.Contains(appended) || outerShape.Overlaps(appended)) return null;
+
+            AdditionSynth addSynth = new AdditionSynth(outerShape, appended);
+
+            List<AtomicRegion> atoms = new List<AtomicRegion>();
+            atoms.Add(outerShape.GetFigureAsAtomicRegion());
+            atoms.Add(appended.GetFigureAsAtomicRegion());
+
+            addSynth.SetOpenRegions(atoms);
+
+            return addSynth;
+        }
     }
 }

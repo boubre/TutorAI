@@ -20,7 +20,8 @@ namespace GeometryTutorLib.ConcreteAST
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
             {
-                if (quad.VerifyRectangle())
+                // Select only rectangles that don't match the outer shape.
+                if (quad.VerifyRectangle() && !quad.HasSamePoints(outerShape as Polygon))
                 {
                     Rectangle rect = new Rectangle(quad);
 
@@ -34,9 +35,58 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public new static List<FigSynthProblem> AppendShape(List<Point> points)
+        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
         {
-            return new List<FigSynthProblem>();
+            //
+            // Acquire a set of lengths of the given segments.
+            //
+            List<int> lengths = new List<int>();
+            segments.ForEach(s => Utilities.AddUnique<int>(lengths, (int)s.Length));
+
+            // Acquire the length of the rectangle so it is fixed among all appended shapes.
+            // We avoid a square by looping.
+            int newLength = -1;
+            for (newLength = Figure.DefaultSideLength(); lengths.Contains(newLength); newLength = Figure.DefaultSideLength()) ;
+
+            List<FigSynthProblem> composed = new List<FigSynthProblem>();
+            foreach (Segment seg in segments)
+            {
+                Rectangle rect1;
+                Rectangle rect2;
+
+                MakeRectangles(seg, newLength, out rect1, out rect2);
+
+                FigSynthProblem prob = Figure.MakeAdditionProblem(outerShape, rect1);
+                if (prob != null) composed.Add(prob);
+
+                prob = Figure.MakeAdditionProblem(outerShape, rect2);
+                if (prob != null) composed.Add(prob);
+            }
+
+            return FigSynthProblem.RemoveSymmetric(composed);
+        }
+
+        public static void MakeRectangles(Segment side, int length, out Rectangle rect1, out Rectangle rect2)
+        {
+            //
+            // First rectangle
+            //
+            Segment adj1 = side.GetPerpendicularByLength(side.Point1, length);
+            Segment adj2 = side.GetPerpendicularByLength(side.Point2, length);
+
+            Segment oppSide = new Segment(adj1.OtherPoint(side.Point1), adj2.OtherPoint(side.Point2));
+
+            rect1 = new Rectangle(side, oppSide, adj1, adj2);
+
+            //
+            // Second rectangle
+            //
+            Segment otherAdj1 = adj1.GetOppositeSegment(side.Point1);
+            Segment otherAdj2 = adj2.GetOppositeSegment(side.Point2);
+
+            oppSide = new Segment(otherAdj1.OtherPoint(side.Point1), otherAdj2.OtherPoint(side.Point2));
+
+            rect2 = new Rectangle(side, oppSide, otherAdj1, otherAdj2);
         }
 
         public static Quadrilateral ConstructDefaultRectangle()

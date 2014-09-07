@@ -12,7 +12,7 @@ namespace GeometryTutorLib
     /// </summary>
     public static partial class FigureSynthesizerMain
     {
-        public static void SynthesizerMain(Dictionary<ShapeType, int> figureCountMap)
+        public static void SynthesizerMain(Dictionary<ShapeType, int> figureCountMap, TemplateType type)
         {
             //
             // Convert the incoming dictionary to a simple list of shapes to process in order.
@@ -22,15 +22,7 @@ namespace GeometryTutorLib
             //
             // Construct the figure recursively.
             //
-            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA);
-
-            //
-            // Debug output of the problems.
-            //
-            foreach (FigSynthProblem problem in problems)
-            {
-                System.Diagnostics.Debug.WriteLine(problem.ToString());
-            }
+            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, type);
 
             //
             // Construct the problem so that it can be passed to the Solver.
@@ -38,39 +30,203 @@ namespace GeometryTutorLib
             ConstructProblemsToSolve(problems);
         }
 
-        public static void SynthesizerMain()
+        //
+        // Abusive, comprehensive test of all combinations of figures with the basic templates.
+        //
+        public static void SynthesizerMainTester()
         {
-            //
-            // Make up a list of shapes to compose.
-            //
-            Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+            List<ShapeType> shapes = new List<ShapeType>();
 
-            figureCountMap[ShapeType.SQUARE] = 1;
-            figureCountMap[ShapeType.ISO_TRAPEZOID] = 1;
+            //shapes.Add(ShapeType.RIGHT_TRIANGLE);
+            //shapes.Add(ShapeType.RECTANGLE);
+            //shapes.Add(ShapeType.SQUARE);
+            //shapes.Add(ShapeType.ISOSCELES_TRIANGLE);
+            //shapes.Add(ShapeType.EQUILATERAL_TRIANGLE);
+            //shapes.Add(ShapeType.TRIANGLE); // Problem with Append and area.
 
+            //shapes.Add(ShapeType.PARALLELOGRAM);   // Area of parallelograms in solver needed.
+            //shapes.Add(ShapeType.ISO_RIGHT_TRIANGLE);
+            //shapes.Add(ShapeType.QUADRILATERAL);
+            //shapes.Add(ShapeType.KITE);
+            //shapes.Add(ShapeType.TRAPEZOID);
+            //shapes.Add(ShapeType.ISO_TRAPEZOID);
+            //shapes.Add(ShapeType.RHOMBUS);
 
-            //
-            // Convert the incoming dictionary to a simple list of shapes to process in order.
-            //
-            List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap);
+            for (int s1 = 0; s1 < shapes.Count; s1++)
+            {
+                bool worked = true;
+                for (int s2 = 0; s2 < shapes.Count; s2++)
+                {
+                    //if (s1 != s2) // Remove for complete tests.
+                    //{
+                        System.Diagnostics.Debug.WriteLine("(" + shapes[s1] + ", " + shapes[s2] + ")");
 
-            //
-            // Construct the figure recursively.
-            //
-            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA);
+                        Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
 
-            //
-            // Debug output of the problems.
-            //
+                        if (s1 == s2) figureCountMap[shapes[s1]] = 2;
+                        else
+                        {
+                            figureCountMap[shapes[s1]] = 1;
+                            figureCountMap[shapes[s2]] = 1;
+                        }
+
+                        try
+                        {
+                            System.Diagnostics.Debug.WriteLine("-------------------------------------------------------------------------------------------------------------------------");
+                            SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA);
+
+                            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                            SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA);
+                        }
+                        catch (NotImplementedException e)
+                        {
+                            System.Diagnostics.Debug.WriteLine("\t\t Unimplmented");
+                            worked = false;
+                        }
+                        catch (Exception e)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Failed: " + e.ToString());
+                            worked = false;
+                        }
+//                    }
+                }
+                if (worked) System.Diagnostics.Debug.WriteLine(shapes[s1] + " is golden.");
+            }
+        }
+
+        //public static void SynthesizerMain()
+        //{
+        //    //
+        //    // Make up a list of shapes to compose.
+        //    //
+        //    Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+
+        //    figureCountMap[ShapeType.SQUARE] = 1;
+        //    figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+
+        //    //
+        //    // Convert the incoming dictionary to a simple list of shapes to process in order.
+        //    //
+        //    List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap);
+
+        //    //
+        //    // Construct the figure recursively.
+        //    //
+        //    List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA);
+
+        //    //
+        //    // Debug output of the problems.
+        //    //
+        //    foreach (FigSynthProblem problem in problems)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine(problem.ToString());
+        //    }
+
+        //    //
+        //    // Construct the problem so that it can be passed to the Solver.
+        //    //
+        //    ConstructProblemsToSolve(problems);
+        //}
+
+#if HARD_CODED_UI
+        private static bool drawnAProblem = false;
+#endif
+        private static List<GeometryTestbed.FigSynthShadedAreaProblem> ConstructProblemsToSolve(List<FigSynthProblem> problems)
+        {
+            List<GeometryTestbed.FigSynthShadedAreaProblem> shadedAreaProblems = new List<GeometryTestbed.FigSynthShadedAreaProblem>();
+
+            int problemCount = 0;
             foreach (FigSynthProblem problem in problems)
             {
-                System.Diagnostics.Debug.WriteLine(problem.ToString());
+                if (Utilities.FIGURE_SYNTHESIZER_DEBUG)
+                {
+                    string label = "";
+                    for (int i = 0; i < 80 / ((problemCount / 10) + 1); i++) label += problemCount + " ";
+                    System.Diagnostics.Debug.WriteLine(label);
+
+                    System.Diagnostics.Debug.WriteLine(problem.ToString());
+                    problemCount++;
+                }
+
+                GeometryTestbed.FigSynthShadedAreaProblem shadedProb = ConstructProblem(problem);
+                shadedAreaProblems.Add(shadedProb);
+
+#if HARD_CODED_UI
+                if (!drawnAProblem)
+                {
+                    UIProblemDrawer.getInstance().draw(shadedProb.MakeUIProblemDescription());
+                    shadedProb.Run();
+                    return shadedAreaProblems;
+                }
+                drawnAProblem = true;
+#endif
+                shadedProb.Run();
             }
 
+            return shadedAreaProblems;
+        }
+
+        private static int figCounter = 1;
+        private static GeometryTestbed.FigSynthShadedAreaProblem ConstructProblem(FigSynthProblem problem)
+        {
+            GeometryTestbed.FigSynthShadedAreaProblem shadedArea = new GeometryTestbed.FigSynthShadedAreaProblem(true, true);
+
             //
-            // Construct the problem so that it can be passed to the Solver.
+            // Name the problem (uniquely).
             //
-            ConstructProblemsToSolve(problems);
+            shadedArea.SetName("Fig-Synthesized " + (figCounter++));
+
+            //
+            // Construct the points.
+            //
+            List<Point> points = problem.CollectPoints();
+            shadedArea.SetPoints(points);
+
+            //
+            // Construct the collinear relationships.
+            //
+            List<Segment> segments;
+            List<Collinear> collinear;
+
+            AcquireCollinearAndSegments(problem.CollectSegments(), points, out segments, out collinear);
+
+            shadedArea.SetSegments(segments);
+            shadedArea.SetCollinear(collinear);
+
+            //
+            // Construct circles.
+            //
+            shadedArea.SetCircles(problem.CollectCircles());
+
+            //
+            // Invoke the parser.
+            //
+            shadedArea.InvokeParser();
+
+            //
+            // Set the wanted atomic regions.
+            //
+            shadedArea.SetWantedRegions(shadedArea.GetRemainingRegionsFromParser(problem));
+
+            //
+            // Set the known values.
+            // Acquire all of the givens using constant propagation for each figure construction.
+            //
+            shadedArea.SetKnowns(problem.AcquireKnowns());
+
+            //
+            // Set the problem given clauses.
+            //
+            List<GroundedClause> givens = problem.GetGivens();
+            problem.GetMidpoints().ForEach(m => givens.Add(m));
+            shadedArea.SetGivens(givens);
+
+            //
+            // Set the actual area of the solution (area of wanted regions).
+            //
+            shadedArea.SetSolutionArea(problem.GetCoordinateArea());
+
+            return shadedArea;
         }
 
         //
@@ -102,31 +258,91 @@ namespace GeometryTutorLib
                     return ConstructSequentialSubtraction(shapeList);
 
                 case TemplateType.ALPHA_PLUS_BETA:                            // a + b
-                    throw new NotImplementedException();
-                
+                    return ConstructSequentialAddition(shapeList);
+
                 //
                 // Three Shapes
                 //
                 case TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA:                 // a + b + c
-                    throw new NotImplementedException();
+                    return ConstructSequentialAddition(shapeList);
 
-                case TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN:  // a + (b - c)
-                    throw new NotImplementedException();
+                case TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN:  // a + (b - c) = (b - c) + a
+                case TemplateType.ALPHA_MINUS_BETA_PLUS_GAMMA:                // (a - b) + c
+                    return ConstructParenSubtractionThenAppend(shapeList);
 
                 case TemplateType.LPAREN_ALPHA_PLUS_BETA_RPAREN_MINUS_GAMMA:  // (a + b) - c
-                    throw new NotImplementedException();
+                    return ConstructAppendThenSubtract(shapeList);
 
                 case TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA:               // a - b - c
                     return ConstructSequentialSubtraction(shapeList);
-
-                case TemplateType.ALPHA_MINUS_BETA_PLUS_GAMMA:                // a - b + c
-                    throw new NotImplementedException();
 
                 case TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN: // a - (b - c)
                     return ConstructGroupedSubtraction(shapeList);
             }
 
             return new List<FigSynthProblem>();
+        }
+
+        //
+        // (a - b) + c
+        // a + (b - c) = (b - c) + a
+        //
+        //  First subtraction x = (a - b)...then append (x + c).
+        //
+        private static List<FigSynthProblem> ConstructParenSubtractionThenAppend(List<ShapeType> shapes)
+        {
+            //
+            // Construct  a - b
+            //
+            Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
+            List<FigSynthProblem> aMinusB = SubtractShape(defaultLargeFigure, shapes[1]);
+
+            //
+            // For each of the aMinusB problems, the outer bounds is defined by a shape; append the new shape.
+            //
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+            foreach (FigSynthProblem top in aMinusB)
+            {
+                List<FigSynthProblem> bMinusC = AddShape(((top as BinarySynthOperation).leftProblem as UnarySynth).figure, shapes[2]);
+
+                foreach (FigSynthProblem bc in bMinusC)
+                {
+                    newSynths.Add(FigSynthProblem.AppendAddition(top, bc));
+                }
+            }
+
+            return newSynths;
+        }
+
+        //
+        // (a + b) - c
+        //
+        //  First append, then subtract from the entire shape.
+        //
+        private static List<FigSynthProblem> ConstructAppendThenSubtract(List<ShapeType> shapes)
+        {
+            //
+            // Construct  a + b
+            //
+            Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
+            List<FigSynthProblem> aPlusB = AddShape(defaultLargeFigure, shapes[1]);
+
+            //
+            // For each of the aPlusB problems, the outer bounds is defined by the exterior segments / set of points.
+            //
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+            foreach (FigSynthProblem top in aPlusB)
+            {
+                Polygon outerPoly = Polygon.MakePolygon(top.GetExteriorSegments());
+                List<FigSynthProblem> xMinusC = SubtractShape(outerPoly, shapes[2]);
+
+                foreach (FigSynthProblem x in xMinusC)
+                {
+                    newSynths.Add(FigSynthProblem.AppendFigureSubtraction(top, x));
+                }
+            }
+
+            return newSynths;
         }
 
         //
@@ -237,37 +453,35 @@ namespace GeometryTutorLib
 
 
 
-
-
-
-
-
         //
-        // Given a set of points, can we construct any shape?
-        // If we can construct a shape, we then have a resultant mess...
+        // Perform a - (b - c) =
+        //                         1. a - b 
+        //                         2. b - c
         //
-        //public static List<FigSynthProblem> SubtractShape(List<Connection> conns, List<Point> points)
+        //private static List<FigSynthProblem> ConstructGroupedSubtraction(List<ShapeType> shapes)
         //{
-        //    List<FigSynthProblem> newAgg = new List<FigSynthProblem>();
+        //    //
+        //    // Construct  a - b
+        //    //
+        //    Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
+        //    List<FigSynthProblem> aMinusB = SubtractShape(defaultLargeFigure, shapes[1]);
 
-        //    newAgg.AddRange(Triangle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(IsoscelesTriangle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(RightTriangle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(EquilateralTriangle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Kite.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Quadrilateral.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Trapezoid.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(IsoscelesTrapezoid.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Parallelogram.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Rectangle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Rhombus.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Square.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Circle.SubtractShape(outerShape, conns, points));
-        //    newAgg.AddRange(Sector.SubtractShape(outerShape, conns, points));
+        //    //
+        //    // For each of the aMinusB problems, the outer bounds is defined by a shape; subtract the new shape.
+        //    //
+        //    List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+        //    foreach (FigSynthProblem top in aMinusB)
+        //    {
+        //        List<FigSynthProblem> bMinusC = SubtractShape(((top as BinarySynthOperation).rightProblem as UnarySynth).figure, shapes[2]);
 
-        //    return newAgg;
+        //        foreach (FigSynthProblem bc in bMinusC)
+        //        {
+        //            newSynths.Add(FigSynthProblem.AppendFigureSubtraction(top, bc));
+        //        }
+        //    }
+
+        //    return newSynths;
         //}
-
 
         //
         // Given a template: \alpha - \beta , etc.
@@ -386,149 +600,127 @@ namespace GeometryTutorLib
         }
 
         //
-        // Given a set of points, can we construct any shape?
-        // If we can construct a shape, we then have a resultant mess...
+        // Perform a - b - ... - c
         //
-        public static List<FigSynthProblem> AppendShape(List<Point> points, ShapeType type)
+        private static List<FigSynthProblem> ConstructSequentialAddition(List<ShapeType> shapes)
         {
+            //
+            // Construct base case
+            //
+            Figure defaultLargeFigure = Figure.ConstructDefaultShape(shapes[0]);
+
+            List<FigSynthProblem> startSynths = AddShape(defaultLargeFigure, shapes[1]);
+
+            //
+            // Recursive construction of each shape (level in the recursion).
+            //
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>(startSynths);
+            for (int s = 2; s < shapes.Count; s++)
+            {
+                newSynths = ConstructAddition(newSynths, shapes[s]);
+            }
+
+            return newSynths;
+        }
+
+        //
+        // Recursive case
+        //
+        private static List<FigSynthProblem> ConstructAddition(List<FigSynthProblem> synths, ShapeType shapeType)
+        {
+            List<FigSynthProblem> newSynths = new List<FigSynthProblem>();
+
+            foreach (FigSynthProblem synth in synths)
+            {
+                newSynths.AddRange(AddShape(synth, shapeType));
+            }
+
+            return newSynths;
+        }
+
+        public static List<FigSynthProblem> AddShape(Figure outerShape, ShapeType type)
+        {
+            List<FigSynthProblem> problems = new List<FigSynthProblem>();
+
             switch (type)
             {
                 case ShapeType.TRIANGLE:
-                    return Triangle.AppendShape(points);
+                    problems.AddRange(Triangle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.ISOSCELES_TRIANGLE:
-                    return IsoscelesTriangle.AppendShape(points);
+                    problems.AddRange(IsoscelesTriangle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.RIGHT_TRIANGLE:
-                    return RightTriangle.AppendShape(points);
-
+                    problems.AddRange(RightTriangle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
                 //case ShapeType.ISO_RIGHT_TRIANGLE:
-                //    return Triangle.AppendShape(points);
+                //    problems.AddRange(Triangle.AppendShape(points);
 
                 case ShapeType.EQUILATERAL_TRIANGLE:
-                    return EquilateralTriangle.AppendShape(points);
-
+                    problems.AddRange(EquilateralTriangle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
                 case ShapeType.KITE:
-                    return Kite.AppendShape(points);
-
+                    problems.AddRange(Kite.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
                 case ShapeType.QUADRILATERAL:
-                    return Quadrilateral.AppendShape(points);
-
+                    problems.AddRange(Quadrilateral.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
                 case ShapeType.TRAPEZOID:
-                    return Trapezoid.AppendShape(points);
-
+                    problems.AddRange(Trapezoid.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
                 case ShapeType.ISO_TRAPEZOID:
-                    return IsoscelesTrapezoid.AppendShape(points);
+                    problems.AddRange(IsoscelesTrapezoid.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.PARALLELOGRAM:
-                    return Parallelogram.AppendShape(points);
+                    problems.AddRange(Parallelogram.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.RECTANGLE:
-                    return Rectangle.AppendShape(points);
+                    problems.AddRange(Rectangle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.RHOMBUS:
-                    return Rhombus.AppendShape(points);
+                    problems.AddRange(Rhombus.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.SQUARE:
-                    return Square.AppendShape(points);
+                    problems.AddRange(Square.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.CIRCLE:
-                    return Circle.AppendShape(points);
+                    problems.AddRange(Circle.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
 
                 case ShapeType.SECTOR:
-                    return Sector.AppendShape(points);
+                    problems.AddRange(Sector.AppendShape(outerShape, outerShape.GetCompleteSideSegments()));
+                    break;
             }
 
-            return new List<FigSynthProblem>();
+            return problems;
         }
 
-#if HARD_CODED_UI
-        private static bool drawnAProblem = false;
-#endif
-        private static List<GeometryTestbed.FigSynthShadedAreaProblem> ConstructProblemsToSolve(List<FigSynthProblem> problems)
+        //
+        // Append to an existent problem.
+        //
+        public static List<FigSynthProblem> AddShape(FigSynthProblem problem, ShapeType type)
         {
-            List<GeometryTestbed.FigSynthShadedAreaProblem> shadedAreaProblems = new List<GeometryTestbed.FigSynthShadedAreaProblem>();
+            // Create a polygon based only on exterior segments.
+            Polygon outer = Polygon.MakePolygon(problem.GetExteriorSegments());
 
-            foreach (FigSynthProblem problem in problems)
+            // Append the shapes
+            List<FigSynthProblem> newSynths = AddShape(outer, type);
+
+            // Create the new problems by appending.
+            List<FigSynthProblem> appended = new List<FigSynthProblem>();
+            foreach (FigSynthProblem synth in newSynths)
             {
-                GeometryTestbed.FigSynthShadedAreaProblem shadedProb = ConstructProblem(problem);
-                shadedAreaProblems.Add(shadedProb);
-                shadedProb.Run();
-
-#if HARD_CODED_UI
-                if (!drawnAProblem)
-                {
-                    UIProblemDrawer.getInstance().draw(shadedProb.MakeUIProblemDescription());
-                    return shadedAreaProblems;
-                }
-                drawnAProblem = true;
-#endif
+                appended.Add(FigSynthProblem.AppendAddition(problem, synth));
             }
 
-            return shadedAreaProblems;
-        }
-
-        private static int figCounter = 1;
-        private static GeometryTestbed.FigSynthShadedAreaProblem ConstructProblem(FigSynthProblem problem)
-        {
-            GeometryTestbed.FigSynthShadedAreaProblem shadedArea = new GeometryTestbed.FigSynthShadedAreaProblem(true, true);
-            
-            //
-            // Name the problem (uniquely).
-            //
-            shadedArea.SetName("Fig-Synthesized " + (figCounter++));
-
-            //
-            // Construct the points.
-            //
-            List<Point> points = problem.CollectPoints();
-            shadedArea.SetPoints(points);
-
-            //
-            // Construct the collinear relationships.
-            //
-            List<Segment> segments;
-            List<Collinear> collinear;
-
-            AcquireCollinearAndSegments(problem.CollectSegments(), points, out segments, out collinear); 
-
-            shadedArea.SetSegments(segments);
-            shadedArea.SetCollinear(collinear);
-
-            //
-            // Construct circles.
-            //
-            shadedArea.SetCircles(problem.CollectCircles());
-
-            //
-            // Invoke the parser.
-            //
-            shadedArea.InvokeParser();
-
-            //
-            // Set the wanted atomic regions.
-            //
-            shadedArea.SetWantedRegions(shadedArea.GetRemainingRegionsFromParser(problem));
-
-            //
-            // Set the known values.
-            // Acquire all of the givens using constant propagation for each figure construction.
-            //
-            shadedArea.SetKnowns(problem.AcquireKnowns());
-            
-            //
-            // Set the problem given clauses.
-            //
-            List<GroundedClause> givens = problem.GetGivens();
-            problem.GetMidpoints().ForEach(m => givens.Add(m));
-            shadedArea.SetGivens(givens);
-
-            //
-            // Set the actual area of the solution (area of wanted regions).
-            //
-            shadedArea.SetSolutionArea(problem.GetCoordinateArea());
-
-            return shadedArea;
+            return appended;
         }
 
         //
@@ -576,7 +768,7 @@ namespace GeometryTutorLib
                         max.AddCollinearPoint(pt);
                     }
                 }
-                
+
                 //
                 // Convert to collinear or straight-up segments.
                 //

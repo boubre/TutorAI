@@ -1027,6 +1027,52 @@ namespace GeometryTutorLib.ConcreteAST
             return "Circle(" + this.center.SimpleToString() + ")";
         }
 
+        public void ConstructChordsRadii(List<Point> figurePoints, out List<Segment> chords, out List<Segment> radii, out List<Point> imagPoints)
+        {
+            List<Point> interPts = GetIntersectingPoints();
+
+            radii = new List<Segment>();
+            chords = new List<Segment>();
+            imagPoints = new List<Point>();
+
+            //
+            // Construct the radii
+            //
+            switch (interPts.Count)
+            {
+                // If there are no points of interest, the circle is the atomic region.
+                case 0: return;
+
+                // If only 1 intersection point, create the diameter.
+                case 1:
+                    Point opp = Utilities.AcquirePoint(figurePoints, this.OppositePoint(interPts[0]));
+                    radii.Add(new Segment(center, interPts[0]));
+                    radii.Add(new Segment(center, opp));
+                    imagPoints.Add(opp);
+                    interPts.Add(opp);
+                    break;
+
+                default:
+                    foreach (Point interPt in interPts)
+                    {
+                        radii.Add(new Segment(center, interPt));
+                    }
+                    break;
+            }
+
+            //
+            // Construct the chords
+            //
+            for (int p1 = 0; p1 < interPts.Count - 1; p1++)
+            {
+                for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
+                {
+                    Segment chord = new Segment(interPts[p1], interPts[p2]);
+                    if (!DefinesDiameter(chord)) chords.Add(chord);
+                }
+            }
+        }
+
         public List<Area_Based_Analyses.Atomizer.AtomicRegion> Atomize(List<Point> figurePoints)
         {
             List<Segment> constructedChords = new List<Segment>();
@@ -1035,44 +1081,11 @@ namespace GeometryTutorLib.ConcreteAST
 
             List<Point> interPts = GetIntersectingPoints();
 
-            //
-            // Construct the radii
-            //
-            switch (interPts.Count)
-            {
-                // If there are no points of interest, the circle is the atomic region.
-                case 0:
-                  return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(this));
+            // Special with an orphan circle.
+            if (interPts.Count == 0) return Utilities.MakeList<AtomicRegion>(new ShapeAtomicRegion(this));
 
-                // If only 1 intersection point, create the diameter.
-                case 1:
-                  Point opp = Utilities.AcquirePoint(figurePoints, this.OppositePoint(interPts[0]));
-                  constructedRadii.Add(new Segment(center, interPts[0]));
-                  constructedRadii.Add(new Segment(center, opp));
-                  imagPoints.Add(opp);
-                  interPts.Add(opp);
-                  break;
-
-                default:
-                  foreach (Point interPt in interPts)
-                  {
-                      constructedRadii.Add(new Segment(center, interPt));
-                  }
-                  break;
-            }
-
-            //
-            // Construct the chords
-            //
-            List<Segment> chords = new List<Segment>();
-            for (int p1 = 0; p1 < interPts.Count - 1; p1++)
-            {
-                for (int p2 = p1 + 1; p2 < interPts.Count; p2++)
-                {
-                    Segment chord = new Segment(interPts[p1], interPts[p2]);
-                    if (!DefinesDiameter(chord)) constructedChords.Add(chord);
-                }
-            }
+            // Construct all of the implied radii and chords.
+            ConstructChordsRadii(figurePoints, out constructedChords, out constructedRadii, out imagPoints);
 
             //
             // Do any of the created segments result in imaginary intersection points.
