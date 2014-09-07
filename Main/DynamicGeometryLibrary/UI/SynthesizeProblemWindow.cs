@@ -169,7 +169,7 @@ namespace DynamicGeometry.UI
 
             this.Close();
             TemplateType template = templateMap[templateSelection.SelectedValue as string];
-            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA);
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain(figureCountMap, template);
         }
 
         /// <summary>
