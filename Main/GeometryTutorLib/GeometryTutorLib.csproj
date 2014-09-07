@@ -382,7 +382,6 @@
     <Compile Include="HardCoded\Problems\ProofProblems\SimilarTrianglesProblem.cs" />
     <Compile Include="HardCoded\Problems\ProofProblems\TransversalsProblem.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ActualShadedAreaProblem.cs" />
-    <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\Limitation.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\SimpleCircleRegion.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\TwoIsoscelesTriangles.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\ACT\TwoCircleInteriorTangent.cs" />
