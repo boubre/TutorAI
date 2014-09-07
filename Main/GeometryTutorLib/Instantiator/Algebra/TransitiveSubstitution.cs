@@ -1065,7 +1065,7 @@ namespace GeometryTutorLib.GenericInstantiator
         {
             //Debug.WriteLine("Substituting with " + eq.ToString() + " and " + subbedEq.ToString());
 
-            if (!eq.Contains(toFind)) return null;
+            if (!eq.ContainsClause(toFind)) return null;
 
             //
             // Make a deep copy of the equation

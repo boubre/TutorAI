@@ -13,11 +13,13 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public ConcavePolygon() { }
 
-        public ConcavePolygon(List<Segment> segs, List<Point> pts, List<Angle> angs)
+        public ConcavePolygon(List<Segment> segs, List<Point> pts, List<Angle> angs) : base()
         {
             orderedSides = segs;
             points = pts;
             angles = angs;
+
+            this.FigureSynthesizerConstructor();
         }
 
         public List<Area_Based_Analyses.Atomizer.AtomicRegion> Atomize(List<Point> figurePoints)

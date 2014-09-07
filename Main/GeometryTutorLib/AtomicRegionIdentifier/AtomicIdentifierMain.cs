@@ -594,8 +594,8 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
             return applicWithMidpoints;
         }
 
-        private static List<AtomicRegion> IdentifyPathological(List<Point> figurePoints, List<AtomicRegion> atoms,
-                                                               List<Circle> circles, Dictionary<Circle, int> circGranularity)
+        public static List<AtomicRegion> IdentifyPathological(List<Point> figurePoints, List<AtomicRegion> atoms,
+                                                              List<Circle> circles, Dictionary<Circle, int> circGranularity)
         {
             List<Point> points = new List<Point>();
             List<Segment> segments = new List<Segment>();
@@ -935,8 +935,11 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                 {
                     if (maximalSegments[s1].IsCollinearWith(maximalSegments[s2]) && maximalSegments[s1].SharedVertex(maximalSegments[s2]) != null)
                     {
-                        segments[s1].AddCollinearPoints(segments[s2].collinear);
-                        segments[s2].AddCollinearPoints(segments[s1].collinear);
+                        //segments[s1].AddCollinearPoints(segments[s2].collinear);
+                        //segments[s2].AddCollinearPoints(segments[s1].collinear);
+
+                        maximalSegments[s1].AddCollinearPoints(maximalSegments[s2].collinear);
+                        maximalSegments[s2].AddCollinearPoints(maximalSegments[s1].collinear);
                     }
                 }
             }

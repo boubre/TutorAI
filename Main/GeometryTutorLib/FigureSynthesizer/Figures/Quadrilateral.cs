@@ -9,6 +9,25 @@ namespace GeometryTutorLib.ConcreteAST
     public partial class Quadrilateral : Polygon
     {
         //
+        // Split the quadrilateral into two triangles and compute the area.
+        //
+        public override double CoordinatizedArea()
+        {
+            Point shared1 = orderedSides[0].SharedVertex(orderedSides[1]);
+            Segment diagonal1 = new Segment(orderedSides[0].OtherPoint(shared1), orderedSides[1].OtherPoint(shared1));
+            Triangle tri1 = new Triangle(orderedSides[0], orderedSides[1], diagonal1);
+
+            Point shared2 = orderedSides[2].SharedVertex(orderedSides[3]);
+            Segment diagonal2 = new Segment(orderedSides[2].OtherPoint(shared2), orderedSides[3].OtherPoint(shared2));
+            Triangle tri2 = new Triangle(orderedSides[2], orderedSides[3], diagonal2);
+
+            double area1 = tri1.CoordinatizedArea();
+            double area2 = tri2.CoordinatizedArea();
+
+            return area1 + area2;
+        }
+
+        //
         // Acquire the list of all possible quadrilaterals 
         //
         public static List<Quadrilateral> GetQuadrilateralsFromPoints(List<Point> points)
@@ -43,12 +62,12 @@ namespace GeometryTutorLib.ConcreteAST
 
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            return new List<FigSynthProblem>();
+            throw new NotImplementedException();
         }
 
-        public new static List<FigSynthProblem> AppendShape(List<Point> points)
+        public new static List<FigSynthProblem> AppendShape(Figure outerShape, List<Segment> segments)
         {
-            return new List<FigSynthProblem>();
+            throw new NotImplementedException();
         }
 
         public static Quadrilateral ConstructDefaultQuadrilateral()

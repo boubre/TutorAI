@@ -1108,6 +1108,11 @@ namespace GeometryTutorLib.ConcreteAST
             return transversal;
         }
 
+        public bool IsPerpendicular()
+        {
+            return lhs.CoordinatePerpendicular(rhs) != null;
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             if (obj is Perpendicular) return (obj as Perpendicular).StructurallyEquals(this);

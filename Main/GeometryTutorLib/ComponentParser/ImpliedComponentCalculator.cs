@@ -78,9 +78,6 @@ namespace GeometryTutorLib.TutorParser
             collinear = new List<Collinear>();
 
             ConstructCommonComponents();
-
-            // --- End timing ---
-            stopwatch.Stop();
         }
 
         //
@@ -102,9 +99,6 @@ namespace GeometryTutorLib.TutorParser
             polygons = Polygon.ConstructPolygonContainer();
 
             ConstructCommonComponents();
-
-            // --- End timing ---
-            stopwatch.Stop();
         }
 
         private void ConstructCommonComponents()
@@ -223,6 +217,8 @@ namespace GeometryTutorLib.TutorParser
                 }
             }
 #endif
+            // --- End timing ---
+            stopwatch.Stop();
         }        
 
         /// <summary>
@@ -607,49 +603,6 @@ namespace GeometryTutorLib.TutorParser
             return semi1;
         }
 
-        //private void GenerateSemicircleClauses(Circle circle)
-        //{
-        //    foreach (Segment seg in segments)
-        //    {
-        //        if (circle.DefinesDiameter(seg))
-        //        {
-        //            //Get the endpoints of the diameter and the indices of these endpoints
-        //            Point e1 = seg.Point1;
-        //            Point e2 = seg.Point2;
-        //            int p1 = circle.pointsOnCircle.IndexOf(e1);
-        //            int p2 = circle.pointsOnCircle.IndexOf(e2);
-
-        //            //For partitioning purposes, order of the endpoints matters. Make sure p1 holds the lower of the two indices
-        //            if (p1 > p2)
-        //            {
-        //                int p3 = p1;
-        //                p1 = p2;
-        //                p2 = p3;
-        //            }
-
-        //            // Partition the remaining points on the circle
-        //            List<Point> minorArcPoints;
-        //            List<Point> majorArcPoints;
-        //            PartitionSemiCircleArcPoints(circle.pointsOnCircle, p1, p2, out minorArcPoints, out majorArcPoints);
-
-        //            // Semicircle requires 3 points to be defined - the two endpoints and a point inbetween
-        //            // The minorArcPoints and majorArcPoints lists contain all the potential inbetween points for either side of the diameter
-        //            // Handle 'side' 1:
-        //            for (int i = 0; i < majorArcPoints.Count; ++i)
-        //            {
-        //                Semicircle semi = new Semicircle(circle, e1, e2, majorArcPoints[i], minorArcPoints, majorArcPoints, seg);
-        //                AddSemicircleClauses(semi);
-        //            }
-        //            // Handle 'side' 2:
-        //            for (int i = 0; i < minorArcPoints.Count; ++i)
-        //            {
-        //                Semicircle semi = new Semicircle(circle, e1, e2, minorArcPoints[i], majorArcPoints, minorArcPoints, seg);
-        //                AddSemicircleClauses(semi);
-        //            }
-        //        }
-        //    }
-        //}
-
         private void AddSemicircleClauses(Semicircle semi)
         {
             if (!GeometryTutorLib.Utilities.HasStructurally<Semicircle>(semiCircles, semi))
@@ -698,8 +651,6 @@ namespace GeometryTutorLib.TutorParser
                     // Do these endpoints form a diameter? If so, the semicircle arcs should have already been handled by GenerateSemicircleClauses()
                     Segment seg = new Segment(circle.pointsOnCircle[p1], circle.pointsOnCircle[p2]);
                     if (!circle.DefinesDiameter(seg)) CreateMajorMinorArcs(circle, p1, p2);
-
-
                 }
             }
         }
