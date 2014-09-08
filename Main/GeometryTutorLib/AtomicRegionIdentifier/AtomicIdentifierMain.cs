@@ -48,7 +48,6 @@ namespace GeometryTutorLib.AtomicRegionIdentifier
                     if (circle.radius > currRadius) gran++;
                     circGranularity[circle] = gran;
                 }
-
             }
 
             //

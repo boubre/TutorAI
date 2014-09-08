@@ -258,15 +258,15 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             if (this.type != that.type && this.HasPoint(that.endpoint1) && this.HasPoint(that.endpoint2)) return false;
 
             // A segment cuts through an arc in two points.
-            if (this.type != that.type && pt1 != null && pt1 != null) return true;
+            if (this.type != that.type && pt1 != null && pt2 != null) return true;
 
             if (pt2 != null) return false;
 
             if (this.HasPoint(pt1)) return false;
-            if (that.HasPoint(pt1)) return false;
+            if (that.HasPoint(pt2)) return false;
 
             if (!this.PointLiesOn(pt1)) return false;
-            if (!that.PointLiesOn(pt1)) return false;
+            if (!that.PointLiesOn(pt2)) return false;
 
             return true;
         }

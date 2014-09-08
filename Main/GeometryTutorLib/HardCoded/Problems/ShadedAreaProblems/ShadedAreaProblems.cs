@@ -163,7 +163,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new HbPage3Prob7(true, false));           // GTG
 
             //// Word Problems For Kids - Grade 11: http://people.stfx.ca/rtmacdon/mathproblems/grade11.html
-            //problems.Add(new WpfkProb2(true, false));              // GTG
+            problems.Add(new WpfkProb2(true, false));              // GTG
             //problems.Add(new WpfkProb6(true, false));              // GTG
             //problems.Add(new WpfkProb46(true, false));             // Works in testapp, but won't load in UI (extremely slow loading)
 
