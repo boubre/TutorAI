@@ -517,6 +517,7 @@
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb6.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb7.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\Magoosh\MgProb8.cs" />
+    <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\OldSchool\OsProb8.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\TutorVista\TvPage2Prob14.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\TutorVista\TvPage4Prob33cs.cs" />
     <Compile Include="HardCoded\Problems\ShadedAreaProblems\Online\TutorVista\TvPage1Prob7.cs" />
