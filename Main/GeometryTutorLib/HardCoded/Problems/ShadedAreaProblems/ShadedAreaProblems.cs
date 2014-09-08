@@ -65,11 +65,11 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page4Prob15(true, false));       // GTG
             //problems.Add(new Page4prob17(true, false));       // GTG
             //problems.Add(new Page4prob18(true, false));       // Works, but uses unproven semicircle clause
-            // problems.Add(new Page4Prob19(true, false));    // Encoding
+            ////problems.Add(new Page4Prob19(true, false));    // Encoding
 
-            //
-            // McDougall
-            //
+            ////
+            //// McDougall
+            ////
             //problems.Add(new Page5Row1Prob24(true, false));   // GTGDemo
             //problems.Add(new Page5Row1Prob25(true, false));   // GTGDemo
             //problems.Add(new Page5Row1Prob26(true, false));   // GTGDemo
@@ -100,16 +100,16 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page7Prob1a(true, false));           // GTG
             //problems.Add(new Page7Prob1b(true, false));           // GTG
             //problems.Add(new Page7Prob1c(true, false));           // GTG
-            //problems.Add(new Page7Prob3(true, false));            // GTG
+            ////problems.Add(new Page7Prob3(true, false));          //Broken - facet exception // GTG
             //// problems.Add(new Page7Prob4(true, false));            // Very long execution, works if RelationsOfCongruentAnglesAreCongruent is turned off
             //problems.Add(new Page7Prob24(true, false));           // GTG
             //problems.Add(new Page7Prob25(true, false));           // GTG
             //// problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
             //// problems.Add(new Page7Prob28(true, false));           // deduction problem
 
-            //
-            // Singapore
-            //
+            ////
+            //// Singapore
+            ////
             //problems.Add(new Page205(true, false));  // GTGDemo
             //// problems.Add(new Page207(true, false));        // Takes a long time; eliminate supplementary from parallelograms to speed up ; Angle equation problem.
             //problems.Add(new Page208(true, false));  // GTGDemo
@@ -117,18 +117,18 @@ namespace GeometryTutorLib.GeometryTestbed
             //// problems.Add(new Page210(true, false));        // Incomputable ; LONG execution need angle addition axiom ; Don't include.
             //// problems.Add(new Page199(true, false));        // Problems with deduction.
 
-            //
-            // Glencoe
-            //
-            // problems.Add(new Page7Row6(true, false));           // GTG, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
+            ////
+            //// Glencoe
+            ////
+            //problems.Add(new Page7Row6(true, false));           // GTG, but slow parse time (~3 minutes) (faster if RelationsOfCongruentAnglesAreCongruent is off)
             //problems.Add(new Page7Prob15(true, false));         // GTG
-            // problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
-            // // problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
-            // problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
-            // problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
-            //problems.Add(new Page8Prob5(true, false));          // Needs triangles from atomizer to work with only 1 defined radius, but otherwise GTG
+            //// problems.Add(new Page7Prob16(true, false));         // Execution time very long, gets stuck in area solution generator
+            //// problems.Add(new Page7Prob17(true, false));      // Execution time very long, gets stuck in area solution generator
+            //// problems.Add(new Page7Prob27(true, false));         // works if RelationsOfCongruentAnglesAreCongruent is turned off (otherwise execution is too long)
+            //// problems.Add(new Page7Prob28(true, false));         // Not working - Encoding issue
+            //// problems.Add(new Page8Prob5(true, false));          // Needs triangles from atomizer to work with only 1 defined radius, but otherwise GTG
             //problems.Add(new Page8Prob14(true, false));         // GTG
-            // problems.Add(new Page8Prob15(true, false));         // Cannot deduce rectangle (does work if given outer quad is a rectangle)
+            ////problems.Add(new Page8Prob15(true, false));         // Cannot deduce rectangle (does work if given outer quad is a rectangle)
             //problems.Add(new Page8Prob18(true, false));         // GTG
             //// problems.Add(new Page8Prob21(true, false));        // Atomic region issue
             //problems.Add(new Page8Row5Prob40(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
@@ -154,16 +154,16 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page10Prob18(true, false));        // GTGDemo
             //// problems.Add(new Page10Prob16(true, false));        // Ambiguous / impossible problem
 
-            //
-            // Online problems
-            //
-            // Hatboro pdf: http://www.hatboro-horsham.org/cms/lib2/PA01000027/Centricity/Domain/271/Shaded%20Area%20Packet.pdf
-            // problems.Add(new HbPage2Prob4(true, false));           // Long execution, lots of atomic regions
+            ////
+            //// Online problems
+            ////
+            //// Hatboro pdf: http://www.hatboro-horsham.org/cms/lib2/PA01000027/Centricity/Domain/271/Shaded%20Area%20Packet.pdf
+            //// problems.Add(new HbPage2Prob4(true, false));           // Long execution, lots of atomic regions
             //problems.Add(new HbPage2Prob5(true, false));           // GTG
             //problems.Add(new HbPage3Prob7(true, false));           // GTG
 
             //// Word Problems For Kids - Grade 11: http://people.stfx.ca/rtmacdon/mathproblems/grade11.html
-            problems.Add(new WpfkProb2(true, false));              // GTG
+            //// problems.Add(new WpfkProb2(true, false));           //Broken - solution not found   // GTG
             //problems.Add(new WpfkProb6(true, false));              // GTG
             //problems.Add(new WpfkProb46(true, false));             // Works in testapp, but won't load in UI (extremely slow loading)
 
@@ -196,6 +196,11 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new TvPage4Prob40(true, false));          // GTG
 
             ////
+            //// Old School Practice Test: http://www.oldschool.com.sg/index.php/module/PublicAccess/action/Wrapper/sid/9595afb87c8cf767f034c3ae53e74bae/coll_id/670/desc/Topical+Worksheet+%231/all_pg/1
+            ////
+            //problems.Add(new OsProb8(true, false));               // GTG
+
+            ////
             //// ACT Practice
             ////
             //problems.Add(new TwoCircleInteriorTangent(true, false));    // GTGDemo
@@ -203,7 +208,7 @@ namespace GeometryTutorLib.GeometryTestbed
             //// problems.Add(new CircCircRegionTester(true, false));        // No solution found
             //// problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
             //problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
-            //problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
+            ////problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
 
             return problems;
         }
