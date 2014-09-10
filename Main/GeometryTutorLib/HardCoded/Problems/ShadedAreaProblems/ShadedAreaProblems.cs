@@ -210,6 +210,13 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
             ////problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
 
+
+            //
+            // Figure Synthesis Testing (Not included in any data about solving).
+            //
+            problems.Add(new RightRight(true, false));
+
+
             return problems;
         }
     }

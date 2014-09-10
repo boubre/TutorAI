@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows.Threading;
 using GeometryTutorLib.ConcreteAST;
+using System.Linq;
+using System;
 
 namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
 {
@@ -29,7 +31,11 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             // Convert the filaments to atomic regions.
             //
             List<AtomicRegion> regions = new List<AtomicRegion>();
-            regions.AddRange(HandleFilaments(graph, circles, filaments));
+            if (filaments.Any())
+            {
+                throw new Exception("A filament occurred in conversion to atomic regions.");
+            }
+            // regions.AddRange(HandleFilaments(graph, circles, filaments));
 
 
 

@@ -80,6 +80,13 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
             return false;
         }
 
+        public bool PointLiesStrictlyOn(Point pt)
+        {
+            if (this.HasPoint(pt)) return false;
+
+            return PointLiesOn(pt);
+        }
+
         public Point Midpoint()
         {
             if (this.type == ConnectionType.SEGMENT)
@@ -249,26 +256,44 @@ namespace GeometryTutorLib.Area_Based_Analyses.Atomizer
         //
         public bool Crosses(Connection that)
         {
+            if (this.type == that.type && this.type == ConnectionType.SEGMENT) return SegmentSegmentCrossing(that);
+            else if (this.type == that.type && this.type == ConnectionType.ARC) return ArcArcCrossing(that);
+            else if (this.type != that.type) return MixedCrossing(that);
+
+            return false;
+        }
+
+        public bool SegmentSegmentCrossing(Connection that)
+        {
+            return (this.segmentOrArc as Segment).LooseCrosses(that.segmentOrArc as Segment);
+        }
+
+        public bool ArcArcCrossing(Connection that)
+        {
+            return (this.segmentOrArc as Arc).Crosses(that.segmentOrArc as Arc);
+        }
+
+        public bool MixedCrossing(Connection that)
+        {
             Point pt1 = null;
             Point pt2 = null;
-
             this.FindIntersection(that, out pt1, out pt2);
 
+            // Must intersect.
+            if (pt1 == null && pt2 == null) return false;
+
             // If the endpoints align, this is not a crossing.
-            if (this.type != that.type && this.HasPoint(that.endpoint1) && this.HasPoint(that.endpoint2)) return false;
+            if (this.HasPoint(that.endpoint1) && this.HasPoint(that.endpoint2)) return false;
 
             // A segment cuts through an arc in two points.
             if (this.type != that.type && pt1 != null && pt2 != null) return true;
 
+            // Catch-all since we have the true cases for 2 intersections.
             if (pt2 != null) return false;
 
-            if (this.HasPoint(pt1)) return false;
-            if (that.HasPoint(pt2)) return false;
-
-            if (!this.PointLiesOn(pt1)) return false;
-            if (!that.PointLiesOn(pt2)) return false;
-
-            return true;
+            // We only have one intersection point now: Point1
+            // Check for the StandsOn relationship.
+            return this.PointLiesStrictlyOn(pt1) && that.PointLiesStrictlyOn(pt1);
         }
 
         public bool DefinesArcSegmentRegion(Connection that)

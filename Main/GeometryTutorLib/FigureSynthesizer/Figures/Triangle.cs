@@ -18,7 +18,7 @@ namespace GeometryTutorLib.ConcreteAST
         }
 
         //
-        // Acquire the list of all possible quadrilaterals 
+        // Acquire the list of all possible triangles.
         //
         public static List<Triangle> GetTrianglesFromPoints(List<Point> points)
         {
@@ -41,12 +41,28 @@ namespace GeometryTutorLib.ConcreteAST
             return tris;
         }
 
+        public static List<Triangle> GetTrianglesFromPoints(ConcavePolygon poly, List<Point> points)
+        {
+            List<Triangle> tris = GetTrianglesFromPoints(points);
+            List<Triangle> containing = new List<Triangle>();
+
+            foreach (Triangle tri in tris)
+            {
+                if (poly.Contains(tri)) containing.Add(tri);
+            }
+
+            return containing;
+        }
+
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
 
             // Possible triangles.
-            List<Triangle> tris = Triangle.GetTrianglesFromPoints(points);
+            List<Triangle> tris = null;
+
+            if (outerShape is ConcavePolygon) tris = Triangle.GetTrianglesFromPoints(outerShape as ConcavePolygon, points);
+            else tris = Triangle.GetTrianglesFromPoints(points);
 
             // Check all triangles to determine applicability.
             foreach (Triangle tri in tris)
@@ -56,9 +72,12 @@ namespace GeometryTutorLib.ConcreteAST
                 {
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, tri);
 
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, tri.points, tri));
-
-                    composed.Add(subSynth);
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, tri.points, tri));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
                 }
             }
 

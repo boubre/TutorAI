@@ -42,6 +42,37 @@ namespace GeometryTutorLib.ConcreteAST
             collinear.Add(endpoint2);
         }
 
+        //
+        // Do these arcs cross each other (pseudo-X)?
+        //
+        public bool Crosses(Arc that)
+        {
+            // Need to be from different circles.
+            if (this.theCircle.StructurallyEquals(that.theCircle)) return false;
+
+            // Need to touch at a point not at the endpoints; 
+            if (this.HasEndpoint(that.endpoint1) && this.HasEndpoint(that.endpoint2)) return false;
+
+            Point inter1, inter2;
+            this.FindIntersection(that, out inter1, out inter2);
+
+            if (inter1 == null && inter2 == null) return false;
+
+            // Pseudo-X
+            if (inter1 != null && inter2 == null)
+            {
+                return this.PointLiesStrictlyOn(inter1) && that.PointLiesStrictlyOn(inter1);
+            }
+
+            // Cursive r; an endpoint may be shared here.
+            if (inter1 != null && inter2 != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public abstract Point Midpoint();
 
         public KeyValuePair<Segment, Segment> GetRadii()

@@ -98,6 +98,12 @@ namespace GeometryTutorLib.Area_Based_Analyses
         {
             if (AngleMeasureKnown(thatAngle)) return false;
 
+            if (!Utilities.CompareValues(thatAngle.measure, measure))
+            {
+
+                System.Diagnostics.Debug.WriteLine("Error in known measurements.");
+            }
+
             angles.Add(new KeyValuePair<Angle, double>(thatAngle, measure));
 
             return true;
@@ -125,6 +131,11 @@ namespace GeometryTutorLib.Area_Based_Analyses
         public bool AddSegmentLength(Segment thatSegment, double length)
         {
             if (SegmentLengthKnown(thatSegment)) return false;
+
+            if (!Utilities.CompareValues(thatSegment.Length, length))
+            {
+                System.Diagnostics.Debug.WriteLine("Error in known measurements.");
+            }
 
             segments.Add(new KeyValuePair<Segment, double>(thatSegment, length));
 

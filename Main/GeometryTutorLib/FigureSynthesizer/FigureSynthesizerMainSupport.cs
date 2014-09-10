@@ -56,7 +56,7 @@ namespace GeometryTutorLib
         //
         // Converts the shape map to a list of shapes to process IN ORDER.
         //
-        private static List<ShapeType> ConvertShapeMapToList(Dictionary<ShapeType, int> figureCountMap)
+        private static List<List<ShapeType>> ConvertShapeMapToList(Dictionary<ShapeType, int> figureCountMap)
         {
             List<ShapeType> shapes = new List<ShapeType>();
 
@@ -69,16 +69,102 @@ namespace GeometryTutorLib
                 }
             }
 
-            //
-            // This should change for experimental purposes...
-            //
-            // Sort the shapes based on the order defined by the ShapeType enumeration.
-            //
-            //
-            shapes.Sort();
-            shapes.Reverse();
+            List<List<ShapeType>> shapeSets = new List<List<ShapeType>>();
+            shapeSets.Add(shapes);
+            List<ShapeType> reversed = new List<ShapeType>(shapes);
+            reversed.Reverse();
+            shapeSets.Add(reversed);
 
-            return shapes;
+            return shapeSets;
+            //
+            // Use the powerset restriction to acquire all possible orderings.
+            //
+            //List<List<int>> sets = Utilities.ConstructPowerSetWithNoEmpty(shapes.Count, shapes.Count);
+
+            //List<List<ShapeType>> shapeSets = new List<List<ShapeType>>();
+            //foreach (List<int> set in sets)
+            //{
+            //    List<ShapeType> shapeSet = new List<ShapeType>();
+            //    foreach (int index in set)
+            //    {
+            //        shapeSet.Add(shapes[index]);
+            //    }
+
+            //    //
+            //    // Only add if this set is not redundant to what exists in this set.
+            //    //
+            //    bool contains = false;
+            //    foreach (List<ShapeType> existent in shapeSets)
+            //    {
+            //        if (shapeSet.Count == existent.Count)
+            //        {
+            //            bool equal = false;
+            //            for (int i = 0; i < existent.Count; i++)
+            //            {
+            //                if (shapeSet[i] == existent[i])
+            //                {
+            //                    equal = true;
+            //                    break;
+            //                }
+            //            }
+            //            if (equal)
+            //            {
+            //                contains = false;
+            //                break;
+            //            }
+            //        }
+
+            //        if (contains) break;
+            //    }
+
+            //    if (!contains)
+            //    {
+            //        shapeSets.Add(shapeSet);
+
+            //        if (Utilities.FIGURE_SYNTHESIZER_DEBUG)
+            //        {
+            //            string s = "{ "; 
+            //            foreach (ShapeType type in shapeSet)
+            //            {
+            //                s += type + ", ";
+            //            }
+            //            s += " }";
+
+            //            System.Diagnostics.Debug.WriteLine(s);
+            //        }
+            //    }
+            //}
+
+            //// Return the resultant list of lists.
+            //return shapeSets;
+
+
+            ////
+            //// This should change for experimental purposes...
+            ////
+            //// Sort the shapes based on the order defined by the ShapeType enumeration.
+            ////
+            ////
+            //shapes.Sort();
+            //shapes.Reverse();
+
+            //return shapes;
+        }
+
+        //
+        // Converts the shape map to a list of shapes to process IN ORDER.
+        //
+        private static Dictionary<ShapeType, int> ConvertListToShapeMap(List<ShapeType> shapeList)
+        {
+            Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+
+            foreach (ShapeType type in shapeList)
+            {
+                if (figureCountMap.ContainsKey(type)) figureCountMap[type] = figureCountMap[type] + 1;
+                else figureCountMap[type] = 1;
+            }
+
+            return figureCountMap;
         }
 
         //

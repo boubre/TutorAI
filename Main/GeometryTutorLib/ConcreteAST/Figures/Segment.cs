@@ -181,7 +181,7 @@ namespace GeometryTutorLib.ConcreteAST
         {
             if (thatPoint == null) return false;
 
-            if (Point1.Equals(thatPoint) || Point2.Equals(thatPoint)) return false;
+            if (this.HasPoint(thatPoint)) return false;
 
             return Segment.Between(thatPoint, Point1, Point2);
         }
@@ -276,11 +276,23 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Do these segments creates an X?
         //
-        public bool Crosses(Segment s)
+        public bool Crosses(Segment that)
         {
-            Point p = this.FindIntersection(s);
+            Point p = this.FindIntersection(that);
 
-            return this.PointLiesOnAndExactlyBetweenEndpoints(p) && s.PointLiesOnAndExactlyBetweenEndpoints(p);
+            if (p == null) return false;
+
+            return this.PointLiesOnAndExactlyBetweenEndpoints(p) && that.PointLiesOnAndExactlyBetweenEndpoints(p);
+        }
+        public bool LooseCrosses(Segment that)
+        {
+            Point p = this.FindIntersection(that);
+
+            if (p == null) return false;
+
+            if (this.HasPoint(p) || that.HasPoint(p)) return false;
+
+            return LooseBetween(p, this.Point1, this.Point2) && LooseBetween(p, that.Point1, that.Point2);
         }
 
         public Point SharedVertex(Segment s)
@@ -305,6 +317,11 @@ namespace GeometryTutorLib.ConcreteAST
         {
             return Utilities.CompareValues(Point.calcDistance(A, M) + Point.calcDistance(M, B),
                                            Point.calcDistance(A, B));
+        }
+        public static bool LooseBetween(Point M, Point A, Point B)
+        {
+            return Utilities.LooseCompareValues(Point.calcDistance(A, M) + Point.calcDistance(M, B),
+                                                Point.calcDistance(A, B));
         }
 
         // Does the given segment overlay this segment; we are looking at both as a RAY only.

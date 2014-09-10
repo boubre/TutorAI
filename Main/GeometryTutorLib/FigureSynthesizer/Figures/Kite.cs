@@ -10,7 +10,11 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            List<Quadrilateral> quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
+            // Possible quadrilaterals.
+            List<Quadrilateral> quads = null;
+
+            if (outerShape is ConcavePolygon) quads = Quadrilateral.GetQuadrilateralsFromPoints(outerShape as ConcavePolygon, points);
+            else quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
 
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
@@ -21,9 +25,13 @@ namespace GeometryTutorLib.ConcreteAST
                     Kite kite = new Kite(quad);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, kite);
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, kite.points, kite));
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, kite.points, kite));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
 
-                    composed.Add(subSynth);
                 }
             }
 
@@ -51,6 +59,16 @@ namespace GeometryTutorLib.ConcreteAST
             Segment leftBottom = new Segment(bottom, origin);
 
             return new Kite(leftTop, rightBottom, rightTop, leftBottom);
+        }
+
+        public override List<Segment> GetAreaVariables()
+        {
+            List<Segment> vars = new List<Segment>();
+
+            vars.Add(bottomLeftTopRightDiagonal);
+            vars.Add(topLeftBottomRightDiagonal);
+
+            return vars;
         }
     }
 }

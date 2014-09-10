@@ -142,6 +142,8 @@ namespace GeometryTutorLib.GeometryTestbed
 
         private void AppendToFiles(StatisticsGenerator.ShadedAreaFigureStatisticsAggregator figureStats)
         {
+
+
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\impFacts.txt", true))
             {
                 file.WriteLine(figureStats.totalImplicitFacts);

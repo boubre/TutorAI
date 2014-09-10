@@ -375,9 +375,20 @@ namespace GeometryTutorLib.GenericInstantiator
             //
             List<Supplementary> newSupps = new List<Supplementary>();
 
-            Supplementary supp = new Supplementary(new Angle(off1, inter1.intersect, inter2.intersect),
-                                                   new Angle(off2, inter2.intersect, inter1.intersect));
-            newSupps.Add(supp);
+            // CTA:
+            // Hack to avoid exception during long tests.
+            try
+            {
+                Supplementary supp = new Supplementary(new Angle(off1, inter1.intersect, inter2.intersect),
+                                                       new Angle(off2, inter2.intersect, inter1.intersect));
+                newSupps.Add(supp);
+
+            } catch (Exception e)
+            {
+                if (Utilities.DEBUG) System.Diagnostics.Debug.WriteLine(e.ToString());
+
+                return newGrounded;
+            }
 
             return MakeHypergraphRelation(newSupps, parallel, inter1, inter2);
         }

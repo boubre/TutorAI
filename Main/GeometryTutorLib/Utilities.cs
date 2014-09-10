@@ -489,10 +489,14 @@ namespace GeometryTutorLib
         }
 
         public static readonly double EPSILON = 0.000001;
-        // Due to issues with polygons, there are two levels of precision needed to discriminate equality.
+
         public static bool CompareValues(double a, double b)
         {
             return Math.Abs(a - b) < EPSILON;
+        }
+        public static bool LooseCompareValues(double a, double b)
+        {
+            return Math.Abs(a - b) < 0.0001;
         }
         public static bool LessThan(double a, double b)
         {

@@ -30,9 +30,14 @@ namespace GeometryTutorLib.ConcreteAST
                     RightTriangle rTri = new RightTriangle(tri);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, rTri);
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, rTri.points, rTri));
 
-                    composed.Add(subSynth);
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, rTri.points, rTri));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
+
                 }
             }
 
@@ -43,12 +48,20 @@ namespace GeometryTutorLib.ConcreteAST
         {
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
 
-            int length = Figure.DefaultSideLength();
+            // Acquire a set of lengths of the given segments.
+            //
+            List<int> lengths = new List<int>();
+            segments.ForEach(s => Utilities.AddUnique<int>(lengths, (int)s.Length));
+
+            // Acquire an isosceles triangle by looping.
+            int newLength = -1;
+            for (newLength = Figure.DefaultSideLength(); lengths.Contains(newLength); newLength = Figure.DefaultSideLength()) ;
+
             foreach (Segment seg in segments)
             {
                 List<RightTriangle> tris;
 
-                MakeRightTriangles(seg, length, out tris);
+                MakeRightTriangles(seg, newLength, out tris);
 
                 foreach (RightTriangle rt in tris)
                 {

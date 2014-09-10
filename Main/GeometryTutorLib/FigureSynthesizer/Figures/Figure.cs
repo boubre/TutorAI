@@ -133,7 +133,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         public static FigSynthProblem MakeAdditionProblem(Figure outerShape, Figure appended)
         {
-            if (outerShape.Contains(appended) || outerShape.Overlaps(appended)) return null;
+            if (outerShape.Contains(appended) || appended.Contains(outerShape) || outerShape.Overlaps(appended)) return null;
 
             AdditionSynth addSynth = new AdditionSynth(outerShape, appended);
 

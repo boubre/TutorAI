@@ -10,7 +10,11 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            List<Triangle> tris = Triangle.GetTrianglesFromPoints(points);
+            // Possible triangles.
+            List<Triangle> tris = null;
+
+            if (outerShape is ConcavePolygon) tris = Triangle.GetTrianglesFromPoints(outerShape as ConcavePolygon, points);
+            else tris = Triangle.GetTrianglesFromPoints(points);
 
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Triangle tri in tris)
@@ -21,9 +25,13 @@ namespace GeometryTutorLib.ConcreteAST
                     IsoscelesTriangle isoTri = new IsoscelesTriangle(tri);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, isoTri);
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, isoTri.points, isoTri));
 
-                    composed.Add(subSynth);
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, isoTri.points, isoTri));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
                 }
             }
 
@@ -50,7 +58,7 @@ namespace GeometryTutorLib.ConcreteAST
                 bool longEnough = true;
                 foreach (Segment side in segments)
                 {
-                    if (newLength < (side.Length / 2.0))
+                    if (newLength < (side.Length / 2.0) + 1)
                     {
                         longEnough = false;
                         break;
@@ -89,6 +97,11 @@ namespace GeometryTutorLib.ConcreteAST
 
             Point inter1, inter2;
             circle1.FindIntersection(circle2, out inter1, out inter2);
+
+            if (inter1 == null || inter2 == null)
+            {
+                throw new Exception("Circles do not have large enough radius.");
+            }
 
             // 1
             tris.Add(new IsoscelesTriangle(new Triangle(side.Point1, side.Point2, inter1)));

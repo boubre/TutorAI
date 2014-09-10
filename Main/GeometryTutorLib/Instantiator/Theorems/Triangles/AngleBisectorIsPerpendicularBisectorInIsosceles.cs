@@ -121,7 +121,14 @@ namespace GeometryTutorLib.GenericInstantiator
             }
 
             // Does the Angle Bisector occur at the vertex angle (non-base angles) of the Isosceles triangle?
-            if (!ab.angle.GetVertex().Equals(isoTri.GetVertexAngle().GetVertex())) return newGrounded;
+            try
+            {
+                if (!ab.angle.GetVertex().Equals(isoTri.GetVertexAngle().GetVertex())) return newGrounded;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
 
             // Is the intersection point between the endpoints of the base of the triangle?
             if (!Segment.Between(inter.intersect, isoTri.baseSegment.Point1, isoTri.baseSegment.Point2)) return newGrounded;

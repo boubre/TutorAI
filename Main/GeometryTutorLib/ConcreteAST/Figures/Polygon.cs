@@ -518,7 +518,7 @@ namespace GeometryTutorLib.ConcreteAST
             {
                 foreach (Segment thatSide in that.orderedSides)
                 {
-                    if (thisSide.Crosses(thatSide)) return false;
+                    if (thisSide.LooseCrosses(thatSide)) return false;
                 }
             }
 

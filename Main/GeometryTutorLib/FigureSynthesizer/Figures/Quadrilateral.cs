@@ -60,6 +60,19 @@ namespace GeometryTutorLib.ConcreteAST
             return quads;
         }
 
+        public static List<Quadrilateral> GetQuadrilateralsFromPoints(ConcavePolygon poly, List<Point> points)
+        {
+            List<Quadrilateral> quads = GetQuadrilateralsFromPoints(points);
+            List<Quadrilateral> containing = new List<Quadrilateral>();
+
+            foreach (Quadrilateral quad in quads)
+            {
+                if (poly.Contains(quad)) containing.Add(quad);
+            }
+
+            return containing;
+        }
+
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
             throw new NotImplementedException();

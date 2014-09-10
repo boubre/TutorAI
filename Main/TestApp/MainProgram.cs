@@ -5,10 +5,29 @@ namespace GeometryTutorLib.GeometryTestbed
 {
     public class MainProgram
     {
+        //
+        // Clean the data directory.
+        //
+        private static void CleanDataDirectory()
+        {
+            string dataDir = @"C:\Users\ctalvin\Desktop\output";
+            string[] txtList = System.IO.Directory.GetFiles(dataDir, "*.txt");
+
+            foreach (string f in txtList)
+            {
+                System.Diagnostics.Debug.WriteLine("Deleting: " + f);
+                System.IO.File.Delete(f);
+            }
+        }
+
         static void Main(string[] args)
         {
+            CleanDataDirectory();
+
 #if FIGURE_SYNTHESIZER
-            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
+            //GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainTester();
+            //GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainDataGeneration();
 #else
             List<GeometryTestbed.ActualProblem> problems = ConstructAllGeoShaderHardCodedProblems();
 

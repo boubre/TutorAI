@@ -13,7 +13,11 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            List<Quadrilateral> quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
+            // Possible quadrilaterals.
+            List<Quadrilateral> quads = null;
+
+            if (outerShape is ConcavePolygon) quads = Quadrilateral.GetQuadrilateralsFromPoints(outerShape as ConcavePolygon, points);
+            else quads = Quadrilateral.GetQuadrilateralsFromPoints(points);
 
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Quadrilateral quad in quads)
@@ -24,9 +28,12 @@ namespace GeometryTutorLib.ConcreteAST
                     Trapezoid trap = new Trapezoid(quad);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, trap);
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, trap.points, trap));
-
-                    composed.Add(subSynth);
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, trap.points, trap));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
                 }
             }
 

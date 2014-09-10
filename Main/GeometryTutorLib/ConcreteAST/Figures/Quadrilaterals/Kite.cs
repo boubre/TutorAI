@@ -55,6 +55,26 @@ namespace GeometryTutorLib.ConcreteAST
             return false;
         }
 
+        public override double GetArea(Area_Based_Analyses.KnownMeasurementsAggregator known)
+        {
+            // Acquire the diagonals.
+            if (this.topLeftBottomRightDiagonal == null || this.bottomLeftTopRightDiagonal == null)
+            {
+                System.Diagnostics.Debug.WriteLine("No-Op");
+            }
+
+            double diag1Length = known.GetSegmentLength(this.bottomLeftTopRightDiagonal);
+            double diag2Length = known.GetSegmentLength(this.topLeftBottomRightDiagonal);
+
+            // Multiply base * height.
+            double thisArea = -1;
+
+            if (diag1Length < 0 || diag2Length < 0) thisArea = -1;
+            else thisArea = 0.5 * diag1Length * diag2Length;
+
+            return thisArea > 0 ? thisArea : SplitTriangleArea(known);
+        }
+
         public override bool StructurallyEquals(Object obj)
         {
             Kite thatKite = obj as Kite;

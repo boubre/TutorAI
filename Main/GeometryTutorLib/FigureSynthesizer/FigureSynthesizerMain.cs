@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using GeometryTutorLib.Area_Based_Analyses.Atomizer;
 using GeometryTutorLib.ConcreteAST;
+using GeometryTutorLib.GeometryTestbed;
 
 namespace GeometryTutorLib
 {
@@ -12,22 +13,85 @@ namespace GeometryTutorLib
     /// </summary>
     public static partial class FigureSynthesizerMain
     {
-        public static void SynthesizerMain(Dictionary<ShapeType, int> figureCountMap, TemplateType type)
+        public static bool SynthesizerMain(Dictionary<ShapeType, int> figureCountMap, TemplateType type)
         {
             //
             // Convert the incoming dictionary to a simple list of shapes to process in order.
             //
-            List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap);
+            List<List<ShapeType>> shapesSets = ConvertShapeMapToList(figureCountMap);
 
-            //
-            // Construct the figure recursively.
-            //
-            List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, type);
+            bool success = true;
+            foreach (List<ShapeType> shapes in shapesSets)
+            {
+                //
+                // Construct the figure recursively.
+                //
+                List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, type);
 
-            //
-            // Construct the problem so that it can be passed to the Solver.
-            //
-            ConstructProblemsToSolve(problems);
+                //
+                // Construct the problem so that it can be passed to the Solver.
+                //
+                success = ConstructProblemsToSolve(problems) || success;
+            }
+
+            return success;
+        }
+
+
+        //
+        // Abusive, comprehensive test of all combinations of figures with the basic templates.
+        //
+        public static void SynthesizerMainDataGeneration()
+        {
+            List<ShapeType> shapes = new List<ShapeType>();
+
+            shapes.Add(ShapeType.RIGHT_TRIANGLE);
+            shapes.Add(ShapeType.RECTANGLE);
+            shapes.Add(ShapeType.SQUARE);
+
+            for (int s1 = 0; s1 < shapes.Count; s1++)
+            {
+                bool worked = true;
+                for (int s2 = 0; s2 < shapes.Count; s2++)
+                {
+                    List<ShapeType> sTypes = new List<ShapeType>();
+                    sTypes.Add(shapes[s1]);
+                    sTypes.Add(shapes[s2]);
+
+                    Dictionary<ShapeType, int> figureCountMap = ConvertListToShapeMap(sTypes);
+
+                    System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- " + shapes[s1] + " - " + shapes[s2] + " --------------------------------------------------------");
+                    worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA) || worked;
+
+                    System.Diagnostics.Debug.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " + shapes[s1] + " + " + shapes[s2] + " +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA) || worked;
+
+                    // Add a value at the end so it can be deleted.
+                    sTypes.Add(shapes[s2]);
+                    for (int s3 = 0; s3 < shapes.Count; s3++)
+                    {
+                        sTypes.RemoveAt(sTypes.Count - 1);
+                        sTypes.Add(shapes[s3]);
+
+                        figureCountMap = ConvertListToShapeMap(sTypes);
+
+                        System.Diagnostics.Debug.WriteLine("-----------------------------------------------------------------" + shapes[s1] + " + " + shapes[s2] + " + " + shapes[s3] + "-----------------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA) || worked;
+
+                        System.Diagnostics.Debug.WriteLine("-----------------------------------------------------------------" + shapes[s1] + " + (" + shapes[s2] + " - " + shapes[s3] + ")" + "-----------------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN) || worked;
+
+                        System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " + " + shapes[s2] + ") - " + shapes[s3] + " -----------------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.LPAREN_ALPHA_PLUS_BETA_RPAREN_MINUS_GAMMA) || worked;
+
+                        System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " - " + shapes[s2] + ") - " + shapes[s3] + " -----------------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA) || worked;
+
+                        System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " - (" + shapes[s2] + " - " + shapes[s3] + ") -----------------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN) || worked;
+                    }
+                }
+            }
         }
 
         //
@@ -37,12 +101,13 @@ namespace GeometryTutorLib
         {
             List<ShapeType> shapes = new List<ShapeType>();
 
-            //shapes.Add(ShapeType.RIGHT_TRIANGLE);
-            //shapes.Add(ShapeType.RECTANGLE);
-            //shapes.Add(ShapeType.SQUARE);
-            //shapes.Add(ShapeType.ISOSCELES_TRIANGLE);
+            //shapes.Add(ShapeType.TRIANGLE);
             //shapes.Add(ShapeType.EQUILATERAL_TRIANGLE);
-            //shapes.Add(ShapeType.TRIANGLE); // Problem with Append and area.
+            //shapes.Add(ShapeType.ISOSCELES_TRIANGLE);
+            shapes.Add(ShapeType.RIGHT_TRIANGLE);
+            shapes.Add(ShapeType.RECTANGLE);
+            //shapes.Add(ShapeType.SQUARE);
+
 
             //shapes.Add(ShapeType.PARALLELOGRAM);   // Area of parallelograms in solver needed.
             //shapes.Add(ShapeType.ISO_RIGHT_TRIANGLE);
@@ -57,85 +122,101 @@ namespace GeometryTutorLib
                 bool worked = true;
                 for (int s2 = 0; s2 < shapes.Count; s2++)
                 {
-                    //if (s1 != s2) // Remove for complete tests.
-                    //{
-                        System.Diagnostics.Debug.WriteLine("(" + shapes[s1] + ", " + shapes[s2] + ")");
+                    if (s1 != s2)
+                    {
+                        List<ShapeType> sTypes = new List<ShapeType>();
+                        sTypes.Add(shapes[s1]);
+                        sTypes.Add(shapes[s2]);
 
-                        Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+                        Dictionary<ShapeType, int> figureCountMap = ConvertListToShapeMap(sTypes);
 
-                        if (s1 == s2) figureCountMap[shapes[s1]] = 2;
-                        else
-                        {
-                            figureCountMap[shapes[s1]] = 1;
-                            figureCountMap[shapes[s2]] = 1;
-                        }
+                        System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- " + shapes[s1] + " - " + shapes[s2] + " --------------------------------------------------------");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA) || worked;
 
-                        try
-                        {
-                            System.Diagnostics.Debug.WriteLine("-------------------------------------------------------------------------------------------------------------------------");
-                            SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA);
+                        System.Diagnostics.Debug.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " + shapes[s1] + " + " + shapes[s2] + " +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA) || worked;
 
-                            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                            SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA);
-                        }
-                        catch (NotImplementedException e)
+                        // Add a value at the end so it can be deleted.
+                        sTypes.Add(shapes[s2]);
+                        for (int s3 = 0; s3 < shapes.Count; s3++)
                         {
-                            System.Diagnostics.Debug.WriteLine("\t\t Unimplmented");
-                            worked = false;
+                            sTypes.RemoveAt(sTypes.Count - 1);
+                            sTypes.Add(shapes[s3]);
+
+                            figureCountMap = ConvertListToShapeMap(sTypes);
+
+                            System.Diagnostics.Debug.WriteLine("-----------------------------------------------------------------" + shapes[s1] + " + " + shapes[s2] + " + " + shapes[s3] + "-----------------------------------------------------------------");
+                            worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA) || worked;
+
+                            System.Diagnostics.Debug.WriteLine("-----------------------------------------------------------------" + shapes[s1] + " + (" + shapes[s2] + " - " + shapes[s3] + ")" + "-----------------------------------------------------------------");
+                            worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_PLUS_LPAREN_BETA_MINUS_GAMMA_RPAREN) || worked;
+
+                            System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " + " + shapes[s2] + ") - " + shapes[s3] + " -----------------------------------------------------------------");
+                            worked = SynthesizerMain(figureCountMap, TemplateType.LPAREN_ALPHA_PLUS_BETA_RPAREN_MINUS_GAMMA) || worked;
+
+                            System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " - " + shapes[s2] + ") - " + shapes[s3] + " -----------------------------------------------------------------");
+                            worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_BETA_MINUS_GAMMA) || worked;
+
+                            System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------- (" + shapes[s1] + " - (" + shapes[s2] + " - " + shapes[s3] + ") -----------------------------------------------------------------");
+                            worked = SynthesizerMain(figureCountMap, TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN) || worked;
                         }
-                        catch (Exception e)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Failed: " + e.ToString());
-                            worked = false;
-                        }
-//                    }
+                    }
                 }
+
                 if (worked) System.Diagnostics.Debug.WriteLine(shapes[s1] + " is golden.");
             }
         }
 
-        //public static void SynthesizerMain()
-        //{
-        //    //
-        //    // Make up a list of shapes to compose.
-        //    //
-        //    Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
+        public static void SynthesizerMain()
+        {
+            //
+            // Make up a list of shapes to compose.
+            //
+            Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
 
-        //    figureCountMap[ShapeType.SQUARE] = 1;
-        //    figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+            figureCountMap[ShapeType.TRIANGLE] = 3;
+            // figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
 
-        //    //
-        //    // Convert the incoming dictionary to a simple list of shapes to process in order.
-        //    //
-        //    List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap);
+            //
+            // Convert the incoming dictionary to a simple list of shapes to process in order.
+            //
+            List<ShapeType> shapes = ConvertShapeMapToList(figureCountMap)[0];
 
-        //    //
-        //    // Construct the figure recursively.
-        //    //
-        //    List<FigSynthProblem> problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_BETA);
+            //
+            // Construct the figure recursively.
+            //
+            List<FigSynthProblem> problems = new List<FigSynthProblem>();
+            try
+            {
+                problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            //
+            // Debug output of the problems.
+            //
+            foreach (FigSynthProblem problem in problems)
+            {
+                System.Diagnostics.Debug.WriteLine(problem.ToString());
+            }
 
-        //    //
-        //    // Debug output of the problems.
-        //    //
-        //    foreach (FigSynthProblem problem in problems)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine(problem.ToString());
-        //    }
-
-        //    //
-        //    // Construct the problem so that it can be passed to the Solver.
-        //    //
-        //    ConstructProblemsToSolve(problems);
-        //}
+            //
+            // Construct the problem so that it can be passed to the Solver.
+            //
+            ConstructProblemsToSolve(problems);
+        }
 
 #if HARD_CODED_UI
         private static bool drawnAProblem = false;
 #endif
-        private static List<GeometryTestbed.FigSynthShadedAreaProblem> ConstructProblemsToSolve(List<FigSynthProblem> problems)
+        private static bool ConstructProblemsToSolve(List<FigSynthProblem> problems)
         {
-            List<GeometryTestbed.FigSynthShadedAreaProblem> shadedAreaProblems = new List<GeometryTestbed.FigSynthShadedAreaProblem>();
+            List<FigSynthShadedAreaProblem> shadedAreaProblems = new List<FigSynthShadedAreaProblem>();
 
             int problemCount = 0;
+            bool worked = true;
             foreach (FigSynthProblem problem in problems)
             {
                 if (Utilities.FIGURE_SYNTHESIZER_DEBUG)
@@ -148,22 +229,48 @@ namespace GeometryTutorLib
                     problemCount++;
                 }
 
-                GeometryTestbed.FigSynthShadedAreaProblem shadedProb = ConstructProblem(problem);
-                shadedAreaProblems.Add(shadedProb);
+                try
+                {
+                    // Create the problem
+                    GeometryTestbed.FigSynthShadedAreaProblem shadedProb = ConstructProblem(problem);
+
+                    // Add the problem to a running list (nothing done with the list yet).
+                    shadedAreaProblems.Add(shadedProb);
+
+                    // Actually run this problem (and solve).
+                    shadedProb.Run();
+
+                    // Data dump for statistics gathering.
+                    System.Diagnostics.Debug.WriteLine(shadedProb.ToString());
+                }
+                catch (ArgumentException e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Argument: " + e.ToString());
+                    worked = false;
+                }
+                catch (NotImplementedException e)
+                {
+                    System.Diagnostics.Debug.WriteLine("\t\t Unimplmented");
+                    worked = false;
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed: " + e.ToString());
+                    worked = false;
+                }
 
 #if HARD_CODED_UI
-                if (!drawnAProblem)
-                {
-                    UIProblemDrawer.getInstance().draw(shadedProb.MakeUIProblemDescription());
-                    shadedProb.Run();
-                    return shadedAreaProblems;
-                }
-                drawnAProblem = true;
+                //if (!drawnAProblem)
+                //{
+                //    UIProblemDrawer.getInstance().draw(shadedProb.MakeUIProblemDescription());
+                //    shadedProb.Run();
+                //    return shadedAreaProblems;
+                //}
+                //drawnAProblem = true;
 #endif
-                shadedProb.Run();
             }
 
-            return shadedAreaProblems;
+            return worked;
         }
 
         private static int figCounter = 1;

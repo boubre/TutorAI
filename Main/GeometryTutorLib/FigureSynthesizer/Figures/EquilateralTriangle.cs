@@ -10,7 +10,11 @@ namespace GeometryTutorLib.ConcreteAST
     {
         public new static List<FigSynthProblem> SubtractShape(Figure outerShape, List<Connection> conns, List<Point> points)
         {
-            List<Triangle> tris = Triangle.GetTrianglesFromPoints(points);
+            // Possible triangles.
+            List<Triangle> tris = null;
+
+            if (outerShape is ConcavePolygon) tris = Triangle.GetTrianglesFromPoints(outerShape as ConcavePolygon, points);
+            else tris = Triangle.GetTrianglesFromPoints(points);
 
             List<FigSynthProblem> composed = new List<FigSynthProblem>();
             foreach (Triangle tri in tris)
@@ -21,9 +25,14 @@ namespace GeometryTutorLib.ConcreteAST
                     EquilateralTriangle eqTri = new EquilateralTriangle(tri);
 
                     SubtractionSynth subSynth = new SubtractionSynth(outerShape, eqTri);
-                    subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, eqTri.points, eqTri));
 
-                    composed.Add(subSynth);
+                    try
+                    {
+                        subSynth.SetOpenRegions(FigSynthProblem.AcquireOpenAtomicRegions(conns, eqTri.points, eqTri));
+                        composed.Add(subSynth);
+                    }
+                    catch (Exception) { }
+
                 }
             }
 

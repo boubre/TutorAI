@@ -224,7 +224,7 @@ namespace GeometryTutorLib.ConcreteAST
 
             double baseVal = known.GetSegmentLength(baseSeg);
 
-            if (baseVal < -1) return pairs;
+            if (baseVal < 0) return pairs;
 
             // Compute the value of the other sides.
             double otherSideVal = Math.Sqrt(Math.Pow(baseVal, 2) / 2.0);
@@ -232,6 +232,15 @@ namespace GeometryTutorLib.ConcreteAST
             // Get the other sides.
             Segment otherSide1, otherSide2;
             isoTri.GetOtherSides(baseSeg, out otherSide1, out otherSide2);
+
+            if (!Utilities.CompareValues(otherSide1.Length, otherSideVal))
+            {
+                System.Diagnostics.Debug.WriteLine("Error in known measurements.");
+            }
+            if (!Utilities.CompareValues(otherSide2.Length, otherSideVal))
+            {
+                System.Diagnostics.Debug.WriteLine("Error in known measurements.");
+            }
 
             pairs.Add(new KeyValuePair<Segment,double>(otherSide1, otherSideVal));
             pairs.Add(new KeyValuePair<Segment, double>(otherSide2, otherSideVal));
