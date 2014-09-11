@@ -95,7 +95,7 @@ namespace GeometryTutorLib.ConcreteAST
                 Rectangle rect1;
                 Rectangle rect2;
 
-                Rectangle.MakeRectangles(seg, (int)seg.Length, out rect1, out rect2);
+                Rectangle.MakeRectangles(seg, seg.Length, out rect1, out rect2);
 
                 Square sq1 = new Square(rect1);
                 Square sq2 = new Square(rect2);

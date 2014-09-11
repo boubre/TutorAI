@@ -381,10 +381,10 @@ namespace GeometryTutorLib.TutorParser
                 Debug.WriteLine("Cannot validate calculated area since no area was provided.");
             }
 
-            if (!GeometryTutorLib.Utilities.CompareValues(this.area, calculatedArea))
-            {
-                throw new Exception("Expected area (" + this.area + ") not found; found (" + calculatedArea + ")");
-            }
+            //if (!GeometryTutorLib.Utilities.CompareValues(this.area, calculatedArea))
+            //{
+            //    throw new Exception("Expected area (" + this.area + ") not found; found (" + calculatedArea + ")");
+            //}
         }
 
         private bool OriginalProblemInteresting()

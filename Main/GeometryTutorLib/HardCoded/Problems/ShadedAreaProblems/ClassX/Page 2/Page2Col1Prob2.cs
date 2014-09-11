@@ -11,13 +11,13 @@ namespace GeometryTutorLib.GeometryTestbed
         //
         public Page2Col1Prob2(bool onoff, bool complete) : base(onoff, complete)
         {
-            Point a = new Point("A", 2 * System.Math.Sqrt(3), -2); points.Add(a);
-            Point b = new Point("B", 2 * System.Math.Sqrt(3), 2); points.Add(b);
+            Point a = new Point("A", 6 * System.Math.Sqrt(3), -6); points.Add(a);
+            Point b = new Point("B", 6 * System.Math.Sqrt(3), 6); points.Add(b);
             Point o = new Point("O", 0, 0); points.Add(o);
 
             // Added for proper statement of knowns.
-            Point m = new Point("M", System.Math.Sqrt(3), 1); points.Add(m);
-            Point n = new Point("N", System.Math.Sqrt(3), -1); points.Add(n);
+            Point m = new Point("M", 7 * System.Math.Sqrt(3) / 2.0, 3.5); points.Add(m);
+            Point n = new Point("N", 7 * System.Math.Sqrt(3) / 2.0, -3.5); points.Add(n);
 
             Segment ab = new Segment(a, b); segments.Add(ab);
 
@@ -33,7 +33,7 @@ namespace GeometryTutorLib.GeometryTestbed
             pts.Add(a);
             collinear.Add(new Collinear(pts));
 
-            circles.Add(new Circle(o, 2.0));
+            circles.Add(new Circle(o, 7.0));
 
 
             parser = new GeometryTutorLib.TutorParser.HardCodedParserMain(points, collinear, segments, circles, onoff);

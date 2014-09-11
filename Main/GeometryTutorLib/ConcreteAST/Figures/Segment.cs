@@ -800,7 +800,7 @@ namespace GeometryTutorLib.ConcreteAST
         //
         // Return the line perpendicular to this segment at the given point. 
         // The point is ON the segment.
-        public Segment GetPerpendicularByLength(Point pt, int length)
+        public Segment GetPerpendicularByLength(Point pt, double length)
         {
             Segment perp = this.GetPerpendicular(pt);
 

@@ -106,7 +106,7 @@ namespace GeometryTutorLib
             //shapes.Add(ShapeType.ISOSCELES_TRIANGLE);
             shapes.Add(ShapeType.RIGHT_TRIANGLE);
             shapes.Add(ShapeType.RECTANGLE);
-            //shapes.Add(ShapeType.SQUARE);
+            shapes.Add(ShapeType.SQUARE);
 
 
             //shapes.Add(ShapeType.PARALLELOGRAM);   // Area of parallelograms in solver needed.
@@ -174,8 +174,8 @@ namespace GeometryTutorLib
             //
             Dictionary<ShapeType, int> figureCountMap = new Dictionary<ShapeType, int>();
 
-            figureCountMap[ShapeType.TRIANGLE] = 3;
-            // figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+            figureCountMap[ShapeType.RIGHT_TRIANGLE] = 2;
+            figureCountMap[ShapeType.SQUARE] = 1;
 
             //
             // Convert the incoming dictionary to a simple list of shapes to process in order.
@@ -188,7 +188,7 @@ namespace GeometryTutorLib
             List<FigSynthProblem> problems = new List<FigSynthProblem>();
             try
             {
-                problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_MINUS_LPAREN_BETA_MINUS_GAMMA_RPAREN);
+                problems = SynthesizeFromTemplateAndFigures(shapes, TemplateType.ALPHA_PLUS_BETA_PLUS_GAMMA);
             }
             catch (Exception e)
             {

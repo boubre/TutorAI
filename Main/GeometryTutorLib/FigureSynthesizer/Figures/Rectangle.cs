@@ -74,7 +74,7 @@ namespace GeometryTutorLib.ConcreteAST
             return FigSynthProblem.RemoveSymmetric(composed);
         }
 
-        public static void MakeRectangles(Segment side, int length, out Rectangle rect1, out Rectangle rect2)
+        public static void MakeRectangles(Segment side, double length, out Rectangle rect1, out Rectangle rect2)
         {
             //
             // First rectangle

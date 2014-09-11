@@ -137,7 +137,9 @@ namespace GeometryTutorLib.GeometryTestbed
             if (isComplete) ActualShadedAreaProblem.TotalComplete++;
             if (figureStats.originalProblemInteresting) ActualShadedAreaProblem.TotalOriginalInteresting++;
 
+#if !HARD_CODED_UI
             AppendToFiles(figureStats);
+#endif
         }
 
         private void AppendToFiles(StatisticsGenerator.ShadedAreaFigureStatisticsAggregator figureStats)

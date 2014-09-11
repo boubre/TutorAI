@@ -564,9 +564,28 @@ namespace GeometryTutorLib.ConcreteAST
             List<Figure> left = new List<Figure>(leftProblem.CollectSubtractiveFigures(subtractFlag));
             List<Figure> right = new List<Figure>(rightProblem.CollectSubtractiveFigures(!subtractFlag));
 
-            left.AddRange(right);
+            //
+            // a - (b - c)
+            //
+            //if (rightProblem is SubtractionSynth)
+            //{
+            //    // Acquire the left as an outer region
+            //    List<AtomicRegion> rightAtoms = rightProblem.GetOpenRegions();
 
-            return left;
+            //    // Covert right atoms to figures to return...
+            //    foreach (AtomicRegion atom in rightAtoms)
+            //    {
+            //        left.Add((atom as ShapeAtomicRegion).shape);
+            //    }
+
+            //    return left;
+            //}
+            //else
+            //{
+                left.AddRange(right);
+
+                return left;
+//            }
         }
     }
 

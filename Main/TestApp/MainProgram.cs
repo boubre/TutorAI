@@ -25,9 +25,9 @@ namespace GeometryTutorLib.GeometryTestbed
             CleanDataDirectory();
 
 #if FIGURE_SYNTHESIZER
-            //GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainTester();
+            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainTester();
             //GeometryTutorLib.FigureSynthesizerMain.SynthesizerMain();
-            GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainDataGeneration();
+            //GeometryTutorLib.FigureSynthesizerMain.SynthesizerMainDataGeneration();
 #else
             List<GeometryTestbed.ActualProblem> problems = ConstructAllGeoShaderHardCodedProblems();
 
