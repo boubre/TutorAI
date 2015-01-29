@@ -29,53 +29,53 @@ namespace GeometryTutorLib.GeometryTestbed
             // Class X
             //
             problems.Add(new Page1Col1Prob1(true, false));     // GTGDemo
-            problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
-            problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
-            problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob2(true, false));     // GTGDemo (Need to fix Implied Calculator to recognize ALL constructed polygons for deduction engine)
-            problems.Add(new Page1Col2Prob3(true, false));     // GTGDemo
-            problems.Add(new Page1Col2Prob4(true, false));     // GTGDemo: Good circle example
-            problems.Add(new Page2Col1Prob1(true, false));     // GTGDemo: Implied polygon id problem.
-            problems.Add(new Page2Col1Prob2(true, false));     // GTGDemo
-            problems.Add(new Page2Col1Prob3(true, false));     // GTGDemo
-            problems.Add(new Page2Col2Prob1(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            problems.Add(new Page2Col2Prob2(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-
-            //
-            // Jurgensen
-            //
-            problems.Add(new Page2Prob15(true, false));       // GTGDemo: Redundant
-            problems.Add(new Page2Prob16(true, false));       // GTG
-            problems.Add(new Page2Prob17(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            problems.Add(new Page2Prob18(true, false));       // GTG
-            problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            problems.Add(new Page2Prob20(true, false));       // GTG (~30 second load time in UI)
-            // problems.Add(new Page2Prob28(true, false));       // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
-            problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            // problems.Add(new Page3Prob22(true, false));    // Too long to execute
-            problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
-            // problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
-            // problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
-            problems.Add(new Page3Prob30(true, false));       // GTG Kind Of (works fine in TestApp with ~25 second parse time, but very slow loading in UI (~3 minutes))
-            problems.Add(new Page4Prob7(true, false));        // GTGDemo
-            problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
-            problems.Add(new Page4Prob13(true, false));       // GTGDemo
-            problems.Add(new Page4Prob14(true, false));       // GTG (if given extra parallel clause, issue with detecting shared angle congruency)
-            problems.Add(new Page4Prob15(true, false));       // GTG
-            problems.Add(new Page4prob17(true, false));       // GTG
-            problems.Add(new Page4prob18(true, false));       // Works, but uses unproven semicircle clause
-            //problems.Add(new Page4Prob19(true, false));    // Encoding
+            //problems.Add(new Page1Col1Prob2(true, false));     // GTGDemo
+            //problems.Add(new Page1Col1Prob3(true, false));     // GTGDemo
+            //problems.Add(new Page1Col1Prob5(true, false));     // GTGDemo
+            //problems.Add(new Page1Col2Prob1(true, false));     // GTGDemo
+            //problems.Add(new Page1Col2Prob2(true, false));     // GTGDemo (Need to fix Implied Calculator to recognize ALL constructed polygons for deduction engine)
+            //problems.Add(new Page1Col2Prob3(true, false));     // GTGDemo
+            //problems.Add(new Page1Col2Prob4(true, false));     // GTGDemo: Good circle example
+            //problems.Add(new Page2Col1Prob1(true, false));     // GTGDemo: Implied polygon id problem.
+            //problems.Add(new Page2Col1Prob2(true, false));     // GTGDemo
+            //problems.Add(new Page2Col1Prob3(true, false));     // GTGDemo
+            //problems.Add(new Page2Col2Prob1(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            //problems.Add(new Page2Col2Prob2(true, false));     // GTGDemo: Redundant to demo; Same Deduc Engine Problem
 
             ////
-            //// McDougall
+            //// Jurgensen
+            ////
+            //problems.Add(new Page2Prob15(true, false));       // GTGDemo: Redundant
+            //problems.Add(new Page2Prob16(true, false));       // GTG
+            //problems.Add(new Page2Prob17(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            //problems.Add(new Page2Prob18(true, false));       // GTG
+            //problems.Add(new Page2Prob19(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            //problems.Add(new Page2Prob20(true, false));       // GTG (~30 second load time in UI)
+            //problems.Add(new Page2Prob28(true, false));       // Atomic Region Finder Problems; Arc equations needed (as well as work to calculate trapezoid area))  
+            //problems.Add(new Page3Prob21(true, false));       // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            ////problems.Add(new Page3Prob22(true, false));    // Too long to execute
+            //problems.Add(new Page3Prob23(true, false));       // GTG2Demo: Interior Tangent Circles
+            //// problems.Add(new Page3Prob24(true, false));       // Atomic Region ID redundancy problem; LONG solving...
+            //// problems.Add(new Page3Prob25(true, false));       // not ready, long time constructing implied components
+            //problems.Add(new Page3Prob30(true, false));       // GTG Kind Of (works fine in TestApp with ~25 second parse time, but very slow loading in UI (~3 minutes))
+            //problems.Add(new Page4Prob7(true, false));        // GTGDemo
+            //problems.Add(new Page4Prob8(true, false));        // GTGDemo: Redundant to demo; Same Deduc Engine Problem
+            //problems.Add(new Page4Prob13(true, false));       // GTGDemo
+            //problems.Add(new Page4Prob14(true, false));       // GTG (if given extra parallel clause, issue with detecting shared angle congruency)
+            //problems.Add(new Page4Prob15(true, false));       // GTG
+            //problems.Add(new Page4prob17(true, false));       // GTG
+            //problems.Add(new Page4prob18(true, false));       // Works, but uses unproven semicircle clause
+            ////problems.Add(new Page4Prob19(true, false));    // Encoding
+
+            ////
+            //// McDougall: Areas?
             ////
             //problems.Add(new Page5Row1Prob24(true, false));   // GTGDemo
             //problems.Add(new Page5Row1Prob25(true, false));   // GTGDemo
             //problems.Add(new Page5Row1Prob26(true, false));   // GTGDemo
             //problems.Add(new Page5Row2Prob27(true, false));   // GTGDemo
             //problems.Add(new Page5Row2Prob28(true, false));   // GTGDemo
-            //// problems.Add(new Page5Row2Prob29(true, false));   // Need way to calculate triangle & parallelogram areas from base and height
+            //problems.Add(new Page5Row2Prob29(true, false));   // Need way to calculate triangle & parallelogram areas from base and height
             //problems.Add(new Page5Row3Prob2(true, false));    // GTGDemo
             //problems.Add(new Page5Row3Prob3(true, false));    // GTGDemo
             //problems.Add(new Page5Row3Prob4(true, false));    // GTGDemo
@@ -100,20 +100,20 @@ namespace GeometryTutorLib.GeometryTestbed
             //problems.Add(new Page7Prob1a(true, false));           // GTG
             //problems.Add(new Page7Prob1b(true, false));           // GTG
             //problems.Add(new Page7Prob1c(true, false));           // GTG
-            ////problems.Add(new Page7Prob3(true, false));          //Broken - facet exception // GTG
+            //problems.Add(new Page7Prob3(true, false));          // GTG
             //// problems.Add(new Page7Prob4(true, false));            // Very long execution, works if RelationsOfCongruentAnglesAreCongruent is turned off
             //problems.Add(new Page7Prob24(true, false));           // GTG
             //problems.Add(new Page7Prob25(true, false));           // GTG
-            //// problems.Add(new Page7Prob26(true, false));           // deduction problem (side of square bisected by perpendicular diamter of inscribed circle)
-            //// problems.Add(new Page7Prob28(true, false));           // deduction problem
+            //problems.Add(new Page7Prob26(true, false));           // GTG
+            ////problems.Add(new Page7Prob28(true, false));           // deduction problem
 
-            //
-            // Singapore
-            //
+            ////
+            //// Singapore
+            ////
             //problems.Add(new Page205(true, false));  // GTGDemo
             //// problems.Add(new Page207(true, false));        // Takes a long time; eliminate supplementary from parallelograms to speed up ; Angle equation problem.
             //problems.Add(new Page208(true, false));  // GTGDemo
-            //// problems.Add(new Page209(true, false));        // GTG (Long deduction engine)
+            ////problems.Add(new Page209(true, false));        // GTG (Long deduction engine)
             //// problems.Add(new Page210(true, false));        // Incomputable ; LONG execution need angle addition axiom ; Don't include.
             //// problems.Add(new Page199(true, false));        // Problems with deduction.
 
@@ -200,15 +200,15 @@ namespace GeometryTutorLib.GeometryTestbed
             ////
             //problems.Add(new OsProb8(true, false));               // GTG
 
-            //
-            // ACT Practice
-            //
-            problems.Add(new TwoCircleInteriorTangent(true, false));    // GTGDemo
-            problems.Add(new TwoIsoscelesTriangles(true, false));       // GTG
-            // problems.Add(new CircCircRegionTester(true, false));        // No solution found
-            // problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
-            problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
-            ////problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
+            ////
+            //// ACT Practice
+            ////
+            //problems.Add(new TwoCircleInteriorTangent(true, false));    // GTGDemo
+            //problems.Add(new TwoIsoscelesTriangles(true, false));       // GTG
+            //// problems.Add(new CircCircRegionTester(true, false));        // No solution found
+            //// problems.Add(new FailingCircCircRegionTester(true, false)); // No solution found
+            //problems.Add(new SimpleCircleRegion(true, false));          // GTG; Triangle Deduction issue.
+            //////problems.Add(new Limitation(true, false)); // This problem is unsolvable for us.
 
 
             //

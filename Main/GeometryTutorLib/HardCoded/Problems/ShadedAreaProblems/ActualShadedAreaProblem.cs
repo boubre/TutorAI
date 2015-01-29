@@ -190,6 +190,31 @@ namespace GeometryTutorLib.GeometryTestbed
             {
                 file.WriteLine(SolverTiming);
             }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\length.txt", true))
+            {
+                file.WriteLine(figureStats.length);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\width.txt", true))
+            {
+                file.WriteLine(figureStats.width);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\areaFacts.txt", true))
+            {
+                file.WriteLine(figureStats.numAreaFacts);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\geometricFacts.txt", true))
+            {
+                file.WriteLine(figureStats.numGeometricFacts);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\ctalvin\Desktop\output\numDeductions.txt", true))
+            {
+                file.WriteLine(figureStats.numDeductions);
+            }
         }
 
         public override string ToString()

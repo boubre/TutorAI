@@ -54,6 +54,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public bool SegmentLengthKnown(Segment thatSeg)
         {
+            if (thatSeg == null) return false;
+
             return GetSegmentLength(thatSeg) > 0;
         }
 
@@ -96,6 +98,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public bool AddAngleMeasureDegree(Angle thatAngle, double measure)
         {
+            if (thatAngle == null) return false;
+
             if (AngleMeasureKnown(thatAngle)) return false;
 
             if (!Utilities.CompareValues(thatAngle.measure, measure))
@@ -130,6 +134,8 @@ namespace GeometryTutorLib.Area_Based_Analyses
 
         public bool AddSegmentLength(Segment thatSegment, double length)
         {
+            if (thatSegment == null) return false;
+
             if (SegmentLengthKnown(thatSegment)) return false;
 
             if (!Utilities.CompareValues(thatSegment.Length, length))

@@ -152,6 +152,9 @@ namespace GeometryTutorLib.TutorParser
             // Acquire a single solution for this specific problem for validation purposes.
             KeyValuePair<GeometryTutorLib.Area_Based_Analyses.ComplexRegionEquation, double> result = solutionAreaGenerator.GetSolution(goalRegions);
 
+            // Number of area facts
+            figureStats.numAreaFacts = result.Key.expr.NumRegions();
+
 #if HARD_CODED_UI
             UIDebugPublisher.getInstance().clearWindow();
             UIDebugPublisher.getInstance().publishString("Original Problem: " + string.Format("{0:N4}", result.Value) + " = " + result.Key.CheapPrettyString());
